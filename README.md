@@ -22,15 +22,15 @@ This repository is associated with our **TBD** submission, Selection Scheme Diag
 This section discusses the kinds selection schemes we are analyzing in this project. These selection schemes were selected because of we believe they
 
 - ![equation](http://www.sciweavers.org/tex2img.php?eq=%28%20%5Cmu%20%2C%20%5Clambda%20%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
-- Fitness sharing
-- Novelty search
-- *epsilon* Lexicase
-- Age-Layered Population Structure (ALPS)
+- Fitness sharing [TODO]
+- Novelty search [TODO]
+- *epsilon* Lexicase [TODO]
+- Age-Layered Population Structure (ALPS) [TODO]
 
 ## Diagnostic Problems
 This section discusses the isolated component that different problems share.
 
-- Exploration
-- Exploitation
-- Structured Exploitation
-- Ecological Niche Filling
+- Exploration [TODO]
+- Exploitation [TODO]
+- Structured Exploitation [TODO]
+- Ecological Niche Filling [TODO]
