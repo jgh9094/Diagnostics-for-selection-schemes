@@ -34,3 +34,5 @@ This section discusses the isolated component that different problems share.
 - Exploitation
 - Structured Exploitation
 - Ecological Niche Filling
+
+http://www.sciweavers.org/tex2img.php?eq=%28%20%5Cmu%20%2C%20%5Clambda%20%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0
