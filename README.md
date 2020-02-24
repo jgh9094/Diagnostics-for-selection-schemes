@@ -24,7 +24,7 @@ This section discusses the kinds selection schemes we are analyzing in this proj
 - ![equation](http://www.sciweavers.org/tex2img.php?eq=%28%20%5Cmu%20%2C%20%5Clambda%20%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
 - Fitness sharing
 - Novelty search
-- $\epsilon$ Lexicase
+- *epsilon* Lexicase
 - Age-Layered Population Structure (ALPS)
 
 ## Diagnostic Problems
