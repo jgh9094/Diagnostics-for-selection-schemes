@@ -21,7 +21,7 @@ This repository is associated with our **TBD** submission, Selection Scheme Diag
 
 This section discusses the kinds selection schemes we are analyzing in this project. These selection schemes were selected because of we believe they
 
-- ($\mu$,$\lambda$)
+- ![equation](http://www.sciweavers.org/tex2img.php?eq=%28%20%5Cmu%20%2C%20%5Clambda%20%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
 - Fitness sharing
 - Novelty search
 - $\epsilon$ Lexicase
@@ -34,4 +34,5 @@ This section discusses the isolated component that different problems share.
 - Exploitation
 - Structured Exploitation
 - Ecological Niche Filling
--     h<sub>&theta;</sub>(x) = &theta;<sub>o</sub> x + &theta;<sub>1</sub>x
+
+http://www.sciweavers.org/tex2img.php?eq=%28%20%5Cmu%20%2C%20%5Clambda%20%29&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0
