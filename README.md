@@ -34,4 +34,3 @@ This section discusses the isolated component that different problems share.
 - Exploitation
 - Structured Exploitation
 - Ecological Niche Filling
-
