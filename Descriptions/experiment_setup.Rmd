@@ -1,0 +1,240 @@
+---
+title: "Selection Scheme Diagnostics: Experimental Setup "
+author: "[Jose Guadalupe Hernandez](https://www.google.com/)"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: "kate"
+    use_bookdown: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+It gives users the ability to control at what points evolution will be moving from, in regard to the fitness landscape. 
+
+
+# Purpose of This Research
+
+Although it may appear that EAs are the ultimate tool for trying to solve complex problems, there are some limitations and concerns.
+A major obstacle when solving difficult, complex problems that EAs must overcome is traversing a difficult problem space or fitness landscape.
+It can be hard to conceptualize what the problem space or fitness landscape looks like because many problems are not formulated in a clean mathematical model.
+While the ideal goal would be to develop a tool to visualize these complex problems, that may take a while.
+
+One major goal of this research is to introduce a set of diagnostic problems that isolate characteristics that EAs must contend with when solving real world problems. 
+It would be beneficial to understand what kinds of EAs are good specific problem spaces and fitness landscapes, but that could prove to be difficult because there are a lot of moving parts in an EA.
+To untangle the affects that these moving parts might have on an EA's performance, we focus on isolating selection algorithms to see the impact they have on performance, in regard to the set of diagnostic problems. 
+In order to isolate the different selection algorithms, we develop a simple candidate solution representation, mutation operator, and problem representation. 
+
+The second major goal of this research is to understand the strength and weaknesses of different selection schemes.
+This set of diagnostic problems gives us a *profile* for each selection algorithm, which will give us insightful information when deciding what algorithm to use for a particular problem.
+In turn, this will also give us insight on the nature of the problem being solved by giving us an understanding of the problem space and fitness landscape that the problem possesses. 
+There are a variety of selection schemes that exist but comparing their effectiveness and robustness is difficult, as many of them use different sets of problems to test the scheme against.
+It is difficult to understand an algorithms strengths and weaknesses from these problems, as it is difficult to understand what characteristics the problem space or fitness landscape posses. 
+Creating these *profiles* will not only give us a better understanding of each selection algorithms' strengths and weaknesses, but also save time when deciding what selection algorithm to use.
+Using the best selection algorithm could also speed up the time required to find a satisfactory solution. 
+
+
+# Research Questions
+
+1. How do selection algorithms perform on each diagnostic?
+2. What stories do the diveristy metrics tell us about each selection scheme?
+
+
+# Evolutionary Algorithm Parameters
+
+Now we will define the variables, conditionals, and proceedures for the evolutionary runs in this experiment.
+The number of generations will determine the stopping criteria for these evolutionary algorihthms, with a maximum of $G=10,000$ generations.
+Population size for these experiments will be $N=500$.
+Candidate solutions underlying representation will consist of a vectors of doubles. 
+We also want to select a decent sized population, where the size of the population will not overcompensate the for the selection algorithms.
+
+Next we have to define the mutation operators and probabilities. 
+We decided to only use point mutations on individual doubles within the vector of a candidate solution.
+These point mutations will consist of adding offsets to individual doubles taken from a normal distributiion with $\mu=1$ and $\sigma^2=1$.
+The probability of an individual double being mutated is set to $0.7\%$ for this project. 
+This means that for every $100$ traits being considered for mutation, on average we expect $7$ of them to be mutated.
+
+# Diagnostic Parameters
+
+We need to define the number of doubles, or traits, that are going to be in the vector and a target objective. 
+Let $M$ be the number of traits and $\gamma$ be the target objective. 
+For this project we are going to set both $M$ and $\gamma$ to $100$. 
+
+
+# Selection Algorithms 
+
+Below we will describe the different variables, conditionals, and proceedures that need to be determined for every algorithm. 
+A full more in depth description of these selection algorithms can be found [here](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html).
+We detmine values from a given range for the selection schemes below from the following percentages; $\approx1\%$, $10\%$, $25\%$, $50\%$, $100\%$. 
+Now we will present our determined values. 
+
+## (μ,λ) Selection
+
+This algorithm asks us to define the population size ,$\lambda$, and count of top performing solutions, $\mu$. 
+Here we define $\lambda = N = 500$ and $\mu$ will be cacluated by multiplying the previous percentages by the population size. 
+This gives us the following parameter estimates. 
+
+<center>
+|                  | $\approx1\%$ |   $10\%$  |   $25\%$   |   $50\%$   |   $100\%$  |
+|:----------------:|:------------:|:---------:|:----------:|:----------:|:----------:|
+| ($\mu, \lambda$) |    (5,500)   | (50, 500) | (125, 500) | (250, 500) | (500, 500) |
+</center>
+
+The method in which in candidate solutions are selected as parents is similar to [6].
+In [6] the top $\mu$ performing solutions produce $\frac{\lambda}{\mu}$ offspring. 
+
+## Tournament Selection
+
+The tournament size, $t$, is the only variable that needs to be set for this algorithm.
+Here we calcuate the tournament size by mutiplying previous percentages by the size of the population. 
+This gives us the following parameter estimates. 
+
+<center>
+|     | $\approx1\%$ | $10\%$ | $25\%$ | $50\%$ | $100\%$ |
+|:---:|:------------:|:------:|:------:|:------:|:-------:|
+| $t$ |       7      |   50   |   125  |   250  |   500   |
+</center>
+
+**Let $t^*$ be the best performing tournament size on a given diagnostic.**
+We will be using this in the following algorithms. 
+
+## Fitness Sharing 
+
+This algorithm asks us to define three variables: a distance function between two candidate solutions, similarity function for two candidate solutions, and theshold for dissimilarity.
+We have to define the parameter $\alpha$ too, but we set it to $1$ based on a recomendation from [11].
+These three variables give us the pieces needed for tranforming the raw fitness value. 
+Let $f_i$ be the raw performance and $f'_i$ be the transformed performance from candidate solution $i$. 
+This transformation is given by the following,
+
+<center>
+$f'_i = \frac{f_i}{m_i}$
+</center>
+
+Now we will define $m_i$ for this algorithm. 
+
+<center>
+$$ m_{i} = \sum_{j=1}^{N} sh(d_{ij})$$
+</center>
+
+
+First we need define the similarity function between two candidate solutions. 
+Let $i,j$ be any two different candidate solution genomes. 
+For this project it will be defined by the following, 
+
+<center>
+$$ d_{ij} = || i - j||_2$$
+</center>
+
+Because we know that $i,j$ are just vector of doubles, we can just use the Euclidean Distance to measure their genotype distance.
+We are now going to define our similarity function. 
+
+<center>
+$$
+sh(d_{ij}) = \left\{
+        \begin{array}{ll}
+            1 - (\frac{d_{ij}}{\sigma}) & \quad \text{if } d_{ij} < \sigma\\
+            0 & \quad \text{otherwise}
+        \end{array}
+    \right.
+$$
+</center>
+
+Finally we have to define the threshold for similarity, $\sigma$. 
+First we calculate the highest possible $d_{ij}$, 
+
+<center>
+$$max(d_{ij}) = || <\gamma,...,\gamma> - <0,...,0>||_2 = || <100,...,100> - <0,...,0>||_2 = 1000$$
+</center>
+
+Now we calcuate the threshold for similarity by mutiplying previous percentages by $max(d_{ij})$. 
+This gives us the following parameter estimates. 
+
+<center>
+|          | $\approx1\%$ | $10\%$ | $25\%$ | $50\%$ | $100\%$ |
+|:--------:|:------------:|:------:|:------:|:------:|:-------:|
+| $\sigma$ |      10      |   100  |   250  |   500  |   100   |
+</center>
+
+## Novelty Search
+
+This algorithm asks us to define two variables: distance function for two candidate solution performances and number of nearest neighbors. 
+Let $dist(x,y)$ be the function that measures the distance between two candidate solution performances. 
+This function can be defined by, 
+
+<center>
+$$dist(x,y) = || x - y ||_2$$
+</center>
+
+Let $k \in \mathbb{Z}^+$ be the $k-$nearest neighbors. 
+These parameter estimates are derived from [8], where they defined $k=15$. 
+In this project we double the $k$ from [8] and mutiply it by the previous percentages. 
+This give us the parameter estimates,
+
+<center>
+|     | $\approx1\%$ | $10\%$ | $\approx25\%$ | $50\%$ | $100\%$ |
+|:---:|:------------:|:------:|:-------------:|:------:|:-------:|
+| $k$ |       1      |    3   |       8       |   15   |    30   |
+</center>
+
+## $\epsilon$-Lexicase
+
+The only variable this algorithm asks us to define is the threshold to pass through filters. 
+We look at the maximum threshold used in [9], which is $\epsilon = 10.0$.
+Here, we calcuate the threshold for these experiments by mutiplying previous percentages by the maximum threshold used in [9].
+This give us the parameter estimates,
+
+<center>
+|            | $1\%$ | $10\%$ | $25\%$ | $50\%$ | $100\%$ |
+|:----------:|:-----:|:------:|:------:|:------:|:-------:|
+| $\epsilon$ |   .1  |   1.0  |   2.5  |   5.0  |   10.0  |
+</center>
+
+
+
+## Age-Layered Population Structure (ALPS)
+
+TBD
+
+
+
+# Data Gathering [REDO]
+
+## Performance 
+
+- Number of updates each requires to solve a diagnostic.
+- Per generation, best organism performance? 
+- Per generation, overall population performance?
+
+## Diversity
+
+- What kind of diversity things should I look for [HELP, but I should read Emily's Quantifying the tape of life paper first!].
+- Diversity data tracked by systematics tracker
+- Loss in diversity/inclusion metric:
+  - After a selection event, when we have the set of parent ids that are reproducing, we divide the number of unique ids in the set by the population size. 
+  - Will tell us the how inclusive the algorithm is per selection event. 
+  - Will tell us the proportion of diversity that is lost. 
+- Selection pressure
+  - According to the authors in [5], the change of the average fitness of the population due to selection is a reasonable measure for selection intensity.
+  - Let $x$ be the average fitness and $s$ be the standard deviation of a population at generation $g$. Let $f$ be the average fitness of the set of parent ids that are reproducing. We can define selection pressure as $\frac{f-x}{s}$.
+  - Can also track selection variance, let $s$ be the standard deviation of a population at generation $g$ and $v$ be the standard deviation  of the set of parent ids that are reproducing. We can define selection variance as $\frac{v^2}{s^2}$. 
+  - This was inspired by work from [5]
+
+
+
+# Citations
+1. Hornby, Greg & Globus, Al & Linden, Derek & Lohn, Jason. (2006). Automated Antenna Design with Evolutionary Algorithms. Collection of Technical Papers - Space 2006 Conference. 1. 10.2514/6.2006-7242.
+2. K. Deb, A. Pratap, S. Agarwal and T. Meyarivan, "A fast and elitist multiobjective genetic algorithm: NSGA-II," in IEEE Transactions on Evolutionary Computation, vol. 6, no. 2, pp. 182-197, April 2002.
+3. Akyazı U., Uyar A.Ş. (2010) Detection of DDoS Attacks via an Artificial Immune System-Inspired Multiobjective Evolutionary Algorithm. In: Di Chio C. et al. (eds) Applications of Evolutionary Computation. EvoApplications 2010. Lecture Notes in Computer Science, vol 6025. Springer, Berlin, Heidelberg
+4. P. Guturu and R. Dantu, "An Impatient Evolutionary Algorithm With Probabilistic Tabu Search for Unified Solution of Some NP-Hard Problems in Graph and Set Theory via Clique Finding," in IEEE Transactions on Systems, Man, and Cybernetics, Part B (Cybernetics), vol. 38, no. 3, pp. 645-666, June 2008.
+5. T. Blickle and L. Thiele, "A Comparison of Selection Schemes Used in Evolutionary Algorithms," in Evolutionary Computation, vol. 4, no. 4, pp. 361-394, Dec. 1996.
+6. Sean Luke, 2013, Essentials of Metaheuristics, Lulu, second edition, available for free at http://cs.gmu.edu/~sean/book/metaheuristics/ 
+7. B. Sareni and L. Krahenbuhl, "Fitness sharing and niching methods revisited," in IEEE Transactions on Evolutionary Computation, vol. 2, no. 3, pp. 97-106, Sept. 1998.
+8. Lehman, Joel & Stanley, Kenneth. (2008). Exploiting open-endedness to solve problems through the search for novelty. Artificial Life - ALIFE. 
+9. La Cava, William, Lee Spector, and Kourosh Danai. “Epsilon-Lexicase Selection for Regression.” Proceedings of the 2016 on Genetic and Evolutionary Computation Conference - GECCO  ’16 (2016): n. pag. Crossref. Web.
+10. Hornby, Greg. (2006). ALPS: The age-layered population structure for reducing the problem of premature convergence. GECCO 2006 - Genetic and Evolutionary Computation Conference. 1. 10.1145/1143997.1144142. 
+11. Anikó Ekárt and Sandor Z. Németh. 2000. A Metric for Genetic Programs and Fitness Sharing. In Proceedings of the European Conference on Genetic Programming. Springer-Verlag, Berlin, Heidelberg, 259–270.
