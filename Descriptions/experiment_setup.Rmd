@@ -160,6 +160,8 @@ This gives us the following parameter estimates.
 | $\sigma$ |      10      |   100  |   250  |   500  |   100   |
 </center>
 
+The method in which in candidate solutions are selected as parents will be a tournament selection with tournament size $t^*$.
+
 ## Novelty Search
 
 This algorithm asks us to define two variables: distance function for two candidate solution performances and number of nearest neighbors. 
@@ -194,6 +196,7 @@ This give us the parameter estimates,
 | $\epsilon$ |   .1  |   1.0  |   2.5  |   5.0  |   10.0  |
 </center>
 
+The method in which in candidate solutions are selected as parents will be through a tournament selection with tournament size $t^*$.
 
 
 ## Age-Layered Population Structure (ALPS)
