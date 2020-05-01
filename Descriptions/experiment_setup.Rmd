@@ -183,6 +183,8 @@ This give us the parameter estimates,
 | $k$ |       1      |    3   |       8       |   15   |    30   |
 </center>
 
+The method in which in candidate solutions are selected as parents will be through a tournament selection with tournament size $t^*$.
+
 ## $\epsilon$-Lexicase
 
 The only variable this algorithm asks us to define is the threshold to pass through filters. 
@@ -195,8 +197,6 @@ This give us the parameter estimates,
 |:----------:|:-----:|:------:|:------:|:------:|:-------:|
 | $\epsilon$ |   .1  |   1.0  |   2.5  |   5.0  |   10.0  |
 </center>
-
-The method in which in candidate solutions are selected as parents will be through a tournament selection with tournament size $t^*$.
 
 
 ## Age-Layered Population Structure (ALPS)
