@@ -2,6 +2,8 @@
 title: "Selection Scheme Diagnostics: Experimental Setup "
 author: "[Jose Guadalupe Hernandez](https://www.google.com/)"
 date: "`r Sys.Date()`"
+header-includes:
+  - \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 output:
   rmdformats::readthedown:
     self_contained: true
@@ -15,8 +17,6 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-It gives users the ability to control at what points evolution will be moving from, in regard to the fitness landscape. 
-
 
 # Purpose of This Research
 
@@ -27,21 +27,21 @@ While the ideal goal would be to develop a tool to visualize these complex probl
 
 One major goal of this research is to introduce a set of diagnostic problems that isolate characteristics that EAs must contend with when solving real world problems. 
 It would be beneficial to understand what kinds of EAs are good specific problem spaces and fitness landscapes, but that could prove to be difficult because there are a lot of moving parts in an EA.
-To untangle the affects that these moving parts might have on an EA's performance, we focus on isolating selection algorithms to see the impact they have on performance, in regard to the set of diagnostic problems. 
-In order to isolate the different selection algorithms, we develop a simple candidate solution representation, mutation operator, and problem representation. 
+To untangle the affects that these moving parts might have on an EA's performance, we focus on isolating selection schemes to see the impact they have on performance, in regard to the set of diagnostic problems. 
+In order to isolate the different selection schemes, we develop a simple candidate solution representation, mutation operator, and problem representation. 
 
 The second major goal of this research is to understand the strength and weaknesses of different selection schemes.
-This set of diagnostic problems gives us a *profile* for each selection algorithm, which will give us insightful information when deciding what algorithm to use for a particular problem.
+This set of diagnostic problems gives us a *profile* for each selection scheme, which will give us insightful information when deciding what algorithm to use for a particular problem.
 In turn, this will also give us insight on the nature of the problem being solved by giving us an understanding of the problem space and fitness landscape that the problem possesses. 
 There are a variety of selection schemes that exist but comparing their effectiveness and robustness is difficult, as many of them use different sets of problems to test the scheme against.
 It is difficult to understand an algorithms strengths and weaknesses from these problems, as it is difficult to understand what characteristics the problem space or fitness landscape posses. 
-Creating these *profiles* will not only give us a better understanding of each selection algorithms' strengths and weaknesses, but also save time when deciding what selection algorithm to use.
-Using the best selection algorithm could also speed up the time required to find a satisfactory solution. 
+Creating these *profiles* will not only give us a better understanding of each selection schemes' strengths and weaknesses, but also save time when deciding what selection scheme to use.
+Using the best selection scheme could also speed up the time required to find a satisfactory solution. 
 
 
 # Research Questions
 
-1. How do selection algorithms perform on each diagnostic?
+1. How do selection schemes perform on each diagnostic?
 2. What stories do the diveristy metrics tell us about each selection scheme?
 
 
@@ -49,9 +49,9 @@ Using the best selection algorithm could also speed up the time required to find
 
 Now we will define the variables, conditionals, and proceedures for the evolutionary runs in this experiment.
 The number of generations will determine the stopping criteria for these evolutionary algorihthms, with a maximum of $G=10,000$ generations.
-Population size for these experiments will be $N=500$.
+Population size for these experiments will be $N=512$.
 Candidate solutions underlying representation will consist of a vectors of doubles. 
-We also want to select a decent sized population, where the size of the population will not overcompensate the for the selection algorithms.
+We also want to select a decent sized population, where the size of the population will not overcompensate the for the selection schemes.
 
 Next we have to define the mutation operators and probabilities. 
 We decided to only use point mutations on individual doubles within the vector of a candidate solution.
@@ -66,27 +66,31 @@ Let $M$ be the number of traits and $\gamma$ be the target objective.
 For this project we are going to set both $M$ and $\gamma$ to $100$. 
 
 
-# Selection Algorithms 
+# Selection Schemes 
 
 Below we will describe the different variables, conditionals, and proceedures that need to be determined for every algorithm. 
-A full more in depth description of these selection algorithms can be found [here](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html).
-We detmine values from a given range for the selection schemes below from the following percentages; $\approx1\%$, $10\%$, $25\%$, $50\%$, $100\%$. 
-Now we will present our determined values. 
+A full more in depth description of these selection schemes can be found [here](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html).
+We detmine values from a given range for the selection schemes below.
 
-## (μ,λ) Selection
+## (μ,λ) Evolutionary Strategy
 
 This algorithm asks us to define the population size ,$\lambda$, and count of top performing solutions, $\mu$. 
-Here we define $\lambda = N = 500$ and $\mu$ will be cacluated by multiplying the previous percentages by the population size. 
-This gives us the following parameter estimates. 
+Here we define $\lambda = 512$ and $\mu$ will be estimated exponentially by powers of $2$. 
+This gives us the following parameter estimates.
 
 <center>
-|                  | $\approx1\%$ |   $10\%$  |   $25\%$   |   $50\%$   |   $100\%$  |
-|:----------------:|:------------:|:---------:|:----------:|:----------:|:----------:|
-| ($\mu, \lambda$) |    (5,500)   | (50, 500) | (125, 500) | (250, 500) | (500, 500) |
+|       | $2^{0}$ | $2^{1}$ | $2^{2}$ | $2^{3}$ | $2^{4}$ | $2^{5}$ | $2^{6}$ | $2^{7}$ | $2^{8}$ | $2^{9}$ |
+|:-----:|---------|:-------:|:-------:|:-------:|---------|---------|---------|---------|---------|---------|
+| $\mu$ | 1       |    2    |    4    |    8    | 16      | 32      | 64      | 128     | 256     | 512     |
 </center>
 
-The method in which in candidate solutions are selected as parents is similar to [6].
-In [6] the top $\mu$ performing solutions produce $\frac{\lambda}{\mu}$ offspring. 
+It is important to not that at $\mu = 512$ there is no pressure to improve in fitness.
+Looking at the other extreme, at $\mu = 1$ there is immense pressure to be the best performing candidate solution.
+These parameter estimates allow us to effectivly explore the range between these extremes. 
+
+One final proceedure we need to define is how to select parents from the top performing $\mu$ candidate solutions. 
+Our method for which candidate solutions are selected as parents is similar to [6], where the top $\mu$ performing candidate solutions produce $\frac{\lambda}{\mu}$ offspring.
+We will use this method in our experiments.
 
 ## Tournament Selection
 
@@ -95,19 +99,27 @@ Here we calcuate the tournament size by mutiplying previous percentages by the s
 This gives us the following parameter estimates. 
 
 <center>
-|     | $\approx1\%$ | $10\%$ | $25\%$ | $50\%$ | $100\%$ |
-|:---:|:------------:|:------:|:------:|:------:|:-------:|
-| $t$ |       7      |   50   |   125  |   250  |   500   |
+|     | $2^{0}$ | $2^{1}$ | $2^{2}$ | $2^{3}$ | $2^{4}$ | $2^{5}$ | $2^{6}$ | $2^{7}$ | $2^{8}$ | $2^{9}$ |
+|:---:|---------|:-------:|:-------:|:-------:|---------|---------|---------|---------|---------|---------|
+| $t$ | 1       |    2    |    4    |    8    | 16      | 32      | 64      | 128     | 256     | 512     |
 </center>
 
+It is important to not that at $t = 512$ there is immense pressure to be the best performing candidate solution.
+Looking at the other extreme, at $t = 1$ there is no pressure to improve in fitness.
+These parameter estimates allow us to effectivly explore the range between these extremes. 
+
 **Let $t^*$ be the best performing tournament size on a given diagnostic.**
-We will be using this in the following algorithms. 
+We will be using $t^*$ in the following algorithms. 
 
 ## Fitness Sharing 
 
-This algorithm asks us to define three variables: a distance function between two candidate solutions, similarity function for two candidate solutions, and theshold for dissimilarity.
-We have to define the parameter $\alpha$ too, but we set it to $1$ based on a recomendation from [11].
-These three variables give us the pieces needed for tranforming the raw fitness value. 
+Fitness sharing requires numerous variables to be defined before execution.
+In this experiment, candidate solutions will be selected as parents through tournament selection with tournament size $t^*$.
+Tournaments will consist on candidate solutions randomly selected from the entire population.
+The parameter $\alpha$ will be set to $1$ based on a recomendation from [11].
+
+This algorithm asks us to define additional variables: a distance function between two candidate solutions, similarity function for two candidate solutions, and theshold for dissimilarity.
+All these variables give us the pieces needed for tranforming the raw fitness value. 
 Let $f_i$ be the raw performance and $f'_i$ be the transformed performance from candidate solution $i$. 
 This transformation is given by the following,
 
@@ -151,20 +163,23 @@ First we calculate the highest possible $d_{ij}$,
 $$max(d_{ij}) = || <\gamma,...,\gamma> - <0,...,0>||_2 = || <100,...,100> - <0,...,0>||_2 = 1000$$
 </center>
 
-Now we calcuate the threshold for similarity by mutiplying previous percentages by $max(d_{ij})$. 
-This gives us the following parameter estimates. 
+Using $max(d_{ij})$ we get the following parameter estimates. 
 
 <center>
-|          | $\approx1\%$ | $10\%$ | $25\%$ | $50\%$ | $100\%$ |
-|:--------:|:------------:|:------:|:------:|:------:|:-------:|
-| $\sigma$ |      10      |   100  |   250  |   500  |   100   |
+|          | $0\%$ | $1\%$ | $3\%$ | $6\%$ | $12\%$ | $25\%$ | $50\%$ | $100\%$ |
+|:--------:|-------|:-----:|:-----:|:-----:|--------|--------|--------|---------|
+| $\sigma$ | 0     |   10  |   30  |   60  | 120    | 250    | 500    | 1000    |
 </center>
 
-The method in which in candidate solutions are selected as parents will be a tournament selection with tournament size $t^*$.
+It is important to not that at $\sigma = 0$ there is no pressure to be genetically different.
+This is similar to running a standard Tournament selection. 
+Looking at the other extreme, at $\sigma = 1000$ there is constant pressure to be genetically different.
+These parameter estimates allow us to effectivly explore the range between these extremes. 
 
 ## Novelty Search
 
 This algorithm asks us to define two variables: distance function for two candidate solution performances and number of nearest neighbors. 
+The method in which in candidate solutions are selected as parents will be through a tournament selection with tournament size $t^*$.
 Let $dist(x,y)$ be the function that measures the distance between two candidate solution performances. 
 This function can be defined by, 
 
@@ -173,29 +188,32 @@ $$dist(x,y) = || x - y ||_2$$
 </center>
 
 Let $k \in \mathbb{Z}^+$ be the $k-$nearest neighbors. 
-These parameter estimates are derived from [8], where they defined $k=15$. 
-In this project we double the $k$ from [8] and mutiply it by the previous percentages. 
+We wanted to explore the parameters around $k=15$ because of its use in [8].
+These parameter were estimated keeping $k=15$ in mind to explore the region around it. 
 This give us the parameter estimates,
 
 <center>
-|     | $\approx1\%$ | $10\%$ | $\approx25\%$ | $50\%$ | $100\%$ |
-|:---:|:------------:|:------:|:-------------:|:------:|:-------:|
-| $k$ |       1      |    3   |       8       |   15   |    30   |
+|     | $0\%$ | $\approx1\%$ | $\approx3\%$ | $\approx6\%$ | $\approx12\%$ | $25\%$ | $50\%$ | $100\%$ |
+|:---:|-------|:------------:|:------------:|:------------:|---------------|--------|--------|---------|
+| $k$ | 0     |       1      |       2      |       4      | 8             | 15     | 30     | 60      |
 </center>
 
-The method in which in candidate solutions are selected as parents will be through a tournament selection with tournament size $t^*$.
+It is important to not that at $k = 0$ there is to explore new regions of the fitness landscape.
+This is similar to running a standard Tournament selection. 
+Looking at the other extreme, at $k = 60$ there is constant pressure to move away from the $60$ nearest neighbors within the fitness landscape per candidate solution.
+
 
 ## $\epsilon$-Lexicase
 
 The only variable this algorithm asks us to define is the threshold to pass through filters. 
-We look at the maximum threshold used in [9], which is $\epsilon = 10.0$.
-Here, we calcuate the threshold for these experiments by mutiplying previous percentages by the maximum threshold used in [9].
+For this experiment we look at the maximum threshold used in [9], which is $\epsilon = 10.0$.
+We would like to explore the region between the smallest possible $\epsilon$, 0, and the maximum $\epsilon$ value from [9].
 This give us the parameter estimates,
 
 <center>
-|            | $1\%$ | $10\%$ | $25\%$ | $50\%$ | $100\%$ |
-|:----------:|:-----:|:------:|:------:|:------:|:-------:|
-| $\epsilon$ |   .1  |   1.0  |   2.5  |   5.0  |   10.0  |
+|            | $0\%$ | $1\%$ | $3\%$ | $6\%$ | $12\%$ | $25\%$ | $50\%$ | $100\%$ |
+|:----------:|-------|:-----:|:-----:|:-----:|--------|--------|--------|---------|
+| $\epsilon$ | 0     |  0.1  |  0.3  |  0.6  | 1.2    | 2.5    | 5.0    | 10.0    |
 </center>
 
 
@@ -205,27 +223,63 @@ TBD
 
 
 
-# Data Gathering [REDO]
+# Data Gathering & Metrics
 
-## Performance 
+Before we discuss the population and individual statistics we are gathering, we must define some parameters.
+Let $\tau$ measure the distance between any given organsims' trait and the target objective $\gamma$.
+The population before selection will be given by $P$ and the set of parents after selection will be given by $\Pi$.
+Both $P,\Pi$ contain candidate solution ids.
+$P$ is the set of all candidate solution ids. 
+$\Pi$ is the set of candidate ids that were selected to produce offspring for the next generation. 
 
-- Number of updates each requires to solve a diagnostic.
-- Per generation, best organism performance? 
-- Per generation, overall population performance?
+We define a trait being succesfully optimized if the distance for the given trait from the target objective $\gamma$ is less than $\tau$.
+A candidate solution is considered an optimal solution all of its traits are considered optimized.
+Let $f_i$ measure the aggregate performance for all traits for a given candidate solution $i$ and $v$ be a trait for a candidate solution.
 
-## Diversity
+$$ f_i = \sum_{v \in i} v$$
 
-- What kind of diversity things should I look for [HELP, but I should read Emily's Quantifying the tape of life paper first!].
+Now we can define some data worth tracking. 
+
+## Performance Metrics
+
+### Population Level Metrics ~ Across All Candidate Solutions
+
+Below is a list of data we are tracking at the population level. 
+
+- Average number of optimized traits
+- Maximum number of optimized traits
+- Number of unique optimized traits
+- Average aggregate performance:
+    - $\bar{f_{P}} = \frac{1}{N} \sum_{i=1}^{N} f_i$
+
+### Individual Level Metrics ~ Best Performing Candidate Solution
+
+This candidate solution is determined by having the best aggregate performance. 
+Below is a list of data we are tracking from this caldidate solution. 
+
+- Number of optimized traits
+- Average trait performance 
+- Aggregate performance
+
+## Diversity Metrics
+
+- Read Emily's Quantifying the tape of life paper for inspiration!
 - Diversity data tracked by systematics tracker
-- Loss in diversity/inclusion metric:
-  - After a selection event, when we have the set of parent ids that are reproducing, we divide the number of unique ids in the set by the population size. 
-  - Will tell us the how inclusive the algorithm is per selection event. 
-  - Will tell us the proportion of diversity that is lost. 
+- Loss in diversity:
+  - The loss in diversity can be measured by dividing the number of unique candidate solution ids in $\Pi$ by the size of the population $P$
+    - $\frac{unique(\Pi)}{size(P)}$
+  - Per selection event, this will tell us the the proportion of diversity that is lost and how inclusive the algorithm is
 - Selection pressure
-  - According to the authors in [5], the change of the average fitness of the population due to selection is a reasonable measure for selection intensity.
-  - Let $x$ be the average fitness and $s$ be the standard deviation of a population at generation $g$. Let $f$ be the average fitness of the set of parent ids that are reproducing. We can define selection pressure as $\frac{f-x}{s}$.
-  - Can also track selection variance, let $s$ be the standard deviation of a population at generation $g$ and $v$ be the standard deviation  of the set of parent ids that are reproducing. We can define selection variance as $\frac{v^2}{s^2}$. 
-  - This was inspired by work from [5]
+  - According to the authors in [5], the change of the average fitness of the population due to selection is a reasonable measure for selection intensity
+  - Let $\bar{f_P}$ be the average fitness for population $P$, $s_{P}$ be the standard deviation for $P$'s fitnesses, and $\bar{f_{\Pi}}$ be the average fitness of $\Pi$
+  - Selection pressure is defined by:
+    - $\frac{\bar{f_{\Pi}} - \bar{f_{P}}}{s_{P}}$
+- Selection variance
+  - The authors in [5] also define a formulation for selection variance
+  - Let $s_P$ be the standard deviation for $P$ and $s_{\Pi}$ be the standard deviation for $\Pi$
+  - Selection variance is defined by:
+    - $\frac{s_P^2}{s_{\Pi}^2}$  
+- Both selection pressure and variance are taken at every generation
 
 
 

@@ -77,7 +77,7 @@ A full descriptive of the algorithm is given below.
 1. Evaluate candidate solutions and record fitness
 2. Form a subset of top performing $\mu$ candidate solutions
 3. Select individual candidtate solutions to use as parents for the next generation
-    * Each one of the $\mu$ candidate solutions creates $\frac{\lambda}{\mu}$ children [1]
+    * Each one of the $\mu$ candidate solutions creates $\frac{\lambda}{\mu}$ children, from [1]
     * Run tournament selection on the new subset
     * Infinite possiblilites
 4. Repeat step 3 until sufficient parents are selected

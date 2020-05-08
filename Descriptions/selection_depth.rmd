@@ -1,0 +1,29 @@
+---
+title: 'Selection Scheme Diagnostics: Selection Scheme In Depth'
+author: "[Jose Guadalupe Hernandez](https://www.google.com/)"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: "kate"
+    use_bookdown: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# What Is A Selection Algorithm?
+
+It gives users the ability to control at what points evolution will be moving from, in regard to the fitness landscape. 
+
+
+
+
+# Citations
+
+1. T. Blickle and L. Thiele, "A Comparison of Selection Schemes Used in Evolutionary Algorithms," in Evolutionary Computation, vol. 4, no. 4, pp. 361-394, Dec. 1996.
