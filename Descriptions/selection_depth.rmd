@@ -21,22 +21,27 @@ knitr::opts_chunk$set(echo = TRUE)
 Evolutionary algorithms can be described as probabilistic search algorithms characterized by the fact that a set of potential candidate solutions of the optimization problem simultaneously sample the search space through a natural evolutionary process. 
 The set of candidate solutions can be thought of as a population in the real world. 
 Just as organisms in the real world produce offspring and form a new generation, evolutionary algorithms incorporate this as well. 
-A new set of candidate solutions must also be selected as genetic material, usually from the existing population of candidate solutions, for the following generation.
+A new set of candidate solutions must be selected as genetic material, usually from the current generation's population of solutions, for the following generation.
 This genetic material undergoes mutation similar to DNA in the real world by altering the underlying structure of a candidate solution.
 There are many interesting directions to explore evolutionary algorithms, but this work focuses on the process of how candidate solutions are selected as genetic material for the following generation. 
-From this point on, this process will be defining a selection scheme.
+From this point on, this process will be knonw as a selection scheme.
 These descriptions were inspired from [1,2].
 
-The selection scheme that an evolutionary algorithm uses plays an important role in finding an optimal solution.
-It selects starting points to move from within the space of all solutions, that translates to some performance from the fitness landscape.
-Mutation operators and percentages act as the direction and distance candidate solutions use to traverse the solution space.
+The selection scheme an evolutionary algorithm uses plays an important role in the convergence and discovery of an optimal solution.
+It essentially selects starting points that candidate solutions use to traverse from and through the space of all solutions.
+Every point in the solution space translates to some performance value on the fitness landscape.
+One thing worth noting is that many candidate solutions in the solution space may be mapped to the same performance value.
+Mutation operators and percentages act as the direction and distance candidate solutions move along the solution space.
 Traversing the space of all possible solutions from a great starting point allows candidate solutions to explore and exploit promising regions of the solution space.
-Looking at the other extreme, traversing from a terrible point in the solution space can lead to candidate solutions being stuck in an unfavorable region.
+Looking at the other extreme, traversing from a terrible point in the solution space can lead to solutions being stuck in an unfavorable region.
 
 A selection scheme returns a list of candidate solutions to be used as genetic material for the following generation.
-Prior to mutation, each one of these candidate solutions can be thought of as a single starting point in the solution space.
+Prior to mutation, each one of these solutions can be thought of as a single starting point in the solution space.
 It is easy to see that it would be beneficial to explore regions of the solution space that are improving performance on the optimization problem.
-Given that the same candidate solution to produce an offspring multiple times, it is also easy to see that it is beneficial to have multiple candidate solutions explore the same region around a good starting point in the solution space.
+The same candidate solution can produce an offspring multiple times within a selection event, so it is also easy to see the benefit of having multiple solutions explore the region around a good starting point.
+Mutation operators do not have any information regarding promosing regions within the solution space. 
+There is a possibility that a candidate solution could regress after mutation, hence having multiple solutions explore promising regions is a good idea. 
+This is because as soon as a solution finds a better position within the solution space that increases performance, its chances of producing an offspring increase. 
 A selection algorithm must contend with finding the best possible set of candidate solutions for the following generation, with the goal of finding an optimal solution. 
 
 The purpose of a selection scheme is to improve the average quality of the population by giving higher performing candidate solution a higher probability to be selected as genetic material for the following generation [1]. 
@@ -54,10 +59,10 @@ Below we elaborate on the four components: fitness modification, population stru
 
 ## Fitness Modification
 
-Before a selection scheme can start selecting candidate solutions for the following generations, each candidate solution must have a single or set of fitness scores.
+Before a selection scheme can start selecting candidate solutions for the following generations, each solution must have a single or set of fitness scores.
 Candidate solutions usually contend with a set of testcases, which we will define as $T = \{t_1, t_2, ..., t_M \}$, where $t \in \mathbb{T}$.
 This means that there are there are $M$ test cases, where $M \in \mathbb{Z}^+$.
-Let $\rho(j,t)$ define a function that takes a candidate solution and testcase as input and returns a fitness performance value, where $\rho : (\mathbb{J},\mathbb{T}) \longrightarrow \mathbb{R}$.
+Let $\rho(j,t)$ define a function that takes a candidate solution and testcase as input and returns a performance fitness value, where $\rho : (\mathbb{J},\mathbb{T}) \longrightarrow \mathbb{R}$.
 After evaluating candidate solutions against all the testcases we end up with a data matrix.
 This data matrix will be defined as $X \in \mathbb{R}^{N\text{x}M}$.
 
@@ -125,8 +130,8 @@ Lexicase keeps fitness performance on individual testcases independent.
 Fitness sharing applies a transformation to the aggregate fitness performance.
 These are just some examples.
 
-**The key take from this section is that once we have the raw performance fitness values on all testcases from each candidate solution, additional layers of complexity can be applied to the data.**
-Once transformations on data are complete, if any are applied, the selection scheme must determine how to use these fitness values.
+**The key take from this section is that once we have all the raw performance fitness values, additional layers of complexity can be applied to the data.**
+Once transformations on data are complete, if applied, the selection scheme must determine how to use these fitness values.
 
 
 ## Population Structure
@@ -136,13 +141,13 @@ Interactions between candidate solutions refers to whether or not two solutions 
 The reason we say potentially is because of the following scenario. 
 Imagine we partition an entire population into cohorts and only allow competition between candidate solutions that belong to the same cohort.
 This means that candidate solutions that are from different cohorts do not share interactions.
-While those that reside within the same cohort all have interactions between each other.
+While those that reside within the same cohort may share interactions between one another.
 
 We will describe standard tournament selection in this context. 
-Standard tournament selection randomly picks a predetermined number of candidate solutions from the entire population, then selections the top performing solution. 
+Standard tournament selection randomly picks a predetermined number of candidate solutions from the entire population, then selects the top performing solution. 
 To elaborate more on the previously described scenario, we will modify tournament selection. 
 Like in the previous scenario, imagine we partition an entire population into cohorts and only allow competition between candidate solutions that belong to the same cohort.
-Tournament selection is then used to selection candidate solutions, but only allow tournaments with solutions from the same cohort.
+Tournament selection is then used to select candidate solutions, but only allow tournaments with solutions from the same cohort.
 This demonstrates that only candidate solutions within the same cohort have the potential to compete with one another.
 Hence, candidate solutions within the same cohort share interactions but not with solutions outside of it.
 
@@ -151,8 +156,8 @@ Hence, candidate solutions within the same cohort share interactions but not wit
 
 During the selection scheme process a candidate solution must be selected as genetic material for the following generation.
 The question still remains on how candidate solutions should be selected. 
-Some simple approaches could be always select the best performing candidate solution or randomly select solutions. 
-These are nowhere near the optimal methods to selection candidate solutions.
+Some simple approaches could be always select the best performing solution or randomly selecting solutions. 
+These are nowhere near the optimal methods for selecting solutions.
 The first one can lead to getting stuck in a local optimum, and the other does not converge to a solution. 
 Other selection schemes use competitions between other candidate solutions to preserve diversity and improve convergence to an optimal solution.
 
