@@ -54,10 +54,10 @@ These are all great description of what a selection scheme is and does, but I th
 Before we can go more in depth into the components, we need to define some variables. 
 Let $P$ represent the population for a given generation, where the population consists of candidate solutions from the space of all possible solutions $\mathbb{J}$. 
 We can let $N$ define the size of the population, which give us $P=\{j_1, j_2,...,j_N\}$.
-Below we elaborate on the four components: fitness modification, population structure, selection, and external selection.
+Below we elaborate on the four components: fitness transformation, population structure, selection, and external selection.
 
 
-## Fitness Modification
+## Fitness Transformation
 
 Before a selection scheme can start selecting candidate solutions for the following generations, each solution must have a single or set of fitness scores.
 Candidate solutions usually contend with a set of testcases, which we will define as $T = \{t_1, t_2, ..., t_M \}$, where $t \in \mathbb{T}$.
@@ -76,7 +76,7 @@ $$X=\begin{pmatrix}
 
 Looking at this data matrix we can make some quick observations. 
 Note that each row in the data matrix represents all performances of a candidate solution.
-For example, the first row represents $j_1$'s performance on all testcases.
+For example, the first row represents solution $j_1$'s performance on all testcases.
 Let $x$ represent this performance vector for a candidate solution, where $x \in \mathbb{R}^{1\text{x}M}$.
 We can also see that the columns represent the populations' performance on a given testcase.
 Now we get the following matrix,
@@ -98,40 +98,37 @@ x_N
 
 I would describe $X$ as the raw fitness performance across all candidate solutions and testcases.
 Now interesting transformations can be applied to this data matrix to add layers of complexity to the selection scheme. 
-Let $F$ represent the matrix that has undergone some transformation.
+Let $X'$ represent the previous data matrix that has some transformation applied to it. 
 
-$$F=
+$$X'=
 \begin{pmatrix}
-f_1\\ 
+x'_1\\ 
 .\\ 
 .\\ 
 .\\ 
-f_N
+x'_N
 \end{pmatrix}$$
 
-Looking at $F$ we can define $f_i = g(x_i)$, where the function $g$ applies some transformation to the raw performance fitness values. 
+Looking at $X'$ we can define $x'_i = g(x_i)$, where the function $g$ applies some transformation to the raw performance fitness values. 
 Below we will describe some examples of the function $g$. 
 
 - Aggregate performance with or without transformation on the aggregate performance or performance on individual testcase performances
-$$f_i = g(x_i) = h_1 \bigg ( \sum_{x \in x_i} h_2(x) \bigg ) $$
+$$x'_i = g(x_i) = h_1 \bigg ( \sum_{x \in x_i} h_2(x) \bigg ) $$
   - Here $h_1$ is a transformation on the aggregate performance and $h_2$ is a transformation on individual performances
 - Keeping testcases independent of one another with or without transformation on the independent testcases
-$$f_i = g(x_i) = \{ h(x_{(i,1)}), h(x_{(i,2)}), ..., h(x_{(i,M)}) \}$$
+$$x'_i = g(x_i) = \{ h(x_{(i,1)}), h(x_{(i,2)}), ..., h(x_{(i,M)}) \}$$
   - The function $h$ is transforming individual raw performance fitness values, where $h$ can also vary ($h \in \{h_1, h_2,...\}$)
 - Direct modification to the performance fitness values
-$$F = G(F)$$
-  - $G$ represents some matrix transformation on $F$
+$$X' = G(X')$$
+  - $G$ represents some matrix transformation on $X'$
+  - Can be done pre and/or post performance fitness values are transformed
   - This includes combining fitness values to produce new fitness values, removing fitness values completely, and applying other matrix transformations
   - Read like code
-  
-Some of these fitness modifications can be seen in classic selection schemes. 
-Tournament selection aggregates fitness performance across all testcases. 
-Lexicase keeps fitness performance on individual testcases independent. 
-Fitness sharing applies a transformation to the aggregate fitness performance.
-These are just some examples.
+
+The purpose of this section is to describe these transformations with a mathemactical representation. 
+While not every selection scheme can be cleanly described by this description, it is important to highlight the importance of this component within a selections scheme.
 
 **The key take from this section is that once we have all the raw performance fitness values, additional layers of complexity can be applied to the data.**
-Once transformations on data are complete, if applied, the selection scheme must determine how to use these fitness values.
 
 
 ## Population Structure
@@ -161,6 +158,14 @@ These are nowhere near the optimal methods for selecting solutions.
 The first one can lead to getting stuck in a local optimum, and the other does not converge to a solution. 
 Other selection schemes use competitions between other candidate solutions to preserve diversity and improve convergence to an optimal solution.
 
+
+# Experiment Selection Schemes
+
+Some of these fitness modifications can be seen in classic selection schemes. 
+Tournament selection aggregates fitness performance across all testcases. 
+Lexicase keeps fitness performance on individual testcases independent. 
+Fitness sharing applies a transformation to the aggregate fitness performance.
+These are just some examples.
 
 # Citations
 
