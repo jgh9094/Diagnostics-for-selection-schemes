@@ -42,7 +42,7 @@ The same candidate solution can produce an offspring multiple times within a sel
 Mutation operators do not have any information regarding promosing regions within the solution space. 
 There is a possibility that a candidate solution could regress after mutation, hence having multiple solutions explore promising regions is a good idea. 
 This is because as soon as a solution finds a better position within the solution space that increases performance, its chances of producing an offspring increase. 
-A selection algorithm must contend with finding the best possible set of candidate solutions for the following generation, with the goal of finding an optimal solution. 
+A selection scheme must contend with finding the best possible set of candidate solutions for the following generation, with the goal of finding an optimal solution. 
 
 The purpose of a selection scheme is to improve the average quality of the population by giving higher performing candidate solution a higher probability to be selected as genetic material for the following generation [1]. 
 This allows the selection scheme to generate populations of candidate solutions that explore promising regions of the solution space.

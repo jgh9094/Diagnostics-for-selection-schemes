@@ -46,16 +46,16 @@ Once these variables, conditionals, and proceedures are determined, EAs generall
 1. Generate population zero
 2. Evaluate candidate solutions fitness
 3. Check stopping criterion
-4. Selection algorithm 
+4. selection scheme 
 5. Mutation operators
 6. Form next generation
 7. Repeat steps 2 - 6
 
-In this work, we are focusing on the **selection algorithm**. 
+In this work, we are focusing on the **selection scheme**. 
 
-# Selection Algorithms 
+# Selection Schemes 
 
-Below we describe in detail, with analysis, the different existing selection algorithms. 
+Below we describe in detail, with analysis, the different existing selection schemes. 
 
 ## (μ,λ) Selection
 
@@ -65,7 +65,7 @@ The implementation of this algorithm was inspired from [1].
 Let $\lambda$ be the size of the population and $\mu$ be the count of top performing candidate solutions, where $\mu , \lambda \in \mathbb{N}$.
 One thing worth highlighting is the impact that $\mu$ has on the exploration and exploitation dynamic.
 As $\mu$ approaches 0, we get this algorithm to resemble more of an elite selection that focuses on exploiting the fitness landscape. 
-As $\mu$ approaches $\lambda$, we get this algorithm to resemble more of a drift selection algorithm that focuses on exploring the fitness landscape.
+As $\mu$ approaches $\lambda$, we get this algorithm to resemble more of a drift selection scheme that focuses on exploring the fitness landscape.
 
 I believe that the novelty this algorithm posses is that it only uses the top $\mu$ candidate solutions as genetic material for the following generation. 
 This algorithm creates a subset of the the population from the top $\mu$ candidate solutions. 
@@ -89,7 +89,7 @@ A full descriptive of the algorithm is given below.
 The algorithm being described is the one commonly seen, with no additional layer of complexity. 
 Let $t$ be the size of the tournaments and $N$ be the population size, where $t,N \in \mathbb{N}$.
 One thing worth highlighting is the impact that $t$ has on the exploration and exploitation dynamic.
-As $t$ approaches 0,  we get this algorithm to resemble more of a drift selection algorithm that focuses on exploring the fitness landscape.
+As $t$ approaches 0,  we get this algorithm to resemble more of a drift selection scheme that focuses on exploring the fitness landscape.
 As $t$ approaches $N$, we get this algorithm to resemble more of an elite selection that focuses on exploiting the fitness landscape.
 
 This algorithm mainly focuses on the ability to select parents for the next generation. 
@@ -167,7 +167,7 @@ But as soon as they come to close, the presure comes back.
     * Infinite possiblilites
 5. Repeat steps 4 until sufficient parents selected  
 
-One major thing worth noting is that when all candidate solutions are at least $\sigma$ apart from one another, this selection algorithm reduces down to an algorithm that focuses on how it selects candidate solutions for the following generation (step 4).
+One major thing worth noting is that when all candidate solutions are at least $\sigma$ apart from one another, this selection scheme reduces down to an algorithm that focuses on how it selects candidate solutions for the following generation (step 4).
 
 
 ## Novelty Search
@@ -220,9 +220,9 @@ Any candidate solution, $j$, from the population that meets the following criter
 $$| e^*_i - e_i^j | \le \epsilon $$
 </center>
 
-This selection algorithm posses a two features that highlight its novelty: keeping testcase performace seperate and filtering with testcases to find a parent.
+This selection scheme posses a two features that highlight its novelty: keeping testcase performace seperate and filtering with testcases to find a parent.
 It uses all testscases independently, in a random order, to filter down to a parent for the following generation.
-Other selection algorithms typically aggregate the performance of all the testcases per candidate solution. 
+Other selection schemes typically aggregate the performance of all the testcases per candidate solution. 
 This incentivzes the population to perform well on different testcases to proceed to the following generation.
 Candidate solutions that perform well on niche testcases are also more likely to proceed to the following generation. 
 

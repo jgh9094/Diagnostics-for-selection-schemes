@@ -1517,7 +1517,7 @@ $(document).ready(function () {
     <div id="table-of-contents">
       <ul>
       <li><a href="#background-of-evolutionary-algorithms"><span class="toc-section-number">1</span> Background of Evolutionary Algorithms</a></li>
-      <li><a href="#selection-algorithms"><span class="toc-section-number">2</span> Selection Algorithms</a><ul>
+      <li><a href="#selection-schemes"><span class="toc-section-number">2</span> Selection Schemes</a><ul>
       <li><a href="#μλ-selection"><span class="toc-section-number">2.1</span> (μ,λ) Selection</a></li>
       <li><a href="#tournament-selection"><span class="toc-section-number">2.2</span> Tournament Selection</a></li>
       <li><a href="#fitness-sharing"><span class="toc-section-number">2.3</span> Fitness Sharing</a></li>
@@ -1565,16 +1565,16 @@ Some of these include but are not limited too,</p>
 <li>Generate population zero</li>
 <li>Evaluate candidate solutions fitness</li>
 <li>Check stopping criterion</li>
-<li>Selection algorithm</li>
+<li>selection scheme</li>
 <li>Mutation operators</li>
 <li>Form next generation</li>
 <li>Repeat steps 2 - 6</li>
 </ol>
-<p>In this work, we are focusing on the <strong>selection algorithm</strong>.</p>
+<p>In this work, we are focusing on the <strong>selection scheme</strong>.</p>
 </div>
-<div id="selection-algorithms" class="section level1">
-<h1><span class="header-section-number">2</span> Selection Algorithms</h1>
-<p>Below we describe in detail, with analysis, the different existing selection algorithms.</p>
+<div id="selection-schemes" class="section level1">
+<h1><span class="header-section-number">2</span> Selection Schemes</h1>
+<p>Below we describe in detail, with analysis, the different existing selection schemes.</p>
 <div id="μλ-selection" class="section level2">
 <h2><span class="header-section-number">2.1</span> (μ,λ) Selection</h2>
 <div id="description" class="section level3">
@@ -1583,7 +1583,7 @@ Some of these include but are not limited too,</p>
 Let <span class="math inline">\(\lambda\)</span> be the size of the population and <span class="math inline">\(\mu\)</span> be the count of top performing candidate solutions, where <span class="math inline">\(\mu , \lambda \in \mathbb{N}\)</span>.
 One thing worth highlighting is the impact that <span class="math inline">\(\mu\)</span> has on the exploration and exploitation dynamic.
 As <span class="math inline">\(\mu\)</span> approaches 0, we get this algorithm to resemble more of an elite selection that focuses on exploiting the fitness landscape.
-As <span class="math inline">\(\mu\)</span> approaches <span class="math inline">\(\lambda\)</span>, we get this algorithm to resemble more of a drift selection algorithm that focuses on exploring the fitness landscape.</p>
+As <span class="math inline">\(\mu\)</span> approaches <span class="math inline">\(\lambda\)</span>, we get this algorithm to resemble more of a drift selection scheme that focuses on exploring the fitness landscape.</p>
 <p>I believe that the novelty this algorithm posses is that it only uses the top <span class="math inline">\(\mu\)</span> candidate solutions as genetic material for the following generation.
 This algorithm creates a subset of the the population from the top <span class="math inline">\(\mu\)</span> candidate solutions.
 Once this subset is found, parent selection can operate and find the genetic material for the next generation.
@@ -1611,7 +1611,7 @@ A full descriptive of the algorithm is given below.</p>
 <p>The algorithm being described is the one commonly seen, with no additional layer of complexity.
 Let <span class="math inline">\(t\)</span> be the size of the tournaments and <span class="math inline">\(N\)</span> be the population size, where <span class="math inline">\(t,N \in \mathbb{N}\)</span>.
 One thing worth highlighting is the impact that <span class="math inline">\(t\)</span> has on the exploration and exploitation dynamic.
-As <span class="math inline">\(t\)</span> approaches 0, we get this algorithm to resemble more of a drift selection algorithm that focuses on exploring the fitness landscape.
+As <span class="math inline">\(t\)</span> approaches 0, we get this algorithm to resemble more of a drift selection scheme that focuses on exploring the fitness landscape.
 As <span class="math inline">\(t\)</span> approaches <span class="math inline">\(N\)</span>, we get this algorithm to resemble more of an elite selection that focuses on exploiting the fitness landscape.</p>
 <p>This algorithm mainly focuses on the ability to select parents for the next generation.
 If domain knowledge exits, then the user is able to adjust <span class="math inline">\(t\)</span> to best fit the problem being solved.
@@ -1685,7 +1685,7 @@ But as soon as they come to close, the presure comes back.</p>
 </ul></li>
 <li>Repeat steps 4 until sufficient parents selected</li>
 </ol>
-<p>One major thing worth noting is that when all candidate solutions are at least <span class="math inline">\(\sigma\)</span> apart from one another, this selection algorithm reduces down to an algorithm that focuses on how it selects candidate solutions for the following generation (step 4).</p>
+<p>One major thing worth noting is that when all candidate solutions are at least <span class="math inline">\(\sigma\)</span> apart from one another, this selection scheme reduces down to an algorithm that focuses on how it selects candidate solutions for the following generation (step 4).</p>
 </div>
 </div>
 <div id="novelty-search" class="section level2">
@@ -1736,9 +1736,9 @@ Any candidate solution, <span class="math inline">\(j\)</span>, from the populat
 <center>
 <span class="math display">\[| e^*_i - e_i^j | \le \epsilon \]</span>
 </center>
-<p>This selection algorithm posses a two features that highlight its novelty: keeping testcase performace seperate and filtering with testcases to find a parent.
+<p>This selection scheme posses a two features that highlight its novelty: keeping testcase performace seperate and filtering with testcases to find a parent.
 It uses all testscases independently, in a random order, to filter down to a parent for the following generation.
-Other selection algorithms typically aggregate the performance of all the testcases per candidate solution.
+Other selection schemes typically aggregate the performance of all the testcases per candidate solution.
 This incentivzes the population to perform well on different testcases to proceed to the following generation.
 Candidate solutions that perform well on niche testcases are also more likely to proceed to the following generation.</p>
 </div>
