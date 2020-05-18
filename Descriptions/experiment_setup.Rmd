@@ -20,51 +20,84 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Purpose of This Research
 
-Although it may appear that EAs are the ultimate tool for trying to solve complex problems, there are some limitations and concerns.
-A major obstacle when solving difficult, complex problems that EAs must overcome is traversing a difficult problem space or fitness landscape.
-It can be hard to conceptualize what the problem space or fitness landscape looks like because many problems are not formulated in a clean mathematical model.
-While the ideal goal would be to develop a tool to visualize these complex problems, that may take a while.
+Although it may appear that evolutionary algorithms the best tool to solve complex problems, there are some limitations.
+A major obstacle when solving difficult, complex problems is traversing the space of all possible candidate solutions and/or fitness landscape.
+It can be extremely difficult to conceptualize the space of all possible candidate solutions or fitness landscape.
+This is due to problems and candidate solutions not being formulated in a clean mathematical model.
 
-One major goal of this research is to introduce a set of diagnostic problems that isolate characteristics that EAs must contend with when solving real world problems.
-It would be beneficial to understand what kinds of EAs are good specific problem spaces and fitness landscapes, but that could prove to be difficult because there are a lot of moving parts in an EA.
-To untangle the affects that these moving parts might have on an EA's performance, we focus on isolating selection schemes to see the impact they have on performance, in regard to the set of diagnostic problems.
-In order to isolate the different selection schemes, we develop a simple candidate solution representation, mutation operator, and problem representation.
+**The goal of this research is to discover characteristics that distinguish the strengths and weaknesses of different evolutionary algorithms.**
+These characteristics are represented by a set of diagnostics.
+Each diagnostic is inspired from the characteristics real world problems pose against evolutionary algorithms.
+After an evolutionary algorithms' performance is recorded across all diagnostics, we have essentially created a *profile* for the algorithm.
+This *profile* would give a better understanding of the kinds of problems each evolutionary algorithm is best suited for.
 
-The second major goal of this research is to understand the strength and weaknesses of different selection schemes.
-This set of diagnostic problems gives us a *profile* for each selection scheme, which will give us insightful information when deciding what algorithm to use for a particular problem.
-In turn, this will also give us insight on the nature of the problem being solved by giving us an understanding of the problem space and fitness landscape that the problem possesses.
-There are a variety of selection schemes that exist but comparing their effectiveness and robustness is difficult, as many of them use different sets of problems to test the scheme against.
-It is difficult to understand an algorithms strengths and weaknesses from these problems, as it is difficult to understand what characteristics the problem space or fitness landscape posses.
-Creating these *profiles* will not only give us a better understanding of each selection schemes' strengths and weaknesses, but also save time when deciding what selection scheme to use.
-Using the best selection scheme could also speed up the time required to find a satisfactory solution.
+Imagine attempting to solve a complicated problem with an evolutionary algorithm.
+One approach is to experiment with numerous evolutionary algorithms and their parameters with the hope that one finds an optimal solution. 
+This approach can be very time consuming and there is also no guarantee that a solution would be found. 
+These *profiles* give us an alternative approach, where we can create a set of top candidate evolutionary algorithms.
+The set of diagnostics will also allow anyone to generate *profiles* for their own evolutionary algorithms as well.
 
 
-# Research Questions
+# Purpose of This Project
+
+Evolutionary algorithms are composed of multiple components that interact with one another.
+These interactions can make analyzing different evolutionary algorithms difficult.
+If we focus on the major components within an evolutionary algorithm, we can still generate *profiles* with meaningful information. 
+More information about evolutionary algorithms can be found at [link](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html).
+
+**This project focuses on the impact different selection schemes have on an evolutionary algorithms' attempt to solve different diagnostics.**
+The diagnostics for this project are meant to imitate problems where the landscapes require exploitation, exploration, building blocks, and conflicting optimization tasks.
+*Profiles* generated from these diagnostics provide meaningful information, as these diagnostics are common across multiple problem domains.
+
+Looking through the literature on selection schemes, it is clear that a copious amount of selection schemes exist.
+Without getting into the literature too much, it also clear that selection schemes are becoming more complex over time. 
+More information about selection schemes can be found at [link](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html).
+Complications may arise when trying to understand the strengths and weaknesses of a selection scheme. 
+
+Understanding the nature of the problem being solved can be difficult, as it may not be possible to conceptualize the fitness landscape or space of all possible solutions.
+This means that knowing the kinds of problems a selection scheme is best suited for may not be possible using this approach.
+Fortunately, these diagnostics help mitigate this issue. 
+By isolating key characteristics that problems possess, we are able to get a better understanding of each selection schemes' strengths and weaknesses.
+
+Another complication that may arise is understanding and testing different novelties integrated within selection schemes.
+Many of the novelties different selection schemes possess may be integrated within other selection schemes as well. 
+A framework for selection schemes may give us a better understanding of how this may be possible.
+This could open a path up to finding more robust evolutionary algorithms. 
+The authors (me) framework for selection schemes can be found at [link](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_depth.html).
+
+**The goal of this project is to develop a set of diagnostics that generate meaningful *profiles*.**
+The *profiles* would give readers information regarding each selection schemes' strengths, weaknesses, and novelties.
+Having this information can be the difference between finding an optimal solution and not.
+
+
+# Project Research Questions
 
 1. How do selection schemes perform on each diagnostic?
 2. What do the recorded metrics tell us about each selection scheme?
+3. Are there any dominating selection schemes, and why?
+4. How do the different novelties compare?
 
 
 # Evolutionary Algorithm Setup
 
-Now we will define the variables, conditionals, and proceedures for the evolutionary runs in this experiment.
-The number of generations will determine the stopping criteria for these evolutionary algorihthms, with a maximum of $G=10,000$ generations.
-Population size for these experiments will be $N=512$, and the population is given by $P = \{j_1, ..., j_N\}$.
-We want to select a decent sized population, where the size of the population will not overcompensate the for the selection schemes.
+The variables, conditionals, and procedures for the evolutionary algorithm used in this experiment will be defined in this section.
+The number of generations will be used to determine the stopping criteria for these evolutionary algorithms, with a maximum of $G=10,000$ generations.
+Population size for these experiments will be $N=512$, and the population candidate solutions is given by $P = \{j_1, ..., j_N\}$.
 
-Next we have to define the underlying representation for the candidate solutions. 
 The underlying representation for candidate solutions will be a vector of doubles.
 Each double in the representation will be called a trait from this point on. 
-The set of traits a candidate solution has will be denoted by $T = \{t_1, ..., t_M\}$, where $M \in \mathbb{Z}^+$ denotes the number of traits desired.
-We can see that $T \in \mathbb{R}^{M}$, hence every candidate solution in $P$ comes from $\mathbb{R}^{M}$. 
+The set of traits representing a candidate solution will be denoted by $T = \{t_1, ..., t_M\}$, where $M \in \mathbb{Z}^+$ denotes the number of traits.
+Notice that $T \in \mathbb{R}^{M}$, hence every candidate solution in $P$ comes from $\mathbb{R}^{M}$.
+This means that $\forall j \in T$, we can represent $j = \{t_1, ..., t_M \}$.
 All traits will be set to $0$ for every candidate solution at the start of the run. 
 
-The mutation operators consists of point mutations on individual traits.
-These point mutations add offsets sampled from a normal distributiion, with $\mu=0$ and $\sigma^2=1$, to the trait.
+The mutation operator consists of point mutations on individual traits.
+These point mutations add offsets sampled from a normal distribution, with $\mu=0$ and $\sigma^2=1$, to a trait.
 It is not possible for a trait to be less than 0.
 In the event that a mutation causes a trait to fall below $0$, that trait will be set to $0$.
 The probability of a trait becoming mutated is set to $7\%$.
-This means that for every $100$ traits being considered for mutation, on average we expect $7$ of them to be mutated.
+This means that for every $100$ traits being considered for mutation; on average we expect $7$ of them receive a mutation.
+
 
 # Diagnostic Setup
 
@@ -74,10 +107,11 @@ This means that $M$ is also used to determine the number of target objectives.
 From this we get a vector of target objectives $\Gamma = \{\gamma_1, ..., \gamma_M\}$, where $\Gamma \in \mathbb{R}^M$.
 Each target objective corresponds to a trait by position, or $\gamma_i \leftrightarrow t_i$.
 
-If a mutation causes a trait to rise above the corresponding target objective, the trait is set to the target objective minus the remaining distance passed the target objective. 
+If a mutation causes a trait to rise above the corresponding target objective, the trait is set to the target objective minus the remaining distance passed the target objective caused by the mutation. 
 For example, let trait $t=99$, mutation $m=1.1$, and target objective $\gamma=100$.
 The new trait $t'$ is given by,
 
+<center>
 $$\begin{align*}
 t' &= \gamma - (t + m - \gamma) \\
    &= 100 - (99 + 1.1 - 100) \\ 
@@ -86,22 +120,22 @@ t' &= \gamma - (t + m - \gamma) \\
    &= 99.9 \\ 
 \end{align*}
 $$
+</center>
 
-We can see that $t + m - \gamma$ is the remaining distance passed the target objective.
+We can see that $t + m - \gamma$ is the remaining distance passed the target objective caused by the mutation.
 For this project we are going to set $M$ and every element in $\Gamma$ too $100$. 
 This gives us $\Gamma = \{100, .., 100 \}$.
 
 
 # Selection Schemes
 
-Below we will describe the different variables, conditionals, and proceedures that need to be determined for every algorithm.
-A full more in depth description of these selection schemes can be found [here](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html).
-We detmine variables, conditionals, and proceedures for the selection schemes used in this experiment.
+Below we will describe the different variables, conditionals, and procedures that need to be determined for every selection scheme.
+A full more in depth description of these selection schemes used in this project can be found [here](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html).
 
 ## (μ,λ) Evolutionary Strategy
 
-This algorithm asks us to define the population size ,$\lambda$, and count of top performing solutions, $\mu$.
-Here we estimate $\lambda = 512$ and $\mu$ will be estimated exponentially by powers of two.
+This algorithm asks requires users to define the population size $\lambda$ and count of top performing solutions $\mu$.
+Here we set $\lambda = 512$ and estimate $\mu$ exponentially by powers of two.
 This gives us the following parameter estimates.
 
 <center>
@@ -112,16 +146,16 @@ This gives us the following parameter estimates.
 
 It is important to note that at $\mu = 512$ there is no pressure to improve in fitness.
 Looking at the other extreme, at $\mu = 1$ there is immense pressure to be the best performing candidate solution.
-These parameter estimates allow us to effectivly explore the range between these extremes.
+These parameter estimates allow us to effectively explore the range between these extremes.
 
-One final proceedure we need to define is how to select parents from the top performing $\mu$ candidate solutions.
+One final procedure we need to define is how to select parents from the top performing $\mu$ candidate solutions.
 Our method for which candidate solutions are selected as parents is similar to [6], where the top $\mu$ performing candidate solutions produce $\frac{\lambda}{\mu}$ offspring.
-In the event of ties occuring, we randomly select one of the top performing candidate solutions until the $\mu$ requirement is met.
+In the event of ties occurring, we randomly select one of the top performing candidate solutions until the $\mu$ requirement is met.
 
 ## Tournament Selection
 
-Tournament size $t$ is the only variable that needs to be set for this algorithm.
-Here estimate tournament size by powers of two. 
+Tournament size $t$ is the only parameter that needs to be set for this algorithm.
+Here tournament size is estimated exponentially by powers of two. 
 This gives us the following parameter estimates.
 
 <center>
@@ -130,23 +164,23 @@ This gives us the following parameter estimates.
 | $t$ | 1       |    2    |    4    |    8    | 16      | 32      | 64      | 128     | 256     | 512     |
 </center>
 
-It is important to not that at $t = 512$ there is immense pressure to be the best performing candidate solution.
+It is important to note that at $t = 512$ there is immense pressure to be the best performing candidate solution.
 Looking at the other extreme, at $t = 1$ there is no pressure to improve in fitness.
-These parameter estimates allow us to effectivly explore the range between these extremes.
+These parameter estimates allow us to effectively explore the range between these extremes.
 
 **Let $t^*$ be the best performing tournament size on a given diagnostic.**
 We will be using $t^*$ in the following algorithms.
 
 ## Fitness Sharing
 
-Fitness sharing requires numerous variables to be defined before execution.
+Fitness sharing requires multiple parameters and functions to be defined prior to running.
 In this experiment, candidate solutions will be selected as parents through tournament selection with tournament size $t^*$.
-Tournaments will consist on candidate solutions randomly selected from the entire population.
-The parameter $\alpha$ will be set to $1$ based on a recomendation from [11].
+Tournaments will consist of candidate solutions randomly selected from the entire population.
+The parameter $\alpha$ will be set to $1$ based on a recommendation from [11].
 
-This algorithm asks us to define additional variables: a distance function between two candidate solutions, similarity function for two candidate solutions, and theshold for dissimilarity.
-All these variables give us the pieces needed for tranforming the raw performance fitness value.
-Let $f_i$ be the raw performance and $f'_i$ be the transformed performance from candidate solution $i$.
+This algorithm also asks us to define a function measuring distance between two candidate solutions, function measuring similarity between two candidate solutions, and threshold for dissimilarity.
+All these pieces give us the ability to transform the original fitness value.
+Let $f_i$ be the original fitness value and $f'_i$ be the transformed fitness value for candidate solution $i$.
 This transformation is given by the following,
 
 <center>
@@ -160,15 +194,15 @@ $$ m_{i} = \sum_{j=1}^{N} sh(d_{ij})$$
 </center>
 
 
-First we need define the similarity function between two candidate solutions.
-Let $i,j$ be any two different candidate solution genomes.
+First, we need define the similarity function between two candidate solutions.
+Let $i,j$ be any two different candidate solutions.
 For this project it will be defined by the following,
 
 <center>
 $$ d_{ij} = || i - j||_2$$
 </center>
 
-Because we know that $i,j$ are just vector of doubles, we can just use the Euclidean Distance to measure their genotype distance.
+Because we know that $i,j$ are just vector of doubles, we can just use the Euclidean Distance to measure their distance in $\mathbb{R}^M$.
 We are now going to define our similarity function.
 
 <center>
@@ -182,11 +216,11 @@ sh(d_{ij}) = \left\{
 $$
 </center>
 
-Finally we have to define the threshold for similarity, $\sigma$.
-First we calculate the highest possible $d_{ij}$,
+Finally, we have to define the threshold for similarity, $\sigma$.
+First, we calculate the highest possible $d_{ij}$,
 
 <center>
-$$max(d_{ij}) = || <\gamma,...,\gamma> - <0,...,0>||_2 = || <100,...,100> - <0,...,0>||_2 = 1000$$
+$$max(d_{ij}) = || <\gamma_1,...,\gamma_M> - <0,...,0>||_2 = || <100,...,100> - <0,...,0>||_2 = 1000$$
 </center>
 
 Using $max(d_{ij})$ we get the following parameter estimates.
@@ -200,22 +234,22 @@ Using $max(d_{ij})$ we get the following parameter estimates.
 It is important to note that at $\sigma = 0$ there is no pressure to be genetically different.
 This is similar to running a standard tournament selection.
 Looking at the other extreme, at $\sigma = 1000$ there is constant pressure to be genetically different.
-These parameter estimates allow us to effectivly explore the range between these extremes.
+These parameter estimates allow us to effectively explore the range between these extremes.
 
 ## Novelty Search
 
-This algorithm asks us to define two variables: distance function for two candidate solution performances and number of nearest neighbors.
-The method in which candidate solutions are selected as parents will be through a tournament selection with tournament size $t^*$.
+This algorithm requires a function measuring distance between two candidate solution performances and number of nearest neighbors.
+The method in which candidate solutions are selected as parents will be through tournament selection with tournament size $t^*$.
 Let $dist(x,y)$ be the function that measures the distance between two candidate solution performances.
 This function can be defined by,
 
 <center>
-$$dist(x,y) = || x - y ||_2$$
+$$dist(x,y) = | x - y |$$
 </center>
 
 Let $k \in \mathbb{Z}^+$ be the $k-$nearest neighbors.
 We wanted to explore the parameters around $k=15$ because of its use in [8].
-These parameter were estimated keeping $k=15$ in mind to explore the region around it.
+These parameters were estimated keeping $k=15$ in mind to explore the region around it.
 This give us the parameter estimates,
 
 <center>
@@ -224,15 +258,15 @@ This give us the parameter estimates,
 | $k$ | 0     |       1      |       2      |       4      | 8             | 15     | 30     | 60      |
 </center>
 
-It is important to note that at $k = 0$ there is no pressure for solutions to increase their distance from neighboors on the fitness landscape.
+It is important to note that at $k = 0$ there is no pressure for solutions to increase their distance from neighbors on the fitness landscape.
 This is similar to running a standard tournament selection.
 Looking at the other extreme, at $k = 60$ there is constant pressure to move away from the $60$ nearest neighbors within the fitness landscape per candidate solution.
 
 
-## $\epsilon$-Lexicase
+## ϵ-Lexicase
 
-The only variable this algorithm asks us to define is the threshold to pass through filters.
-For this experiment we look at the maximum threshold used in [9], which is $\epsilon = 10.0$.
+This algorithm requires a threshold $\epsilon$ for differences in performance.
+The maximum threshold used in [9] will be used to estimate other threshold values, where $\epsilon = 10.0$.
 We would like to explore the region between the smallest possible $\epsilon$ and the maximum $\epsilon$ value from [9].
 This give us the parameter estimates,
 
@@ -242,7 +276,8 @@ This give us the parameter estimates,
 | $\epsilon$ | 0     |  0.1  |  0.3  |  0.6  | 1.2    | 2.5    | 5.0    | 10.0    |
 </center>
 
-It is importrant to note that $\epsilon = 0$ gives us the original lexicase selection. 
+It is important to note that $\epsilon = 0$ gives us the original lexicase selection. 
+
 
 ## Age-Layered Population Structure (ALPS)
 
@@ -257,16 +292,17 @@ TODO - Create diagnostic depth
 
 # Data Gathering & Metrics
 
-Before discussing the statistics being gathered we must define some variables.
-Let $\tau$ be a threshold for distance between a trait and its cooresponding target objective.
+Before discussing the statistics being gathered, we must define some variables.
+Let $\tau$ be a threshold for distance between a trait and its corresponding target objective.
 The current population of candidate solutions is given by $P$.
-A candidate solution's trait perforamce will be called fitness.
+A candidate solution's trait performance will be called fitness.
 The set of fitnesses for a candidate solution will be denoted by $F = \{f_1,...,f_m\}$. 
-Each fitness value cooresponds to a traits' performance by position, or $f_i \leftrightarrow t_i$. 
+Each fitness value corresponds to a traits' performance by position, or $f_i \leftrightarrow t_i$. 
 
-Traits are considered optimimal if the distance from the trait to the cooresponding target objective is less than $\tau$.
-Let $t \in \mathbb{R}$ be some trait, $\gamma \in \mathbb{R}$ be the cooresponding target objective, and the function $op$ determine optimality. 
-The function $op$ is described by, 
+Traits are considered optimal if the distance from the trait to the corresponding target objective is less than $\tau$.
+Let $t \in \mathbb{R}$ be some trait, $\gamma \in \mathbb{R}$ be the corresponding target objective, and the function $op$ determine optimality. 
+
+The function $op$ is described by,
 $$
 op(t, \gamma) = \left\{
         \begin{array}{ll}
@@ -297,35 +333,37 @@ These metrics are data we are collecting at the individual level.
 
 #### Number of Optimized Traits
 
-To obtain the number of optimized traits for a candidate soultion, we must go through every trait and determine its optimality.
+To obtain the number of optimized traits for a candidate solution, we must go through every trait and determine its optimality.
 After doing this, we can count the number of optimized traits.
 
-Let $c_j$ denote the number of optimized traits for candidate solution $j= \{t_1, ..., t_M \}$, where $c_j \in \mathbb{N}$.
+Let $c$ denote the number of optimized traits for candidate solution $j= \{t_1, ..., t_M \}$, where $c \in \mathbb{N}$.
 For some given set of target objectives $\Gamma = \{ \gamma_1, ..., \gamma_M \}$, the number of optimized traits for $j$ is given by
 
-$$c_j = \sum_{i = 1}^{M} op(t_i, \gamma_i) $$
+$$c = \sum_{i = 1}^{M} op(t_i, \gamma_i) $$
 
 
 #### Fitness Aggregate and Average Trait Fitness
 
-All diagnostics can be thought of as maximization problems with different constraits applied.
-Each diagnotic will measure trait performance differently, giving us different performances for the same candidate solution.
+All diagnostics can be thought of as maximization problems with different constraints applied.
+Each diagnostic will measure trait performance differently, giving us different performances for the same candidate solution.
 We will let $\omega$ denote the aggregate of fitnesses for a candidate solution. 
 
 For candidate solution $j$, let $F_j = \{f_1, ..., f_m \}$ represent its fitness vector, where $F_j \in \mathbb{R}^M$. 
-Now let $\omega_j$ denote the aggregate of fitnesses for a candidate solution $j$.
-We define $\omega_j$ by, 
-$$ \omega_j = \sum_{f \in F_j} f$$
+Now let $\omega$ denote the aggregate of fitnesses for a candidate solution $j$.
 
-In order to calculate the average trait fitness we do the following, 
+We define $\omega$ by, 
+$$ \omega = \sum_{f \in F_j} f$$
 
-$${\bar{\omega_j}} = \frac{\omega_j}{M} =  \frac{1}{M} \sum_{f \in F_j} f$$
+To calculate average trait fitness, we do the following, 
+
+$${\bar{\omega}} = \frac{\omega}{M} =  \frac{1}{M} \sum_{f \in F_j} f$$
 
 
 ### Population Metrics Across All Candidate Solutions
 
 These metrics calculated across all candidate solutions in the population.
 Let $P_{F}$ be the set of aggregate fitnesses and $P_{C}$ be the set of optimized traits counts, both per candidate solution in the population $P$.
+
 
 #### Average Number of Optimized Traits
 
@@ -347,14 +385,16 @@ $$C_{max} = max\{P_C \}$$
 
 #### Number of Unique Optimized Traits
 
-We go through each target objective in $\Gamma$, and see if there exists a candidate solution that has the the corresponding trait optimized.
-This will tell us the the spread of optimized traits that a population can maintain. 
+We go through each target objective in $\Gamma$, and see if there exists a candidate solution that has the corresponding trait optimized.
+This will tell us the spread of optimized traits that a population can maintain. 
 Now let $C_{uni}$ represent the number of unique optimized traits. 
 
 For some set of target objectives $\Gamma = \{\gamma_1, ..., \gamma_M\}$, we define $C_{uni}$ by,
+
 $$C_{uni} = \sum_{i = 1}^{M} OP(\gamma_i)$$
 Where the function $OP$ measures whether or not a candidate solution exists with an optimized trait for the corresponding target objective.
-We define $OP$ by, 
+
+We define $OP$ by,
 $$
 OP(\gamma_i) = \left\{
         \begin{array}{ll}
@@ -364,7 +404,7 @@ OP(\gamma_i) = \left\{
     \right.
 $$
 
-#### Average Aggregate Trait Performance
+#### Fitness Aggregate Average
 
 We sum every candidate solution aggregate fitness value $\omega$, followed by dividing the sum by the size of the population. 
 Now let $\bar{f_{P}}$ represent the average aggregate fitness per candidate solution. 
@@ -374,7 +414,7 @@ $$\bar{f_{P}} = \frac{1}{N} \sum_{f \in P_F} f$$
 
 #### Optimal Solutions Found Per Generation
 
-We record the the number of optimal solutions per generation. 
+We record the number of optimal solutions per generation. 
 
 ### Candidate Solutions of Interest
 
@@ -402,9 +442,9 @@ Below is a list of data we are gathering for these kinds of solutions.
 
 #### Most Common Candidate Solution
 
-This candidate solution is selection because it is the most common solution in the population.
+This candidate solution is selection because it is the most common solution genotype in the population.
 In the event of ties, we first filter solutions by the maximum aggregate fitness value, then by maximum number of optimized traits.
-If ties still occur, we randonly select a candidate solution. 
+If ties still occur, we randomly select a candidate solution. 
 Below is a list of data we are gathering for these kinds of solutions. 
 
 - [Number of Optimized Traits](#number-of-optimized-traits)
@@ -427,8 +467,9 @@ I know that it does phylogenies, but need to do more looking into.
 ### Loss in diversity
 
 The loss in diversity can be measured by dividing the number of unique candidate solutions selected to produce an offspring by the size of the population. 
-Per selection event, this will tell us the the proportion of diversity that is lost and how inclusive the algorithm is. 
-Loss in diversity can now be defined by, 
+Per selection event, this will tell us the proportion of diversity that is lost and how inclusive the algorithm is. 
+
+Loss in diversity can now be defined by,
 
 $$ \frac{unique(\Pi)}{N}$$
 
@@ -445,11 +486,11 @@ $$\frac{\bar{f_{\Pi}} - \bar{f_{P}}}{s_{P}}$$
 The authors in [5] also define a measurement for selection variance. 
 Before we define this, let $\Pi_F$ denote the set of aggregate fitnesses for candidate solutions in $\Pi$. 
 Now let $s_P$ be the standard deviation for $P_F$ and $s_{\Pi}$ be the standard deviation for $\Pi_F$.
-Selection variance can now be defined by, 
+Selection variance can now be defined by,
+
 $$\frac{s_P^2}{s_{\Pi}^2}$$
 
 **Both selection pressure and variance are taken at every generation**
-
 
 
 # Citations

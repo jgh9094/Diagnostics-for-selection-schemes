@@ -16,32 +16,29 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Background of Evolutionary Algorithms
+# Evolutionary Algorithms
 
-All life we see in the world today was derived from single cellular organisms. 
-These organisms were constantly adapting and overcoming new obstacle that appeared.
-Hence, it would seem that converting biological evolution into a computational framework would be a good tool to solve complex and difficult problems.
-This inspiration from biological evolution would lead the way for evolutionary computation.
+Evolutionary algorithms are a set of algorithms used to solve complex optimization problems through an evolutionary process.
+These algorithms take inspiration from nature and follow a similar evolutionary process.
+This evolution process was able to evolve single cellular organisms to the complex life we see today.
+These algorithms present a promising approach for solving complex optimization problems and problems that are difficult to represent in a mathematical equation. 
 
-One technique used to solve real world problems in evolutionary computation is evolutionary algorithms (EAs).
-Evolutionary algorithms (EAs) take inspiration from biological evolution and follow an almost similar process seen in nature.
-They present a promising technique for solving complex, difficult problems that are difficult to represent in a mathematical equation. 
-Some of the major benefits of using EAs are:
+Notable contributions evolutionary algorithms have made can be found in [1,2,3,4].
+Benefits of using evolutionary algorithms include,
 
-- Not having to make assumptions about the problem space 
-- Can provide alternative solutions that are unintuitive to a human designer 
-- Provide an alternative approach when it is difficult to form a mathematical representation for a given problem
+- No problem space assumptions required
+- Discover alternative solutions unintuitive to a human designer 
+- Provide an alternative approach when no clean mathematical model exists for problem
 
-Notable contributions and highlights that EAs have made can be found in [1,2,3,4]. 
-There are variables, conditionals, and proceedures that must be determined prior to running an EA.
-Some of these include but are not limited too,
+Different variables, conditional, and procedures must be determined prior to running an evolutionary algorithm.
+Examples of these requirements are
 
 - Candidate solution underlying representation
 - Stopping criterion
 - Mutation operators and rates of mutation
-- Selection algorihtm to select set of genetic material for the following generation 
+- Selection scheme
 
-Once these variables, conditionals, and proceedures are determined, EAs generally follow the following steps:
+Once all required variables, conditionals, and procedures are determined, evolutionary algorithms generally follow the following steps.
 
 1. Generate population zero
 2. Evaluate candidate solutions fitness
@@ -51,83 +48,96 @@ Once these variables, conditionals, and proceedures are determined, EAs generall
 6. Form next generation
 7. Repeat steps 2 - 6
 
-In this work, we are focusing on the **selection scheme**. 
+The primary focus of this literature review is on **selection schemes**.
+
 
 # Selection Schemes 
 
-Below we describe in detail, with analysis, the different existing selection schemes. 
+Below is a description and analysis of the different selection schemes used in this project.
 
 ## (μ,λ) Selection
 
 ### Description
 
-The implementation of this algorithm was inspired from [1]. 
-Let $\lambda$ be the size of the population and $\mu$ be the count of top performing candidate solutions, where $\mu , \lambda \in \mathbb{N}$.
-One thing worth highlighting is the impact that $\mu$ has on the exploration and exploitation dynamic.
-As $\mu$ approaches 0, we get this algorithm to resemble more of an elite selection that focuses on exploiting the fitness landscape. 
-As $\mu$ approaches $\lambda$, we get this algorithm to resemble more of a drift selection scheme that focuses on exploring the fitness landscape.
+This selection scheme requires a population size $\lambda$ and candidate solution count $\mu$.
+The solution count $\mu$ denotes the size of a new subset that consists of the $\mu$ solutions with the highest fitness.
+Fitness in this selection scheme is the aggregate performance across all test cases.
+A process must also be determined to handle ties in fitness when forming the new subset.
 
-I believe that the novelty this algorithm posses is that it only uses the top $\mu$ candidate solutions as genetic material for the following generation. 
-This algorithm creates a subset of the the population from the top $\mu$ candidate solutions. 
-Once this subset is found, parent selection can operate and find the genetic material for the next generation.
-A full descriptive of the algorithm is given below. 
+Candidate solutions must be selected as genetic material for the following generation from this newly formed subset.
+This selection scheme does not specify a process to accomplish this, and instead leaves it up to the user.
+The implementation of this selection scheme from [1] has each of the $\mu$ candidate solutions produce $\frac{\lambda}{\mu}$ offspring.
+Another process that could be used is running tournament selection on the new subset until enough candidate solutions are selected. 
 
 ### Algorithm
 
-1. Evaluate candidate solutions and record fitness
-2. Form a subset of top performing $\mu$ candidate solutions
-3. Select individual candidtate solutions to use as parents for the next generation
-    * Each one of the $\mu$ candidate solutions creates $\frac{\lambda}{\mu}$ children, from [1]
+1. Form a subset of top performing $\mu$ candidate solutions from entire population
+2. Select a candidate solution to be used as genetic material for the following generation from the subset
+    * Each one of the $\mu$ candidate solutions creates $\frac{\lambda}{\mu}$ offspring [1]
     * Run tournament selection on the new subset
-    * Infinite possiblilites
-4. Repeat step 3 until sufficient parents are selected
+    * Infinite possibilities
+3. Repeat step 2 until sufficient candidate solutions are selected
+
+### Analysis
+
+*I believe* the novelty this selection scheme possesses is that it only considers a subset of the top $\mu$ candidate solutions as genetic material for the following generation. 
+The user is given flexibility on how to select candidate solutions for the following generation from this subset.
+Both of these factors play a huge role in a selection schemes performance. 
+
+It is worth highlighting the impact that $\mu$ has on the exploration and exploitation dynamic.
+As $\mu \longrightarrow 0$, the scheme increases its focus on exploiting promising regions in fitness landscape where the population is. 
+As $\mu \longrightarrow \lambda$, the scheme increases its focus on exploring the fitness landscape.
   
 ## Tournament Selection
 
 ### Description
 
-The algorithm being described is the one commonly seen, with no additional layer of complexity. 
-Let $t$ be the size of the tournaments and $N$ be the population size, where $t,N \in \mathbb{N}$.
-One thing worth highlighting is the impact that $t$ has on the exploration and exploitation dynamic.
-As $t$ approaches 0,  we get this algorithm to resemble more of a drift selection scheme that focuses on exploring the fitness landscape.
-As $t$ approaches $N$, we get this algorithm to resemble more of an elite selection that focuses on exploiting the fitness landscape.
+This selection scheme requires a size $t$ for tournaments that consist of competitions between randomly selected candidate solutions from the population.
+The candidate solution that wins a tournament is the one with the highest fitness when compared to other solutions in the tournament.
+A process must also be determined to handle ties in fitness, where fitness in this selection scheme is the aggregate performance across all test cases. 
 
-This algorithm mainly focuses on the ability to select parents for the next generation. 
-If domain knowledge exits, then the user is able to adjust $t$ to best fit the problem being solved.
-The tournament size is also able to be adjusted during an evolutionary run, if needed.
+Every tournament returns a single candidate solution that will produce an offspring for the following generation.
+This means that the size of the population determines the number of tournaments that need to be ran.
 
 ### Algorithm
 
-1. Evaluate candidate solutions and record fitness
-2. Randomly select $t$ candidate solutions from the entire population (with or without replacement)
-3. Select top performing candidate solution as parent for next generation
-4. Repeat steps 2-3 until sufficient parents are selected
+1. Randomly select $t$ candidate solutions from the entire population (with or without replacement)
+2. Select candidate solution with highest fitness to be used as genetic material for the following generation
+3. Repeat steps 1-2 until sufficient candidate solutions are selected
 
+### Analysis
+
+*I believe* the novelty this selection scheme possesses is the manner in which candidate solutions are selected to be used as genetic material for the following generation.
+
+It is worth highlighting the impact that $t$ has on the exploration and exploitation dynamic.
+As $t \longrightarrow N$, the scheme increases its focus on exploring the fitness landscape. 
+As $t \longrightarrow 0$, the scheme increases its focus on exploiting promising regions in fitness landscape where the population is. 
 
 ## Fitness Sharing 
 
 ### Description
 
-The implementation of this algorithm was inspired by [2]. 
-Let $f_i$ be the raw performance and $f'_i$ be the transformed performance from candidate solution $i$. 
+Fitness sharing requires multiple parameters and functions to be defined prior to running.
+Let $f_i$ be the original fitness value and $f'_i$ be the transformed fitness value for candidate solution $i$. 
 The transformation from $f_i$ to $f'_i$ is given by the following formula, 
 
 <center>
 $f'_i = \frac{f_i}{m_i}$
 </center>
 
-Now we have another variable to define, $m_i$.
 Let $m_i$ be the niche count which measures the approximate number of candidate solutions with whom the fitness $f_i$ is shared [2].
 Niche count is calculated by summing a sharing function over all candidate solutions [2].
-The sharing function can be applied to either genotypic or phenotypic candidate solution data. 
+The sharing function can be applied to either genotypic or phenotypic candidate solution properties.  
+
 The following formula describes $m_i$,
 
 <center>
-$$m_i = \sum_{j=1}^{N} sh(d_{i,j})$$
+$$m_i = \sum_{j=1}^{N} sh(d_{ij})$$
 </center>
 
-Let the function $sh()$ measure the similarity between two candidate solutions and $d_{i,j}$ measure the distance between candidate solutions $i$ and $j$. 
-The function $sh$ can be described by the following,
+Let the function $sh()$ measure the similarity between two candidate solutions and $d_{ij}$ measure the distance between candidate solutions $i$ and $j$. 
+
+The following formula describes the function $sh$,
 
 <center>
 $$
@@ -143,137 +153,150 @@ $$
 Let $\alpha,\sigma \in \mathbb{R}$. 
 The variable $\alpha$ acts as a parameter that regulates the shape of the sharing function and $\sigma$ acts as a threshold for dissimilarity. 
 
-I believe the novelty that this algorithm posses is the modification of the raw fitness value. 
-This algorithm punishes candidate solutions for being close to others in the phenotype and genotype landscapes.
-Looking at extreme cases for $d_{ij}$, the distance between solutions increases as $d_{ij} \rightarrow \infty$ and decreases as $d_{ij} \rightarrow 0$.
-A solution is penalized on how distant it is against all other solutions that fall below $\sigma$. 
-We can view $\sigma$ as a knob for determing the pressure to be phenotypically or genotypically distant. 
-This algorithm pushes solutions to be at least $\sigma$ apart within a given landscape. 
-As $\sigma \rightarrow 0$ there is no little to no fitness modification ocurring. 
-As $\sigma \rightarrow max(d_{ij})$ there is extreme pressure for the whole population to be spread across the landscape.
-The penalty is increased as $\alpha \rightarrow \infty$ and decreases as $\alpha \rightarrow 0$.
-
-The pressure for solutions to be spread apart goes away as soon as they are all $\sigma$ apart across the landscapes. 
-But as soon as they come to close, the presure comes back. 
+Candidate solutions must be selected as genetic material for the following generation from the population, post fitness transformation.
+This selection scheme does not specify a process to accomplish this, and instead leaves it up to the user.
+An exmple of this process could running tournament selection until enough candidate solutions are selected. 
 
 ### Algorithm
 
-1. Evaluate candidate solutions
-2. Compute distance matrix based on performance
-3. Transform all raw fitness values to $f'$
-4. Select individual candidtate solutions to use as parents for the next generation 
+1. Compute the distance matrix for genotypic or phenotypic properties
+2. Transform all original fitness values $f$ to transformed fitness values $f'$
+3. Select a candidate solution to act as a parent for the next generation 
     * Tournament selection
     * Lexicase filtering
-    * Infinite possiblilites
-5. Repeat steps 4 until sufficient parents selected  
+    * Infinite possibilities
+4. Repeat step 3 until sufficient candidate solutions are selected  
 
-One major thing worth noting is that when all candidate solutions are at least $\sigma$ apart from one another, this selection scheme reduces down to an algorithm that focuses on how it selects candidate solutions for the following generation (step 4).
+### Analysis
 
+*I believe* the novelty this selection scheme possesses is its modification of the original fitness value. 
+This algorithm punishes candidate solutions for being close to other solutions within the space of all genotypes or phenotypes.
+The user is given flexibility on how to select candidate solutions for the following generation.
+
+The extreme cases for distance between candidate solutions $d_{ij}$ can give us a better understanding of what this value represents. 
+As $d_{ij} \longrightarrow \infty$, the distance between two solutions in the space of all genotypes or phenotypes is growing. 
+As $d_{ij} \longrightarrow 0$, there is practically no distance between two solutions in the space of all genotypes or phenotypes.
+
+A candidate solution is penalized if its distance to another solution falls below the threshold $\sigma$. 
+The threshold value $\sigma$ can be viewed as a nob for determining the pressure candidate solutions face to be distant from one another. 
+This solution scheme pushes candidate solutions to be at least $\sigma$ apart within the space of all genotypes or phenotypes.
+As $\sigma \longrightarrow 0$ there is no little to no fitness modification occurring. 
+As $\sigma \longrightarrow max(d_{ij})$ there is extreme pressure for the whole population to be spread across the landscape.
+The penalty is increased as $\alpha \longrightarrow \infty$ and decreases as $\alpha \longrightarrow 0$.
+
+It is important to note that if a candidate solution is at least $\sigma$ apart from all other solutions, then it will not undergo a fitness transformation.
 
 ## Novelty Search
 
 ### Description
 
-The implementation of this algorithm was inspired from [3]. 
-This algorithm searches with no objective other than continually finding novel behaviors in the search space.
-Let $k \in \mathbb{Z}^+$ be the count for the $k-$nearest neighbors and $dist(x,y)$ be a function that measures the distance between candidate solutions $x$ and $y$.
-The transformation from raw fitness value $f_x$ to $f_x'$ for a given solution $x$ is depicted by the function $p(f_x)$, 
+This selection scheme searches with no objective in consideration, other than continually finding novel behaviors in the space of all possible phenotypes.
+A count and function measuring the distance between two candidate solutions must be defined. 
+Let $k$ be the count for the $k-$nearest neighbors and $dist(i,j)$ be a function that measures the distance between candidate solutions $i$ and $j$.
+The original fitness value for candidate solution $x$ will be defined by $f_x$, and the transformed fitness value by $f'_x$.
+
+The transformation from $f_x$ to $f_x'$ is given by, 
 
 <center>
-$$f_x' = p(f_x) = \frac{1}{k} \sum_{i=0}^{k} dist(f_x, \mu_i)$$
+$$f_x'  = \frac{1}{k} \sum_{i=0}^{k} dist(f_x, \mu_i)$$
 </center>
 
-Where $\mu_i$ is one of the $k-$nearest neighbors. 
+where $\mu_i$ is the original fitness value for one of the $k-$nearest neighbors. 
 
-I believe the novelty this algorithm brings is the constant pressure that this fitness tranfomation applies to candidates solutions for all non-negative $k$.
-This algorithm also specifies that $f_x$ must be a value measuring performance or a phenotype. 
-As $k \longrightarrow 1$ the algorithm puts more pressure on candidate solutions to move away from a smaller set of $k-$nearest neighbors. 
-This smaller set of neighbors pressures candidate solutions to move away others in a smaller sample of the fitness landscape. 
-Let $N$ be the size of the population. 
-Looking at the other extreme, as $k \longrightarrow N$ we begin to compare candidate solutoins to the entire population.
-This puts pressure on candidate solutions to explore new regions of the entire fitness landscape. 
+Candidate solutions must be selected as genetic material for the following generation from the population, post fitness transformation.
+This selection scheme does not specify a process to accomplish this, and instead leaves it up to the user.
+An example of this process could be running tournament selection until enough candidate solutions are selected. 
 
 ### Algorithm
 
-1. Evaluate candidate solutions
-2. Transform raw fitness values to novelty fitness values
-3. Select individual candidtate solutions to use as parents for the next generation 
+1. Transform original fitness values to novelty fitness values
+2. Select individual candidate solutions to use as parent for the next generation 
     * Tournament selection
-    * Infinite possiblilites
-4. Repeat step 3 until enough parents selected
+    * Infinite possibilities
+3. Repeat step 2 until enough candidate solutions selected
 
+### Analysis
 
-## $\epsilon$-Lexicase
+*I believe* the novelty this selection scheme possesses is the constant pressure it puts on candidates’ solutions to produce novel behaviors different from the $k-$nearest neighbors. 
+This selection scheme also specifies that only values from the space of all possible phenotypes are allowed to be transformed.
+Looking at the extreme cases for $k$ can give a better understanding of its impact.
+
+Let $N$ be the size of the population. 
+As $k \longrightarrow 1$, the selection scheme applies more pressure on candidate solutions to spread apart from their nearest neighbor. 
+As $k \longrightarrow N$, the selection scheme applies more pressure for candidate solutions to spread apart from all other solutions. 
+This puts pressure on candidate solutions to produce novel behaviors.
+
+## ϵ-Lexicase
 
 ### Description
 
-The implementation of this algorithm was inspired from [4].
-Epsilon lexicase is very similar to the original variation of lexicase, but the criteria to pass through filters has been relaxed in epsillon.
-This is implemented by setting a threshold, which we will call $\epsilon$.
-Any candidate solutions that satisfy the following are allowed to pass through the filters lexicase presents. 
-We also note that when $\epsilon = 0$, the original lexicase arises.
+This selection scheme uses performances on individual testcases to reduce the number of solutions to a single solution to use as genetic material for the following generation.
+Candidate solutions in this scheme possess a set of fitnesses, rather than an aggregate value across all individual testcase performances. 
+These testcases are shuffled and then used as filters to trim down the number of solutions by taking the top performing solutions on the current testcase. 
+The next testcase is used until a single candidate solution remains or no more testcases remain.
+Top performing candidate solutions that pass a filter possess high fitness values for a given testcase.
+The distribution of fitness values depends on a threshold $\epsilon$, where this threshold allows different solutions to pass through a filter. 
 
-Let $e^{*}_{i}$ be the best performance on testcase $i$ from candidate solution $*$.
-Any candidate solution, $j$, from the population that meets the following criteria passes through the lexicase filters, where $j \ne *$.
+Candidate solutions that satisfy the following are allowed to pass through the filters previously described. 
+Let $e^{*}_{i}$ be the best fitness on testcase $i$ from candidate solution $*$.
+Any candidate solution $j$, where $j \ne *$, from the population that meets the following criteria passes through the lexicase filters
 
 <center>
 $$| e^*_i - e_i^j | \le \epsilon $$
 </center>
 
-This selection scheme posses a two features that highlight its novelty: keeping testcase performace seperate and filtering with testcases to find a parent.
-It uses all testscases independently, in a random order, to filter down to a parent for the following generation.
-Other selection schemes typically aggregate the performance of all the testcases per candidate solution. 
-This incentivzes the population to perform well on different testcases to proceed to the following generation.
-Candidate solutions that perform well on niche testcases are also more likely to proceed to the following generation. 
-
-
 ### Algorithm
 
-1. Evaluate candidate solutions on testcases
-2. Shuffle testcase order
-3. Filter population through testcases until winner determined
-4. Repeat steps 1-3 until enough parents selected
+1. Shuffle testcase order
+2. Filter down set of candidate solutions with individual testcases until a solution is found to use as a parent for the next generation. 
+3. Repeat steps 1-2 until enough candidate solutions selected
+
+### Analysis
+
+*I believe* this selection scheme possesses two novelties: keeping testcase performance independent and using testcases to filter through candidate solutions.
+This incentivizes the population to perform well on different testcases to pass through filters and the following generation.
+Other selection schemes typically aggregate the performance across all testcases.
+
 
 ## Age-Layered Population Structure (ALPS)
 
 ### Description
 
-The implementation of this algorithm was inspired from [5]. 
-This algorithm presents a new population structure that makes candidate solution interaction dependent on age.
-Interaction in this context means allowing candidate solutions to compete against one another, if needed. 
-The population is divided into cohorts, where a candidate solution must fall within a certain age to belong in a cohort.
-Candidate solutions are only allowed to interact with other solutions that belong to the same cohort. 
-This allows younger candidate solutions to develop and explore potententially new regions of the fitness landscape. 
-These age dependen cohorts protect young candidate solutions from being quickly removed because of older existing solutions. 
+This selection scheme presents a population structure where interactions between different candidate solutions is dependent on age.
+Interaction in this context refers to the possibility of candidate solutions competing against one another.
+The population is divided into cohorts, where a candidate solutions' assignments are dependent on its age. 
+Candidate solutions are only allowed to interact with solutions that belong to the same cohort. 
 
-In this algorithm, $\alpha \in \mathbb{Z}^+$ represents the age gap within the cohorts.
-There are different ways this age gap can be implemented, and can be explored in [5].
-A age of an offspring candidate solution is the age of the offspring's parent incremented by 1.
+A variable measuring the age gap $\alpha$ and number of cohorts $C$ must be determined before being ran. 
+There are different methods for constructing different age gaps that can be explored in [5].
+The age of a candidate solution is dependent on the number of generations it has persisted. 
+An offspring’s' age is the age of its parent incremented by 1.
+
 This means that after every $\alpha$ generations, solutions are moving to the next cohort.
-The first cohort is populated with random candidate solutions when this occurs as well.
-The final cohort is special because there is no age limit there and only best performing candidate solutions are kept. 
-
-Now we will take a deeper look at $\alpha$. 
-The age gap gives candidate solutions $\alpha$ generations to improve their performace before proceeding to the next cohort. 
-This can be viewd as a knob for the amount of generations candidate solutions have to develop before facing older, potentially better solutions. 
-As $\alpha \longrightarrow 1$ there exists almost no protection for younger solutions against older ones. 
-As $\alpha \longrightarrow \infty$ younger organims gain more time to develop. 
-It should also be noted that if $\alpha$ is bigger than the number of generations possible, the age based population strucutre no longer exists. 
-
-The novelty this algorithm posses are its the age based population structure and injection of random candidate solutions.
-There is the potential to remove older, struggling candidate solution because of this structure.
-Younger candidate solutions are now given the protection to develop and compete with older solutions.
-The ability to inject new random candidate solutions allows the population to explore different regions of the fitness landscape and genotype space. 
+The first cohort is populated with random candidate solutions after $\alpha$ generations.
+The final cohort has no age limit and only best performing candidate solutions are kept. 
 
 ### Algorithm
 
-1. Evaluate candidate solutions
-2. Place solutions into appropriate cohorts
-3. Select individual candidtate solutions to use as parents for the next generation, per individual cohort
+1. Place candidate solutions into appropriate cohorts
+2. Select individual candidate solutions to use as parents for the next generation, per individual cohort
     * Tournament selection
     * Lexicase filtering
-    * Infinite possiblilites
-4. Repeat steps 1 - 3 until sufficient parents selected
+    * Infinite possibilities
+3. Repeat steps 1 - 2 until sufficient parents selected
+
+### Analysis
+
+*I believe* the novelties this selection scheme possesses is the age based population structure and injection of random candidate solutions.
+There is the potential to remove older, struggling candidate solution because of this structure.
+Younger candidate solutions are now given the protection to develop and compete with older solutions.
+The ability to inject new random candidate solutions allows the population to explore different regions of the genotype and phenotype space. 
+
+The age gap gives candidate solutions $\alpha$ generations to improve their performance before proceeding to the next cohort. 
+Age can be viewed as a knob for the amount of generations candidate solutions have to develop before facing older, potentially better solutions. 
+As $\alpha \longrightarrow 1$ there exists almost no protection for younger solutions against older ones. 
+As $\alpha \longrightarrow \infty$ younger organisms gain more time to develop. 
+It should also be noted that if $\alpha$ is bigger than the number of generations possible, the age based population structure no longer exists.
 
 
 ## Citations

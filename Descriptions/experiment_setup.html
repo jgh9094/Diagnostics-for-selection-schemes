@@ -10,7 +10,7 @@
 
 <meta name="author" content="Jose Guadalupe Hernandez" />
 
-<meta name="date" content="2020-05-13" />
+<meta name="date" content="2020-05-17" />
 
 <title>Selection Scheme Diagnostics: Experimental Setup</title>
 
@@ -1517,108 +1517,136 @@ $(document).ready(function () {
     <div id="table-of-contents">
       <ul>
       <li><a href="#purpose-of-this-research"><span class="toc-section-number">1</span> Purpose of This Research</a></li>
-      <li><a href="#research-questions"><span class="toc-section-number">2</span> Research Questions</a></li>
-      <li><a href="#evolutionary-algorithm-setup"><span class="toc-section-number">3</span> Evolutionary Algorithm Setup</a></li>
-      <li><a href="#diagnostic-setup"><span class="toc-section-number">4</span> Diagnostic Setup</a></li>
-      <li><a href="#selection-schemes"><span class="toc-section-number">5</span> Selection Schemes</a><ul>
-      <li><a href="#μλ-evolutionary-strategy"><span class="toc-section-number">5.1</span> (μ,λ) Evolutionary Strategy</a></li>
-      <li><a href="#tournament-selection"><span class="toc-section-number">5.2</span> Tournament Selection</a></li>
-      <li><a href="#fitness-sharing"><span class="toc-section-number">5.3</span> Fitness Sharing</a></li>
-      <li><a href="#novelty-search"><span class="toc-section-number">5.4</span> Novelty Search</a></li>
-      <li><a href="#epsilon-lexicase"><span class="toc-section-number">5.5</span> <span class="math inline">\(\epsilon\)</span>-Lexicase</a></li>
-      <li><a href="#age-layered-population-structure-alps"><span class="toc-section-number">5.6</span> Age-Layered Population Structure (ALPS)</a></li>
+      <li><a href="#purpose-of-this-project"><span class="toc-section-number">2</span> Purpose of This Project</a></li>
+      <li><a href="#project-research-questions"><span class="toc-section-number">3</span> Project Research Questions</a></li>
+      <li><a href="#evolutionary-algorithm-setup"><span class="toc-section-number">4</span> Evolutionary Algorithm Setup</a></li>
+      <li><a href="#diagnostic-setup"><span class="toc-section-number">5</span> Diagnostic Setup</a></li>
+      <li><a href="#selection-schemes"><span class="toc-section-number">6</span> Selection Schemes</a><ul>
+      <li><a href="#μλ-evolutionary-strategy"><span class="toc-section-number">6.1</span> (μ,λ) Evolutionary Strategy</a></li>
+      <li><a href="#tournament-selection"><span class="toc-section-number">6.2</span> Tournament Selection</a></li>
+      <li><a href="#fitness-sharing"><span class="toc-section-number">6.3</span> Fitness Sharing</a></li>
+      <li><a href="#novelty-search"><span class="toc-section-number">6.4</span> Novelty Search</a></li>
+      <li><a href="#ϵ-lexicase"><span class="toc-section-number">6.5</span> ϵ-Lexicase</a></li>
+      <li><a href="#age-layered-population-structure-alps"><span class="toc-section-number">6.6</span> Age-Layered Population Structure (ALPS)</a></li>
       </ul></li>
-      <li><a href="#diagnostics"><span class="toc-section-number">6</span> Diagnostics</a></li>
-      <li><a href="#data-gathering-metrics"><span class="toc-section-number">7</span> Data Gathering &amp; Metrics</a><ul>
-      <li><a href="#performance-metrics"><span class="toc-section-number">7.1</span> Performance Metrics</a></li>
-      <li><a href="#diversity-metrics"><span class="toc-section-number">7.2</span> Diversity Metrics</a></li>
+      <li><a href="#diagnostics"><span class="toc-section-number">7</span> Diagnostics</a></li>
+      <li><a href="#data-gathering-metrics"><span class="toc-section-number">8</span> Data Gathering &amp; Metrics</a><ul>
+      <li><a href="#performance-metrics"><span class="toc-section-number">8.1</span> Performance Metrics</a></li>
+      <li><a href="#diversity-metrics"><span class="toc-section-number">8.2</span> Diversity Metrics</a></li>
       </ul></li>
-      <li><a href="#citations"><span class="toc-section-number">8</span> Citations</a></li>
+      <li><a href="#citations"><span class="toc-section-number">9</span> Citations</a></li>
       </ul>
     </div>
     
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
               <p class="author"><span class="glyphicon glyphicon-user"></span> <a href="https://www.google.com/">Jose Guadalupe Hernandez</a></p>
-                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-05-13</p>
+                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-05-17</p>
         </div>
 </div>
 
 <div id="main">
 <div id="purpose-of-this-research" class="section level1">
 <h1><span class="header-section-number">1</span> Purpose of This Research</h1>
-<p>Although it may appear that EAs are the ultimate tool for trying to solve complex problems, there are some limitations and concerns.
-A major obstacle when solving difficult, complex problems that EAs must overcome is traversing a difficult problem space or fitness landscape.
-It can be hard to conceptualize what the problem space or fitness landscape looks like because many problems are not formulated in a clean mathematical model.
-While the ideal goal would be to develop a tool to visualize these complex problems, that may take a while.</p>
-<p>One major goal of this research is to introduce a set of diagnostic problems that isolate characteristics that EAs must contend with when solving real world problems.
-It would be beneficial to understand what kinds of EAs are good specific problem spaces and fitness landscapes, but that could prove to be difficult because there are a lot of moving parts in an EA.
-To untangle the affects that these moving parts might have on an EA’s performance, we focus on isolating selection schemes to see the impact they have on performance, in regard to the set of diagnostic problems.
-In order to isolate the different selection schemes, we develop a simple candidate solution representation, mutation operator, and problem representation.</p>
-<p>The second major goal of this research is to understand the strength and weaknesses of different selection schemes.
-This set of diagnostic problems gives us a <em>profile</em> for each selection scheme, which will give us insightful information when deciding what algorithm to use for a particular problem.
-In turn, this will also give us insight on the nature of the problem being solved by giving us an understanding of the problem space and fitness landscape that the problem possesses.
-There are a variety of selection schemes that exist but comparing their effectiveness and robustness is difficult, as many of them use different sets of problems to test the scheme against.
-It is difficult to understand an algorithms strengths and weaknesses from these problems, as it is difficult to understand what characteristics the problem space or fitness landscape posses.
-Creating these <em>profiles</em> will not only give us a better understanding of each selection schemes’ strengths and weaknesses, but also save time when deciding what selection scheme to use.
-Using the best selection scheme could also speed up the time required to find a satisfactory solution.</p>
+<p>Although it may appear that evolutionary algorithms the best tool to solve complex problems, there are some limitations.
+A major obstacle when solving difficult, complex problems is traversing the space of all possible candidate solutions and/or fitness landscape.
+It can be extremely difficult to conceptualize the space of all possible candidate solutions or fitness landscape.
+This is due to problems and candidate solutions not being formulated in a clean mathematical model.</p>
+<p><strong>The goal of this research is to discover characteristics that distinguish the strengths and weaknesses of different evolutionary algorithms.</strong>
+These characteristics are represented by a set of diagnostics.
+Each diagnostic is inspired from the characteristics real world problems pose against evolutionary algorithms.
+After an evolutionary algorithms’ performance is recorded across all diagnostics, we have essentially created a <em>profile</em> for the algorithm.
+This <em>profile</em> would give a better understanding of the kinds of problems each evolutionary algorithm is best suited for.</p>
+<p>Imagine attempting to solve a complicated problem with an evolutionary algorithm.
+One approach is to experiment with numerous evolutionary algorithms and their parameters with the hope that one finds an optimal solution.
+This approach can be very time consuming and there is also no guarantee that a solution would be found.
+These <em>profiles</em> give us an alternative approach, where we can create a set of top candidate evolutionary algorithms.
+The set of diagnostics will also allow anyone to generate <em>profiles</em> for their own evolutionary algorithms as well.</p>
 </div>
-<div id="research-questions" class="section level1">
-<h1><span class="header-section-number">2</span> Research Questions</h1>
+<div id="purpose-of-this-project" class="section level1">
+<h1><span class="header-section-number">2</span> Purpose of This Project</h1>
+<p>Evolutionary algorithms are composed of multiple components that interact with one another.
+These interactions can make analyzing different evolutionary algorithms difficult.
+If we focus on the major components within an evolutionary algorithm, we can still generate <em>profiles</em> with meaningful information.
+More information about evolutionary algorithms can be found at <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html">link</a>.</p>
+<p><strong>This project focuses on the impact different selection schemes have on an evolutionary algorithms’ attempt to solve different diagnostics.</strong>
+The diagnostics for this project are meant to imitate problems where the landscapes require exploitation, exploration, building blocks, and conflicting optimization tasks.
+<em>Profiles</em> generated from these diagnostics provide meaningful information, as these diagnostics are common across multiple problem domains.</p>
+<p>Looking through the literature on selection schemes, it is clear that a copious amount of selection schemes exist.
+Without getting into the literature too much, it also clear that selection schemes are becoming more complex over time.
+More information about selection schemes can be found at <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html">link</a>.
+Complications may arise when trying to understand the strengths and weaknesses of a selection scheme.</p>
+<p>Understanding the nature of the problem being solved can be difficult, as it may not be possible to conceptualize the fitness landscape or space of all possible solutions.
+This means that knowing the kinds of problems a selection scheme is best suited for may not be possible using this approach.
+Fortunately, these diagnostics help mitigate this issue.
+By isolating key characteristics that problems possess, we are able to get a better understanding of each selection schemes’ strengths and weaknesses.</p>
+<p>Another complication that may arise is understanding and testing different novelties integrated within selection schemes.
+Many of the novelties different selection schemes possess may be integrated within other selection schemes as well.
+A framework for selection schemes may give us a better understanding of how this may be possible.
+This could open a path up to finding more robust evolutionary algorithms.
+The authors (me) framework for selection schemes can be found at <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_depth.html">link</a>.</p>
+<p><strong>The goal of this project is to develop a set of diagnostics that generate meaningful <em>profiles</em>.</strong>
+The <em>profiles</em> would give readers information regarding each selection schemes’ strengths, weaknesses, and novelties.
+Having this information can be the difference between finding an optimal solution and not.</p>
+</div>
+<div id="project-research-questions" class="section level1">
+<h1><span class="header-section-number">3</span> Project Research Questions</h1>
 <ol style="list-style-type: decimal">
 <li>How do selection schemes perform on each diagnostic?</li>
 <li>What do the recorded metrics tell us about each selection scheme?</li>
+<li>Are there any dominating selection schemes, and why?</li>
+<li>How do the different novelties compare?</li>
 </ol>
 </div>
 <div id="evolutionary-algorithm-setup" class="section level1">
-<h1><span class="header-section-number">3</span> Evolutionary Algorithm Setup</h1>
-<p>Now we will define the variables, conditionals, and proceedures for the evolutionary runs in this experiment.
-The number of generations will determine the stopping criteria for these evolutionary algorihthms, with a maximum of <span class="math inline">\(G=10,000\)</span> generations.
-Population size for these experiments will be <span class="math inline">\(N=512\)</span>, and the population is given by <span class="math inline">\(P = \{j_1, ..., j_N\}\)</span>.
-We want to select a decent sized population, where the size of the population will not overcompensate the for the selection schemes.</p>
-<p>Next we have to define the underlying representation for the candidate solutions.
-The underlying representation for candidate solutions will be a vector of doubles.
+<h1><span class="header-section-number">4</span> Evolutionary Algorithm Setup</h1>
+<p>The variables, conditionals, and procedures for the evolutionary algorithm used in this experiment will be defined in this section.
+The number of generations will be used to determine the stopping criteria for these evolutionary algorithms, with a maximum of <span class="math inline">\(G=10,000\)</span> generations.
+Population size for these experiments will be <span class="math inline">\(N=512\)</span>, and the population candidate solutions is given by <span class="math inline">\(P = \{j_1, ..., j_N\}\)</span>.</p>
+<p>The underlying representation for candidate solutions will be a vector of doubles.
 Each double in the representation will be called a trait from this point on.
-The set of traits a candidate solution has will be denoted by <span class="math inline">\(T = \{t_1, ..., t_M\}\)</span>, where <span class="math inline">\(M \in \mathbb{Z}^+\)</span> denotes the number of traits desired.
-We can see that <span class="math inline">\(T \in \mathbb{R}^{M}\)</span>, hence every candidate solution in <span class="math inline">\(P\)</span> comes from <span class="math inline">\(\mathbb{R}^{M}\)</span>.
+The set of traits representing a candidate solution will be denoted by <span class="math inline">\(T = \{t_1, ..., t_M\}\)</span>, where <span class="math inline">\(M \in \mathbb{Z}^+\)</span> denotes the number of traits.
+Notice that <span class="math inline">\(T \in \mathbb{R}^{M}\)</span>, hence every candidate solution in <span class="math inline">\(P\)</span> comes from <span class="math inline">\(\mathbb{R}^{M}\)</span>.
+This means that <span class="math inline">\(\forall j \in T\)</span>, we can represent <span class="math inline">\(j = \{t_1, ..., t_M \}\)</span>.
 All traits will be set to <span class="math inline">\(0\)</span> for every candidate solution at the start of the run.</p>
-<p>The mutation operators consists of point mutations on individual traits.
-These point mutations add offsets sampled from a normal distributiion, with <span class="math inline">\(\mu=0\)</span> and <span class="math inline">\(\sigma^2=1\)</span>, to the trait.
+<p>The mutation operator consists of point mutations on individual traits.
+These point mutations add offsets sampled from a normal distribution, with <span class="math inline">\(\mu=0\)</span> and <span class="math inline">\(\sigma^2=1\)</span>, to a trait.
 It is not possible for a trait to be less than 0.
 In the event that a mutation causes a trait to fall below <span class="math inline">\(0\)</span>, that trait will be set to <span class="math inline">\(0\)</span>.
 The probability of a trait becoming mutated is set to <span class="math inline">\(7\%\)</span>.
-This means that for every <span class="math inline">\(100\)</span> traits being considered for mutation, on average we expect <span class="math inline">\(7\)</span> of them to be mutated.</p>
+This means that for every <span class="math inline">\(100\)</span> traits being considered for mutation; on average we expect <span class="math inline">\(7\)</span> of them receive a mutation.</p>
 </div>
 <div id="diagnostic-setup" class="section level1">
-<h1><span class="header-section-number">4</span> Diagnostic Setup</h1>
+<h1><span class="header-section-number">5</span> Diagnostic Setup</h1>
 <p>Candidate solutions are challenged to optimize their traits to some corresponding target objective.
 The number of traits per candidate solution also gives us the number of target objectives.
 This means that <span class="math inline">\(M\)</span> is also used to determine the number of target objectives.
 From this we get a vector of target objectives <span class="math inline">\(\Gamma = \{\gamma_1, ..., \gamma_M\}\)</span>, where <span class="math inline">\(\Gamma \in \mathbb{R}^M\)</span>.
 Each target objective corresponds to a trait by position, or <span class="math inline">\(\gamma_i \leftrightarrow t_i\)</span>.</p>
-<p>If a mutation causes a trait to rise above the corresponding target objective, the trait is set to the target objective minus the remaining distance passed the target objective.
+<p>If a mutation causes a trait to rise above the corresponding target objective, the trait is set to the target objective minus the remaining distance passed the target objective caused by the mutation.
 For example, let trait <span class="math inline">\(t=99\)</span>, mutation <span class="math inline">\(m=1.1\)</span>, and target objective <span class="math inline">\(\gamma=100\)</span>.
 The new trait <span class="math inline">\(t&#39;\)</span> is given by,</p>
-<p><span class="math display">\[\begin{align*}
+<center>
+<span class="math display">\[\begin{align*}
 t&#39; &amp;= \gamma - (t + m - \gamma) \\
    &amp;= 100 - (99 + 1.1 - 100) \\ 
    &amp;= 100 - (101.1 - 100) \\
    &amp;= 100 - 0.1 \\
    &amp;= 99.9 \\ 
 \end{align*}
-\]</span></p>
-<p>We can see that <span class="math inline">\(t + m - \gamma\)</span> is the remaining distance passed the target objective.
+\]</span>
+</center>
+<p>We can see that <span class="math inline">\(t + m - \gamma\)</span> is the remaining distance passed the target objective caused by the mutation.
 For this project we are going to set <span class="math inline">\(M\)</span> and every element in <span class="math inline">\(\Gamma\)</span> too <span class="math inline">\(100\)</span>.
 This gives us <span class="math inline">\(\Gamma = \{100, .., 100 \}\)</span>.</p>
 </div>
 <div id="selection-schemes" class="section level1">
-<h1><span class="header-section-number">5</span> Selection Schemes</h1>
-<p>Below we will describe the different variables, conditionals, and proceedures that need to be determined for every algorithm.
-A full more in depth description of these selection schemes can be found <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html">here</a>.
-We detmine variables, conditionals, and proceedures for the selection schemes used in this experiment.</p>
+<h1><span class="header-section-number">6</span> Selection Schemes</h1>
+<p>Below we will describe the different variables, conditionals, and procedures that need to be determined for every selection scheme.
+A full more in depth description of these selection schemes used in this project can be found <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html">here</a>.</p>
 <div id="μλ-evolutionary-strategy" class="section level2">
-<h2><span class="header-section-number">5.1</span> (μ,λ) Evolutionary Strategy</h2>
-<p>This algorithm asks us to define the population size ,<span class="math inline">\(\lambda\)</span>, and count of top performing solutions, <span class="math inline">\(\mu\)</span>.
-Here we estimate <span class="math inline">\(\lambda = 512\)</span> and <span class="math inline">\(\mu\)</span> will be estimated exponentially by powers of two.
+<h2><span class="header-section-number">6.1</span> (μ,λ) Evolutionary Strategy</h2>
+<p>This algorithm asks requires users to define the population size <span class="math inline">\(\lambda\)</span> and count of top performing solutions <span class="math inline">\(\mu\)</span>.
+Here we set <span class="math inline">\(\lambda = 512\)</span> and estimate <span class="math inline">\(\mu\)</span> exponentially by powers of two.
 This gives us the following parameter estimates.</p>
 <center>
 <table>
@@ -1656,15 +1684,15 @@ This gives us the following parameter estimates.</p>
 </center>
 <p>It is important to note that at <span class="math inline">\(\mu = 512\)</span> there is no pressure to improve in fitness.
 Looking at the other extreme, at <span class="math inline">\(\mu = 1\)</span> there is immense pressure to be the best performing candidate solution.
-These parameter estimates allow us to effectivly explore the range between these extremes.</p>
-<p>One final proceedure we need to define is how to select parents from the top performing <span class="math inline">\(\mu\)</span> candidate solutions.
+These parameter estimates allow us to effectively explore the range between these extremes.</p>
+<p>One final procedure we need to define is how to select parents from the top performing <span class="math inline">\(\mu\)</span> candidate solutions.
 Our method for which candidate solutions are selected as parents is similar to [6], where the top <span class="math inline">\(\mu\)</span> performing candidate solutions produce <span class="math inline">\(\frac{\lambda}{\mu}\)</span> offspring.
-In the event of ties occuring, we randomly select one of the top performing candidate solutions until the <span class="math inline">\(\mu\)</span> requirement is met.</p>
+In the event of ties occurring, we randomly select one of the top performing candidate solutions until the <span class="math inline">\(\mu\)</span> requirement is met.</p>
 </div>
 <div id="tournament-selection" class="section level2">
-<h2><span class="header-section-number">5.2</span> Tournament Selection</h2>
-<p>Tournament size <span class="math inline">\(t\)</span> is the only variable that needs to be set for this algorithm.
-Here estimate tournament size by powers of two.
+<h2><span class="header-section-number">6.2</span> Tournament Selection</h2>
+<p>Tournament size <span class="math inline">\(t\)</span> is the only parameter that needs to be set for this algorithm.
+Here tournament size is estimated exponentially by powers of two.
 This gives us the following parameter estimates.</p>
 <center>
 <table>
@@ -1700,21 +1728,21 @@ This gives us the following parameter estimates.</p>
 </tbody>
 </table>
 </center>
-<p>It is important to not that at <span class="math inline">\(t = 512\)</span> there is immense pressure to be the best performing candidate solution.
+<p>It is important to note that at <span class="math inline">\(t = 512\)</span> there is immense pressure to be the best performing candidate solution.
 Looking at the other extreme, at <span class="math inline">\(t = 1\)</span> there is no pressure to improve in fitness.
-These parameter estimates allow us to effectivly explore the range between these extremes.</p>
+These parameter estimates allow us to effectively explore the range between these extremes.</p>
 <p><strong>Let <span class="math inline">\(t^*\)</span> be the best performing tournament size on a given diagnostic.</strong>
 We will be using <span class="math inline">\(t^*\)</span> in the following algorithms.</p>
 </div>
 <div id="fitness-sharing" class="section level2">
-<h2><span class="header-section-number">5.3</span> Fitness Sharing</h2>
-<p>Fitness sharing requires numerous variables to be defined before execution.
+<h2><span class="header-section-number">6.3</span> Fitness Sharing</h2>
+<p>Fitness sharing requires multiple parameters and functions to be defined prior to running.
 In this experiment, candidate solutions will be selected as parents through tournament selection with tournament size <span class="math inline">\(t^*\)</span>.
-Tournaments will consist on candidate solutions randomly selected from the entire population.
-The parameter <span class="math inline">\(\alpha\)</span> will be set to <span class="math inline">\(1\)</span> based on a recomendation from [11].</p>
-<p>This algorithm asks us to define additional variables: a distance function between two candidate solutions, similarity function for two candidate solutions, and theshold for dissimilarity.
-All these variables give us the pieces needed for tranforming the raw performance fitness value.
-Let <span class="math inline">\(f_i\)</span> be the raw performance and <span class="math inline">\(f&#39;_i\)</span> be the transformed performance from candidate solution <span class="math inline">\(i\)</span>.
+Tournaments will consist of candidate solutions randomly selected from the entire population.
+The parameter <span class="math inline">\(\alpha\)</span> will be set to <span class="math inline">\(1\)</span> based on a recommendation from [11].</p>
+<p>This algorithm also asks us to define a function measuring distance between two candidate solutions, function measuring similarity between two candidate solutions, and threshold for dissimilarity.
+All these pieces give us the ability to transform the original fitness value.
+Let <span class="math inline">\(f_i\)</span> be the original fitness value and <span class="math inline">\(f&#39;_i\)</span> be the transformed fitness value for candidate solution <span class="math inline">\(i\)</span>.
 This transformation is given by the following,</p>
 <center>
 <span class="math inline">\(f&#39;_i = \frac{f_i}{m_i}\)</span>
@@ -1723,13 +1751,13 @@ This transformation is given by the following,</p>
 <center>
 <span class="math display">\[ m_{i} = \sum_{j=1}^{N} sh(d_{ij})\]</span>
 </center>
-<p>First we need define the similarity function between two candidate solutions.
-Let <span class="math inline">\(i,j\)</span> be any two different candidate solution genomes.
+<p>First, we need define the similarity function between two candidate solutions.
+Let <span class="math inline">\(i,j\)</span> be any two different candidate solutions.
 For this project it will be defined by the following,</p>
 <center>
 <span class="math display">\[ d_{ij} = || i - j||_2\]</span>
 </center>
-<p>Because we know that <span class="math inline">\(i,j\)</span> are just vector of doubles, we can just use the Euclidean Distance to measure their genotype distance.
+<p>Because we know that <span class="math inline">\(i,j\)</span> are just vector of doubles, we can just use the Euclidean Distance to measure their distance in <span class="math inline">\(\mathbb{R}^M\)</span>.
 We are now going to define our similarity function.</p>
 <center>
 <span class="math display">\[
@@ -1741,10 +1769,10 @@ sh(d_{ij}) = \left\{
     \right.
 \]</span>
 </center>
-<p>Finally we have to define the threshold for similarity, <span class="math inline">\(\sigma\)</span>.
-First we calculate the highest possible <span class="math inline">\(d_{ij}\)</span>,</p>
+<p>Finally, we have to define the threshold for similarity, <span class="math inline">\(\sigma\)</span>.
+First, we calculate the highest possible <span class="math inline">\(d_{ij}\)</span>,</p>
 <center>
-<span class="math display">\[max(d_{ij}) = || &lt;\gamma,...,\gamma&gt; - &lt;0,...,0&gt;||_2 = || &lt;100,...,100&gt; - &lt;0,...,0&gt;||_2 = 1000\]</span>
+<span class="math display">\[max(d_{ij}) = || &lt;\gamma_1,...,\gamma_M&gt; - &lt;0,...,0&gt;||_2 = || &lt;100,...,100&gt; - &lt;0,...,0&gt;||_2 = 1000\]</span>
 </center>
 <p>Using <span class="math inline">\(max(d_{ij})\)</span> we get the following parameter estimates.</p>
 <center>
@@ -1780,20 +1808,20 @@ First we calculate the highest possible <span class="math inline">\(d_{ij}\)</sp
 <p>It is important to note that at <span class="math inline">\(\sigma = 0\)</span> there is no pressure to be genetically different.
 This is similar to running a standard tournament selection.
 Looking at the other extreme, at <span class="math inline">\(\sigma = 1000\)</span> there is constant pressure to be genetically different.
-These parameter estimates allow us to effectivly explore the range between these extremes.</p>
+These parameter estimates allow us to effectively explore the range between these extremes.</p>
 </div>
 <div id="novelty-search" class="section level2">
-<h2><span class="header-section-number">5.4</span> Novelty Search</h2>
-<p>This algorithm asks us to define two variables: distance function for two candidate solution performances and number of nearest neighbors.
-The method in which candidate solutions are selected as parents will be through a tournament selection with tournament size <span class="math inline">\(t^*\)</span>.
+<h2><span class="header-section-number">6.4</span> Novelty Search</h2>
+<p>This algorithm requires a function measuring distance between two candidate solution performances and number of nearest neighbors.
+The method in which candidate solutions are selected as parents will be through tournament selection with tournament size <span class="math inline">\(t^*\)</span>.
 Let <span class="math inline">\(dist(x,y)\)</span> be the function that measures the distance between two candidate solution performances.
 This function can be defined by,</p>
 <center>
-<span class="math display">\[dist(x,y) = || x - y ||_2\]</span>
+<span class="math display">\[dist(x,y) = | x - y |\]</span>
 </center>
 <p>Let <span class="math inline">\(k \in \mathbb{Z}^+\)</span> be the <span class="math inline">\(k-\)</span>nearest neighbors.
 We wanted to explore the parameters around <span class="math inline">\(k=15\)</span> because of its use in [8].
-These parameter were estimated keeping <span class="math inline">\(k=15\)</span> in mind to explore the region around it.
+These parameters were estimated keeping <span class="math inline">\(k=15\)</span> in mind to explore the region around it.
 This give us the parameter estimates,</p>
 <center>
 <table>
@@ -1825,14 +1853,14 @@ This give us the parameter estimates,</p>
 </tbody>
 </table>
 </center>
-<p>It is important to note that at <span class="math inline">\(k = 0\)</span> there is no pressure for solutions to increase their distance from neighboors on the fitness landscape.
+<p>It is important to note that at <span class="math inline">\(k = 0\)</span> there is no pressure for solutions to increase their distance from neighbors on the fitness landscape.
 This is similar to running a standard tournament selection.
 Looking at the other extreme, at <span class="math inline">\(k = 60\)</span> there is constant pressure to move away from the <span class="math inline">\(60\)</span> nearest neighbors within the fitness landscape per candidate solution.</p>
 </div>
-<div id="epsilon-lexicase" class="section level2">
-<h2><span class="header-section-number">5.5</span> <span class="math inline">\(\epsilon\)</span>-Lexicase</h2>
-<p>The only variable this algorithm asks us to define is the threshold to pass through filters.
-For this experiment we look at the maximum threshold used in [9], which is <span class="math inline">\(\epsilon = 10.0\)</span>.
+<div id="ϵ-lexicase" class="section level2">
+<h2><span class="header-section-number">6.5</span> ϵ-Lexicase</h2>
+<p>This algorithm requires a threshold <span class="math inline">\(\epsilon\)</span> for differences in performance.
+The maximum threshold used in [9] will be used to estimate other threshold values, where <span class="math inline">\(\epsilon = 10.0\)</span>.
 We would like to explore the region between the smallest possible <span class="math inline">\(\epsilon\)</span> and the maximum <span class="math inline">\(\epsilon\)</span> value from [9].
 This give us the parameter estimates,</p>
 <center>
@@ -1865,29 +1893,29 @@ This give us the parameter estimates,</p>
 </tbody>
 </table>
 </center>
-<p>It is importrant to note that <span class="math inline">\(\epsilon = 0\)</span> gives us the original lexicase selection.</p>
+<p>It is important to note that <span class="math inline">\(\epsilon = 0\)</span> gives us the original lexicase selection.</p>
 </div>
 <div id="age-layered-population-structure-alps" class="section level2">
-<h2><span class="header-section-number">5.6</span> Age-Layered Population Structure (ALPS)</h2>
+<h2><span class="header-section-number">6.6</span> Age-Layered Population Structure (ALPS)</h2>
 <p>TBD</p>
 </div>
 </div>
 <div id="diagnostics" class="section level1">
-<h1><span class="header-section-number">6</span> Diagnostics</h1>
+<h1><span class="header-section-number">7</span> Diagnostics</h1>
 <p>TODO - Describes the set up for for diagnostics. Follow simialr flow to selection depth and experiement set up</p>
 <p>TODO - Create diagnostic depth</p>
 </div>
 <div id="data-gathering-metrics" class="section level1">
-<h1><span class="header-section-number">7</span> Data Gathering &amp; Metrics</h1>
-<p>Before discussing the statistics being gathered we must define some variables.
-Let <span class="math inline">\(\tau\)</span> be a threshold for distance between a trait and its cooresponding target objective.
+<h1><span class="header-section-number">8</span> Data Gathering &amp; Metrics</h1>
+<p>Before discussing the statistics being gathered, we must define some variables.
+Let <span class="math inline">\(\tau\)</span> be a threshold for distance between a trait and its corresponding target objective.
 The current population of candidate solutions is given by <span class="math inline">\(P\)</span>.
-A candidate solution’s trait perforamce will be called fitness.
+A candidate solution’s trait performance will be called fitness.
 The set of fitnesses for a candidate solution will be denoted by <span class="math inline">\(F = \{f_1,...,f_m\}\)</span>.
-Each fitness value cooresponds to a traits’ performance by position, or <span class="math inline">\(f_i \leftrightarrow t_i\)</span>.</p>
-<p>Traits are considered optimimal if the distance from the trait to the cooresponding target objective is less than <span class="math inline">\(\tau\)</span>.
-Let <span class="math inline">\(t \in \mathbb{R}\)</span> be some trait, <span class="math inline">\(\gamma \in \mathbb{R}\)</span> be the cooresponding target objective, and the function <span class="math inline">\(op\)</span> determine optimality.
-The function <span class="math inline">\(op\)</span> is described by,
+Each fitness value corresponds to a traits’ performance by position, or <span class="math inline">\(f_i \leftrightarrow t_i\)</span>.</p>
+<p>Traits are considered optimal if the distance from the trait to the corresponding target objective is less than <span class="math inline">\(\tau\)</span>.
+Let <span class="math inline">\(t \in \mathbb{R}\)</span> be some trait, <span class="math inline">\(\gamma \in \mathbb{R}\)</span> be the corresponding target objective, and the function <span class="math inline">\(op\)</span> determine optimality.</p>
+<p>The function <span class="math inline">\(op\)</span> is described by,
 <span class="math display">\[
 op(t, \gamma) = \left\{
         \begin{array}{ll}
@@ -1903,38 +1931,38 @@ If <span class="math inline">\(j\)</span> is an optimal solution for some set of
 <span class="math display">\[ M = \sum_{i = 1}^{M} op(t_i, \gamma_i)\]</span></p>
 <p>We would like to note that different values of <span class="math inline">\(\tau\)</span> will be explored to find interesting results.</p>
 <div id="performance-metrics" class="section level2">
-<h2><span class="header-section-number">7.1</span> Performance Metrics</h2>
+<h2><span class="header-section-number">8.1</span> Performance Metrics</h2>
 <p>Below we describe the data we are tracking at different levels that give us insight on performance.</p>
 <div id="individual-candidate-solution-metrics" class="section level3">
-<h3><span class="header-section-number">7.1.1</span> Individual Candidate Solution Metrics</h3>
+<h3><span class="header-section-number">8.1.1</span> Individual Candidate Solution Metrics</h3>
 <p>These metrics are data we are collecting at the individual level.</p>
 <div id="number-of-optimized-traits" class="section level4">
-<h4><span class="header-section-number">7.1.1.1</span> Number of Optimized Traits</h4>
-<p>To obtain the number of optimized traits for a candidate soultion, we must go through every trait and determine its optimality.
+<h4><span class="header-section-number">8.1.1.1</span> Number of Optimized Traits</h4>
+<p>To obtain the number of optimized traits for a candidate solution, we must go through every trait and determine its optimality.
 After doing this, we can count the number of optimized traits.</p>
-<p>Let <span class="math inline">\(c_j\)</span> denote the number of optimized traits for candidate solution <span class="math inline">\(j= \{t_1, ..., t_M \}\)</span>, where <span class="math inline">\(c_j \in \mathbb{N}\)</span>.
+<p>Let <span class="math inline">\(c\)</span> denote the number of optimized traits for candidate solution <span class="math inline">\(j= \{t_1, ..., t_M \}\)</span>, where <span class="math inline">\(c \in \mathbb{N}\)</span>.
 For some given set of target objectives <span class="math inline">\(\Gamma = \{ \gamma_1, ..., \gamma_M \}\)</span>, the number of optimized traits for <span class="math inline">\(j\)</span> is given by</p>
-<p><span class="math display">\[c_j = \sum_{i = 1}^{M} op(t_i, \gamma_i) \]</span></p>
+<p><span class="math display">\[c = \sum_{i = 1}^{M} op(t_i, \gamma_i) \]</span></p>
 </div>
 <div id="fitness-aggregate-and-average-trait-fitness" class="section level4">
-<h4><span class="header-section-number">7.1.1.2</span> Fitness Aggregate and Average Trait Fitness</h4>
-<p>All diagnostics can be thought of as maximization problems with different constraits applied.
-Each diagnotic will measure trait performance differently, giving us different performances for the same candidate solution.
+<h4><span class="header-section-number">8.1.1.2</span> Fitness Aggregate and Average Trait Fitness</h4>
+<p>All diagnostics can be thought of as maximization problems with different constraints applied.
+Each diagnostic will measure trait performance differently, giving us different performances for the same candidate solution.
 We will let <span class="math inline">\(\omega\)</span> denote the aggregate of fitnesses for a candidate solution.</p>
 <p>For candidate solution <span class="math inline">\(j\)</span>, let <span class="math inline">\(F_j = \{f_1, ..., f_m \}\)</span> represent its fitness vector, where <span class="math inline">\(F_j \in \mathbb{R}^M\)</span>.
-Now let <span class="math inline">\(\omega_j\)</span> denote the aggregate of fitnesses for a candidate solution <span class="math inline">\(j\)</span>.
-We define <span class="math inline">\(\omega_j\)</span> by,
-<span class="math display">\[ \omega_j = \sum_{f \in F_j} f\]</span></p>
-<p>In order to calculate the average trait fitness we do the following,</p>
-<p><span class="math display">\[{\bar{\omega_j}} = \frac{\omega_j}{M} =  \frac{1}{M} \sum_{f \in F_j} f\]</span></p>
+Now let <span class="math inline">\(\omega\)</span> denote the aggregate of fitnesses for a candidate solution <span class="math inline">\(j\)</span>.</p>
+<p>We define <span class="math inline">\(\omega\)</span> by,
+<span class="math display">\[ \omega = \sum_{f \in F_j} f\]</span></p>
+<p>To calculate average trait fitness, we do the following,</p>
+<p><span class="math display">\[{\bar{\omega}} = \frac{\omega}{M} =  \frac{1}{M} \sum_{f \in F_j} f\]</span></p>
 </div>
 </div>
 <div id="population-metrics-across-all-candidate-solutions" class="section level3">
-<h3><span class="header-section-number">7.1.2</span> Population Metrics Across All Candidate Solutions</h3>
+<h3><span class="header-section-number">8.1.2</span> Population Metrics Across All Candidate Solutions</h3>
 <p>These metrics calculated across all candidate solutions in the population.
 Let <span class="math inline">\(P_{F}\)</span> be the set of aggregate fitnesses and <span class="math inline">\(P_{C}\)</span> be the set of optimized traits counts, both per candidate solution in the population <span class="math inline">\(P\)</span>.</p>
 <div id="average-number-of-optimized-traits" class="section level4">
-<h4><span class="header-section-number">7.1.2.1</span> Average Number of Optimized Traits</h4>
+<h4><span class="header-section-number">8.1.2.1</span> Average Number of Optimized Traits</h4>
 <p>The average number of optimized traits is calculated by summing up every candidate solutions’ optimized trait count, followed by dividing the sum by the size of the population.
 This data gives us insight on the average number of traits a candidate solution in the population can maintain optimized.
 Now let <span class="math inline">\(C_P\)</span> represent the average number of optimized traits.</p>
@@ -1942,21 +1970,21 @@ Now let <span class="math inline">\(C_P\)</span> represent the average number of
 <span class="math display">\[C_P = \frac{1}{N} \sum_{c \in P_C} c\]</span></p>
 </div>
 <div id="maximum-number-of-optimized-traits" class="section level4">
-<h4><span class="header-section-number">7.1.2.2</span> Maximum Number of Optimized Traits</h4>
+<h4><span class="header-section-number">8.1.2.2</span> Maximum Number of Optimized Traits</h4>
 <p>We go through every candidate solutions’ optimized trait count and record the maximum.
 Now let <span class="math inline">\(C_{max}\)</span> represent the maximum optimized trait count.</p>
 <p>We define <span class="math inline">\(C_{max}\)</span> by,
 <span class="math display">\[C_{max} = max\{P_C \}\]</span></p>
 </div>
 <div id="number-of-unique-optimized-traits" class="section level4">
-<h4><span class="header-section-number">7.1.2.3</span> Number of Unique Optimized Traits</h4>
-<p>We go through each target objective in <span class="math inline">\(\Gamma\)</span>, and see if there exists a candidate solution that has the the corresponding trait optimized.
-This will tell us the the spread of optimized traits that a population can maintain.
+<h4><span class="header-section-number">8.1.2.3</span> Number of Unique Optimized Traits</h4>
+<p>We go through each target objective in <span class="math inline">\(\Gamma\)</span>, and see if there exists a candidate solution that has the corresponding trait optimized.
+This will tell us the spread of optimized traits that a population can maintain.
 Now let <span class="math inline">\(C_{uni}\)</span> represent the number of unique optimized traits.</p>
-<p>For some set of target objectives <span class="math inline">\(\Gamma = \{\gamma_1, ..., \gamma_M\}\)</span>, we define <span class="math inline">\(C_{uni}\)</span> by,
-<span class="math display">\[C_{uni} = \sum_{i = 1}^{M} OP(\gamma_i)\]</span>
-Where the function <span class="math inline">\(OP\)</span> measures whether or not a candidate solution exists with an optimized trait for the corresponding target objective.
-We define <span class="math inline">\(OP\)</span> by,
+<p>For some set of target objectives <span class="math inline">\(\Gamma = \{\gamma_1, ..., \gamma_M\}\)</span>, we define <span class="math inline">\(C_{uni}\)</span> by,</p>
+<p><span class="math display">\[C_{uni} = \sum_{i = 1}^{M} OP(\gamma_i)\]</span>
+Where the function <span class="math inline">\(OP\)</span> measures whether or not a candidate solution exists with an optimized trait for the corresponding target objective.</p>
+<p>We define <span class="math inline">\(OP\)</span> by,
 <span class="math display">\[
 OP(\gamma_i) = \left\{
         \begin{array}{ll}
@@ -1966,23 +1994,23 @@ OP(\gamma_i) = \left\{
     \right.
 \]</span></p>
 </div>
-<div id="average-aggregate-trait-performance" class="section level4">
-<h4><span class="header-section-number">7.1.2.4</span> Average Aggregate Trait Performance</h4>
+<div id="fitness-aggregate-average" class="section level4">
+<h4><span class="header-section-number">8.1.2.4</span> Fitness Aggregate Average</h4>
 <p>We sum every candidate solution aggregate fitness value <span class="math inline">\(\omega\)</span>, followed by dividing the sum by the size of the population.
 Now let <span class="math inline">\(\bar{f_{P}}\)</span> represent the average aggregate fitness per candidate solution.</p>
 <p>We define <span class="math inline">\(\bar{f_{P}}\)</span> by,
 <span class="math display">\[\bar{f_{P}} = \frac{1}{N} \sum_{f \in P_F} f\]</span></p>
 </div>
 <div id="optimal-solutions-found-per-generation" class="section level4">
-<h4><span class="header-section-number">7.1.2.5</span> Optimal Solutions Found Per Generation</h4>
-<p>We record the the number of optimal solutions per generation.</p>
+<h4><span class="header-section-number">8.1.2.5</span> Optimal Solutions Found Per Generation</h4>
+<p>We record the number of optimal solutions per generation.</p>
 </div>
 </div>
 <div id="candidate-solutions-of-interest" class="section level3">
-<h3><span class="header-section-number">7.1.3</span> Candidate Solutions of Interest</h3>
+<h3><span class="header-section-number">8.1.3</span> Candidate Solutions of Interest</h3>
 <p>Below we describe different kinds of candidate solutions we are interested in analyzing.</p>
 <div id="maximum-performing-candidate-solution" class="section level4">
-<h4><span class="header-section-number">7.1.3.1</span> Maximum Performing Candidate Solution</h4>
+<h4><span class="header-section-number">8.1.3.1</span> Maximum Performing Candidate Solution</h4>
 <p>This candidate solution is selected because their aggregate fitness value <span class="math inline">\(\omega = max\{P_F\}\)</span>.
 In the event of a tie we select the candidate solution with the most optimized traits.
 If ties still occur, we randomly select a candidate solution.
@@ -1993,7 +2021,7 @@ Below is a list of data we are gathering for these kinds of solutions.</p>
 </ul>
 </div>
 <div id="maximum-optimized-trait-count" class="section level4">
-<h4><span class="header-section-number">7.1.3.2</span> Maximum Optimized Trait Count</h4>
+<h4><span class="header-section-number">8.1.3.2</span> Maximum Optimized Trait Count</h4>
 <p>This candidate solution is selected because their aggregate fitness value <span class="math inline">\(c = C_{max}\)</span>.
 In the event of a tie we select the candidate solution with the maximum aggregate fitness value.
 If ties still occur, we randomly select a candidate solution.
@@ -2004,10 +2032,10 @@ Below is a list of data we are gathering for these kinds of solutions.</p>
 </ul>
 </div>
 <div id="most-common-candidate-solution" class="section level4">
-<h4><span class="header-section-number">7.1.3.3</span> Most Common Candidate Solution</h4>
-<p>This candidate solution is selection because it is the most common solution in the population.
+<h4><span class="header-section-number">8.1.3.3</span> Most Common Candidate Solution</h4>
+<p>This candidate solution is selection because it is the most common solution genotype in the population.
 In the event of ties, we first filter solutions by the maximum aggregate fitness value, then by maximum number of optimized traits.
-If ties still occur, we randonly select a candidate solution.
+If ties still occur, we randomly select a candidate solution.
 Below is a list of data we are gathering for these kinds of solutions.</p>
 <ul>
 <li><a href="#number-of-optimized-traits">Number of Optimized Traits</a></li>
@@ -2017,25 +2045,25 @@ Below is a list of data we are gathering for these kinds of solutions.</p>
 </div>
 </div>
 <div id="diversity-metrics" class="section level2">
-<h2><span class="header-section-number">7.2</span> Diversity Metrics</h2>
+<h2><span class="header-section-number">8.2</span> Diversity Metrics</h2>
 <p>These metrics are all population based as well, but with a focus on diversity.
 Let <span class="math inline">\(\Pi\)</span> be the set of candidate solutions selected to produce an offspring.
 We want to note that <span class="math inline">\(\Pi\)</span> consists of candidate solutions from population <span class="math inline">\(P\)</span>.
 Also, let <span class="math inline">\(P_F\)</span> be the set of aggregate fitnesses per candidate solution in the population P.</p>
 <div id="systematics-tracker-data" class="section level3">
-<h3><span class="header-section-number">7.2.1</span> Systematics Tracker Data</h3>
+<h3><span class="header-section-number">8.2.1</span> Systematics Tracker Data</h3>
 <p>I need to look into the kinds of data that the systematic tracker can record.
 I know that it does phylogenies, but need to do more looking into.</p>
 </div>
 <div id="loss-in-diversity" class="section level3">
-<h3><span class="header-section-number">7.2.2</span> Loss in diversity</h3>
+<h3><span class="header-section-number">8.2.2</span> Loss in diversity</h3>
 <p>The loss in diversity can be measured by dividing the number of unique candidate solutions selected to produce an offspring by the size of the population.
-Per selection event, this will tell us the the proportion of diversity that is lost and how inclusive the algorithm is.
-Loss in diversity can now be defined by,</p>
+Per selection event, this will tell us the proportion of diversity that is lost and how inclusive the algorithm is.</p>
+<p>Loss in diversity can now be defined by,</p>
 <p><span class="math display">\[ \frac{unique(\Pi)}{N}\]</span></p>
 </div>
 <div id="selection-pressure" class="section level3">
-<h3><span class="header-section-number">7.2.3</span> Selection Pressure</h3>
+<h3><span class="header-section-number">8.2.3</span> Selection Pressure</h3>
 <p>According to the authors in [5], the change of the average fitness of the population due to selection is a reasonable measure for selection intensity.
 Let <span class="math inline">\(\bar{f_P}\)</span> be the average and <span class="math inline">\(s_P\)</span> be the standard deviation of the set of all aggregate fitnesses <span class="math inline">\(P_F\)</span>.
 Also let <span class="math inline">\(\bar{f_\Pi}\)</span> measure a value similar to <span class="math inline">\(\bar{f_P}\)</span>, but with respect to <span class="math inline">\(\Pi\)</span>.
@@ -2043,18 +2071,18 @@ Selection pressure can now be defined by,
 <span class="math display">\[\frac{\bar{f_{\Pi}} - \bar{f_{P}}}{s_{P}}\]</span></p>
 </div>
 <div id="selection-variance" class="section level3">
-<h3><span class="header-section-number">7.2.4</span> Selection Variance</h3>
+<h3><span class="header-section-number">8.2.4</span> Selection Variance</h3>
 <p>The authors in [5] also define a measurement for selection variance.
 Before we define this, let <span class="math inline">\(\Pi_F\)</span> denote the set of aggregate fitnesses for candidate solutions in <span class="math inline">\(\Pi\)</span>.
 Now let <span class="math inline">\(s_P\)</span> be the standard deviation for <span class="math inline">\(P_F\)</span> and <span class="math inline">\(s_{\Pi}\)</span> be the standard deviation for <span class="math inline">\(\Pi_F\)</span>.
-Selection variance can now be defined by,
-<span class="math display">\[\frac{s_P^2}{s_{\Pi}^2}\]</span></p>
+Selection variance can now be defined by,</p>
+<p><span class="math display">\[\frac{s_P^2}{s_{\Pi}^2}\]</span></p>
 <p><strong>Both selection pressure and variance are taken at every generation</strong></p>
 </div>
 </div>
 </div>
 <div id="citations" class="section level1">
-<h1><span class="header-section-number">8</span> Citations</h1>
+<h1><span class="header-section-number">9</span> Citations</h1>
 <ol style="list-style-type: decimal">
 <li>Hornby, Greg &amp; Globus, Al &amp; Linden, Derek &amp; Lohn, Jason. (2006). Automated Antenna Design with Evolutionary Algorithms. Collection of Technical Papers - Space 2006 Conference. 1. 10.2514/6.2006-7242.</li>
 <li>K. Deb, A. Pratap, S. Agarwal and T. Meyarivan, “A fast and elitist multiobjective genetic algorithm: NSGA-II,” in IEEE Transactions on Evolutionary Computation, vol. 6, no. 2, pp. 182-197, April 2002.</li>

@@ -18,19 +18,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # What Is A Selection Scheme?
 
-Evolutionary algorithms can be described as probabilistic search algorithms characterized by the fact that a set of potential candidate solutions of the optimization problem simultaneously sample the search space through a natural evolutionary process. 
+Evolutionary algorithms can be described as probabilistic search algorithms characterized by the fact that a set of potential candidate solutions of the optimization problem simultaneously samples the search space through an evolutionary process. 
 The set of candidate solutions can be thought of as a population in the real world. 
 Just as organisms in the real world produce offspring and form a new generation, evolutionary algorithms incorporate this as well. 
 A new set of candidate solutions must be selected as genetic material, usually from the current generation's population of solutions, for the following generation.
-This genetic material undergoes mutation similar to DNA in the real world by altering the underlying structure of a candidate solution.
-There are many interesting directions to explore evolutionary algorithms, but this work focuses on the process of how candidate solutions are selected as genetic material for the following generation. 
-From this point on, this process will be knonw as a selection scheme.
+This genetic material undergoes mutation similar to DNA in the real world, by altering the underlying structure of a candidate solution.
+
+There are many interesting directions to explore evolutionary algorithms from, but this work focuses on the process of how candidate solutions are selected as genetic material for the following generation. 
+From this point on, this process will be known as a selection scheme.
 These descriptions were inspired from [1,2].
 
 The selection scheme an evolutionary algorithm uses plays an important role in the convergence and discovery of an optimal solution.
 It essentially selects starting points that candidate solutions use to traverse from and through the space of all solutions.
 Every point in the solution space translates to some performance value on the fitness landscape.
 One thing worth noting is that many candidate solutions in the solution space may be mapped to the same performance value.
+
 Mutation operators and percentages act as the direction and distance candidate solutions move along the solution space.
 Traversing the space of all possible solutions from a great starting point allows candidate solutions to explore and exploit promising regions of the solution space.
 Looking at the other extreme, traversing from a terrible point in the solution space can lead to solutions being stuck in an unfavorable region.
@@ -38,32 +40,33 @@ Looking at the other extreme, traversing from a terrible point in the solution s
 A selection scheme returns a list of candidate solutions to be used as genetic material for the following generation.
 Prior to mutation, each one of these solutions can be thought of as a single starting point in the solution space.
 It is easy to see that it would be beneficial to explore regions of the solution space that are improving performance on the optimization problem.
-The same candidate solution can produce an offspring multiple times within a selection event, so it is also easy to see the benefit of having multiple solutions explore the region around a good starting point.
-Mutation operators do not have any information regarding promosing regions within the solution space. 
+The same candidate solution can selected to produce an offspring multiple times within a selection scheme run, so it is also easy to see the benefit of having multiple solutions explore the region around a good starting point.
+Mutation operators do not have any information regarding promising regions within the solution space. 
+
 There is a possibility that a candidate solution could regress after mutation, hence having multiple solutions explore promising regions is a good idea. 
 This is because as soon as a solution finds a better position within the solution space that increases performance, its chances of producing an offspring increase. 
 A selection scheme must contend with finding the best possible set of candidate solutions for the following generation, with the goal of finding an optimal solution. 
 
 The purpose of a selection scheme is to improve the average quality of the population by giving higher performing candidate solution a higher probability to be selected as genetic material for the following generation [1]. 
 This allows the selection scheme to generate populations of candidate solutions that explore promising regions of the solution space.
-These are all great description of what a selection scheme is and does, but I think we can identify four components that can better describe a selection scheme from an algorithmic perspective.
+These are all great description of what a selection scheme is and does, but *I think* there are four components that can describe a selection scheme from an algorithmic perspective.
 
 
 # Selection Scheme Components
 
-Before we can go more in depth into the components, we need to define some variables. 
+Before going more in depth into the components, some additional variables need to be defined. 
 Let $P$ represent the population for a given generation, where the population consists of candidate solutions from the space of all possible solutions $\mathbb{J}$. 
-We can let $N$ define the size of the population, which give us $P=\{j_1, j_2,...,j_N\}$.
-Below we elaborate on the four components: fitness transformation, population structure, selection, and external selection.
+Now let $N$ define the size of the population, which give us $P=\{j_1, j_2,...,j_N\}$.
+The four components are described in detail below: fitness transformation, population structure, and parent selection.
 
 
 ## Fitness Transformation
 
-Before a selection scheme can start selecting candidate solutions for the following generations, each solution must have a single or set of fitness scores.
+Before a selection scheme can start selecting candidate solutions for the following generations, each solution must have a set of performances values from a set of testcases they are trying to solve.
 Candidate solutions usually contend with a set of testcases, which we will define as $T = \{t_1, t_2, ..., t_M \}$, where $t \in \mathbb{T}$.
-This means that there are there are $M$ test cases, where $M \in \mathbb{Z}^+$.
-Let $\rho(j,t)$ define a function that takes a candidate solution and testcase as input and returns a performance fitness value, where $\rho : (\mathbb{J},\mathbb{T}) \longrightarrow \mathbb{R}$.
-After evaluating candidate solutions against all the testcases we end up with a data matrix.
+This means that there are there are $M \in \mathbb{Z}^+$ test cases.
+Let $\rho(j,t)$ define a function that takes a candidate solution and testcase as input and returns a performance value, where $\rho : (\mathbb{J},\mathbb{T}) \longrightarrow \mathbb{R}$.
+After evaluating the candidate solutions against all the testcases, a data matrix can be constructed.
 This data matrix will be defined as $X \in \mathbb{R}^{N\text{x}M}$.
 
 $$X=\begin{pmatrix}
@@ -74,11 +77,10 @@ $$X=\begin{pmatrix}
 \rho(j_N,t_1) & ... & \rho(j_N,t_M)
 \end{pmatrix}$$
 
-Looking at this data matrix we can make some quick observations. 
-Note that each row in the data matrix represents all performances of a candidate solution.
+Note that each row in the data matrix represents all the performances for a candidate solution.
 For example, the first row represents solution $j_1$'s performance on all testcases.
-Let $x$ represent this performance vector for a candidate solution, where $x \in \mathbb{R}^{1\text{x}M}$.
-We can also see that the columns represent the populations' performance on a given testcase.
+Let $x$ represent this performance vector for a candidate solution, where $x \in \mathbb{R}^{M}$.
+It is also clear that the columns represent the populations' performance on a given testcase.
 Now we get the following matrix,
 
 $$X=\begin{pmatrix}
@@ -96,9 +98,9 @@ x_1\\
 x_N
 \end{pmatrix}$$
 
-I would describe $X$ as the raw fitness performance across all candidate solutions and testcases.
-Now interesting transformations can be applied to this data matrix to add layers of complexity to the selection scheme. 
-Let $X'$ represent the previous data matrix that has some transformation applied to it. 
+*I would* describe $X$ as the original performance across all candidate solutions and testcases.
+Now interesting transformations can be applied to this data matrix to add layers of complexity to a selection scheme. 
+Let $X'$ represent the matrix that is produced from applying some transformation on $X$.
 
 $$X'=
 \begin{pmatrix}
@@ -109,26 +111,26 @@ x'_1\\
 x'_N
 \end{pmatrix}$$
 
-Looking at $X'$ we can define $x'_i = g(x_i)$, where the function $g$ applies some transformation to the raw performance fitness values. 
+Looking at $X'$ we can define $x'_i = g(x_i)$, where the function $g$ applies some transformation to the original performance values. 
+Rows of $X'$ can consist of single or multiple values. 
 Below we will describe some examples of the function $g$. 
 
-- Aggregate performance with or without transformation on the aggregate performance or performance on individual testcase performances
+- Aggregate performance, with or without transformation on the aggregate performance or performance on individual testcase performances
 $$x'_i = g(x_i) = h_1 \bigg ( \sum_{x \in x_i} h_2(x) \bigg ) $$
   - Here $h_1$ is a transformation on the aggregate performance and $h_2$ is a transformation on individual performances
-- Keeping testcases independent of one another with or without transformation on the independent testcases
+- Keeping testcases independent of one another, with or without transformation on the independent testcases
 $$x'_i = g(x_i) = \{ h(x_{(i,1)}), h(x_{(i,2)}), ..., h(x_{(i,M)}) \}$$
   - The function $h$ is transforming individual raw performance fitness values, where $h$ can also vary ($h \in \{h_1, h_2,...\}$)
 - Direct modification to the performance fitness values
 $$X' = G(X')$$
   - $G$ represents some matrix transformation on $X'$
-  - Can be done pre and/or post performance fitness values are transformed
-  - This includes combining fitness values to produce new fitness values, removing fitness values completely, and applying other matrix transformations
+  - Can be done pre and/or post performance values are transformed
+  - This includes combining performance values to produce new performance values, removing performance values completely, and applying other matrix transformations
   - Read like code
 
-The purpose of this section is to describe these transformations with a mathemactical representation. 
+The purpose of this section is to describe these transformations with a mathematical representation.
 While not every selection scheme can be cleanly described by this description, it is important to highlight the importance of this component within a selections scheme.
-
-**The key take from this section is that once we have all the raw performance fitness values, additional layers of complexity can be applied to the data.**
+**The key take from this section is that once we have all the raw performance values, additional layers of complexity can be applied to the data to generate interesting fitness values.**
 
 
 ## Population Structure
@@ -160,6 +162,20 @@ Other selection schemes use competitions between other candidate solutions to pr
 
 
 # Experiment Selection Schemes
+
+Below is a description of the selection schemes used in the project with the previously described components. 
+
+## (μ,λ) Selection
+
+## Tournament Selection
+
+## Fitness Sharing
+
+## Novelty Search
+
+## ϵ-Lexicase
+
+## Age-Layered Population Structure (ALPS)
 
 Some of these fitness modifications can be seen in classic selection schemes. 
 Tournament selection aggregates fitness performance across all testcases. 

@@ -10,7 +10,7 @@
 
 <meta name="author" content="Jose Guadalupe Hernandez" />
 
-<meta name="date" content="2020-05-13" />
+<meta name="date" content="2020-05-17" />
 
 <title>Selection Scheme Diagnostics: Selection Scheme Literature</title>
 
@@ -1516,13 +1516,13 @@ $(document).ready(function () {
     <h2><a href="#content">Selection Scheme Diagnostics: Selection Scheme Literature</a></h2>
     <div id="table-of-contents">
       <ul>
-      <li><a href="#background-of-evolutionary-algorithms"><span class="toc-section-number">1</span> Background of Evolutionary Algorithms</a></li>
+      <li><a href="#evolutionary-algorithms"><span class="toc-section-number">1</span> Evolutionary Algorithms</a></li>
       <li><a href="#selection-schemes"><span class="toc-section-number">2</span> Selection Schemes</a><ul>
       <li><a href="#μλ-selection"><span class="toc-section-number">2.1</span> (μ,λ) Selection</a></li>
       <li><a href="#tournament-selection"><span class="toc-section-number">2.2</span> Tournament Selection</a></li>
       <li><a href="#fitness-sharing"><span class="toc-section-number">2.3</span> Fitness Sharing</a></li>
       <li><a href="#novelty-search"><span class="toc-section-number">2.4</span> Novelty Search</a></li>
-      <li><a href="#epsilon-lexicase"><span class="toc-section-number">2.5</span> <span class="math inline">\(\epsilon\)</span>-Lexicase</a></li>
+      <li><a href="#ϵ-lexicase"><span class="toc-section-number">2.5</span> ϵ-Lexicase</a></li>
       <li><a href="#age-layered-population-structure-alps"><span class="toc-section-number">2.6</span> Age-Layered Population Structure (ALPS)</a></li>
       <li><a href="#citations"><span class="toc-section-number">2.7</span> Citations</a></li>
       </ul></li>
@@ -1531,36 +1531,33 @@ $(document).ready(function () {
     
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
               <p class="author"><span class="glyphicon glyphicon-user"></span> <a href="https://www.google.com/">Jose Guadalupe Hernandez</a></p>
-                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-05-13</p>
+                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-05-17</p>
         </div>
 </div>
 
 <div id="main">
-<div id="background-of-evolutionary-algorithms" class="section level1">
-<h1><span class="header-section-number">1</span> Background of Evolutionary Algorithms</h1>
-<p>All life we see in the world today was derived from single cellular organisms.
-These organisms were constantly adapting and overcoming new obstacle that appeared.
-Hence, it would seem that converting biological evolution into a computational framework would be a good tool to solve complex and difficult problems.
-This inspiration from biological evolution would lead the way for evolutionary computation.</p>
-<p>One technique used to solve real world problems in evolutionary computation is evolutionary algorithms (EAs).
-Evolutionary algorithms (EAs) take inspiration from biological evolution and follow an almost similar process seen in nature.
-They present a promising technique for solving complex, difficult problems that are difficult to represent in a mathematical equation.
-Some of the major benefits of using EAs are:</p>
+<div id="evolutionary-algorithms" class="section level1">
+<h1><span class="header-section-number">1</span> Evolutionary Algorithms</h1>
+<p>Evolutionary algorithms are a set of algorithms used to solve complex optimization problems through an evolutionary process.
+These algorithms take inspiration from nature and follow a similar evolutionary process.
+This evolution process was able to evolve single cellular organisms to the complex life we see today.
+These algorithms present a promising approach for solving complex optimization problems and problems that are difficult to represent in a mathematical equation.</p>
+<p>Notable contributions evolutionary algorithms have made can be found in [1,2,3,4].
+Benefits of using evolutionary algorithms include,</p>
 <ul>
-<li>Not having to make assumptions about the problem space</li>
-<li>Can provide alternative solutions that are unintuitive to a human designer</li>
-<li>Provide an alternative approach when it is difficult to form a mathematical representation for a given problem</li>
+<li>No problem space assumptions required</li>
+<li>Discover alternative solutions unintuitive to a human designer</li>
+<li>Provide an alternative approach when no clean mathematical model exists for problem</li>
 </ul>
-<p>Notable contributions and highlights that EAs have made can be found in [1,2,3,4].
-There are variables, conditionals, and proceedures that must be determined prior to running an EA.
-Some of these include but are not limited too,</p>
+<p>Different variables, conditional, and procedures must be determined prior to running an evolutionary algorithm.
+Examples of these requirements are</p>
 <ul>
 <li>Candidate solution underlying representation</li>
 <li>Stopping criterion</li>
 <li>Mutation operators and rates of mutation</li>
-<li>Selection algorihtm to select set of genetic material for the following generation</li>
+<li>Selection scheme</li>
 </ul>
-<p>Once these variables, conditionals, and proceedures are determined, EAs generally follow the following steps:</p>
+<p>Once all required variables, conditionals, and procedures are determined, evolutionary algorithms generally follow the following steps.</p>
 <ol style="list-style-type: decimal">
 <li>Generate population zero</li>
 <li>Evaluate candidate solutions fitness</li>
@@ -1570,83 +1567,92 @@ Some of these include but are not limited too,</p>
 <li>Form next generation</li>
 <li>Repeat steps 2 - 6</li>
 </ol>
-<p>In this work, we are focusing on the <strong>selection scheme</strong>.</p>
+<p>The primary focus of this literature review is on <strong>selection schemes</strong>.</p>
 </div>
 <div id="selection-schemes" class="section level1">
 <h1><span class="header-section-number">2</span> Selection Schemes</h1>
-<p>Below we describe in detail, with analysis, the different existing selection schemes.</p>
+<p>Below is a description and analysis of the different selection schemes used in this project.</p>
 <div id="μλ-selection" class="section level2">
 <h2><span class="header-section-number">2.1</span> (μ,λ) Selection</h2>
 <div id="description" class="section level3">
 <h3><span class="header-section-number">2.1.1</span> Description</h3>
-<p>The implementation of this algorithm was inspired from [1].
-Let <span class="math inline">\(\lambda\)</span> be the size of the population and <span class="math inline">\(\mu\)</span> be the count of top performing candidate solutions, where <span class="math inline">\(\mu , \lambda \in \mathbb{N}\)</span>.
-One thing worth highlighting is the impact that <span class="math inline">\(\mu\)</span> has on the exploration and exploitation dynamic.
-As <span class="math inline">\(\mu\)</span> approaches 0, we get this algorithm to resemble more of an elite selection that focuses on exploiting the fitness landscape.
-As <span class="math inline">\(\mu\)</span> approaches <span class="math inline">\(\lambda\)</span>, we get this algorithm to resemble more of a drift selection scheme that focuses on exploring the fitness landscape.</p>
-<p>I believe that the novelty this algorithm posses is that it only uses the top <span class="math inline">\(\mu\)</span> candidate solutions as genetic material for the following generation.
-This algorithm creates a subset of the the population from the top <span class="math inline">\(\mu\)</span> candidate solutions.
-Once this subset is found, parent selection can operate and find the genetic material for the next generation.
-A full descriptive of the algorithm is given below.</p>
+<p>This selection scheme requires a population size <span class="math inline">\(\lambda\)</span> and candidate solution count <span class="math inline">\(\mu\)</span>.
+The solution count <span class="math inline">\(\mu\)</span> denotes the size of a new subset that consists of the <span class="math inline">\(\mu\)</span> solutions with the highest fitness.
+Fitness in this selection scheme is the aggregate performance across all test cases.
+A process must also be determined to handle ties in fitness when forming the new subset.</p>
+<p>Candidate solutions must be selected as genetic material for the following generation from this newly formed subset.
+This selection scheme does not specify a process to accomplish this, and instead leaves it up to the user.
+The implementation of this selection scheme from [1] has each of the <span class="math inline">\(\mu\)</span> candidate solutions produce <span class="math inline">\(\frac{\lambda}{\mu}\)</span> offspring.
+Another process that could be used is running tournament selection on the new subset until enough candidate solutions are selected.</p>
 </div>
 <div id="algorithm" class="section level3">
 <h3><span class="header-section-number">2.1.2</span> Algorithm</h3>
 <ol style="list-style-type: decimal">
-<li>Evaluate candidate solutions and record fitness</li>
-<li>Form a subset of top performing <span class="math inline">\(\mu\)</span> candidate solutions</li>
-<li>Select individual candidtate solutions to use as parents for the next generation
+<li>Form a subset of top performing <span class="math inline">\(\mu\)</span> candidate solutions from entire population</li>
+<li>Select a candidate solution to be used as genetic material for the following generation from the subset
 <ul>
-<li>Each one of the <span class="math inline">\(\mu\)</span> candidate solutions creates <span class="math inline">\(\frac{\lambda}{\mu}\)</span> children, from [1]</li>
+<li>Each one of the <span class="math inline">\(\mu\)</span> candidate solutions creates <span class="math inline">\(\frac{\lambda}{\mu}\)</span> offspring [1]</li>
 <li>Run tournament selection on the new subset</li>
-<li>Infinite possiblilites</li>
+<li>Infinite possibilities</li>
 </ul></li>
-<li>Repeat step 3 until sufficient parents are selected</li>
+<li>Repeat step 2 until sufficient candidate solutions are selected</li>
 </ol>
+</div>
+<div id="analysis" class="section level3">
+<h3><span class="header-section-number">2.1.3</span> Analysis</h3>
+<p><em>I believe</em> the novelty this selection scheme possesses is that it only considers a subset of the top <span class="math inline">\(\mu\)</span> candidate solutions as genetic material for the following generation.
+The user is given flexibility on how to select candidate solutions for the following generation from this subset.
+Both of these factors play a huge role in a selection schemes performance.</p>
+<p>It is worth highlighting the impact that <span class="math inline">\(\mu\)</span> has on the exploration and exploitation dynamic.
+As <span class="math inline">\(\mu \longrightarrow 0\)</span>, the scheme increases its focus on exploiting promising regions in fitness landscape where the population is.
+As <span class="math inline">\(\mu \longrightarrow \lambda\)</span>, the scheme increases its focus on exploring the fitness landscape.</p>
 </div>
 </div>
 <div id="tournament-selection" class="section level2">
 <h2><span class="header-section-number">2.2</span> Tournament Selection</h2>
 <div id="description-1" class="section level3">
 <h3><span class="header-section-number">2.2.1</span> Description</h3>
-<p>The algorithm being described is the one commonly seen, with no additional layer of complexity.
-Let <span class="math inline">\(t\)</span> be the size of the tournaments and <span class="math inline">\(N\)</span> be the population size, where <span class="math inline">\(t,N \in \mathbb{N}\)</span>.
-One thing worth highlighting is the impact that <span class="math inline">\(t\)</span> has on the exploration and exploitation dynamic.
-As <span class="math inline">\(t\)</span> approaches 0, we get this algorithm to resemble more of a drift selection scheme that focuses on exploring the fitness landscape.
-As <span class="math inline">\(t\)</span> approaches <span class="math inline">\(N\)</span>, we get this algorithm to resemble more of an elite selection that focuses on exploiting the fitness landscape.</p>
-<p>This algorithm mainly focuses on the ability to select parents for the next generation.
-If domain knowledge exits, then the user is able to adjust <span class="math inline">\(t\)</span> to best fit the problem being solved.
-The tournament size is also able to be adjusted during an evolutionary run, if needed.</p>
+<p>This selection scheme requires a size <span class="math inline">\(t\)</span> for tournaments that consist of competitions between randomly selected candidate solutions from the population.
+The candidate solution that wins a tournament is the one with the highest fitness when compared to other solutions in the tournament.
+A process must also be determined to handle ties in fitness, where fitness in this selection scheme is the aggregate performance across all test cases.</p>
+<p>Every tournament returns a single candidate solution that will produce an offspring for the following generation.
+This means that the size of the population determines the number of tournaments that need to be ran.</p>
 </div>
 <div id="algorithm-1" class="section level3">
 <h3><span class="header-section-number">2.2.2</span> Algorithm</h3>
 <ol style="list-style-type: decimal">
-<li>Evaluate candidate solutions and record fitness</li>
 <li>Randomly select <span class="math inline">\(t\)</span> candidate solutions from the entire population (with or without replacement)</li>
-<li>Select top performing candidate solution as parent for next generation</li>
-<li>Repeat steps 2-3 until sufficient parents are selected</li>
+<li>Select candidate solution with highest fitness to be used as genetic material for the following generation</li>
+<li>Repeat steps 1-2 until sufficient candidate solutions are selected</li>
 </ol>
+</div>
+<div id="analysis-1" class="section level3">
+<h3><span class="header-section-number">2.2.3</span> Analysis</h3>
+<p><em>I believe</em> the novelty this selection scheme possesses is the manner in which candidate solutions are selected to be used as genetic material for the following generation.</p>
+<p>It is worth highlighting the impact that <span class="math inline">\(t\)</span> has on the exploration and exploitation dynamic.
+As <span class="math inline">\(t \longrightarrow N\)</span>, the scheme increases its focus on exploring the fitness landscape.
+As <span class="math inline">\(t \longrightarrow 0\)</span>, the scheme increases its focus on exploiting promising regions in fitness landscape where the population is.</p>
 </div>
 </div>
 <div id="fitness-sharing" class="section level2">
 <h2><span class="header-section-number">2.3</span> Fitness Sharing</h2>
 <div id="description-2" class="section level3">
 <h3><span class="header-section-number">2.3.1</span> Description</h3>
-<p>The implementation of this algorithm was inspired by [2].
-Let <span class="math inline">\(f_i\)</span> be the raw performance and <span class="math inline">\(f&#39;_i\)</span> be the transformed performance from candidate solution <span class="math inline">\(i\)</span>.
+<p>Fitness sharing requires multiple parameters and functions to be defined prior to running.
+Let <span class="math inline">\(f_i\)</span> be the original fitness value and <span class="math inline">\(f&#39;_i\)</span> be the transformed fitness value for candidate solution <span class="math inline">\(i\)</span>.
 The transformation from <span class="math inline">\(f_i\)</span> to <span class="math inline">\(f&#39;_i\)</span> is given by the following formula,</p>
 <center>
 <span class="math inline">\(f&#39;_i = \frac{f_i}{m_i}\)</span>
 </center>
-<p>Now we have another variable to define, <span class="math inline">\(m_i\)</span>.
-Let <span class="math inline">\(m_i\)</span> be the niche count which measures the approximate number of candidate solutions with whom the fitness <span class="math inline">\(f_i\)</span> is shared [2].
+<p>Let <span class="math inline">\(m_i\)</span> be the niche count which measures the approximate number of candidate solutions with whom the fitness <span class="math inline">\(f_i\)</span> is shared [2].
 Niche count is calculated by summing a sharing function over all candidate solutions [2].
-The sharing function can be applied to either genotypic or phenotypic candidate solution data.
-The following formula describes <span class="math inline">\(m_i\)</span>,</p>
+The sharing function can be applied to either genotypic or phenotypic candidate solution properties.</p>
+<p>The following formula describes <span class="math inline">\(m_i\)</span>,</p>
 <center>
-<span class="math display">\[m_i = \sum_{j=1}^{N} sh(d_{i,j})\]</span>
+<span class="math display">\[m_i = \sum_{j=1}^{N} sh(d_{ij})\]</span>
 </center>
-<p>Let the function <span class="math inline">\(sh()\)</span> measure the similarity between two candidate solutions and <span class="math inline">\(d_{i,j}\)</span> measure the distance between candidate solutions <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>.
-The function <span class="math inline">\(sh\)</span> can be described by the following,</p>
+<p>Let the function <span class="math inline">\(sh()\)</span> measure the similarity between two candidate solutions and <span class="math inline">\(d_{ij}\)</span> measure the distance between candidate solutions <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>.</p>
+<p>The following formula describes the function <span class="math inline">\(sh\)</span>,</p>
 <center>
 <span class="math display">\[
 sh(d_{ij}) = \left\{
@@ -1659,140 +1665,153 @@ sh(d_{ij}) = \left\{
 </center>
 <p>Let <span class="math inline">\(\alpha,\sigma \in \mathbb{R}\)</span>.
 The variable <span class="math inline">\(\alpha\)</span> acts as a parameter that regulates the shape of the sharing function and <span class="math inline">\(\sigma\)</span> acts as a threshold for dissimilarity.</p>
-<p>I believe the novelty that this algorithm posses is the modification of the raw fitness value.
-This algorithm punishes candidate solutions for being close to others in the phenotype and genotype landscapes.
-Looking at extreme cases for <span class="math inline">\(d_{ij}\)</span>, the distance between solutions increases as <span class="math inline">\(d_{ij} \rightarrow \infty\)</span> and decreases as <span class="math inline">\(d_{ij} \rightarrow 0\)</span>.
-A solution is penalized on how distant it is against all other solutions that fall below <span class="math inline">\(\sigma\)</span>.
-We can view <span class="math inline">\(\sigma\)</span> as a knob for determing the pressure to be phenotypically or genotypically distant.
-This algorithm pushes solutions to be at least <span class="math inline">\(\sigma\)</span> apart within a given landscape.
-As <span class="math inline">\(\sigma \rightarrow 0\)</span> there is no little to no fitness modification ocurring.
-As <span class="math inline">\(\sigma \rightarrow max(d_{ij})\)</span> there is extreme pressure for the whole population to be spread across the landscape.
-The penalty is increased as <span class="math inline">\(\alpha \rightarrow \infty\)</span> and decreases as <span class="math inline">\(\alpha \rightarrow 0\)</span>.</p>
-<p>The pressure for solutions to be spread apart goes away as soon as they are all <span class="math inline">\(\sigma\)</span> apart across the landscapes.
-But as soon as they come to close, the presure comes back.</p>
+<p>Candidate solutions must be selected as genetic material for the following generation from the population, post fitness transformation.
+This selection scheme does not specify a process to accomplish this, and instead leaves it up to the user.
+An exmple of this process could running tournament selection until enough candidate solutions are selected.</p>
 </div>
 <div id="algorithm-2" class="section level3">
 <h3><span class="header-section-number">2.3.2</span> Algorithm</h3>
 <ol style="list-style-type: decimal">
-<li>Evaluate candidate solutions</li>
-<li>Compute distance matrix based on performance</li>
-<li>Transform all raw fitness values to <span class="math inline">\(f&#39;\)</span></li>
-<li>Select individual candidtate solutions to use as parents for the next generation
+<li>Compute the distance matrix for genotypic or phenotypic properties</li>
+<li>Transform all original fitness values <span class="math inline">\(f\)</span> to transformed fitness values <span class="math inline">\(f&#39;\)</span></li>
+<li>Select a candidate solution to act as a parent for the next generation
 <ul>
 <li>Tournament selection</li>
 <li>Lexicase filtering</li>
-<li>Infinite possiblilites</li>
+<li>Infinite possibilities</li>
 </ul></li>
-<li>Repeat steps 4 until sufficient parents selected</li>
+<li>Repeat step 3 until sufficient candidate solutions are selected</li>
 </ol>
-<p>One major thing worth noting is that when all candidate solutions are at least <span class="math inline">\(\sigma\)</span> apart from one another, this selection scheme reduces down to an algorithm that focuses on how it selects candidate solutions for the following generation (step 4).</p>
+</div>
+<div id="analysis-2" class="section level3">
+<h3><span class="header-section-number">2.3.3</span> Analysis</h3>
+<p><em>I believe</em> the novelty this selection scheme possesses is its modification of the original fitness value.
+This algorithm punishes candidate solutions for being close to other solutions within the space of all genotypes or phenotypes.
+The user is given flexibility on how to select candidate solutions for the following generation.</p>
+<p>The extreme cases for distance between candidate solutions <span class="math inline">\(d_{ij}\)</span> can give us a better understanding of what this value represents.
+As <span class="math inline">\(d_{ij} \longrightarrow \infty\)</span>, the distance between two solutions in the space of all genotypes or phenotypes is growing.
+As <span class="math inline">\(d_{ij} \longrightarrow 0\)</span>, there is practically no distance between two solutions in the space of all genotypes or phenotypes.</p>
+<p>A candidate solution is penalized if its distance to another solution falls below the threshold <span class="math inline">\(\sigma\)</span>.
+The threshold value <span class="math inline">\(\sigma\)</span> can be viewed as a nob for determining the pressure candidate solutions face to be distant from one another.
+This solution scheme pushes candidate solutions to be at least <span class="math inline">\(\sigma\)</span> apart within the space of all genotypes or phenotypes.
+As <span class="math inline">\(\sigma \longrightarrow 0\)</span> there is no little to no fitness modification occurring.
+As <span class="math inline">\(\sigma \longrightarrow max(d_{ij})\)</span> there is extreme pressure for the whole population to be spread across the landscape.
+The penalty is increased as <span class="math inline">\(\alpha \longrightarrow \infty\)</span> and decreases as <span class="math inline">\(\alpha \longrightarrow 0\)</span>.</p>
+<p>It is important to note that if a candidate solution is at least <span class="math inline">\(\sigma\)</span> apart from all other solutions, then it will not undergo a fitness transformation.</p>
 </div>
 </div>
 <div id="novelty-search" class="section level2">
 <h2><span class="header-section-number">2.4</span> Novelty Search</h2>
 <div id="description-3" class="section level3">
 <h3><span class="header-section-number">2.4.1</span> Description</h3>
-<p>The implementation of this algorithm was inspired from [3].
-This algorithm searches with no objective other than continually finding novel behaviors in the search space.
-Let <span class="math inline">\(k \in \mathbb{Z}^+\)</span> be the count for the <span class="math inline">\(k-\)</span>nearest neighbors and <span class="math inline">\(dist(x,y)\)</span> be a function that measures the distance between candidate solutions <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.
-The transformation from raw fitness value <span class="math inline">\(f_x\)</span> to <span class="math inline">\(f_x&#39;\)</span> for a given solution <span class="math inline">\(x\)</span> is depicted by the function <span class="math inline">\(p(f_x)\)</span>,</p>
+<p>This selection scheme searches with no objective in consideration, other than continually finding novel behaviors in the space of all possible phenotypes.
+A count and function measuring the distance between two candidate solutions must be defined.
+Let <span class="math inline">\(k\)</span> be the count for the <span class="math inline">\(k-\)</span>nearest neighbors and <span class="math inline">\(dist(i,j)\)</span> be a function that measures the distance between candidate solutions <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>.
+The original fitness value for candidate solution <span class="math inline">\(x\)</span> will be defined by <span class="math inline">\(f_x\)</span>, and the transformed fitness value by <span class="math inline">\(f&#39;_x\)</span>.</p>
+<p>The transformation from <span class="math inline">\(f_x\)</span> to <span class="math inline">\(f_x&#39;\)</span> is given by,</p>
 <center>
-<span class="math display">\[f_x&#39; = p(f_x) = \frac{1}{k} \sum_{i=0}^{k} dist(f_x, \mu_i)\]</span>
+<span class="math display">\[f_x&#39;  = \frac{1}{k} \sum_{i=0}^{k} dist(f_x, \mu_i)\]</span>
 </center>
-<p>Where <span class="math inline">\(\mu_i\)</span> is one of the <span class="math inline">\(k-\)</span>nearest neighbors.</p>
-<p>I believe the novelty this algorithm brings is the constant pressure that this fitness tranfomation applies to candidates solutions for all non-negative <span class="math inline">\(k\)</span>.
-This algorithm also specifies that <span class="math inline">\(f_x\)</span> must be a value measuring performance or a phenotype.
-As <span class="math inline">\(k \longrightarrow 1\)</span> the algorithm puts more pressure on candidate solutions to move away from a smaller set of <span class="math inline">\(k-\)</span>nearest neighbors.
-This smaller set of neighbors pressures candidate solutions to move away others in a smaller sample of the fitness landscape.
-Let <span class="math inline">\(N\)</span> be the size of the population.
-Looking at the other extreme, as <span class="math inline">\(k \longrightarrow N\)</span> we begin to compare candidate solutoins to the entire population.
-This puts pressure on candidate solutions to explore new regions of the entire fitness landscape.</p>
+<p>where <span class="math inline">\(\mu_i\)</span> is the original fitness value for one of the <span class="math inline">\(k-\)</span>nearest neighbors.</p>
+<p>Candidate solutions must be selected as genetic material for the following generation from the population, post fitness transformation.
+This selection scheme does not specify a process to accomplish this, and instead leaves it up to the user.
+An example of this process could be running tournament selection until enough candidate solutions are selected.</p>
 </div>
 <div id="algorithm-3" class="section level3">
 <h3><span class="header-section-number">2.4.2</span> Algorithm</h3>
 <ol style="list-style-type: decimal">
-<li>Evaluate candidate solutions</li>
-<li>Transform raw fitness values to novelty fitness values</li>
-<li>Select individual candidtate solutions to use as parents for the next generation
+<li>Transform original fitness values to novelty fitness values</li>
+<li>Select individual candidate solutions to use as parent for the next generation
 <ul>
 <li>Tournament selection</li>
-<li>Infinite possiblilites</li>
+<li>Infinite possibilities</li>
 </ul></li>
-<li>Repeat step 3 until enough parents selected</li>
+<li>Repeat step 2 until enough candidate solutions selected</li>
 </ol>
 </div>
+<div id="analysis-3" class="section level3">
+<h3><span class="header-section-number">2.4.3</span> Analysis</h3>
+<p><em>I believe</em> the novelty this selection scheme possesses is the constant pressure it puts on candidates’ solutions to produce novel behaviors different from the <span class="math inline">\(k-\)</span>nearest neighbors.
+This selection scheme also specifies that only values from the space of all possible phenotypes are allowed to be transformed.
+Looking at the extreme cases for <span class="math inline">\(k\)</span> can give a better understanding of its impact.</p>
+<p>Let <span class="math inline">\(N\)</span> be the size of the population.
+As <span class="math inline">\(k \longrightarrow 1\)</span>, the selection scheme applies more pressure on candidate solutions to spread apart from their nearest neighbor.
+As <span class="math inline">\(k \longrightarrow N\)</span>, the selection scheme applies more pressure for candidate solutions to spread apart from all other solutions.
+This puts pressure on candidate solutions to produce novel behaviors.</p>
 </div>
-<div id="epsilon-lexicase" class="section level2">
-<h2><span class="header-section-number">2.5</span> <span class="math inline">\(\epsilon\)</span>-Lexicase</h2>
+</div>
+<div id="ϵ-lexicase" class="section level2">
+<h2><span class="header-section-number">2.5</span> ϵ-Lexicase</h2>
 <div id="description-4" class="section level3">
 <h3><span class="header-section-number">2.5.1</span> Description</h3>
-<p>The implementation of this algorithm was inspired from [4].
-Epsilon lexicase is very similar to the original variation of lexicase, but the criteria to pass through filters has been relaxed in epsillon.
-This is implemented by setting a threshold, which we will call <span class="math inline">\(\epsilon\)</span>.
-Any candidate solutions that satisfy the following are allowed to pass through the filters lexicase presents.
-We also note that when <span class="math inline">\(\epsilon = 0\)</span>, the original lexicase arises.</p>
-<p>Let <span class="math inline">\(e^{*}_{i}\)</span> be the best performance on testcase <span class="math inline">\(i\)</span> from candidate solution <span class="math inline">\(*\)</span>.
-Any candidate solution, <span class="math inline">\(j\)</span>, from the population that meets the following criteria passes through the lexicase filters, where <span class="math inline">\(j \ne *\)</span>.</p>
+<p>This selection scheme uses performances on individual testcases to reduce the number of solutions to a single solution to use as genetic material for the following generation.
+Candidate solutions in this scheme possess a set of fitnesses, rather than an aggregate value across all individual testcase performances.
+These testcases are shuffled and then used as filters to trim down the number of solutions by taking the top performing solutions on the current testcase.
+The next testcase is used until a single candidate solution remains or no more testcases remain.
+Top performing candidate solutions that pass a filter possess high fitness values for a given testcase.
+The distribution of fitness values depends on a threshold <span class="math inline">\(\epsilon\)</span>, where this threshold allows different solutions to pass through a filter.</p>
+<p>Candidate solutions that satisfy the following are allowed to pass through the filters previously described.
+Let <span class="math inline">\(e^{*}_{i}\)</span> be the best fitness on testcase <span class="math inline">\(i\)</span> from candidate solution <span class="math inline">\(*\)</span>.
+Any candidate solution <span class="math inline">\(j\)</span>, where <span class="math inline">\(j \ne *\)</span>, from the population that meets the following criteria passes through the lexicase filters</p>
 <center>
 <span class="math display">\[| e^*_i - e_i^j | \le \epsilon \]</span>
 </center>
-<p>This selection scheme posses a two features that highlight its novelty: keeping testcase performace seperate and filtering with testcases to find a parent.
-It uses all testscases independently, in a random order, to filter down to a parent for the following generation.
-Other selection schemes typically aggregate the performance of all the testcases per candidate solution.
-This incentivzes the population to perform well on different testcases to proceed to the following generation.
-Candidate solutions that perform well on niche testcases are also more likely to proceed to the following generation.</p>
 </div>
 <div id="algorithm-4" class="section level3">
 <h3><span class="header-section-number">2.5.2</span> Algorithm</h3>
 <ol style="list-style-type: decimal">
-<li>Evaluate candidate solutions on testcases</li>
 <li>Shuffle testcase order</li>
-<li>Filter population through testcases until winner determined</li>
-<li>Repeat steps 1-3 until enough parents selected</li>
+<li>Filter down set of candidate solutions with individual testcases until a solution is found to use as a parent for the next generation.</li>
+<li>Repeat steps 1-2 until enough candidate solutions selected</li>
 </ol>
+</div>
+<div id="analysis-4" class="section level3">
+<h3><span class="header-section-number">2.5.3</span> Analysis</h3>
+<p><em>I believe</em> this selection scheme possesses two novelties: keeping testcase performance independent and using testcases to filter through candidate solutions.
+This incentivizes the population to perform well on different testcases to pass through filters and the following generation.
+Other selection schemes typically aggregate the performance across all testcases.</p>
 </div>
 </div>
 <div id="age-layered-population-structure-alps" class="section level2">
 <h2><span class="header-section-number">2.6</span> Age-Layered Population Structure (ALPS)</h2>
 <div id="description-5" class="section level3">
 <h3><span class="header-section-number">2.6.1</span> Description</h3>
-<p>The implementation of this algorithm was inspired from [5].
-This algorithm presents a new population structure that makes candidate solution interaction dependent on age.
-Interaction in this context means allowing candidate solutions to compete against one another, if needed.
-The population is divided into cohorts, where a candidate solution must fall within a certain age to belong in a cohort.
-Candidate solutions are only allowed to interact with other solutions that belong to the same cohort.
-This allows younger candidate solutions to develop and explore potententially new regions of the fitness landscape.
-These age dependen cohorts protect young candidate solutions from being quickly removed because of older existing solutions.</p>
-<p>In this algorithm, <span class="math inline">\(\alpha \in \mathbb{Z}^+\)</span> represents the age gap within the cohorts.
-There are different ways this age gap can be implemented, and can be explored in [5].
-A age of an offspring candidate solution is the age of the offspring’s parent incremented by 1.
-This means that after every <span class="math inline">\(\alpha\)</span> generations, solutions are moving to the next cohort.
-The first cohort is populated with random candidate solutions when this occurs as well.
-The final cohort is special because there is no age limit there and only best performing candidate solutions are kept.</p>
-<p>Now we will take a deeper look at <span class="math inline">\(\alpha\)</span>.
-The age gap gives candidate solutions <span class="math inline">\(\alpha\)</span> generations to improve their performace before proceeding to the next cohort.
-This can be viewd as a knob for the amount of generations candidate solutions have to develop before facing older, potentially better solutions.
-As <span class="math inline">\(\alpha \longrightarrow 1\)</span> there exists almost no protection for younger solutions against older ones.
-As <span class="math inline">\(\alpha \longrightarrow \infty\)</span> younger organims gain more time to develop.
-It should also be noted that if <span class="math inline">\(\alpha\)</span> is bigger than the number of generations possible, the age based population strucutre no longer exists.</p>
-<p>The novelty this algorithm posses are its the age based population structure and injection of random candidate solutions.
-There is the potential to remove older, struggling candidate solution because of this structure.
-Younger candidate solutions are now given the protection to develop and compete with older solutions.
-The ability to inject new random candidate solutions allows the population to explore different regions of the fitness landscape and genotype space.</p>
+<p>This selection scheme presents a population structure where interactions between different candidate solutions is dependent on age.
+Interaction in this context refers to the possibility of candidate solutions competing against one another.
+The population is divided into cohorts, where a candidate solutions’ assignments are dependent on its age.
+Candidate solutions are only allowed to interact with solutions that belong to the same cohort.</p>
+<p>A variable measuring the age gap <span class="math inline">\(\alpha\)</span> and number of cohorts <span class="math inline">\(C\)</span> must be determined before being ran.
+There are different methods for constructing different age gaps that can be explored in [5].
+The age of a candidate solution is dependent on the number of generations it has persisted.
+An offspring’s’ age is the age of its parent incremented by 1.</p>
+<p>This means that after every <span class="math inline">\(\alpha\)</span> generations, solutions are moving to the next cohort.
+The first cohort is populated with random candidate solutions after <span class="math inline">\(\alpha\)</span> generations.
+The final cohort has no age limit and only best performing candidate solutions are kept.</p>
 </div>
 <div id="algorithm-5" class="section level3">
 <h3><span class="header-section-number">2.6.2</span> Algorithm</h3>
 <ol style="list-style-type: decimal">
-<li>Evaluate candidate solutions</li>
-<li>Place solutions into appropriate cohorts</li>
-<li>Select individual candidtate solutions to use as parents for the next generation, per individual cohort
+<li>Place candidate solutions into appropriate cohorts</li>
+<li>Select individual candidate solutions to use as parents for the next generation, per individual cohort
 <ul>
 <li>Tournament selection</li>
 <li>Lexicase filtering</li>
-<li>Infinite possiblilites</li>
+<li>Infinite possibilities</li>
 </ul></li>
-<li>Repeat steps 1 - 3 until sufficient parents selected</li>
+<li>Repeat steps 1 - 2 until sufficient parents selected</li>
 </ol>
+</div>
+<div id="analysis-5" class="section level3">
+<h3><span class="header-section-number">2.6.3</span> Analysis</h3>
+<p><em>I believe</em> the novelties this selection scheme possesses is the age based population structure and injection of random candidate solutions.
+There is the potential to remove older, struggling candidate solution because of this structure.
+Younger candidate solutions are now given the protection to develop and compete with older solutions.
+The ability to inject new random candidate solutions allows the population to explore different regions of the genotype and phenotype space.</p>
+<p>The age gap gives candidate solutions <span class="math inline">\(\alpha\)</span> generations to improve their performance before proceeding to the next cohort.
+Age can be viewed as a knob for the amount of generations candidate solutions have to develop before facing older, potentially better solutions.
+As <span class="math inline">\(\alpha \longrightarrow 1\)</span> there exists almost no protection for younger solutions against older ones.
+As <span class="math inline">\(\alpha \longrightarrow \infty\)</span> younger organisms gain more time to develop.
+It should also be noted that if <span class="math inline">\(\alpha\)</span> is bigger than the number of generations possible, the age based population structure no longer exists.</p>
 </div>
 </div>
 <div id="citations" class="section level2">
