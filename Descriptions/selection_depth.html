@@ -10,7 +10,7 @@
 
 <meta name="author" content="Jose Guadalupe Hernandez" />
 
-<meta name="date" content="2020-05-17" />
+<meta name="date" content="2020-05-20" />
 
 <title>Selection Scheme Diagnostics: Selection Scheme In Depth</title>
 
@@ -1520,7 +1520,7 @@ $(document).ready(function () {
       <li><a href="#selection-scheme-components"><span class="toc-section-number">2</span> Selection Scheme Components</a><ul>
       <li><a href="#fitness-transformation"><span class="toc-section-number">2.1</span> Fitness Transformation</a></li>
       <li><a href="#population-structure"><span class="toc-section-number">2.2</span> Population Structure</a></li>
-      <li><a href="#selection"><span class="toc-section-number">2.3</span> Selection</a></li>
+      <li><a href="#parent-selection-maybe-selection-event"><span class="toc-section-number">2.3</span> Parent Selection (Maybe Selection Event)</a></li>
       </ul></li>
       <li><a href="#experiment-selection-schemes"><span class="toc-section-number">3</span> Experiment Selection Schemes</a><ul>
       <li><a href="#μλ-selection"><span class="toc-section-number">3.1</span> (μ,λ) Selection</a></li>
@@ -1536,7 +1536,7 @@ $(document).ready(function () {
     
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
               <p class="author"><span class="glyphicon glyphicon-user"></span> <a href="https://www.google.com/">Jose Guadalupe Hernandez</a></p>
-                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-05-17</p>
+                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-05-20</p>
         </div>
 </div>
 
@@ -1553,18 +1553,17 @@ From this point on, this process will be known as a selection scheme.
 These descriptions were inspired from [1,2].</p>
 <p>The selection scheme an evolutionary algorithm uses plays an important role in the convergence and discovery of an optimal solution.
 It essentially selects starting points that candidate solutions use to traverse from and through the space of all solutions.
-Every point in the solution space translates to some performance value on the fitness landscape.
-One thing worth noting is that many candidate solutions in the solution space may be mapped to the same performance value.</p>
+Every point in the solution space translates to some performance value on a fitness landscape.
+One thing worth noting is that many candidate solutions from the space of all solutions may be mapped to the same performance value.</p>
 <p>Mutation operators and percentages act as the direction and distance candidate solutions move along the solution space.
 Traversing the space of all possible solutions from a great starting point allows candidate solutions to explore and exploit promising regions of the solution space.
 Looking at the other extreme, traversing from a terrible point in the solution space can lead to solutions being stuck in an unfavorable region.</p>
 <p>A selection scheme returns a list of candidate solutions to be used as genetic material for the following generation.
 Prior to mutation, each one of these solutions can be thought of as a single starting point in the solution space.
 It is easy to see that it would be beneficial to explore regions of the solution space that are improving performance on the optimization problem.
-The same candidate solution can selected to produce an offspring multiple times within a selection scheme run, so it is also easy to see the benefit of having multiple solutions explore the region around a good starting point.
-Mutation operators do not have any information regarding promising regions within the solution space.</p>
+The same candidate solution can selected to produce an offspring multiple times within a selection scheme run, so it is also easy to see the benefit of having multiple solutions explore the region around a good starting point.</p>
 <p>There is a possibility that a candidate solution could regress after mutation, hence having multiple solutions explore promising regions is a good idea.
-This is because as soon as a solution finds a better position within the solution space that increases performance, its chances of producing an offspring increase.
+As a solution finds a better position in the solution space that increases performance, its chances of producing an offspring increase.
 A selection scheme must contend with finding the best possible set of candidate solutions for the following generation, with the goal of finding an optimal solution.</p>
 <p>The purpose of a selection scheme is to improve the average quality of the population by giving higher performing candidate solution a higher probability to be selected as genetic material for the following generation [1].
 This allows the selection scheme to generate populations of candidate solutions that explore promising regions of the solution space.
@@ -1622,7 +1621,7 @@ x&#39;_1\\
 x&#39;_N
 \end{pmatrix}\]</span></p>
 <p>Looking at <span class="math inline">\(X&#39;\)</span> we can define <span class="math inline">\(x&#39;_i = g(x_i)\)</span>, where the function <span class="math inline">\(g\)</span> applies some transformation to the original performance values.
-Rows of <span class="math inline">\(X&#39;\)</span> can consist of single or multiple values.
+Rows of <span class="math inline">\(X&#39;\)</span> can consist of single or multiple values, and will be called fitness vectors from this point on.
 Below we will describe some examples of the function <span class="math inline">\(g\)</span>.</p>
 <ul>
 <li>Aggregate performance, with or without transformation on the aggregate performance or performance on individual testcase performances
@@ -1650,55 +1649,196 @@ While not every selection scheme can be cleanly described by this description, i
 </div>
 <div id="population-structure" class="section level2">
 <h2><span class="header-section-number">2.2</span> Population Structure</h2>
-<p>Population structure in this context refers to the interactions that candidate solutions have with one another.
-Interactions between candidate solutions refers to whether or not two solutions can potentially compete to become selected as genetic material for the following generation.
-The reason we say potentially is because of the following scenario.
-Imagine we partition an entire population into cohorts and only allow competition between candidate solutions that belong to the same cohort.
-This means that candidate solutions that are from different cohorts do not share interactions.
-While those that reside within the same cohort may share interactions between one another.</p>
-<p>We will describe standard tournament selection in this context.
-Standard tournament selection randomly picks a predetermined number of candidate solutions from the entire population, then selects the top performing solution.
-To elaborate more on the previously described scenario, we will modify tournament selection.
-Like in the previous scenario, imagine we partition an entire population into cohorts and only allow competition between candidate solutions that belong to the same cohort.
-Tournament selection is then used to select candidate solutions, but only allow tournaments with solutions from the same cohort.
-This demonstrates that only candidate solutions within the same cohort have the potential to compete with one another.
-Hence, candidate solutions within the same cohort share interactions but not with solutions outside of it.</p>
+<p>Population structure in this context refers to the interactions that candidate solutions may have with one another.
+There is an interaction between two candidate solutions if they can potentially compete against one another to produce an offspring for the following generation.
+Below is example too help describe this definition may look like.</p>
+<p>Imagine a popluation of candidate solutions is split into two cohorts, and solutions are only able to compete with other solutions from the same cohort.
+The nature of these competitions may vary by selection scheme, but the winners become parents for the following generation.
+This means no interactions exist between candidate solutions from different cohorts: interactions only exist between candidate solutions from the same cohort.</p>
 </div>
-<div id="selection" class="section level2">
-<h2><span class="header-section-number">2.3</span> Selection</h2>
-<p>During the selection scheme process a candidate solution must be selected as genetic material for the following generation.
-The question still remains on how candidate solutions should be selected.
-Some simple approaches could be always select the best performing solution or randomly selecting solutions.
-These are nowhere near the optimal methods for selecting solutions.
-The first one can lead to getting stuck in a local optimum, and the other does not converge to a solution.
-Other selection schemes use competitions between other candidate solutions to preserve diversity and improve convergence to an optimal solution.</p>
+<div id="parent-selection-maybe-selection-event" class="section level2">
+<h2><span class="header-section-number">2.3</span> Parent Selection (Maybe Selection Event)</h2>
+<p>Once a selection scheme has detmerined its population structure and calculated all fitness values, it must use this information to select the best set of candidate solutions to act as parents for the following generation.
+The methedology for selecting candidate solutions to act as parents, with the previous information for support, will be called parent selection.
+Parent selection is an important component of a selection scheme because it helps guide the evolutionary search.
+An example of how parent selection can use population structure and fitness values is described below.</p>
+<p>Population structure presents a set of interactions between different candidate solutions.
+These interactions give insight on the different candidate solutions that can be evaluated against one another to find a parent.
+The parent selection methodology must describe how these interactions are used to find a parent.</p>
+<p><em>Competitions</em> can be established between interacting candidate solutions as a means to find a parent.
+Every <em>competion</em> should have a set of set of rules and criteria for determining winning cadidate solutions.
+Fitness is commonly used to determine the winning candidate solution from these <em>competitions</em>.
+It should also be noted that more complex fitness values can provide more information for an evolutionary search.</p>
 </div>
 </div>
 <div id="experiment-selection-schemes" class="section level1">
 <h1><span class="header-section-number">3</span> Experiment Selection Schemes</h1>
-<p>Below is a description of the selection schemes used in the project with the previously described components.</p>
+<p>Below is a description of the selection schemes used in the project with the previously described components.
+This article assumes that the reader has a good understanding of these selection schemes.
+More information about these selection schemes can be found <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html">here</a>.</p>
 <div id="μλ-selection" class="section level2">
 <h2><span class="header-section-number">3.1</span> (μ,λ) Selection</h2>
+<div id="fitness-transformation-1" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> Fitness Transformation</h3>
+<p>The fitness vector for a candidate solution consists of a single value that is the aggreate performance across all testcases.
+For any candidate solution, let <span class="math inline">\(x\)</span> be its perfomance vector and <span class="math inline">\(x&#39;\)</span> be its fitness vector.
+The aggregate performance will be a single value, meaning that <span class="math inline">\(x&#39; \in \mathbb{R}\)</span>.
+Let <span class="math inline">\(\alpha\)</span> be a performance from <span class="math inline">\(x\)</span>,</p>
+<p><span class="math display">\[x&#39; = \sum_{\alpha \in x} \alpha\]</span></p>
+<p>This describes the construction of the final fitness value.</p>
+</div>
+<div id="population-structure-1" class="section level3">
+<h3><span class="header-section-number">3.1.2</span> Population Structure</h3>
+<p>A subset of the entire population is constructed; where the subset consists of the top performing <span class="math inline">\(\mu\)</span> candidate solutions.
+The user must specify how to break up ties between candidate solutions that share a similar fitness value.
+After this subset is formed, all solutions within the subset can potentially have interactions with one another.</p>
+</div>
+<div id="parent-selection" class="section level3">
+<h3><span class="header-section-number">3.1.3</span> Parent Selection</h3>
+<p>The selection scheme generates a single fitness value and subset of the population, where candidates in the subset all have interactions with one another.
+The parent selection methedology for this selection scheme is an everyone wins approach.
+All candidate solutions from the subset produce <span class="math inline">\(\frac{\lambda}{\mu}\)</span> offspring.</p>
+<p>To elaborate more with respect to the <em>competition</em> metaphore, all candidate solutions are competing against one another.
+This selection schemes just decides to select all solutions in the subset as parents.
+It should also be noted that tournament selection could also have been used as method for selecting parents from the subset.</p>
+<p><strong>The action of selecting each of the candidate solution in the subset to act as a parent and produce <span class="math inline">\(\frac{\lambda}{\mu}\)</span> offspring is the selection scheme’s parent selection method.</strong></p>
+</div>
 </div>
 <div id="tournament-selection" class="section level2">
 <h2><span class="header-section-number">3.2</span> Tournament Selection</h2>
+<div id="fitness-transformation-2" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> Fitness Transformation</h3>
+<p>The fitness vector for a candidate solution consists of a single value that is the aggreate performance across all testcases.
+For any candidate solution, let <span class="math inline">\(x\)</span> be its perfomance vector and <span class="math inline">\(x&#39;\)</span> be its fitness vector.
+The aggregate performance will be a single value, meaning that <span class="math inline">\(x&#39; \in \mathbb{R}\)</span>.
+Let <span class="math inline">\(\alpha\)</span> be a performance from <span class="math inline">\(x\)</span>,</p>
+<p><span class="math display">\[x&#39; = \sum_{\alpha \in x} \alpha\]</span></p>
+<p>This describes the construction of the final fitness value.</p>
+</div>
+<div id="population-structure-2" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Population Structure</h3>
+<p>All candidate solutions in the population have interactions with one another.</p>
+</div>
+<div id="parent-selection-1" class="section level3">
+<h3><span class="header-section-number">3.2.3</span> Parent Selection</h3>
+<p>The selection scheme generates a single fitness value and population, where all candidate solutions have an interaction with one another.
+Parent selection operates by randomly selecting <span class="math inline">\(t\)</span> candidate solutions to compete against one another.
+The winner of these tournaments is the candidate solutions with the maximum fitness value.
+A user must also determine what to do in the event of ties.</p>
+<p><strong>The action of randomly selecting <span class="math inline">\(t\)</span> candidate solutions to compete against one another, followed by selecting the most fit solution to act as a parent, is the selection scheme’s parent selection method.</strong></p>
+</div>
 </div>
 <div id="fitness-sharing" class="section level2">
 <h2><span class="header-section-number">3.3</span> Fitness Sharing</h2>
+<div id="fitness-transformation-3" class="section level3">
+<h3><span class="header-section-number">3.3.1</span> Fitness Transformation</h3>
+<p>The fitness vector for a candidate solution consists of a single value that is the aggreate performance across all testcases divided by the approximate number of candidate solution who share the same fitness.
+Let <span class="math inline">\(f_i\)</span> be the aggregate performance value, <span class="math inline">\(x_i\)</span> be the performance vector, and <span class="math inline">\(x&#39;_i\)</span> be the fitness vector for a candidate solution <span class="math inline">\(i\)</span>.</p>
+<p>The aggregate performance is given by,</p>
+<p><span class="math display">\[f_i = \sum_{\alpha \in x_i} \alpha\]</span></p>
+<p>Once the aggregate performance has been calculated, it can be transformed by the following transformation.</p>
+<p>Let <span class="math inline">\(h(f_i)\)</span> be the function that transforms the aggregate performance <span class="math inline">\(f_i\)</span>.
+The final fitness vector will consist of a single value, hence <span class="math inline">\(x&#39;_i \in \mathbb{R}\)</span>.</p>
+<p>The fitness value for a candidate solution is given by,</p>
+<p><span class="math display">\[x&#39;_i = h(f_i) = \frac{f_i}{m_i}\]</span></p>
+<p>The variable <span class="math inline">\(m_i\)</span> measures a candidate solution’s similarity to all other solutions in the population.
+A more in depth description of this fitness transformation can be found at <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html">Selection Scheme Literature</a> and <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/experiment_setup.html">Experimental Setup</a>.</p>
+</div>
+<div id="population-structure-3" class="section level3">
+<h3><span class="header-section-number">3.3.2</span> Population Structure</h3>
+<p>All candidate solutions in the population have interactions with one another.</p>
+</div>
+<div id="parent-selection-2" class="section level3">
+<h3><span class="header-section-number">3.3.3</span> Parent Selection</h3>
+<p>The selection scheme generates a single transformed fitness value and population, where all candidate solutions have an interaction with one another.
+Parent selection operates by randomly selecting <span class="math inline">\(t\)</span> candidate solutions to compete against one another.
+The winner of these tournaments is the candidate solutions with the maximum fitness value.
+A user must also determine what to do in the event of ties.</p>
+<p><strong>The action of randomly selecting <span class="math inline">\(t\)</span> candidate solutions to compete against one another, followed by selecting the most fit solution to act as a parent, is the selection scheme’s parent selection method.</strong></p>
+</div>
 </div>
 <div id="novelty-search" class="section level2">
 <h2><span class="header-section-number">3.4</span> Novelty Search</h2>
+<div id="fitness-transformation-4" class="section level3">
+<h3><span class="header-section-number">3.4.1</span> Fitness Transformation</h3>
+<p>The fitness vector for a candidate solution consists of a single value that measures the distance from a candidate solution’s aggregate performance, to the aggregate performances of its <span class="math inline">\(k-\)</span>nearest neighbors.
+Let <span class="math inline">\(f_i\)</span> be the aggregate performance value, <span class="math inline">\(x_i\)</span> be the performance vector, and <span class="math inline">\(x&#39;_i\)</span> be the fitness vector for a candidate solution <span class="math inline">\(i\)</span>.</p>
+<p>The aggregate performance is given by,</p>
+<p><span class="math display">\[f_i = \sum_{\alpha \in x_i} \alpha\]</span></p>
+<p>Once the aggregate performance has been calculated, it can be transformed by the following transformation.</p>
+<p>Let <span class="math inline">\(h(f_i)\)</span> be the function that transforms the aggregate performance <span class="math inline">\(f_i\)</span>.
+The final fitness vector will consist of a single value, hence <span class="math inline">\(x&#39;_i \in \mathbb{R}\)</span>.</p>
+<p>The fitness value for a candidate solution is given by,</p>
+<p><span class="math display">\[x&#39;_i = h(f_i) = \sum_{j = 1}^{k} dist(f_i, \mu_j)\]</span></p>
+<p>The function <span class="math inline">\(dist()\)</span> measures the distance between two phenotypic behaviors and <span class="math inline">\(\mu_i\)</span> is the aggregate performance for one of <span class="math inline">\(x&#39;_i\)</span>’s <span class="math inline">\(k-\)</span>nearest neighbors.
+A more in depth description of this fitness transformation can be found at <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html">Selection Scheme Literature</a> and <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/experiment_setup.html">Experimental Setup</a>.</p>
+</div>
+<div id="population-structure-4" class="section level3">
+<h3><span class="header-section-number">3.4.2</span> Population Structure</h3>
+<p>All candidate solutions in the population have interactions with one another.</p>
+</div>
+<div id="parent-selection-3" class="section level3">
+<h3><span class="header-section-number">3.4.3</span> Parent Selection</h3>
+<p>The selection scheme generates a single transformed fitness value and population, where all candidate solutions have an interaction with one another.
+Parent selection operates by randomly selecting <span class="math inline">\(t\)</span> candidate solutions to compete against one another.
+The winner of these tournaments is the candidate solutions with the maximum fitness value.
+A user must also determine what to do in the event of ties.</p>
+<p><strong>The action of randomly selecting <span class="math inline">\(t\)</span> candidate solutions to compete against one another, followed by selecting the most fit solution to act as a parent, is the selection scheme’s parent selection method.</strong></p>
+</div>
 </div>
 <div id="ϵ-lexicase" class="section level2">
 <h2><span class="header-section-number">3.5</span> ϵ-Lexicase</h2>
+<div id="fitness-transformation-5" class="section level3">
+<h3><span class="header-section-number">3.5.1</span> Fitness Transformation</h3>
+<p>The fitness fitness vector for a candidate solution consists of multiple fitness values, where a single fitness value is a performance against a testcase.
+This means that the length of the fitness vector depends on the number of testcases.
+Let <span class="math inline">\(x_i = \{\alpha_1,...,\alpha_M\}\)</span> be the performance vector and <span class="math inline">\(x&#39;_i = \{\alpha&#39;_1,...,\alpha&#39;_M\}\)</span> be the fitness vector for a candidate solution <span class="math inline">\(i\)</span>.</p>
+<p>The fitness vector is given by,</p>
+<p><span class="math display">\[x&#39;_i = \{\alpha&#39;_1 = \alpha_1,...,\alpha&#39;_M=\alpha_M\}\]</span></p>
+<p>No additional transformation were applied to the individual fitness values, but some could be applied if desired.
+A more in depth description of this fitness transformation can be found at <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/selection_literature.html">Selection Scheme Literature</a> and <a href="https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/experiment_setup.html">Experimental Setup</a>.</p>
+</div>
+<div id="population-structure-5" class="section level3">
+<h3><span class="header-section-number">3.5.2</span> Population Structure</h3>
+<p>All candidate solutions in the population have interactions with one another.</p>
+</div>
+<div id="parent-selection-4" class="section level3">
+<h3><span class="header-section-number">3.5.3</span> Parent Selection</h3>
+<p>The selection scheme generates a set of of fitnesses per candidate solution and population, where all solutions have an interaction with one another.
+This methedology operates by using individual testcase performances to find a candidate solution to act as a parent.
+Each indivual testcase acts as a filter, where only the maximum performing solutions are allowed to proceed to the next testcase.
+The selection scheme iterates through the testcases until a single candidate solution remains or all testcases have been used.
+In the event of ties, the user must specify a method in breaking them up.</p>
+<p><strong>The action of using testcases to filter through candidate solutions to find a parent is this selection scheme’s parent selection method.</strong></p>
+</div>
 </div>
 <div id="age-layered-population-structure-alps" class="section level2">
 <h2><span class="header-section-number">3.6</span> Age-Layered Population Structure (ALPS)</h2>
-<p>Some of these fitness modifications can be seen in classic selection schemes.
-Tournament selection aggregates fitness performance across all testcases.
-Lexicase keeps fitness performance on individual testcases independent.
-Fitness sharing applies a transformation to the aggregate fitness performance.
-These are just some examples.</p>
+<div id="fitness-transformation-6" class="section level3">
+<h3><span class="header-section-number">3.6.1</span> Fitness Transformation</h3>
+<p>The fitness vector for a candidate solution consists of a single value that is the aggreate performance across all testcases.
+For any candidate solution, let <span class="math inline">\(x\)</span> be its perfomance vector and <span class="math inline">\(x&#39;\)</span> be its fitness vector.
+The aggregate performance will be a single value, meaning that <span class="math inline">\(x&#39; \in \mathbb{R}\)</span>.
+Let <span class="math inline">\(\alpha\)</span> be a performance from <span class="math inline">\(x\)</span>,</p>
+<p><span class="math display">\[x&#39; = \sum_{\alpha \in x} \alpha\]</span></p>
+<p>This describes the construction of the final fitness value.</p>
+</div>
+<div id="population-structure-6" class="section level3">
+<h3><span class="header-section-number">3.6.2</span> Population Structure</h3>
+<p>Interactions between candidate solutions are dependent on age for this selection scheme.
+Users must specify the number of cohorts and age range must per cohort.
+Candidate solutions are assigned to a specific cohort, and only intractions between solutions from the same cohort exist.</p>
+</div>
+<div id="parent-selection-5" class="section level3">
+<h3><span class="header-section-number">3.6.3</span> Parent Selection</h3>
+<p>The selection scheme generates a single fitness value and assigns candidate solutions to a cohort.
+Interactions between solutions only exist for those that belong to the same cohort.
+Parent selection operates by randomly selecting <span class="math inline">\(t\)</span> candidate solutions to compete against one another in a tournament.
+These tournaments are consist of only candidate solutions that belong to the same cohort.
+The winner of these tournaments is the candidate solutions with the maximum fitness value.
+A user must also determine what to do in the event of ties.</p>
+<p><strong>The action of randomly selecting <span class="math inline">\(t\)</span> candidate solutions to compete against one another in a tournament, followed by selecting the most fit solution to act as a parent, is the selection scheme’s parent selection method.</strong></p>
+</div>
 </div>
 </div>
 <div id="citations" class="section level1">
