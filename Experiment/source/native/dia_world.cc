@@ -10,6 +10,8 @@
 #include "../DiaWorld.h"
 #include "../dia-org.h"
 
+// Hello world
+
 int main(int argc, char* argv[])
 {
   DiaConfig config;
