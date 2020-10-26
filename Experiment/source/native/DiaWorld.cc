@@ -6,8 +6,9 @@
 #include "config/command_line.h"
 #include "config/ArgManager.h"
 
-#include "../config.h"
+#include "../dia-config.h"
 #include "../DiaWorld.h"
+#include "../dia-org.h"
 
 int main(int argc, char* argv[])
 {
@@ -27,7 +28,8 @@ int main(int argc, char* argv[])
 
   DiaWorld world(config);
 
-  for (size_t ud = 0; ud < config.MAX_GENS(); ud++) {
+  for (size_t ud = 0; ud < config.MAX_GENS(); ud++)
+  {
     world.Update();
     std::cout << "UD: " << ud
               << "  NumOrgs=" << world.GetNumOrgs()
