@@ -10,13 +10,19 @@ This repository is associated with our **TBD** submission, Selection Scheme Diag
 ## Authors
 
 - [Jose Guadalupe Hernandez](https://jgh9094.github.io/)
-- Alexander Lalejini (maybe?)
 - [Charles Ofria](http://ofria.com) (PhD advisor extraordinaire)
 
 ## Abstract
 
-> Evolutionary algorithms have demonstrated to ability to solve complex problems, sometimes with a solution that is unintuitive to a human designer. 
-> A major component of these evolutionary algorithms is the selection of genetic material for the generation of candidate solutions, or selection schemes. Over time, the complexity of these selection schemes has grown, and in turn become more robust and efficient towards finding optimal solutions. With every new selection scheme that emerges, a new set of problems the scheme must contend with to prove its worthiness arises. This is a problem when comparing the efficiency and robustness across different selection schemes. In this work we present four diagnostic problems that are isolated components across different problems evolutionary algorithms must contend with. This set of diagnostic problems gives us a better understanding of the kinds of problems that selection schemes perform well on and what they struggle with. We analyze how the five selection schemes chosen perform in regards to diversity and performance on a given diagnostic.
+> Evolutionary algorithms have demonstrated to ability to solve complex real-world optimization problems, sometimes presenting solutions that are unintuitive to a human designer.
+> The difference between solving complex optimization problem and not can be heavily influenced by the kind of algorithm and its configuration.
+> Hence, being able to piece together the best algorithm for a give optimization problem is key to solving it.
+> One of the major pieces of an evolutionary algorithm, that many in fact share, is the selection of genetic material for the construction of a new population of solutions for the following generation -- otherwise known as a selection scheme.
+> Over time, the complexity of selection schemes has grown to increase the robustness and efficiency when traversing the fitness landscape to find optimal solutions.
+> The effectiveness of new selection schemes is usually illustrated with different sets of real-world problems, which can make it difficult to compare different schemes.
+> While this approach demonstrates a selection scheme's ability to solve a complex optimization problem, understanding or visualizing the fitness landscape being traversed is difficult and may be impossible.
+> In this work we present X diagnostic characteristic problems that focus on isolating problem characteristics that algorithms will encounter in a real-world optimization problem, so that we can better understand the strengths and weaknesses of different selection schemes.
+> Five selection schemes are evaluated against these X different diagnostics, where different data is recorded to illustrate strengths and weaknesses.
 
 ## Selection Schemes
 
