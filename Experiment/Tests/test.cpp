@@ -1,16 +1,35 @@
 #define CATCH_CONFIG_MAIN
+
+// testing files
 #include "/mnt/c/Users/josex/Desktop/Research/Repos/Catch/catch.hpp"
+#include "../source/problem.h"
 
-// To run: clear; clang++ -std=c++17 test.cpp -o test; ./test
+// empirical headers
+#include "base/vector.h"
 
-unsigned int Factorial( unsigned int number ) {
-  return number > 1 ? Factorial(number-1)*number : 1;
-}
+// To run: clang++ -std=c++17 -I ../../../Empirical/source/ test.cpp -o test; ./test -l -t -s
 
-TEST_CASE( "Factorials are computed", "[factorial]" ) {
-    REQUIRE( Factorial(0) == 1 );
-    REQUIRE( Factorial(1) == 1 );
-    REQUIRE( Factorial(2) == 2 );
-    REQUIRE( Factorial(3) == 6 );
-    REQUIRE( Factorial(10) == 3628800 );
+TEST_CASE( "Problem class initialization", "[initialization]" )
+{
+  // first round of tests
+  emp::vector<double> tar(1.0,100);
+  emp::vector<double> tar_d(1.0,100);
+  Diagnostic diagnostic(tar);
+
+  // make sure we are saving the vector and can find the same one
+  REQUIRE_THAT(diagnostic.GetTarget(), Catch::Matchers::Equals(tar));
+  // make sure we can get the same vector contents with differnt vars
+  REQUIRE_THAT(diagnostic.GetTarget(), Catch::Matchers::Equals(tar_d));
+
+  // switch the target vector
+  emp::vector<double> targ(2.0, 100);
+  emp::vector<double> targ1(2.0, 100);
+  diagnostic.SetTarget(targ);
+
+  //make sure the target vector is switched
+  REQUIRE_THAT(diagnostic.GetTarget(), Catch::Matchers::Equals(targ));
+  // make sure we get the same vector contents with different vars
+  REQUIRE_THAT(diagnostic.GetTarget(), Catch::Matchers::Equals(targ1));
+
+
 }
