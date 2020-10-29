@@ -1,5 +1,5 @@
 # Project-specific settings
-PROJECT := diaworld
+PROJECT := dia_world
 EMP_DIR := ../../Empirical/source
 CEREAL_DIR := ../../Empirical/third-party/cereal/include
 
@@ -7,7 +7,7 @@ CEREAL_DIR := ../../Empirical/third-party/cereal/include
 CFLAGS_all := -Wall -Wno-unused-function -std=c++17 -I$(EMP_DIR)/
 
 # Native compiler information
-CXX_nat := g++
+CXX_nat := clang++
 CFLAGS_nat := -O3 -DNDEBUG $(CFLAGS_all)
 CFLAGS_nat_debug := -g $(CFLAGS_all)
 
@@ -34,7 +34,7 @@ debug-web:	$(PROJECT).js
 
 web-debug:	debug-web
 
-$(PROJECT):	source/DiaWorld.h source/DiaOrg.h source/native/$(PROJECT).cc
+$(PROJECT):	source/DiaWorld.h source/DiaOrg.h source/org.h source/problem.h source/selection.h source/world.h source/native/$(PROJECT).cc
 	$(CXX_nat) $(CFLAGS_nat) source/native/$(PROJECT).cc -o $(PROJECT)
 	@echo To build the web version use: make web
 
