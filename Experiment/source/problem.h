@@ -30,6 +30,8 @@ class Diagnostic
       std::copy(t_.begin(), t_.end(), target.begin());
     }
 
+    Diagnostic() {;}
+
     // getters
     target_t GetTarget() const {return target;}
     // const target_t & GetTarget() const {return target;}
@@ -55,8 +57,8 @@ class Diagnostic
 
     /**
      * Structured Exploitation function.
-     * All genes in genome expect to follow accending order for evaluation.
-     * If accending order is broken, max error assigned to every position after broken.
+     * All genes in genome expect to follow descending order for evaluation.
+     * If descending order is broken, max error assigned to every position after broken.
      * Assuming that genes in genome cannot go over the target.
      *
      * @param g Genome from organism being evaluated.
@@ -116,48 +118,28 @@ Diagnostic::score_t Diagnostic::EcologyNiche(const genome_t & g)
 
 Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g, double max_error)
 {
-  // quick checks
-  emp_assert(g.size() == target.size(), g.size());
-
   // intialize vector with size g
   score_t score(g.size());
 
-  // loop through vector and check if structure holds
-  size_t error = g.size();
-  for(size_t i = 0; i < g.size()-1; ++i)
-  {
-    // debugging
-    std::cerr << "(" << i <<"," << i+1 <<"), ";
+  // using stl algorithm library
+  auto it = std::is_sorted_until(g.begin(), g.end(), std::greater_equal<>());
 
-    // if correct order
-    if(g[i] <= g[i+1]) {score[i] = g[i];}
-
-    else
-    {
-      score[i] = max_error;
-      error = i;
-      break;
-    }
-  }
-
-  // check if we broke structure
-  if(error < g.size())
-  {
-    // everything after broken structure set to max error
-    for(size_t i = error + 1; i < g.size(); ++i) {score[i] = max_error;}
-  }
+  // if sorted
+  if(it == g.end()) {std::copy(g.begin(), g.end(), score.begin());}
 
   else
   {
-    score[g.size()-1] = g[g.size()-1];
-  }
+    size_t cutoff = (it - g.begin());
 
+    // everything up to unsorted
+    for(size_t i = 0; i < cutoff; ++i) {score[i] = g[i];}
+
+    // everything after unsorted
+    for(size_t i = cutoff; i < score.size(); ++i) {score[i] = max_error;}
+  }
 
   return score;
 }
-
-
-
 
 
 #endif
