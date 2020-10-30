@@ -7,7 +7,18 @@
 // empirical headers
 #include "base/vector.h"
 
+// library includes
+#include <algorithm>
+#include <string>
+
 // To run: clang++ -std=c++17 -I ../../../Empirical/source/ test.cpp -o test; ./test -l -t -s
+
+void PrintVec(const emp::vector<double> &v, const std::string s)
+{
+  std::cerr << s << ": ";
+  for(auto x : v) {std::cerr << x << ",";}
+  std::cerr << std::endl;
+}
 
 TEST_CASE( "Problem class initialization", "[initialization]" )
 {
@@ -30,6 +41,58 @@ TEST_CASE( "Problem class initialization", "[initialization]" )
   REQUIRE_THAT(diagnostic.GetTarget(), Catch::Matchers::Equals(targ));
   // make sure we get the same vector contents with different vars
   REQUIRE_THAT(diagnostic.GetTarget(), Catch::Matchers::Equals(targ1));
+}
+
+TEST_CASE( "Problem class structured exploitation function", "[struct-exploit]")
+{
+  // set up our genome and diagnostic to score with structured exploitation
+  const size_t size = 10;
+  const double error = -1.0;
+  emp::vector<double> g(size);
+  emp::vector<double> correct(size);
 
 
+  /* Making sure that a decending vector is calculated correctly */
+  for(size_t i = size; i > 0; --i) {g[size-i] = i;}
+  // create diagnostic + test function
+  Diagnostic diag;
+  emp::vector<double> score = diag.StructExploitation(g, error);
+  // checking
+  REQUIRE_THAT(score, Catch::Matchers::Equals(g));
+
+
+  /* Making sure that a decending sorted vector is calculated correctly */
+  std::reverse(g.begin(), g.end());
+  score = diag.StructExploitation(g, error);
+  // create correct vector
+  correct[0] = g[0];
+  for(size_t i = 1; i < correct.size(); ++i) {correct[i] = error;}
+  // checking
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  /* Checking accending vector last element out of order */
+  std::reverse(g.begin(), g.end());
+  g.back() = size;
+  score = diag.StructExploitation(g, error);
+  // create correct vector
+  correct.clear(); correct.resize(size);
+  std::copy(g.begin(), g.end(), correct.begin());
+  correct.back() = error;
+  // make sure we get the correct vector
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  /* Checking accending vector middle & last element out of order */
+  g[size/2] = size;
+  score = diag.StructExploitation(g, error);
+  // create correct vector
+  for(size_t i = size/2; i < correct.size(); ++i) {correct[i] = error;}
+  // make sure we get the correct vector
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+  // debug
+  // PrintVec(g, "g");
+  // PrintVec(correct, "c");
+  // PrintVec(score, "s");
 }
