@@ -23,6 +23,7 @@ class Diagnostic
     using target_t = emp::vector<double>;
     using score_t = emp::vector<double>;
     using genome_t = emp::vector<double>;
+    using opti_t = emp::vector<bool>;
 
   public:
 
@@ -41,8 +42,10 @@ class Diagnostic
     //setters
     void SetTarget(target_t & t) {target.clear(); target.resize(t.size()); std::copy(t.begin(), t.end(), target.begin());}
 
+    ///< Functions that deal with diagnostic problem scoring
+
     /**
-     * Exploitation function
+     * Exploitation function:
      *
      * Solutions are pressured to optimize genomes in descending order.
      * With the caveat that solutions are resposible for optimizizing from start to end.
@@ -54,24 +57,26 @@ class Diagnostic
      *
      * @param g Genome from organism being evaluated.
      * @param max_error This value is the maximum error assigned when structure broken
+     *
      * @return score vector that is calculated from 'g'.
      */
     score_t Exploration(const genome_t & g, double max_error);
 
     /**
-     * Exploitation function.
+     * Exploitation function:
      *
      * All genes in genome evaluated treated as independent optimization tasks.
      * In other words, there is no interactions between genes.
      * The score vector is just the genome, with the caveat that genes cannot go over associated target value.
      *
      * @param g Genome from organism being evaluated.
+     *
      * @return score vector that is calculated from 'g'.
      */
     score_t Exploitation(const genome_t & g);
 
     /**
-     * Contradicting Ecology function
+     * Contradicting Ecology function:
      *
      * All genes are associated with a single type of resource.
      * Solutions are pressured to optimize one maximaly, while keeping others close to 0.
@@ -81,12 +86,13 @@ class Diagnostic
      *
      * @param g Genome from organism being evaluated.
      * @param max_error This value is the maximum error assigned when structure broken
+     *
      * @return score vector that is calculated from 'g'.
      */
     score_t ContraEcology(const genome_t & g);
 
     /**
-     * Structured Exploitation function.
+     * Structured Exploitation function:
      *
      * All genes in genome expected to follow descending order for evaluation.
      * While in decending order, score vector value at positon 'i' is gene value at position 'i'.
@@ -96,18 +102,34 @@ class Diagnostic
      *
      * @param g Genome from organism being evaluated.
      * @param max_error This value is the maximum error assigned when structure broken
+     *
      * @return score vector that is calculated from 'g'.
      */
     score_t StructExploitation(const genome_t & g, double max_error);
+
+
+    ///< Functions that deal with interpretation of score vectors
+
+    /**
+     * Optimized Vector:
+     *
+     * Will return a boolean vector that lists what genes are optimized relative to the target vector.
+     * A gene is optimized if it meets the target value accuracy % requirement.
+     *
+     * @param g Genome from organism being evaluated.
+     * @param acc This value is the accuracy % needed to be considered optimized
+     *
+     * @return boolean vector that displays optimized traits.
+    */
+    opti_t OptimizedVector(const genome_t & g, const double & acc);
 
   private:
     // variable that holds target vector
     target_t target;
 };
 
+///< diagnostic problem implementations
 
-
-// exploration function
 Diagnostic::score_t Diagnostic::Exploration(const genome_t & g, double max_error)
 {
   // intialize vector with size g
@@ -118,7 +140,6 @@ Diagnostic::score_t Diagnostic::Exploration(const genome_t & g, double max_error
   size_t opti = (opti_it - g.begin());
 
   // find where order breaks
-  // auto sort_it = std::is_sorted_until(opti_it, g.end(), std::greater_equal<>());
   size_t sort = (std::is_sorted_until(opti_it, g.end(), std::greater_equal<>()) - g.begin());
 
   // left of optimal value found
@@ -130,7 +151,6 @@ Diagnostic::score_t Diagnostic::Exploration(const genome_t & g, double max_error
 
   return score;
 }
-
 Diagnostic::score_t Diagnostic::Exploitation(const genome_t & g)
 {
   // intialize vector with size g
@@ -141,7 +161,6 @@ Diagnostic::score_t Diagnostic::Exploitation(const genome_t & g)
 
   return score;
 }
-
 Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
 {
   // intialize score vector
@@ -161,7 +180,6 @@ Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
 
   return score;
 }
-
 Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g, double max_error)
 {
   // intialize vector with size g
@@ -186,6 +204,28 @@ Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g, double ma
   }
 
   return score;
+}
+
+///< score vector interpretation implementations
+
+Diagnostic::opti_t Diagnostic::OptimizedVector(const genome_t & g, const double & acc)
+{
+  // quick checks
+  emp_assert(g.size() > 0, g.size());
+  emp_assert(g.size() == target.size(), target.size());
+  emp_assert(0.0 < acc, acc);
+  emp_assert(acc <= 1.0, acc);
+
+  // initialize optimized vector with all false
+  opti_t optimize(g.size(), false);
+
+  // iterate through genome and check optimality
+  for(size_t i = 0; i < g.size(); ++i)
+  {
+    if((acc * target[i]) <= g[i]) {optimize[i] = true;}
+  }
+
+  return optimize;
 }
 
 #endif
