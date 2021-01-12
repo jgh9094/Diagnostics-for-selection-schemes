@@ -44,7 +44,7 @@ class Diagnostic
     /**
      * Exploitation function.
      * All genes in genome expected to follow descending order for evaluation.
-     * While in decending order, fitness vector score at positon 'i' is gene value at position 'i'.
+     * While in decending order, score vector value at positon 'i' is gene value at position 'i'.
      * If descending order is broken, max error assigned at position descending order is broken, and after.
      * Assuming that genes in genome cannot go over the target vector per position in genome.
      *
@@ -55,9 +55,11 @@ class Diagnostic
     score_t Exploration(const genome_t & g);
 
     /**
-     * Exploration function. All positions in genome evaluated independently.
-     * This means that we just return the same vector, in principle.
-     * Assuming that genes in genome cannot go over the target.
+     * Exploitation function.
+     *
+     * All genes in genome evaluated treated as independent optimization tasks.
+     * In other words, there is no interactions between genes.
+     * The score vector is just the genome, with the caveat that genes cannot go over associated target value.
      *
      * @param g Genome from organism being evaluated.
      * @return score vector that is calculated from 'g'.
@@ -69,9 +71,9 @@ class Diagnostic
      *
      * All genes are associated with a single type of resource.
      * Solutions are pressured to optimize one maximaly, while keeping others close to 0.
-     * To find calculate fitness vector, first we find the maximum gene value i*.
-     * Once i* is found, fitness vector score at position i is i* minus gene value at position i.
-     * Fitness vector score where i* is found is just i*.
+     * To find calculate score vector, first we find the maximum gene value i*.
+     * Once i* is found, score vector value at position i is i* minus gene value at position i.
+     * Score vector value where i* is found is just i*.
      *
      * @param g Genome from organism being evaluated.
      * @param max_error This value is the maximum error assigned when structure broken
@@ -83,8 +85,8 @@ class Diagnostic
      * Structured Exploitation function.
      *
      * All genes in genome expected to follow descending order for evaluation.
-     * While in decending order, fitness vector score at positon 'i' is gene value at position 'i'.
-     * If descending order is broken, max error assigned at position descending order is broken in fitness vector, and after.
+     * While in decending order, score vector value at positon 'i' is gene value at position 'i'.
+     * If descending order is broken, max error assigned at position descending order is broken in score vector, and after.
      * Assuming that genes in genome cannot go over the target vector per position in genome.
      *
      * @param g Genome from organism being evaluated.
@@ -117,20 +119,14 @@ Diagnostic::score_t Diagnostic::Exploration(const genome_t & g)
 
 Diagnostic::score_t Diagnostic::Exploitation(const genome_t & g)
 {
-  // quick checks
-  emp_assert(g.size() == target.size(), g.size());
-
   // intialize vector with size g
   score_t score(g.size());
 
-  for(size_t i = 0; i < g.size(); ++i)
-  {
-    score[i] = g[i];
-  }
+  // copy genome into score vector
+  std::copy(g.begin(), g.end(), score.begin());
 
   return score;
 }
-
 
 Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
 {
