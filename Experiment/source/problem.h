@@ -1,12 +1,4 @@
 /// Set of diagnostic problems being used in research project
-
-// TODO
-// Exploration []
-// Exploitation [X]
-// ContraEcology [X]
-// StructExploitation [X]
-
-
 #ifndef DIA_PRO_H
 #define DIA_PRO_H
 
