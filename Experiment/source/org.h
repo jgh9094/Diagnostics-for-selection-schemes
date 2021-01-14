@@ -214,7 +214,7 @@ double Org::AggregateScore()
 size_t Org::CountOptimized()
 {
   //quick checks
-  emp_assert(!counted); emp_assert(0 < M);
+  emp_assert(!counted); emp_assert(0 < M); emp_assert(opti);
   emp_assert(optimal.size() == M, optimal.size());
 
   // calculate total optimal genes and set it
