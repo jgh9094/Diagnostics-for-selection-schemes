@@ -19,7 +19,7 @@ class Diagnostic
 
   public:
 
-    Diagnostic(target_t & t_)
+    Diagnostic(target_t & t_, double c) : max_cred(c)
     {
       target.resize(t_.size());
       std::copy(t_.begin(), t_.end(), target.begin());
@@ -33,7 +33,7 @@ class Diagnostic
 
     //setters
     void SetTarget(target_t & t) {target.clear(); target.resize(t.size()); std::copy(t.begin(), t.end(), target.begin());}
-
+    void SetCredit(double c) {max_cred = c;}
     ///< Functions that deal with diagnostic problem scoring
 
     /**
@@ -52,7 +52,7 @@ class Diagnostic
      *
      * @return score vector that is calculated from 'g'.
      */
-    score_t Exploration(const genome_t & g, double max_credit);
+    score_t Exploration(const genome_t & g);
 
     /**
      * Exploitation function:
@@ -97,7 +97,7 @@ class Diagnostic
      *
      * @return score vector that is calculated from 'g'.
      */
-    score_t StructExploitation(const genome_t & g, double max_credit);
+    score_t StructExploitation(const genome_t & g);
 
 
     ///< Functions that deal with interpretation of score vectors
@@ -116,14 +116,19 @@ class Diagnostic
     opti_t OptimizedVector(const genome_t & g, const double & acc);
 
   private:
-    // variable that holds target vector
+    // holds vector of target objective values
     target_t target;
+    // holds maximum credit allowed for error
+    double max_cred;
 };
 
 ///< diagnostic problem implementations
 
-Diagnostic::score_t Diagnostic::Exploration(const genome_t & g, double max_credit)
+Diagnostic::score_t Diagnostic::Exploration(const genome_t & g)
 {
+  // quick checks
+  emp_assert(g.size() > 0, g.size());
+
   // intialize vector with size g
   score_t score(g.size());
 
@@ -135,16 +140,19 @@ Diagnostic::score_t Diagnostic::Exploration(const genome_t & g, double max_credi
   size_t sort = (std::is_sorted_until(opti_it, g.end(), std::greater_equal<>()) - g.begin());
 
   // left of optimal value found
-  for(size_t i = 0; i < opti; ++i) {score[i] = max_credit;}
+  for(size_t i = 0; i < opti; ++i) {score[i] = max_cred;}
   // middle of optimal value till order broken
   for(size_t i = opti; i < sort; ++i) {score[i] = g[i];}
   // right of order broken
-  for(size_t i = sort; i < score.size(); ++i) {score[i] = max_credit;}
+  for(size_t i = sort; i < score.size(); ++i) {score[i] = max_cred;}
 
   return score;
 }
 Diagnostic::score_t Diagnostic::Exploitation(const genome_t & g)
 {
+  // quick checks
+  emp_assert(g.size() > 0, g.size());
+
   // intialize vector with size g
   score_t score(g.size());
 
@@ -155,6 +163,9 @@ Diagnostic::score_t Diagnostic::Exploitation(const genome_t & g)
 }
 Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
 {
+  // quick checks
+  emp_assert(g.size() > 0, g.size());
+
   // intialize score vector
   score_t score(g.size());
 
@@ -172,8 +183,11 @@ Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
 
   return score;
 }
-Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g, double max_credit)
+Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g)
 {
+  // quick checks
+  emp_assert(g.size() > 0, g.size());
+
   // intialize vector with size g
   score_t score(g.size());
 
@@ -192,7 +206,7 @@ Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g, double ma
     for(size_t i = 0; i < cutoff; ++i) {score[i] = g[i];}
 
     // everything after unsorted
-    for(size_t i = cutoff; i < score.size(); ++i) {score[i] = max_credit;}
+    for(size_t i = cutoff; i < score.size(); ++i) {score[i] = max_cred;}
   }
 
   return score;
