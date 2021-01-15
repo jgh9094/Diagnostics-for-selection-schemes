@@ -136,7 +136,45 @@ class Selection
 
 };
 
+///< population structure
+
+Selection::group_t Selection::KNearestN(const score_t & score)
+{
+  // quick checks
+
+  group_t group;
+
+
+
+  return group;
+}
+
+///< fitness transformation
+
+Selection::score_t Selection::FitnessSharing(const genome_t & genome, const score_t & score, const double alph, const double sig)
+{
+  // quick checks
+
+
+  score_t tscore;
+
+
+  return tscore;
+}
+Selection::score_t Selection::Novelty(const score_t & score, const group_t & neigh)
+{
+  // quick checks
+
+
+  score_t tscore;
+
+
+  return tscore;
+}
+
+
 ///< selector functions
+
 Selection::parent_t Selection::MLElite(const size_t mu, const size_t lambda, const score_t & score)
 {
   // quick checks
@@ -148,7 +186,6 @@ Selection::parent_t Selection::MLElite(const size_t mu, const size_t lambda, con
 
   return win;
 }
-
 size_t Selection::Tournament(const size_t t, const score_t & score)
 {
   // quick checks
@@ -163,11 +200,8 @@ size_t Selection::Tournament(const size_t t, const score_t & score)
                 return score[lhs] < score[rhs];
               });
 
-
-
   return std::distance(tour.begin(), win);
 }
-
 size_t Selection::Drift(const size_t size)
 {
   // quick checks
