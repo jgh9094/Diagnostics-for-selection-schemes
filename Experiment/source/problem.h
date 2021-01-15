@@ -134,10 +134,10 @@ Diagnostic::score_t Diagnostic::Exploration(const genome_t & g)
 
   // find max value position
   auto opti_it = std::max_element(g.begin(), g.end());
-  size_t opti = (opti_it - g.begin());
+  size_t opti = std::distance(g.begin(), opti_it);
 
   // find where order breaks
-  size_t sort = (std::is_sorted_until(opti_it, g.end(), std::greater_equal<>()) - g.begin());
+  size_t sort = std::distance(g.begin(), std::is_sorted_until(opti_it, g.end(), std::greater_equal<>()));
 
   // left of optimal value found
   for(size_t i = 0; i < opti; ++i) {score[i] = max_cred;}
@@ -170,7 +170,7 @@ Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
   score_t score(g.size());
 
   // find max value position
-  size_t skip = (std::max_element(g.begin(), g.end()) - g.begin());
+  size_t skip = std::distance(g.begin(), std::max_element(g.begin(), g.end()));
 
   // set all score vector values except where max value is
   for(size_t i = 0; i < score.size(); ++i)
@@ -200,7 +200,7 @@ Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g)
   // else fill in appropiately
   else
   {
-    size_t cutoff = (it - g.begin());
+    size_t cutoff = std::distance(g.begin(), it);
 
     // everything up to unsorted
     for(size_t i = 0; i < cutoff; ++i) {score[i] = g[i];}
