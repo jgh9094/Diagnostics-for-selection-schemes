@@ -11,6 +11,9 @@
 #include "base/vector.h"
 #include "tools/Random.h"
 
+///< constant vars
+constexpr size_t DRIFT_SIZE = 1;
+
 class Selection
 {
   public:
@@ -27,7 +30,7 @@ class Selection
 
   public:
 
-    Selection() {;}
+    Selection(emp::Ptr<emp::Random> rng = nullptr) : random(rng) {emp_assert(rng);}
 
     ///< population structure
 
@@ -128,17 +131,41 @@ class Selection
 
   private:
 
+    // random pointer from world.h
+    emp::Ptr<emp::Random> random;
+
 };
 
 ///< selector functions
 Selection::parent_t Selection::MLElite(const size_t mu, const size_t lambda, const score_t & score)
 {
+  // quick checks
 
+  parent_t win;
+
+
+
+
+  return win;
 }
 
 size_t Selection::Tournament(const size_t t, const score_t & score)
 {
+  // quick checks
+  emp_assert(t > 0); emp_assert(0 < score.size());
 
+  // get tournament ids
+  auto tour = emp::Choose(*random, score.size(), t);
+
+  auto win = std::max_element(tour.begin(), tour.end(),
+              [score](double const lhs, double const rhs)
+              {
+                return score[lhs] < score[rhs];
+              });
+
+
+
+  return std::distance(tour.begin(), win);
 }
 
 size_t Selection::Drift(const size_t size)
@@ -146,8 +173,11 @@ size_t Selection::Drift(const size_t size)
   // quick checks
   emp_assert(size > 0);
 
-  return 0;
+  // return a random org id
+  auto win = emp::Choose(*random, size, DRIFT_SIZE);
+  emp_assert(win.size() == DRIFT_SIZE);
+
+  return win[0];
 }
 
-// Ptr<Random>
 #endif
