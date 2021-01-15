@@ -9,6 +9,7 @@
 
 ///< empirical headers
 #include "base/vector.h"
+#include "tools/Random.h"
 
 class Selection
 {
@@ -76,7 +77,7 @@ class Selection
      *
      * @return Vector with transformed scores.
      */
-    score_t Novelty(const scores_t & score, const group_t & neigh);
+    score_t Novelty(const score_t & score, const group_t & neigh);
 
 
     ///< selector functions
@@ -119,7 +120,7 @@ class Selection
      *
      * @return Parent id that is selected.
      */
-    size_t Drift(const score_t & score);
+    size_t Drift(const size_t size);
 
 
     ///< helper functions
@@ -128,4 +129,25 @@ class Selection
   private:
 
 };
+
+///< selector functions
+Selection::parent_t Selection::MLElite(const size_t mu, const size_t lambda, const score_t & score)
+{
+
+}
+
+size_t Selection::Tournament(const size_t t, const score_t & score)
+{
+
+}
+
+size_t Selection::Drift(const size_t size)
+{
+  // quick checks
+  emp_assert(size > 0);
+
+  return 0;
+}
+
+// Ptr<Random>
 #endif
