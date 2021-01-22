@@ -6,6 +6,7 @@
 
 ///< standard headers
 #include <algorithm>
+#include <map>
 
 ///< empirical headers
 #include "base/vector.h"
@@ -21,7 +22,7 @@ class Selection
     using parent_t = emp::vector<size_t>;
     // vector type of org score
     using score_t = emp::vector<double>;
-    // matrix type of org with multiple scorea
+    // matrix type of org with multiple scores
     using matrix_t = emp::vector<emp::vector<double>>;
     // vector holding population genomes
     using genome_t = emp::vector<emp::vector<double>>;
@@ -97,7 +98,7 @@ class Selection
      *
      * @return Vector with parent id's that are selected.
      */
-    parent_t MLElite(const size_t mu, const size_t lambda, const score_t & score);
+    parent_t MLSelect(const size_t mu, const size_t lambda, const score_t & score);
 
     /**
      * Tournament Selector:
@@ -175,14 +176,48 @@ Selection::score_t Selection::Novelty(const score_t & score, const group_t & nei
 
 ///< selector functions
 
-Selection::parent_t Selection::MLElite(const size_t mu, const size_t lambda, const score_t & score)
+Selection::parent_t Selection::MLSelect(const size_t mu, const size_t lambda, const score_t & score)
 {
   // quick checks
+  emp_assert(0 < mu); emp_assert(0 < lambda);
+  emp_assert(mu < lambda); emp_assert(0 < score.size());
 
+  // place all solutions in map based on score
+  std::map<double, parent_t, std::greater<int>> group;
+  for(size_t i = 0; i < score.size(); ++i)
+  {
+    // didn't find in group
+    if(group.find(score[i]) == group.end())
+    {
+      parent_t p{i};
+      group[score[i]] = p;
+    }
+    else{group[score[i]].push_back(i);}
+  }
+
+  // go through the ordered scores and get our top mu solutions
+  parent_t topmu;
+  for(auto & g : group)
+  {
+    emp::Shuffle(*random, g.second);
+    for(auto id : g.second)
+    {
+      topmu.push_back(id);
+      if(topmu.size() == mu) {break;}
+    }
+
+    if(topmu.size() == mu) {break;}
+  }
+
+  // insert the correct amount of ids
   parent_t win;
+  size_t ml = mu / lambda;
+  for(auto id : topmu)
+  {
+    for(size_t i = 0; i < ml; ++i){win.push_back(id);}
+  }
 
-
-
+  emp_assert(win.size() == lambda);
 
   return win;
 }
