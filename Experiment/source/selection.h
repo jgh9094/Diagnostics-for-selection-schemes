@@ -28,6 +28,8 @@ class Selection
     using genome_t = emp::vector<emp::vector<double>>;
     // vector holding population groupings
     using group_t = emp::vector<emp::vector<size_t>>;
+    // map holding population id groupings by fitness (keys in decending order)
+    using fitgp_t = std::map<double, parent_t, std::greater<int>>;
 
   public:
 
@@ -45,9 +47,21 @@ class Selection
      *
      * @param score Vector containing all solution scores.
      *
-     * @return Vector with parent id's that are selected.
+     * @return Vector of vector ids groups as nearest neighbors.
      */
     group_t KNearestN(const score_t & score);
+
+    /**
+     * Fitness Group Structure:
+     *
+     * This function will return a map of double,vector pairing where
+     * each vector corresponds to solution ids share the same fitness
+     *
+     * @param score Vector containing all solution scores.
+     *
+     * @return Map grouping population ids by fitness (keys (fitness) in decending order)
+     */
+    fitgp_t FitnessGroup(const score_t & score);
 
 
     ///< fitness transformation
@@ -94,11 +108,11 @@ class Selection
      *
      * @param top Number of top performing solutions to pick.
      * @param pops Population size.
-     * @param score Vector holding the population score.
+     * @param group Map with fitness,vector id pairs (descending order expected). Doesn't have to be fitness but some double value in best to worst order.
      *
      * @return Vector with parent id's that are selected.
      */
-    parent_t MLSelect(const size_t mu, const size_t lambda, const score_t & score);
+    parent_t MLSelect(const size_t mu, const size_t lambda, const fitgp_t & group);
 
     /**
      * Tournament Selector:
@@ -149,6 +163,27 @@ Selection::group_t Selection::KNearestN(const score_t & score)
 
   return group;
 }
+Selection::fitgp_t Selection::FitnessGroup(const score_t & score)
+{
+  // quick checks
+  emp_assert(0 < score.size());
+
+  // place all solutions in map based on score
+  fitgp_t group;
+  for(size_t i = 0; i < score.size(); ++i)
+  {
+    // didn't find in group
+    if(group.find(score[i]) == group.end())
+    {
+      parent_t p{i};
+      group[score[i]] = p;
+    }
+    else{group[score[i]].push_back(i);}
+  }
+
+  return group;
+}
+
 
 ///< fitness transformation
 
@@ -176,31 +211,19 @@ Selection::score_t Selection::Novelty(const score_t & score, const group_t & nei
 
 ///< selector functions
 
-Selection::parent_t Selection::MLSelect(const size_t mu, const size_t lambda, const score_t & score)
+Selection::parent_t Selection::MLSelect(const size_t mu, const size_t lambda, const fitgp_t & group)
 {
   // quick checks
   emp_assert(0 < mu); emp_assert(0 < lambda);
-  emp_assert(mu <= lambda); emp_assert(0 < score.size());
-
-  // place all solutions in map based on score
-  std::map<double, parent_t, std::greater<int>> group;
-  for(size_t i = 0; i < score.size(); ++i)
-  {
-    // didn't find in group
-    if(group.find(score[i]) == group.end())
-    {
-      parent_t p{i};
-      group[score[i]] = p;
-    }
-    else{group[score[i]].push_back(i);}
-  }
+  emp_assert(mu <= lambda); emp_assert(0 < group.size());
 
   // go through the ordered scores and get our top mu solutions
   parent_t topmu;
   for(auto & g : group)
   {
-    emp::Shuffle(*random, g.second);
-    for(auto id : g.second)
+    auto gt = g.second;
+    emp::Shuffle(*random, gt);
+    for(auto id : gt)
     {
       topmu.push_back(id);
       if(topmu.size() == mu) {break;}
