@@ -49,7 +49,7 @@ class Selection
      *
      * @return Vector of vector ids groups as nearest neighbors.
      */
-    group_t KNearestN(const score_t & score);
+    group_t FitNearestN(const score_t & score, const size_t K);
 
     /**
      * Fitness Group Structure:
@@ -153,9 +153,10 @@ class Selection
 
 ///< population structure
 
-Selection::group_t Selection::KNearestN(const score_t & score)
+Selection::group_t Selection::FitNearestN(const score_t & score, const size_t K)
 {
   // quick checks
+  emp_assert(0 < score.size());
 
   group_t group;
 
