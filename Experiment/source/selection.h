@@ -180,7 +180,7 @@ Selection::parent_t Selection::MLSelect(const size_t mu, const size_t lambda, co
 {
   // quick checks
   emp_assert(0 < mu); emp_assert(0 < lambda);
-  emp_assert(mu < lambda); emp_assert(0 < score.size());
+  emp_assert(mu <= lambda); emp_assert(0 < score.size());
 
   // place all solutions in map based on score
   std::map<double, parent_t, std::greater<int>> group;
@@ -210,21 +210,22 @@ Selection::parent_t Selection::MLSelect(const size_t mu, const size_t lambda, co
   }
 
   // insert the correct amount of ids
-  parent_t win;
+  parent_t parent;
   size_t ml = mu / lambda;
   for(auto id : topmu)
   {
-    for(size_t i = 0; i < ml; ++i){win.push_back(id);}
+    for(size_t i = 0; i < ml; ++i){parent.push_back(id);}
   }
 
-  emp_assert(win.size() == lambda);
+  emp_assert(parent.size() == lambda);
 
-  return win;
+  return parent;
 }
 size_t Selection::Tournament(const size_t t, const score_t & score)
 {
   // quick checks
-  emp_assert(t > 0); emp_assert(0 < score.size());
+  emp_assert(0 < t); emp_assert(0 < score.size());
+  emp_assert(t <= score.size());
 
   // get tournament ids
   auto tour = emp::Choose(*random, score.size(), t);
