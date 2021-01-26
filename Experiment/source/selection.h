@@ -7,6 +7,8 @@
 ///< standard headers
 #include <algorithm>
 #include <map>
+#include <utility>
+#include <cmath>
 
 ///< empirical headers
 #include "base/vector.h"
@@ -30,6 +32,10 @@ class Selection
     using group_t = emp::vector<emp::vector<size_t>>;
     // map holding population id groupings by fitness (keys in decending order)
     using fitgp_t = std::map<double, parent_t, std::greater<int>>;
+    // sorted score vector w/ position id and score
+    using sorted_t = emp::vector<std::pair<size_t,double>>;
+    // vector of double vectors for K neighborhoods
+    using kneigh_t = emp::vector<emp::vector<double>>;
 
   public:
 
@@ -49,7 +55,7 @@ class Selection
      *
      * @return Vector of vector ids groups as nearest neighbors.
      */
-    group_t FitNearestN(const score_t & score, const size_t K);
+    kneigh_t FitNearestN(const score_t & score, const size_t K);
 
     /**
      * Fitness Group Structure:
@@ -143,24 +149,77 @@ class Selection
 
     ///< helper functions
 
+    // distance function between two values
+    double Distance(double a, double b) {return std::abs(a - b);}
+
 
   private:
 
     // random pointer from world.h
     emp::Ptr<emp::Random> random;
-
 };
 
 ///< population structure
 
-Selection::group_t Selection::FitNearestN(const score_t & score, const size_t K)
+Selection::kneigh_t Selection::FitNearestN(const score_t & score, const size_t K)
 {
   // quick checks
-  emp_assert(0 < score.size());
+  emp_assert(0 < score.size()); emp_assert(score.size()-1 < K);
 
-  group_t group;
+  // create group vector returning
+  kneigh_t group(score.size());
 
+  // create vector to sort scores and generate score neighborhood pairings
+  // <position id in orginal score vector, original score vector value>
+  sorted_t order;
 
+  // populate the vector with pairings + sort it based on scores
+  for(size_t i = 0; i < score.size(); ++i){order.emplace_back(i, score[i]);}
+  std::sort(order.begin(), order.end(), [](const auto &left, const auto &right) {
+    return left.second < right.second;
+  });
+
+  // walk through sorted vector and create the k neighborhood per score value
+  for(size_t i = 0; i < order.size(); ++i)
+  {
+    emp::vector<double> neigh;
+    int left = i - 1; int right = i + 1;
+
+    // generate the neighborhood
+    while(neigh.size() != K)
+    {
+      //quick checks
+      emp_assert((left < 0) && (order.size() <= right));
+
+      // i = 0
+      if(left < 0)
+      {
+        neigh.push_back(order[right].second);
+        ++right;
+      }
+      // i = score.size() - 1
+      else if (order.size() <= right)
+      {
+        neigh.push_back(order[left].second);
+        --left;
+      }
+      // in the middle
+      else
+      {
+        // look at distances
+        double ld = Distance(order[i].second, order[left].second);
+        double rd = Distance(order[i].second, order[right].second);
+
+        // left is smaller distance
+        if(ld < rd) {neigh.push_back(order[left].second); --left;}
+        else {neigh.push_back(order[right].second); ++right;}
+      }
+    }
+
+    emp_assert(neigh.size() == K);
+    // we now have the add vector into right location
+    group[order[i].first] = neigh;
+  }
 
   return group;
 }
