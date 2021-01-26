@@ -97,7 +97,9 @@ class Selection
      *
      *
      * @param score Vector containing all solution scores.
-     * @param neigh Vector containing neighboring positions in score (per solution)
+     * @param neigh Vector containing neighboring positions in score (per solution).
+     * @param K Size of each neighborhood.
+     * @param exp Exponent we are using for the p norm calculations.
      *
      * @return Vector with transformed scores.
      */
@@ -268,8 +270,25 @@ Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & nei
   // novelty score transformed from orignial scores
   score_t nscore;
 
+  // iterate through both score and neighborhood vectors
+  for(size_t i = 0; i < score.size(); ++i)
+  {
+    // quick checks
+    emp_assert(neigh[i].size() == K);
 
+    // keep track of distances
+    double numer = 0.0;
 
+    // euclidean distance for two points
+    for(size_t k = 0; k < K; ++k){numer += Distance(score[i], neigh[i][k]);}
+
+    // calculate the average
+    double denom = static_cast<double>(K);
+
+    nscore.push_back(numer / denom);
+  }
+
+  emp_assert(nscore.size() == score.size());
 
   return nscore;
 }
