@@ -35,7 +35,7 @@ class Selection
     // sorted score vector w/ position id and score
     using sorted_t = emp::vector<std::pair<size_t,double>>;
     // vector of double vectors for K neighborhoods
-    using kneigh_t = emp::vector<emp::vector<double>>;
+    using neigh_t = emp::vector<emp::vector<double>>;
 
   public:
 
@@ -55,7 +55,7 @@ class Selection
      *
      * @return Vector of vector ids groups as nearest neighbors.
      */
-    kneigh_t FitNearestN(const score_t & score, const size_t K);
+    neigh_t FitNearestN(const score_t & score, const size_t K);
 
     /**
      * Fitness Group Structure:
@@ -101,7 +101,7 @@ class Selection
      *
      * @return Vector with transformed scores.
      */
-    score_t Novelty(const score_t & score, const group_t & neigh);
+    score_t Novelty(const score_t & score, const neigh_t & neigh, const size_t K);
 
 
     ///< selector functions
@@ -131,7 +131,6 @@ class Selection
      *
      * @return Parent id of solution that won the tournament.
      */
-
     size_t Tournament(const size_t t, const score_t & score);
 
     /**
@@ -152,6 +151,9 @@ class Selection
     // distance function between two values
     double Distance(double a, double b) {return std::abs(a - b);}
 
+    // P-Norm function between a set of values
+    double Pnorm(const score_t & score, const double exp);
+
 
   private:
 
@@ -161,13 +163,13 @@ class Selection
 
 ///< population structure
 
-Selection::kneigh_t Selection::FitNearestN(const score_t & score, const size_t K)
+Selection::neigh_t Selection::FitNearestN(const score_t & score, const size_t K)
 {
   // quick checks
   emp_assert(0 < score.size()); emp_assert(score.size()-1 < K);
 
   // create group vector returning
-  kneigh_t group(score.size());
+  neigh_t group(score.size());
 
   // create vector to sort scores and generate score neighborhood pairings
   // <position id in orginal score vector, original score vector value>
@@ -257,15 +259,19 @@ Selection::score_t Selection::FitnessSharing(const genome_t & genome, const scor
 
   return tscore;
 }
-Selection::score_t Selection::Novelty(const score_t & score, const group_t & neigh)
+Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & neigh, const size_t K)
 {
   // quick checks
+  emp_assert(score.size() == neigh.size());
+  emp_assert(0 < score.size()); emp_assert(0 < neigh.size());
+
+  // novelty score transformed from orignial scores
+  score_t nscore;
 
 
-  score_t tscore;
 
 
-  return tscore;
+  return nscore;
 }
 
 
@@ -333,4 +339,18 @@ size_t Selection::Drift(const size_t size)
   return win[0];
 }
 
+
+///< helper functions
+
+double Selection::Pnorm(const score_t & score, const double exp)
+{
+  // quick checks
+  emp_assert(0 < score.size()); emp_assert(1 <= exp);
+
+  double tot = 0.0;
+
+  for(const double & s : score) {tot += std::pow(std::abs(s), exp);}
+
+  return std::pow(tot, (1.0/exp));
+}
 #endif
