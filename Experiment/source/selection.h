@@ -80,14 +80,28 @@ class Selection
      * in IEEE Transactions on Evolutionary Computation, vol. 2, no. 3, pp. 97-106, Sept. 1998.
      *
      *
-     * @param genome Vector containing all genomes.
+     * @param dmat distance matrix for genome pairs.
      * @param score Vector containing all solution scores.
      * @param alph Shape of sharing function.
      * @param sig Similarity threshold.
      *
      * @return Vector with parent id's that are selected.
      */
-    score_t FitnessSharing(const genome_t & genome, const score_t & score, const double alph, const double sig);
+    score_t FitnessSharing(const matrix_t & dmat, const score_t & score, const double alph, const double sig);
+
+    /**
+     * Fitness Sharing: Sharing Function
+     *
+     * This function will return a score of 0 or 1 - (score/sig)^alph.
+     * Depending on score < sig.
+     *
+     * \param dist single score we are evaluating
+     * \param sig similarity threshold we are using
+     * \param alph shape of penalty function
+     *
+     * \return a tranformed fitness score, with fitness sharing integrated within the score
+     */
+    double SharingFunction(const double dist, const double sig, const double alph);
 
     /**
      * Novelty Fitness Transformation:
@@ -153,8 +167,11 @@ class Selection
     // distance function between two values
     double Distance(double a, double b) {return std::abs(a - b);}
 
-    // P-Norm function between a set of values
-    double Pnorm(const score_t & score, const double exp);
+    // p-norm function between two vector subtractions and the exponent for p
+    double Pnorm(const score_t & x, const score_t & y, const double exp);
+
+    // similarity matrix generator
+    matrix_t SimilarityMatrix(const genome_t & genome, const double exp);
 
 
   private:
@@ -195,19 +212,19 @@ Selection::neigh_t Selection::FitNearestN(const score_t & score, const size_t K)
       //quick checks
       emp_assert((left < 0) && (order.size() <= right));
 
-      // i = 0
+      // reached all left neighbors possible for i
       if(left < 0)
       {
         neigh.push_back(order[right].second);
         ++right;
       }
-      // i = score.size() - 1
+      // reached all right neighbors possible for i
       else if (order.size() <= right)
       {
         neigh.push_back(order[left].second);
         --left;
       }
-      // in the middle
+      // we find the closes neighbor to score i, between left and right
       else
       {
         // look at distances
@@ -219,8 +236,9 @@ Selection::neigh_t Selection::FitNearestN(const score_t & score, const size_t K)
         else {neigh.push_back(order[right].second); ++right;}
       }
     }
-
+    // quick checks
     emp_assert(neigh.size() == K);
+
     // we now have the add vector into right location
     group[order[i].first] = neigh;
   }
@@ -249,17 +267,34 @@ Selection::fitgp_t Selection::FitnessGroup(const score_t & score)
 }
 
 
-///< fitness transformation
+///< fitness transformation >///
 
-Selection::score_t Selection::FitnessSharing(const genome_t & genome, const score_t & score, const double alph, const double sig)
+Selection::score_t Selection::FitnessSharing(const matrix_t & dmat, const score_t & score, const double alph, const double sig)
 {
   // quick checks
+  emp_assert(dmat.size() == score.size()); emp_assert(0 <= alph); emp_assert(0 <= sig);
+  emp_assert(0 < dmat.size()); emp_assert(0 < score.size());
+
+  score_t tscore(score.size());
 
 
-  score_t tscore;
 
 
   return tscore;
+}
+double Selection::SharingFunction(const double dist, const double sig, const double alph)
+{
+  // quick checks
+  emp_assert(0 <= dist); emp_assert(0 <= sig); emp_assert(0 <= alph);
+
+  if(dist < sig)
+  {
+    // right side of equation
+    double rse = std::pow((dist/sig), alph);
+    return 1.0 - rse;
+  }
+
+  return 0.0;
 }
 Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & neigh, const size_t K)
 {
@@ -361,15 +396,38 @@ size_t Selection::Drift(const size_t size)
 
 ///< helper functions
 
-double Selection::Pnorm(const score_t & score, const double exp)
+double Selection::Pnorm(const score_t & x, const score_t & y, const double exp)
 {
   // quick checks
-  emp_assert(0 < score.size()); emp_assert(1 <= exp);
+  emp_assert(0 < x.size()); emp_assert(0 < y.size());
+  emp_assert(x.size() == y.size()); emp_assert(1 <= exp);
 
-  double tot = 0.0;
+  // subtract one vector from the other and take the exp of that
+  score_t diff(x.size());
+  for(size_t i = 0; i < x.size(); ++i){diff[i] = std::pow((x[i] - y[i]), exp);}
 
-  for(const double & s : score) {tot += std::pow(std::abs(s), exp);}
+  double tot = std::accumulate(diff.begin(), diff.end(), 0.0);
 
   return std::pow(tot, (1.0/exp));
 }
+Selection::matrix_t Selection::SimilarityMatrix(const genome_t & genome, const double exp)
+{
+  // quick checks
+  emp_assert(1 <= exp); emp_assert(1 < genome.size());
+
+  // generate the matrix
+  matrix_t similar(genome.size());
+  for(auto & s : similar) {s.resize(genome.size(), -1.0);}
+
+  for(size_t i = 0; i < genome.size(); ++i)
+  {
+    for(size_t j = 0; j < i; ++j)
+    {
+      similar[i][j] = Pnorm(genome[i], genome[j], exp);
+    }
+  }
+
+  return similar;
+}
+
 #endif
