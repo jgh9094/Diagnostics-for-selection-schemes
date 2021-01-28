@@ -35,6 +35,8 @@ class Diagnostic
     //setters
     void SetTarget(target_t & t) {target.clear(); target.resize(t.size()); std::copy(t.begin(), t.end(), target.begin());}
     void SetCredit(double c) {cred_set = true; max_cred = c;}
+
+
     ///< Functions that deal with diagnostic problem scoring
 
     /**
