@@ -381,43 +381,41 @@ size_t Selection::EpsiLexicase(const matrix_t & mscore, const double epsi, const
   ids_t test_id(M);
   std::iota(test_id.begin(), test_id.end(), 0);
   emp::Shuffle(*random, test_id);
-  size_t tcnt = 0;
 
-  // variable with impossible return for checks
-  size_t win = mscore.size();
-
-  // vector to hold filtering population
+  // vector to hold filterd elite solutions
   ids_t filter(mscore.size());
   std::iota(filter.begin(), filter.end(), 0);
 
   // iterate through testcases until we run out or have a single winner
-  while(tcnt < test_id.size() && filter.size() != 1)
+  size_t tcnt = 0;
+  while(tcnt < M && filter.size() != 1)
   {
-    // group org ids by performance in descending order
-    fitgp_t group;
-    for(auto id : filter)
-    {
-      const double score = mscore[id][tcnt];
+    // testcase we are randomly evaluating
+    size_t testcase = test_id[tcnt];
 
-      // if the score is new to the group
-      if(group.find(score) == group.end())
-      {
-        ids_t g{id};
-        group[score] = g;
-      }
-      else
-      {
-        group[score].push_back(id);
-      }
+    // create vector of current filter solutions
+    score_t scores(filter.size());
+    for(size_t i = 0; i < filter.size(); ++i)
+    {
+      // make sure each solutions vector is the right size
+      emp_assert(mscore[filter[i]].size() == M);
+      scores[i] = mscore[filter[i]][testcase];
     }
 
+    // group org ids by performance in descending order
+    fitgp_t group = FitnessGroup(scores);
+
     // update the filter vector with pop ids that are worthy
-    filter.clear(); double opti = group.begin()->first;
+    ids_t temp_filter = filter;
+    filter.clear();
     for(const auto & p : group)
     {
-      if(Distance(opti, p.first) < epsi)
+      if(Distance(group.begin()->first, p.first) < epsi)
       {
-        for(auto id : p.second){filter.push_back(id);}
+        for(auto id : p.second)
+        {
+          filter.push_back(temp_filter[id]);
+        }
       }
       else{break;}
     }
@@ -425,9 +423,9 @@ size_t Selection::EpsiLexicase(const matrix_t & mscore, const double epsi, const
     ++tcnt;
   }
 
+  // Get a random position from the remaining filtered solutions (may be one left too)
   size_t wid = emp::Choose(*random, filter.size(), 1)[0];
 
-  emp_assert(filter[wid] != mscore.size());
   return filter[wid];
 }
 
