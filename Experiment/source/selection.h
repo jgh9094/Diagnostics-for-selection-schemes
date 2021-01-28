@@ -16,6 +16,7 @@
 
 ///< constant vars
 constexpr size_t DRIFT_SIZE = 1;
+double ERROR_VALD = -1.0;
 
 class Selection
 {
@@ -80,7 +81,7 @@ class Selection
      * in IEEE Transactions on Evolutionary Computation, vol. 2, no. 3, pp. 97-106, Sept. 1998.
      *
      *
-     * @param dmat distance matrix for genome pairs.
+     * @param dmat distance matrix for genome pairs, a lower diagnoal matrix is expected.
      * @param score Vector containing all solution scores.
      * @param alph Shape of sharing function.
      * @param sig Similarity threshold.
@@ -277,8 +278,34 @@ Selection::score_t Selection::FitnessSharing(const matrix_t & dmat, const score_
 
   score_t tscore(score.size());
 
+  for(size_t i = 0; i < dmat.size(); ++i)
+  {
+    // quick checks
+    emp_assert(dmat[i].size() == score.size());
 
+    // mi value that holds niche count (or scaling factor)
+    double mi = 0.0;
 
+    for(size_t j = 0; j < dmat.size(); ++j)
+    {
+      // ignore similar pairs
+      if(i == j) {continue;}
+
+      // only look at lower triangular diagonal values
+      if(j < i)
+      {
+        emp_assert(dmat[i][j] != ERROR_VALD);
+        mi += SharingFunction(dmat[i][j], sig, alph);
+      }
+      else
+      {
+        emp_assert(dmat[j][i] != ERROR_VALD);
+        mi += SharingFunction(dmat[j][i], sig, alph);
+      }
+    }
+
+    tscore[i] = score[i] / mi;
+  }
 
   return tscore;
 }
@@ -290,12 +317,13 @@ double Selection::SharingFunction(const double dist, const double sig, const dou
   if(dist < sig)
   {
     // right side of equation
-    double rse = std::pow((dist/sig), alph);
+    const double rse = std::pow((dist/sig), alph);
     return 1.0 - rse;
   }
 
   return 0.0;
 }
+
 Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & neigh, const size_t K)
 {
   // quick checks
@@ -303,7 +331,7 @@ Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & nei
   emp_assert(0 < score.size()); emp_assert(0 < neigh.size());
 
   // novelty score transformed from orignial scores
-  score_t nscore;
+  score_t nscore(score.size());
 
   // iterate through both score and neighborhood vectors
   for(size_t i = 0; i < score.size(); ++i)
@@ -318,12 +346,10 @@ Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & nei
     for(size_t k = 0; k < K; ++k){numer += Distance(score[i], neigh[i][k]);}
 
     // calculate the average
-    double denom = static_cast<double>(K);
+    const double denom = static_cast<double>(K);
 
-    nscore.push_back(numer / denom);
+    nscore[i] = numer / denom;
   }
-
-  emp_assert(nscore.size() == score.size());
 
   return nscore;
 }
@@ -364,6 +390,7 @@ Selection::parent_t Selection::MLSelect(const size_t mu, const size_t lambda, co
 
   return parent;
 }
+
 size_t Selection::Tournament(const size_t t, const score_t & score)
 {
   // quick checks
@@ -381,6 +408,7 @@ size_t Selection::Tournament(const size_t t, const score_t & score)
 
   return std::distance(tour.begin(), win);
 }
+
 size_t Selection::Drift(const size_t size)
 {
   // quick checks
@@ -410,14 +438,15 @@ double Selection::Pnorm(const score_t & x, const score_t & y, const double exp)
 
   return std::pow(tot, (1.0/exp));
 }
+
 Selection::matrix_t Selection::SimilarityMatrix(const genome_t & genome, const double exp)
 {
   // quick checks
   emp_assert(1 <= exp); emp_assert(1 < genome.size());
 
-  // generate the matrix
+  // generate the matrix, lower diagnonal matrix filled (not include i == j)
   matrix_t similar(genome.size());
-  for(auto & s : similar) {s.resize(genome.size(), -1.0);}
+  for(auto & s : similar) {s.resize(genome.size(), ERROR_VALD);}
 
   for(size_t i = 0; i < genome.size(); ++i)
   {
