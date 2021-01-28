@@ -21,8 +21,8 @@ double ERROR_VALD = -1.0;
 class Selection
 {
   public:
-    // vector type of parent ids selected
-    using parent_t = emp::vector<size_t>;
+    // vector of any ids
+    using ids_t = emp::vector<size_t>;
     // vector type of org score
     using score_t = emp::vector<double>;
     // matrix type of org with multiple scores
@@ -32,7 +32,7 @@ class Selection
     // vector holding population groupings
     using group_t = emp::vector<emp::vector<size_t>>;
     // map holding population id groupings by fitness (keys in decending order)
-    using fitgp_t = std::map<double, parent_t, std::greater<int>>;
+    using fitgp_t = std::map<double, ids_t, std::greater<int>>;
     // sorted score vector w/ position id and score
     using sorted_t = emp::vector<std::pair<size_t,double>>;
     // vector of double vectors for K neighborhoods
@@ -41,6 +41,19 @@ class Selection
   public:
 
     Selection(emp::Ptr<emp::Random> rng = nullptr) : random(rng) {emp_assert(rng);}
+
+
+    ///< helper functions
+
+    // distance function between two values
+    double Distance(double a, double b) {return std::abs(a - b);}
+
+    // p-norm function between two vector subtractions and the exponent for p
+    double Pnorm(const score_t & x, const score_t & y, const double exp);
+
+    // similarity matrix generator
+    matrix_t SimilarityMatrix(const genome_t & genome, const double exp);
+
 
     ///< population structure
 
@@ -136,7 +149,7 @@ class Selection
      *
      * @return Vector with parent id's that are selected.
      */
-    parent_t MLSelect(const size_t mu, const size_t lambda, const fitgp_t & group);
+    ids_t MLSelect(const size_t mu, const size_t lambda, const fitgp_t & group);
 
     /**
      * Tournament Selector:
@@ -163,18 +176,22 @@ class Selection
      */
     size_t Drift(const size_t size);
 
-
-    ///< helper functions
-
-    // distance function between two values
-    double Distance(double a, double b) {return std::abs(a - b);}
-
-    // p-norm function between two vector subtractions and the exponent for p
-    double Pnorm(const score_t & x, const score_t & y, const double exp);
-
-    // similarity matrix generator
-    matrix_t SimilarityMatrix(const genome_t & genome, const double exp);
-
+    /**
+     * Epsilon Lexicase Selector:
+     *
+     * This function will iterate through individual testcases.
+     * While filtering down the population on each one, only taking the top performers.
+     * The top performers must be some within some distance of the top performance to pass.
+     *
+     * In the event of ties on the last testcase being used, a solution will be selected at random.
+     *
+     * @param mscore Matrix of solution fitnesses (must be the same amount of fitness per solution)(mscore.size => # of orgs).
+     * @param epsi Epsilon threshold value.
+     * @param M Number of traits we are expecting.
+     *
+     * @return A single winning solution id.
+     */
+    size_t EpsiLexicase(const matrix_t & mscore, const double epsi, const size_t M);
 
   private:
 
@@ -259,7 +276,7 @@ Selection::fitgp_t Selection::FitnessGroup(const score_t & score)
     // didn't find in group
     if(group.find(score[i]) == group.end())
     {
-      parent_t p{i};
+      ids_t p{i};
       group[score[i]] = p;
     }
     else{group[score[i]].push_back(i);}
@@ -355,17 +372,76 @@ Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & nei
   return nscore;
 }
 
+size_t Selection::EpsiLexicase(const matrix_t & mscore, const double epsi, const size_t M)
+{
+  // quick checks
+  emp_assert(0 < mscore.size()); emp_assert(0 <= epsi); emp_assert(0 < M);
+
+  // create vector of shuffled testcase ids
+  ids_t test_id(M);
+  std::iota(test_id.begin(), test_id.end(), 0);
+  emp::Shuffle(*random, test_id);
+  size_t tcnt = 0;
+
+  // variable with impossible return for checks
+  size_t win = mscore.size();
+
+  // vector to hold filtering population
+  ids_t filter(mscore.size());
+  std::iota(filter.begin(), filter.end(), 0);
+
+  // iterate through testcases until we run out or have a single winner
+  while(tcnt < test_id.size() && filter.size() != 1)
+  {
+    // group org ids by performance in descending order
+    fitgp_t group;
+    for(auto id : filter)
+    {
+      const double score = mscore[id][tcnt];
+
+      // if the score is new to the group
+      if(group.find(score) == group.end())
+      {
+        ids_t g{id};
+        group[score] = g;
+      }
+      else
+      {
+        group[score].push_back(id);
+      }
+    }
+
+    // update the filter vector with pop ids that are worthy
+    filter.clear(); double opti = group.begin()->first;
+    for(const auto & p : group)
+    {
+      if(Distance(opti, p.first) < epsi)
+      {
+        for(auto id : p.second){filter.push_back(id);}
+      }
+      else{break;}
+    }
+
+    ++tcnt;
+  }
+
+  size_t wid = emp::Choose(*random, filter.size(), 1)[0];
+
+  emp_assert(filter[wid] != mscore.size());
+  return filter[wid];
+}
+
 
 ///< selector functions
 
-Selection::parent_t Selection::MLSelect(const size_t mu, const size_t lambda, const fitgp_t & group)
+Selection::ids_t Selection::MLSelect(const size_t mu, const size_t lambda, const fitgp_t & group)
 {
   // quick checks
   emp_assert(0 < mu); emp_assert(0 < lambda);
   emp_assert(mu <= lambda); emp_assert(0 < group.size());
 
   // go through the ordered scores and get our top mu solutions
-  parent_t topmu;
+  ids_t topmu;
   for(auto & g : group)
   {
     auto gt = g.second;
@@ -380,7 +456,7 @@ Selection::parent_t Selection::MLSelect(const size_t mu, const size_t lambda, co
   }
 
   // insert the correct amount of ids
-  parent_t parent;
+  ids_t parent;
   size_t ml = mu / lambda;
   for(auto id : topmu)
   {
