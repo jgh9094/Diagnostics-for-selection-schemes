@@ -21,6 +21,7 @@ class Diagnostic
 
     Diagnostic(target_t & t_, double c) : max_cred(c)
     {
+      cred_set = true;
       target.resize(t_.size());
       std::copy(t_.begin(), t_.end(), target.begin());
     }
@@ -33,7 +34,7 @@ class Diagnostic
 
     //setters
     void SetTarget(target_t & t) {target.clear(); target.resize(t.size()); std::copy(t.begin(), t.end(), target.begin());}
-    void SetCredit(double c) {max_cred = c;}
+    void SetCredit(double c) {cred_set = true; max_cred = c;}
     ///< Functions that deal with diagnostic problem scoring
 
     /**
@@ -113,13 +114,16 @@ class Diagnostic
      *
      * @return boolean vector that displays optimized traits.
     */
-    opti_t OptimizedVector(const genome_t & g, const double & acc);
+    opti_t OptimizedVector(const genome_t & g, const double acc);
 
   private:
     // holds vector of target objective values
     target_t target;
+
     // holds maximum credit allowed for error
     double max_cred;
+    // max credit set?
+    bool cred_set = false;
 };
 
 ///< diagnostic problem implementations
@@ -127,7 +131,7 @@ class Diagnostic
 Diagnostic::score_t Diagnostic::Exploration(const genome_t & g)
 {
   // quick checks
-  emp_assert(g.size() > 0, g.size());
+  emp_assert(0 < g.size()); emp_assert(max_cred);
 
   // intialize vector with size g
   score_t score(g.size());
@@ -151,7 +155,7 @@ Diagnostic::score_t Diagnostic::Exploration(const genome_t & g)
 Diagnostic::score_t Diagnostic::Exploitation(const genome_t & g)
 {
   // quick checks
-  emp_assert(g.size() > 0, g.size());
+  emp_assert(0 < g.size());
 
   // intialize vector with size g
   score_t score(g.size());
@@ -164,34 +168,34 @@ Diagnostic::score_t Diagnostic::Exploitation(const genome_t & g)
 Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
 {
   // quick checks
-  emp_assert(g.size() > 0, g.size());
+  emp_assert(g.size() > 0);
 
   // intialize score vector
   score_t score(g.size());
 
   // find max value position
-  size_t skip = std::distance(g.begin(), std::max_element(g.begin(), g.end()));
+  size_t max_v = std::distance(g.begin(), std::max_element(g.begin(), g.end()));
 
   // set all score vector values except where max value is
   for(size_t i = 0; i < score.size(); ++i)
   {
-    if(i == skip) {continue;}
-    score[i] = g[skip] - g[i];
+    if(i == max_v) {continue;}
+    score[i] = g[max_v] - g[i];
   }
 
-  score[skip] = g[skip];
+  score[max_v] = g[max_v];
 
   return score;
 }
 Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g)
 {
   // quick checks
-  emp_assert(g.size() > 0, g.size());
+  emp_assert(g.size() > 0); emp_assert(cred_set);
 
   // intialize vector with size g
   score_t score(g.size());
 
-  // find where order breaks
+  // find where descending order breaks
   auto it = std::is_sorted_until(g.begin(), g.end(), std::greater_equal<>());
 
   // if sorted, return same vector
@@ -200,6 +204,7 @@ Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g)
   // else fill in appropiately
   else
   {
+    // calculate cutoff point where descending order is broken
     size_t cutoff = std::distance(g.begin(), it);
 
     // everything up to unsorted
@@ -214,13 +219,13 @@ Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g)
 
 ///< score vector interpretation implementations
 
-Diagnostic::opti_t Diagnostic::OptimizedVector(const genome_t & g, const double & acc)
+Diagnostic::opti_t Diagnostic::OptimizedVector(const genome_t & g, const double acc)
 {
   // quick checks
-  emp_assert(g.size() > 0, g.size());
-  emp_assert(g.size() == target.size(), target.size());
-  emp_assert(0.0 < acc, acc);
-  emp_assert(acc <= 1.0, acc);
+  emp_assert(g.size() > 0);
+  emp_assert(g.size() == target.size());
+  emp_assert(0.0 < acc);
+  emp_assert(acc <= 1.0);
 
   // initialize optimized vector with all false
   opti_t optimize(g.size(), false);
