@@ -50,9 +50,10 @@ class Selection
      * This function will return a vector of vectors, where
      * each individual vector corresponds to that solutions nearest neighbor
      *
-     * In the event of ties, a solution will be selected at random.
+     * In the event of ties, we take right neighbor score.
      *
      * @param score Vector containing all solution scores.
+     * @param K Size of neighborhood looking for
      *
      * @return Vector of vector ids groups as nearest neighbors.
      */
@@ -229,8 +230,8 @@ Selection::neigh_t Selection::FitNearestN(const score_t & score, const size_t K)
       else
       {
         // look at distances
-        double ld = Distance(order[i].second, order[left].second);
-        double rd = Distance(order[i].second, order[right].second);
+        const double ld = Distance(order[i].second, order[left].second);
+        const double rd = Distance(order[i].second, order[right].second);
 
         // left is smaller distance
         if(ld < rd) {neigh.push_back(order[left].second); --left;}
@@ -327,7 +328,7 @@ double Selection::SharingFunction(const double dist, const double sig, const dou
 Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & neigh, const size_t K)
 {
   // quick checks
-  emp_assert(score.size() == neigh.size());
+  emp_assert(score.size() == neigh.size()); emp_assert(0 <= K);
   emp_assert(0 < score.size()); emp_assert(0 < neigh.size());
 
   // novelty score transformed from orignial scores
@@ -428,7 +429,7 @@ double Selection::Pnorm(const score_t & x, const score_t & y, const double exp)
 {
   // quick checks
   emp_assert(0 < x.size()); emp_assert(0 < y.size());
-  emp_assert(x.size() == y.size()); emp_assert(1 <= exp);
+  emp_assert(x.size() == y.size()); emp_assert(0 <= exp);
 
   // subtract one vector from the other and take the exp of that
   score_t diff(x.size());
