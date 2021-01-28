@@ -27,17 +27,15 @@ class Selection
     // vector type of org score
     using score_t = emp::vector<double>;
     // matrix type of org with multiple scores
-    using matrix_t = emp::vector<emp::vector<double>>;
+    using fmatrix_t = emp::vector<score_t>;
     // vector holding population genomes
-    using genome_t = emp::vector<emp::vector<double>>;
-    // vector holding population groupings
-    using group_t = emp::vector<emp::vector<size_t>>;
+    using gmatrix_t = emp::vector<emp::vector<double>>;
     // map holding population id groupings by fitness (keys in decending order)
     using fitgp_t = std::map<double, ids_t, std::greater<int>>;
     // sorted score vector w/ position id and score
     using sorted_t = emp::vector<std::pair<size_t,double>>;
     // vector of double vectors for K neighborhoods
-    using neigh_t = emp::vector<emp::vector<double>>;
+    using neigh_t = emp::vector<score_t>;
 
   public:
 
@@ -53,7 +51,7 @@ class Selection
     double Pnorm(const score_t & x, const score_t & y, const double exp);
 
     // similarity matrix generator
-    matrix_t SimilarityMatrix(const genome_t & genome, const double exp);
+    fmatrix_t SimilarityMatrix(const gmatrix_t & genome, const double exp);
 
 
     ///< population structure
@@ -103,7 +101,7 @@ class Selection
      *
      * @return Vector with parent id's that are selected.
      */
-    score_t FitnessSharing(const matrix_t & dmat, const score_t & score, const double alph, const double sig);
+    score_t FitnessSharing(const fmatrix_t & dmat, const score_t & score, const double alph, const double sig);
 
     /**
      * Fitness Sharing: Sharing Function
@@ -192,7 +190,7 @@ class Selection
      *
      * @return A single winning solution id.
      */
-    size_t EpsiLexicase(const matrix_t & mscore, const double epsi, const size_t M);
+    size_t EpsiLexicase(const fmatrix_t & mscore, const double epsi, const size_t M);
 
   private:
 
@@ -289,7 +287,7 @@ Selection::fitgp_t Selection::FitnessGroup(const score_t & score)
 
 ///< fitness transformation >///
 
-Selection::score_t Selection::FitnessSharing(const matrix_t & dmat, const score_t & score, const double alph, const double sig)
+Selection::score_t Selection::FitnessSharing(const fmatrix_t & dmat, const score_t & score, const double alph, const double sig)
 {
   // quick checks
   emp_assert(dmat.size() == score.size()); emp_assert(0 <= alph); emp_assert(0 <= sig);
@@ -440,7 +438,7 @@ size_t Selection::Drift(const size_t size)
   return win[0];
 }
 
-size_t Selection::EpsiLexicase(const matrix_t & mscore, const double epsi, const size_t M)
+size_t Selection::EpsiLexicase(const fmatrix_t & mscore, const double epsi, const size_t M)
 {
   // quick checks
   emp_assert(0 < mscore.size()); emp_assert(0 <= epsi); emp_assert(0 < M);
@@ -514,13 +512,13 @@ double Selection::Pnorm(const score_t & x, const score_t & y, const double exp)
   return std::pow(tot, (1.0/exp));
 }
 
-Selection::matrix_t Selection::SimilarityMatrix(const genome_t & genome, const double exp)
+Selection::fmatrix_t Selection::SimilarityMatrix(const gmatrix_t & genome, const double exp)
 {
   // quick checks
   emp_assert(1 <= exp); emp_assert(1 < genome.size());
 
   // generate the matrix, lower diagnonal matrix filled (not include i == j)
-  matrix_t similar(genome.size());
+  fmatrix_t similar(genome.size());
   for(auto & s : similar) {s.resize(genome.size(), ERROR_VALD);}
 
   for(size_t i = 0; i < genome.size(); ++i)
