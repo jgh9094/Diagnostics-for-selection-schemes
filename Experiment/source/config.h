@@ -3,17 +3,17 @@
 
 #include "config/config.h"
 
-EMP_BUILD_CONFIG( DiaConfig,
+EMP_BUILD_CONFIG(DiaConfig,
   GROUP(WORLD_STRUCTURE, "How should the world be setup?"),
-  VALUE(POP_SIZE,     size_t,      512, "Population size."),
-  VALUE(MAX_GENS,     size_t,    1, "Maximum number of generations."),
-  VALUE(SEED,           int,        0,  "Random number seed."),
+  VALUE(POP_SIZE,     size_t,      512,    "Population size."),
+  VALUE(MAX_GENS,     size_t,        0,    "Maximum number of generations."),
+  VALUE(SEED,           int,         0,    "Random number seed."),
 
   GROUP(DIAGNOSTICS, "How are the diagnostics setup?"),
   VALUE(TARGET,              double,     100.0,      "Target that traits are trying to optimize towards."),
-  VALUE(SOLUTION_THRESH,     double,      0.05,      "Proportion of error we are allowing, based of TARGET (TARGET * SOLUTION_THRESH)."),
+  VALUE(ACCURACY,            double,      0.99,      "Accuracy percentage needed to be considered an optimal trait"),
   VALUE(TRAIT_CNT,           size_t,       100,      "Number of traits an organism has"),
-  VALUE(SELECTION,           size_t,         0,      "Which selection are we doing? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Lexicase"),
+  VALUE(SELECTION,           size_t,         0,      "Which selection are we doing? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase"),
   VALUE(DIAGNOSTIC,          size_t,         0,      "Which diagnostic are we doing? \n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration"),
 
   GROUP(MUTATIONS, "Mutation rates for organisms."),
