@@ -21,6 +21,7 @@ double ERROR_VALD = -1.0;
 
 class Selection
 {
+  // object types we are using in this class
   public:
     // vector of any ids
     using ids_t = emp::vector<size_t>;
@@ -36,6 +37,7 @@ class Selection
     using sorted_t = emp::vector<std::pair<size_t,double>>;
     // vector of double vectors for K neighborhoods
     using neigh_t = emp::vector<score_t>;
+
 
   public:
 
