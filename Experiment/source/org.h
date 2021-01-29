@@ -63,13 +63,13 @@ class Org
     score_t & GetScore() {emp_assert(scored); return score;}
     optimal_t & GetOptimal() {emp_assert(opti); return optimal;}
     // get const aggregate fitness
-    double GetAggregate() const {emp_assert(aggregated); return agg_score;}
+    double GetAggregate() {emp_assert(aggregated); return agg_score;}
     // get clone bool
-    const bool & GetClone() const {emp_assert(0 < genome.size()); return clone;}
+    bool GetClone() const {emp_assert(0 < genome.size()); return clone;}
     // get optimal
-    const size_t & GetCount() const {emp_assert(counted); return count;}
+    size_t GetCount() const {emp_assert(counted); return count;}
     // get gene count
-    size_t & GetM() {emp_assert(0 < M); return M;}
+    size_t GetM() {emp_assert(0 < M); return M;}
 
 
     ///< setters
@@ -211,6 +211,7 @@ double Org::AggregateScore()
 
   return agg_score;
 }
+
 size_t Org::CountOptimized()
 {
   //quick checks
@@ -249,6 +250,7 @@ void Org::Reset()
   // reset clone var
   clone = false;
 }
+
 void Org::Inherit(const score_t & s, const optimal_t & o, size_t c, double a)
 {
   // quick checks
