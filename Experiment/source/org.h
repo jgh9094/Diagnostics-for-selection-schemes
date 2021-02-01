@@ -70,7 +70,8 @@ class Org
     size_t GetCount() const {emp_assert(counted); return count;}
     // get gene count
     size_t GetM() {emp_assert(0 < M); return M;}
-
+    // Are we optimized at this objective?
+    bool OptimizedAt(size_t obj);
 
     ///< setters
 
@@ -197,6 +198,16 @@ class Org
     // Are we a clone?
     bool clone = false;
 };
+
+///< getters with extra
+bool Org::OptimizedAt(size_t obj)
+{
+  // quick checks
+  emp_assert(0 <= obj); emp_assert(obj < M);
+  emp_assert(0 < optimal.size()); emp_assert(M == optimal.size());
+
+  return optimal[obj];
+}
 
 ///< functions to calculate scores and related data
 
