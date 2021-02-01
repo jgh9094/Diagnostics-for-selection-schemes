@@ -6,18 +6,17 @@
  * []: Nothing done yet
  *
  * SELECTION SCHEME:
- * []: (μ,λ)
- * []: Tournament
- * []: Fitness Sharing
- * []: Novelty Search
- * []: Epsilon-Lexicae
- * []: Age Layered Population Structure (ALPS)
+ * [X]: (μ,λ)
+ * [X]: Tournament
+ * [X]: Fitness Sharing
+ * [X]: Novelty Search
+ * [X]: Epsilon-Lexicae
  *
  * DIAGNOSTICS:
- * []: Exploitation
- * []: Structured Exploitation
- * []: Contradictory Traits Ecologoy
- * []: Exploitation
+ * [P]: Exploitation
+ * [P]: Structured Exploitation
+ * [P]: Contradictory Traits Ecologoy
+ * [P]: Exploitation
  *
  * PERFORMANCE METRICS:
  *
@@ -77,7 +76,7 @@ class DiagWorld : public emp::World<Org>
     // score vector for a solution
     using score_t = emp::vector<double>;
     // boolean optimal vector per objective
-    using optimal_t = emp::vector<double>;
+    using optimal_t = emp::vector<bool>;
     // target vector type
     using target_t = emp::vector<double>;
 
@@ -163,6 +162,18 @@ class DiagWorld : public emp::World<Org>
     void EpsilonLexicase();
 
 
+    ///< evaluation function implementations
+
+    void Exploitation();
+
+    void StructuredExploitation();
+
+    void ContraEcology();
+
+    void Exploration();
+
+
+
     ///< helper functions
 
     // create a vector of population aggregate scores
@@ -184,6 +195,8 @@ class DiagWorld : public emp::World<Org>
     eval_t evaluate;
     // selection lambda we set
     sele_t select;
+    // vector holding population aggregate scores (by position id)
+    score_t fit_vec;
 
     // select.h var
     emp::Ptr<Selection> selection;
@@ -375,7 +388,36 @@ void DiagWorld::SetOnOffspringReady()
 
 void DiagWorld::SetEvaluation()
 {
+  std::cerr << "------------------------------------------------" << std::endl;
+  std::cerr << "Setting Selection function..." << std::endl;
 
+  target_t target(config.POP_SIZE(), config.TARGET());
+  diagnostic = emp::NewPtr<Diagnostic>(target, config.CREDIT());
+  std::cerr << "Created diagnostic emp::Ptr" << std::endl;
+
+  switch (config.DIAGNOSTIC())
+  {
+  case 0: // exploitation
+    Exploitation();
+    break;
+
+  case 1: // structured exploitation
+    StructuredExploitation();
+    break;
+
+  case 2: // contradictory ecology
+    ContraEcology();
+    break;
+
+  case 3: // exploration
+    Exploration();
+    break;
+
+  default:
+    break;
+  }
+
+  std::cerr << "Evaluation function set!\n" <<std::endl;
 }
 
 void DiagWorld::SetDataTracking()
@@ -419,10 +461,10 @@ void DiagWorld::MuLambda()
   {
     // quick checks
     emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
-    emp_assert(0 < pop.size());
+    emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
 
     // group population by fitness
-    fitgp_t group = selection->FitnessGroup(PopAggFit());
+    fitgp_t group = selection->FitnessGroup(fit_vec);
 
     return selection->MLSelect(config.MU(), config.POP_SIZE(), group);
   };
@@ -438,17 +480,15 @@ void DiagWorld::Tournament()
   {
     // quick checks
     emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
-    emp_assert(0 < pop.size());
+    emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
 
     // will hold parent ids + get pop agg score values
     ids_t parent(pop.size());
-    score_t score = PopAggFit();
-    emp_assert(score.size() == config.POP_SIZE());
 
     // get pop size amount of parents
     for(size_t i = 0; i < parent.size(); ++i)
     {
-      parent[i] = selection->Tournament(config.TOUR_SIZE(), score);
+      parent[i] = selection->Tournament(config.TOUR_SIZE(), fit_vec);
     }
 
     return parent;
@@ -465,14 +505,13 @@ void DiagWorld::FitnessSharing()
   {
     // quick checks
     emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
-    emp_assert(0 < pop.size());
+    emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
 
     gmatrix_t genomes = PopGenomes();
-    score_t score = PopAggFit();
 
     // generate distance matrix + fitness transformation
     fmatrix_t dist_mat = selection->SimilarityMatrix(genomes, config.PNORM_EXP());
-    score_t tscore = selection->FitnessSharing(dist_mat, score, config.FIT_ALPHA(), config.FIT_SIGMA());
+    score_t tscore = selection->FitnessSharing(dist_mat, fit_vec, config.FIT_ALPHA(), config.FIT_SIGMA());
 
     // select parent ids
     ids_t parent(pop.size());
@@ -496,15 +535,13 @@ void DiagWorld::NoveltySearch()
   {
     // quick checks
     emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
-    emp_assert(0 < pop.size());
-
-    score_t score = PopAggFit();
+    emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
 
     // generate nearest neighbor pop structure
-    neigh_t neighborhood = selection->FitNearestN(score, config.NOVEL_K());
+    neigh_t neighborhood = selection->FitNearestN(fit_vec, config.NOVEL_K());
 
     // transform original fitness into novelty fitness
-    score_t tscore = selection->Novelty(score, neighborhood, config.NOVEL_K());
+    score_t tscore = selection->Novelty(fit_vec, neighborhood, config.NOVEL_K());
 
     // select parent ids
     ids_t parent(pop.size());
@@ -545,6 +582,90 @@ void DiagWorld::EpsilonLexicase()
 
   std::cerr << "Epsilon Lexicase selection scheme set!" << std::endl;
 }
+
+
+///< evaluation function implementations
+
+void Exploitation()
+{
+  std::cerr << "Setting exploitation diagnostic..." << std::endl;
+
+  evaluate = [this](Org & org)
+  {
+    // set score & aggregate
+    score_t score = diagnostic->Exploitation(org.GetGenome());
+    org.SetScore(score);
+    org.AggregateScore();
+
+    // set optimal vector and count
+    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
+    org.SetOptimal(opti);
+    org.CountOptimized();
+  }
+
+  std::cerr << "Exploitation diagnotic set!" << std::endl;
+}
+
+void StructuredExploitation()
+{
+  std::cerr << "Setting structured exploitation diagnostic..." << std::endl;
+
+  evaluate = [this](Org & org)
+  {
+    // set score & aggregate
+    score_t score = diagnostic->StructExploitation(org.GetGenome());
+    org.SetScore(score);
+    org.AggregateScore();
+
+    // set optimal vector and count
+    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
+    org.SetOptimal(opti);
+    org.CountOptimized();
+  }
+
+  std::cerr << "Structured exploitation diagnotic set!" << std::endl;
+}
+
+void ContraEcology()
+{
+  std::cerr << "Setting contradictory ecology diagnostic..." << std::endl;
+
+  evaluate = [this](Org & org)
+  {
+    // set score & aggregate
+    score_t score = diagnostic->ContraEcology(org.GetGenome());
+    org.SetScore(score);
+    org.AggregateScore();
+
+    // set optimal vector and count
+    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
+    org.SetOptimal(opti);
+    org.CountOptimized();
+  }
+
+  std::cerr << "Contradictory ecology diagnotic set!" << std::endl;
+}
+
+void Exploration()
+{
+  std::cerr << "Setting exploration diagnostic..." << std::endl;
+
+  evaluate = [this](Org & org)
+  {
+    // set score & aggregate
+    score_t score = diagnostic->Exploration(org.GetGenome());
+    org.SetScore(score);
+    org.AggregateScore();
+
+    // set optimal vector and count
+    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
+    org.SetOptimal(opti);
+    org.CountOptimized();
+  }
+
+  std::cerr << "Exploration diagnotic set!" << std::endl;
+}
+
 
 
 ///< helper functions
