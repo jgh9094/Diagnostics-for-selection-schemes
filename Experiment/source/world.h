@@ -116,6 +116,15 @@ class DiagWorld : public emp::World<Org>
       random_ptr = emp::NewPtr<emp::Random>(config.SEED());
     }
 
+    ~DiagWorld()
+    {
+      selection.Delete();
+      diagnostic.Delete();
+      pop_fit.Delete();
+      pop_opti.Delete();
+      pnt_fit.Delete();
+      pnt_opti.Delete();
+    }
 
     ///< functions called to setup the world
 
@@ -485,6 +494,7 @@ void DiagWorld::SetDataTracking()
 
 
   // initialize all nodes
+  // ask charles
   std::cerr << "Initializing nodes..." << std::endl;
   pop_fit.New(); pop_opti.New(); pnt_fit.New(); pnt_opti.New();
   std::cerr << "Nodes initialized!" << std::endl;
