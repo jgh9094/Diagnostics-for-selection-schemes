@@ -52,13 +52,14 @@ TEST_CASE("Problem class exploration function", "[exploration]")
   const size_t size = 10; const double cred = 0.0;
   emp::vector<double> g(size);
   emp::vector<double> correct(size);
+  Diagnostic diag(g, cred);
+
 
   // create decending vector
   // <10, 9,..., 1>
   g = {10,9,8,7,6,5,4,3,2,1};
   correct = {10,9,8,7,6,5,4,3,2,1};
   // create diagnostic & test function with descending order
-  Diagnostic diag(g, cred);
   emp::vector<double> score = diag.Exploration(g);
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
@@ -109,14 +110,12 @@ TEST_CASE("Problem class structured exploitation function", "[struct-exploit]")
   emp::vector<double> g(size);
   emp::vector<double> correct(size);
   emp::vector<double> score(size);
+  Diagnostic diag(g, cred);
 
   // create decending vector
-  // {10,9,8,7,6,5,4,3,2,1}
   g = {10,9,8,7,6,5,4,3,2,1};
   correct = {10,9,8,7,6,5,4,3,2,1};
-
   // create diagnostic & test function with descending order
-  Diagnostic diag(g, cred);
   score = diag.StructExploitation(g);
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
@@ -155,7 +154,6 @@ TEST_CASE("Problem class structured exploitation function", "[struct-exploit]")
 
 
   // checking for accending vector middle to end
-  // <1,9,8,7,6,5,4,3,2,1>
   g = {1,9,8,7,6,5,4,3,2,1};
   score = diag.StructExploitation(g);
   //create correct vector
@@ -165,9 +163,54 @@ TEST_CASE("Problem class structured exploitation function", "[struct-exploit]")
 
 
   // all the same values
-  // <1,1,1,1,1,1,1,1,1,1>
   g = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
   score = diag.StructExploitation(g);
+  //create correct vector
+  correct = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+}
+
+TEST_CASE("Problem class contradictory ecology function", "[contra-ecology]")
+{
+  // set up our genome and diagnostic to score with structured exploitation
+  const size_t size = 10; const double cred = 0.0;
+  emp::vector<double> g(size);
+  emp::vector<double> correct(size);
+  emp::vector<double> score(size);
+  Diagnostic diag(g, cred);
+
+
+  // create decending vector, start the optimum
+  g = {10,9,8,7,6,5,4,3,2,1};
+  correct = {10,1,2,3,4,5,6,7,8,9};
+  // create diagnostic & test function with descending order
+  score = diag.ContraEcology(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // end of vector is optimum
+  g = {10,9,8,7,6,5,4,3,2,20};
+  correct = {10,11,12,13,14,15,16,17,18,20};
+  // create diagnostic & test function with descending order
+  score = diag.ContraEcology(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // start and end of vector is optimum
+  g = {20,9,8,7,6,5,4,3,2,20};
+  correct = {20,11,12,13,14,15,16,17,18,20};
+  // create diagnostic & test function with descending order
+  score = diag.ContraEcology(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // all the same values
+  g = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+  score = diag.ContraEcology(g);
   //create correct vector
   correct = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
