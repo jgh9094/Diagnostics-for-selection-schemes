@@ -96,14 +96,18 @@ class DiagWorld : public emp::World<Org>
     ///< world related types
 
     // evaluation function type
-    using eval_t = std::function<void(Org &)>;
+    using eval_t = std::function<double(Org &)>;
     // selection function type
     using sele_t = std::function<ids_t()>;
+
+    ///< data tracking stuff
+    using node_t = emp::Ptr<emp::DataMonitor<int>>;
 
 
   public:
 
-    DiagWorld(DiaConfig & _config) : config(_config)
+    DiagWorld(DiaConfig & _config) : config(_config), data_file("data.csv"), elite_pos(config.POP_SIZE()),
+    comm_pos(config.POP_SIZE()), opti_pos(config.POP_SIZE())
     {
       // set random pointer seed
       random_ptr = emp::NewPtr<emp::Random>(config.SEED());
@@ -173,6 +177,16 @@ class DiagWorld : public emp::World<Org>
     void Exploration();
 
 
+    ///< data tracking
+
+    size_t UniqueObjective();
+
+    size_t FindElite();
+
+    size_t FindCommon();
+
+    size_t FindOptimized();
+
 
     ///< helper functions
 
@@ -197,11 +211,35 @@ class DiagWorld : public emp::World<Org>
     sele_t select;
     // vector holding population aggregate scores (by position id)
     score_t fit_vec;
+    // vector holding parent solutions selected by selection scheme
+    ids_t parent_set;
 
     // select.h var
     emp::Ptr<Selection> selection;
     // problem.h var
     emp::Ptr<Diagnostic> diagnostic;
+
+    ///< data file & node related variables
+
+    // file we are working with
+    emp::DataFile data_file;
+    // node to track pop fitnesses
+    node_t pop_fit;
+    // node to track pop opitmized count
+    node_t pop_opti;
+    // node to track parent fitnesses
+    node_t pnt_fit;
+    // node to track parent optimized count
+    node_t pnt_opti;
+
+    ///< data we are tracking during an evolutionary run
+
+    // elite solution position
+    size_t elite_pos;
+    // common solution position
+    size_t comm_pos;
+    // optimal solution position
+    size_t opti_pos;
 };
 
 ///< functions called to setup the world
@@ -240,13 +278,11 @@ void DiagWorld::SetOnUpdate()
   // set up the evolutionary algorithm
   OnUpdate([this](size_t gen)
   {
-    // step 1
+    // step 1: evaluate all solutions on diagnostic
     EvaluationStep();
 
-    // step 2
+    // step 2: select parent solutions for
     SelectionStep();
-
-    // gather data before changing the population
 
     // step 3
     ReproductionStep();
@@ -422,8 +458,108 @@ void DiagWorld::SetEvaluation()
 
 void DiagWorld::SetDataTracking()
 {
+  std::cerr << "------------------------------------------------" << std::endl;
+  std::cerr << "Setting up data tracking..." << std::endl;
 
+
+  // initialize all nodes
+  std::cerr << "Initializing nodes..." << std::endl;
+  pop_fit.New(); pop_opti.New(); pnt_fit.New(); pnt_opti.New();
+  std::cerr << "Nodes initialized!" << std::endl;
+
+  // track population aggregate score stats: average, variance, min, max
+  data_file.AddMean(*pop_fit, "pop_fit_avg", "Population average aggregate performance.");
+  data_file.AddVariance(*pop_fit, "pop_fit_var", "Population variance aggregate performance.");
+  data_file.AddMax(*pop_fit, "pop_fit_max", "Population maximum aggregate performance.");
+  data_file.AddMin(*pop_fit, "pop_fit_min", "Population minimum aggregate performance.");
+
+  // track population optimized objective count stats: average, variance, min, max
+  data_file.AddMean(*pop_opti, "pop_opt_avg", "Population average objective optimization count.");
+  data_file.AddVariance(*pop_opti, "pop_opt_var", "Population variance objective optimization count.");
+  data_file.AddMax(*pop_opti, "pop_opt_max", "Population maximum objective optimization count.");
+  data_file.AddMin(*pop_opti, "pop_opt_min", "Population minimum objective optimization count.");
+
+  // track parent aggregate score stats: average, variance, min, max
+  data_file.AddMean(*pnt_fit, "pnt_fit_avg", "Parent average aggregate performance.");
+  data_file.AddVariance(*pnt_fit, "pnt_fit_var", "Parent variance aggregate performance.");
+  data_file.AddMax(*pnt_fit, "pnt_fit_max", "Parent maximum aggregate performance.");
+  data_file.AddMin(*pnt_fit, "pnt_fit_min", "Parent minimum aggregate performance.");
+
+  // track parent optimized objective count stats: average, variance, min, max
+  data_file.AddMean(*pnt_opti, "pnt_opt_avg", "Parent average objective optimization count.");
+  data_file.AddVariance(*pnt_opti, "pnt_opt_var", "Parent variance objective optimization count.");
+  data_file.AddMax(*pnt_opti, "pnt_opt_max", "Parent maximum objective optimization count.");
+  data_file.AddMin(*pnt_opti, "pnt_opt_min", "Parent minimum objective optimization count.");
+
+  std::cerr << "Added all data nodes to data file!" << std::endl;
+
+  // unique optimized objectives count
+  data_file.AddFun<size_t>([this]()
+  {
+    return UniqueObjective();
+  }, "pop_uni_obj", "Number of unique optimized traits per generation!");
+
+  // number of genetically distinct solutions
+
+  // elite solution aggregate performance
+  data_file.AddFun<double>([this]()
+  {
+    // quick checks
+    emp_assert(elite_pos != config.POP_SIZE());
+    emp_assert(pop.size() == config.POP_SIZE());
+
+    Org & org = *pop[elite_pos];
+
+    return org.GetAggregate();
+  }, "ele_agg_per", "Elite solution aggregate performance!");
+
+  // elite solution optimized objectives count
+  data_file.AddFun<double>([this]()
+  {
+    // quick checks
+    emp_assert(elite_pos != config.POP_SIZE());
+    emp_assert(pop.size() == config.POP_SIZE());
+
+    Org & org = *pop[elite_pos];
+
+    return org.GetCount();
+  }, "ele_opt_cnt", "Elite solution optimized objective count!");
+
+  // common solution aggregate performance
+
+  // common solution optimized objectives count
+
+  // optimized solution aggregate performance
+  data_file.AddFun<size_t>([this]()
+  {
+    // quick checks
+    emp_assert(opti_pos != config.POP_SIZE());
+    emp_assert(pop.size() == config.POP_SIZE());
+
+    Org & org = *pop[opti_pos];
+
+    return org.GetAggregate();
+  }, "opt_agg_per", "Otpimal solution aggregate performance");
+
+  // optimized solution optimized objectives count
+  data_file.AddFun<size_t>([this]()
+  {
+    // quick checks
+    emp_assert(opti_pos != config.POP_SIZE());
+    emp_assert(pop.size() == config.POP_SIZE());
+
+    Org & org = *pop[opti_pos];
+
+    return org.GetCount();
+  }, "opt_obj_cnt", "Otpimal solution aggregate performance");
+
+
+  std::cerr << "Finished setting data tracking!\n" << std::endl;
 }
+
+
+
+
 
 void DiagWorld::InitializeWorld()
 {
@@ -431,11 +567,28 @@ void DiagWorld::InitializeWorld()
 }
 
 
+
+
+
+
 ///< principle steps during an evolutionary run
 
 void DiagWorld::EvaluationStep()
 {
+  // quick checks
+  emp_assert(fit_vec.size() == 0); emp_assert(0 < pop.size());
+  emp_assert(pop.size() == config.POP_SIZE());
 
+  // iterate through the world and populate fitness vector
+  fit_vec.clear();
+  fit_vec.resize(config.POP_SIZE());
+  for(size_t i = 0; i < pop.size(); ++i)
+  {
+    auto & org = *pop[i];
+
+    // no evaluate needed if offspring is a clone
+    fit_vec[i] = (org.GetClone()) ? org.GetAggregate() : evaluate(org);
+  }
 }
 
 DiagWorld::ids_t DiagWorld::SelectionStep()
@@ -586,7 +739,7 @@ void DiagWorld::EpsilonLexicase()
 
 ///< evaluation function implementations
 
-void Exploitation()
+void DiagWorld::Exploitation()
 {
   std::cerr << "Setting exploitation diagnostic..." << std::endl;
 
@@ -601,12 +754,14 @@ void Exploitation()
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
     org.CountOptimized();
-  }
+
+    return org.GetAggregate();
+  };
 
   std::cerr << "Exploitation diagnotic set!" << std::endl;
 }
 
-void StructuredExploitation()
+void DiagWorld::StructuredExploitation()
 {
   std::cerr << "Setting structured exploitation diagnostic..." << std::endl;
 
@@ -621,12 +776,14 @@ void StructuredExploitation()
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
     org.CountOptimized();
-  }
+
+    return org.GetAggregate();
+  };
 
   std::cerr << "Structured exploitation diagnotic set!" << std::endl;
 }
 
-void ContraEcology()
+void DiagWorld::ContraEcology()
 {
   std::cerr << "Setting contradictory ecology diagnostic..." << std::endl;
 
@@ -641,12 +798,14 @@ void ContraEcology()
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
     org.CountOptimized();
-  }
+
+    return org.GetAggregate();
+  };
 
   std::cerr << "Contradictory ecology diagnotic set!" << std::endl;
 }
 
-void Exploration()
+void DiagWorld::Exploration()
 {
   std::cerr << "Setting exploration diagnostic..." << std::endl;
 
@@ -661,11 +820,79 @@ void Exploration()
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
     org.CountOptimized();
-  }
+
+    return org.GetAggregate();
+  };
 
   std::cerr << "Exploration diagnotic set!" << std::endl;
 }
 
+
+///< data tracking
+
+size_t DiagWorld::UniqueObjective()
+{
+  // quick checks
+  emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
+
+  // iterate through objectives
+  size_t cnt = 0;
+  for(size_t o = 0; 0 < config.OBJECTIVE_CNT(); ++o)
+  {
+    // iterate pop to check is a solution has the objective optimized
+    for(size_t p = 0; p < pop.size(); ++p)
+    {
+      Org & org = *pop[p];
+
+      if(org.OptimizedAt(o))
+      {
+        ++cnt;
+        break;
+      }
+    }
+  }
+
+  return cnt;
+}
+
+size_t DiagWorld::FindElite()
+{
+  // quick checks
+  emp_assert(0 < fit_vec.size()); emp_assert(fit_vec.size() == pop.size());
+  emp_assert(fit_vec.size() == config.POP_SIZE());
+
+
+  // find max value position
+  auto elite_it = std::max_element(fit_vec.begin(), fit_vec.end());
+  elite_pos = std::distance(fit_vec.begin(), elite_it);
+
+  return elite_pos;
+}
+
+size_t DiagWorld::FindCommon()
+{
+
+}
+
+size_t DiagWorld::FindOptimized()
+{
+  // quick checks
+  emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
+
+  // iterate through pop and find optimal solution
+  size_t max = 0;
+  for(size_t i = 0; i < pop.size(); ++i)
+  {
+    const Org & org = *pop[i];
+    if(max < org.GetCount())
+    {
+      max = org.GetCount();
+      opti_pos = i;
+    }
+  }
+
+  return opti_pos;
+}
 
 
 ///< helper functions
