@@ -46,36 +46,94 @@ TEST_CASE("Problem class initialization", "[initialization]")
   REQUIRE_THAT(diagnostic.GetTarget(), Catch::Matchers::Equals(targ1));
 }
 
-TEST_CASE("Problem class structured exploitation function", "[struct-exploit]")
+TEST_CASE("Problem class exploration function", "[exploration]")
 {
   // set up our genome and diagnostic to score with structured exploitation
-  const size_t size = 10; const double cred = 0.0; const double max = 100.0;
+  const size_t size = 10; const double cred = 0.0;
   emp::vector<double> g(size);
   emp::vector<double> correct(size);
 
   // create decending vector
   // <10, 9,..., 1>
-  for(size_t i = size; i > 0; --i) {g[size-i] = (double) i; correct[size-i] = double(i);}
-
-  // create diagnostic + test function
+  g = {10,9,8,7,6,5,4,3,2,1};
+  correct = {10,9,8,7,6,5,4,3,2,1};
+  // create diagnostic & test function with descending order
   Diagnostic diag(g, cred);
-  emp::vector<double> score = diag.StructExploitation(g);
-  // PrintVec(g, "g:"); PrintVec(score, "s:");
-  REQUIRE_THAT(score, Catch::Matchers::Equals(g));
+  emp::vector<double> score = diag.Exploration(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 
 
-  // Making sure that a decending sorted vector is calculated correctly
+  // make sure that ascending order vector is calcualted correctly
+  // {1,2,3,4,5,6,7,8,9,10}
+  std::reverse(g.begin(), g.end());
+  // create correct vector & get score
+  correct = {cred,cred,cred,cred,cred,cred,cred,cred,cred,10};
+  score = diag.Exploration(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // middle to end scoring is correct
+  g = {10,9,8,7,6,100,4,3,2,1};
+  // create correct vector & get score
+  correct = {cred, cred, cred, cred, cred, 100, 4, 3, 2, 1};
+  score = diag.Exploration(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // early middle to later middle scoring is correct
+  g = {10,9,100,7,6,5,10,3,2,1};
+  // create correct vector & get score
+  correct = {cred,cred,100,7,6,5,cred,cred,cred,cred};
+  score = diag.Exploration(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // all the same values
+  // <1,1,1,1,1,1,1,1,1,1>
+  g = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+  score = diag.Exploration(g);
+  //create correct vector
+  correct = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+}
+
+TEST_CASE("Problem class structured exploitation function", "[struct-exploit]")
+{
+  // set up our genome and diagnostic to score with structured exploitation
+  const size_t size = 10; const double cred = 0.0;
+  emp::vector<double> g(size);
+  emp::vector<double> correct(size);
+  emp::vector<double> score(size);
+
+  // create decending vector
+  // {10,9,8,7,6,5,4,3,2,1}
+  g = {10,9,8,7,6,5,4,3,2,1};
+  correct = {10,9,8,7,6,5,4,3,2,1};
+
+  // create diagnostic & test function with descending order
+  Diagnostic diag(g, cred);
+  score = diag.StructExploitation(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // Making sure that a ascending order vector is calculated correctly
   // <1, 2,..., 10>
   std::reverse(g.begin(), g.end());
   score = diag.StructExploitation(g);
   // create correct vector
   correct = {1,cred,cred,cred,cred,cred,cred,cred,cred,cred};
-  // PrintVec(correct, "c"); PrintVec(g, "g");
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 
 
   // Checking accending order when last element out of order
-  // <10, 9,...,10>
+  // <10,9,8,7,6,10,4,3,2,10>
   std::reverse(g.begin(), g.end());
   g.back() = size;
   score = diag.StructExploitation(g);
@@ -102,6 +160,16 @@ TEST_CASE("Problem class structured exploitation function", "[struct-exploit]")
   score = diag.StructExploitation(g);
   //create correct vector
   correct = {1, cred, cred, cred, cred, cred, cred, cred, cred,cred};
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // all the same values
+  // <1,1,1,1,1,1,1,1,1,1>
+  g = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+  score = diag.StructExploitation(g);
+  //create correct vector
+  correct = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 }
