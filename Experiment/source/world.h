@@ -55,6 +55,8 @@
 
 ///< standard headers
 #include <functional>
+#include <map>
+#include <set>
 
 ///< empirical headers
 #include "Evolve/World.h"
@@ -102,6 +104,7 @@ class DiagWorld : public emp::World<Org>
 
     ///< data tracking stuff
     using node_t = emp::Ptr<emp::DataMonitor<int>>;
+    using como_t = std::map<size_t, ids_t>;
 
 
   public:
@@ -240,6 +243,8 @@ class DiagWorld : public emp::World<Org>
     size_t comm_pos;
     // optimal solution position
     size_t opti_pos;
+    // common solution dictionary
+    como_t common;
 };
 
 ///< functions called to setup the world
@@ -500,6 +505,19 @@ void DiagWorld::SetDataTracking()
   }, "pop_uni_obj", "Number of unique optimized traits per generation!");
 
   // number of genetically distinct solutions
+  data_file.AddFun<size_t>([this]()
+  {
+    // quick checks
+    emp_assert(0 < common.size());
+    emp_assert(comm_pos != config.POP_SIZE());
+
+    // find iterator to common org
+    const auto it = common.find(comm_pos);
+    emp_assert(it != common.end());
+    emp_assert(0 < it->second.size());
+
+    return it->second.size();
+  }, "com_sol_cnt", "Count of genetically common solution!");
 
   // elite solution aggregate performance
   data_file.AddFun<double>([this]()
@@ -514,7 +532,7 @@ void DiagWorld::SetDataTracking()
   }, "ele_agg_per", "Elite solution aggregate performance!");
 
   // elite solution optimized objectives count
-  data_file.AddFun<double>([this]()
+  data_file.AddFun<size_t>([this]()
   {
     // quick checks
     emp_assert(elite_pos != config.POP_SIZE());
@@ -526,11 +544,31 @@ void DiagWorld::SetDataTracking()
   }, "ele_opt_cnt", "Elite solution optimized objective count!");
 
   // common solution aggregate performance
+  data_file.AddFun<double>([this]()
+  {
+    // quick checks
+    emp_assert(comm_pos != config.POP_SIZE());
+    emp_assert(pop.size() == config.POP_SIZE());
+
+    Org & org = *pop[comm_pos];
+
+    return org.GetAggregate();
+  }, "com_agg_per", "Common solution aggregate performance!");
 
   // common solution optimized objectives count
+  data_file.AddFun<size_t>([this]()
+  {
+    // quick checks
+    emp_assert(comm_pos != config.POP_SIZE());
+    emp_assert(pop.size() == config.POP_SIZE());
+
+    Org & org = *pop[comm_pos];
+
+    return org.GetCount();
+  }, "com_opt_cnt", "Common solution optimized objective count!");
 
   // optimized solution aggregate performance
-  data_file.AddFun<size_t>([this]()
+  data_file.AddFun<double>([this]()
   {
     // quick checks
     emp_assert(opti_pos != config.POP_SIZE());
@@ -552,7 +590,6 @@ void DiagWorld::SetDataTracking()
 
     return org.GetCount();
   }, "opt_obj_cnt", "Otpimal solution aggregate performance");
-
 
   std::cerr << "Finished setting data tracking!\n" << std::endl;
 }
@@ -871,7 +908,52 @@ size_t DiagWorld::FindElite()
 
 size_t DiagWorld::FindCommon()
 {
+  // quick checks
+  emp_assert(pop.size() == config.POP_SIZE());
+  emp_assert(common.size() == 0);
 
+  // iterate through pop and place in appropiate bin
+  for(size_t i = 0; i < pop.size(); ++i)
+  {
+    bool in_comm = false;
+    const Org & org = *pop[i];
+
+    // check if current org matches any of the existing keys
+    for(const auto & p : common)
+    {
+      const Org & korg = *pop[p.first];
+
+      // get euclidean distance between both genomes
+      const double dif = selection->Pnorm(org.GetGenome(), korg.GetGenome(), 2.0);
+
+      // if they are a match
+      if(dif == 0.0)
+      {
+        common[p.first].push_back(i);
+        in_comm = true;
+        break;
+      }
+    }
+
+    if(!in_comm)
+    {
+      ids_t first{i};
+      common[i] = first;
+    }
+  }
+
+  // iterate through common dictionary and find common org id
+  size_t max = 0;
+  for(const auto & p : common)
+  {
+    if(max < p.second.size())
+    {
+      comm_pos = p.first;
+      max = p.second.size();
+    }
+  }
+
+  return comm_pos;
 }
 
 size_t DiagWorld::FindOptimized()
