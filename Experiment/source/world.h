@@ -146,14 +146,20 @@ class DiagWorld : public emp::World<Org>
 
     ///< principle steps during an evolutionary run
 
+    // reset all data step
+    void ResetData();
+
     // evaluation step
     void EvaluationStep();
 
     // selction step
-    ids_t SelectionStep();
+    void SelectionStep();
 
     // reprodutive step
     void ReproductionStep();
+
+    // record data step
+    void RecordData();
 
 
     ///< selection scheme implementations
@@ -206,16 +212,21 @@ class DiagWorld : public emp::World<Org>
   private:
     // experiment configurations
     DiaConfig & config;
+
+
     // target vector
-    target_t target; // need to initialize
+    target_t target;
+    // vector holding population aggregate scores (by position id)
+    score_t fit_vec;
+    // vector holding parent solutions selected by selection scheme
+    ids_t parent_vec;
+
+
     // evaluation lambda we set
     eval_t evaluate;
     // selection lambda we set
     sele_t select;
-    // vector holding population aggregate scores (by position id)
-    score_t fit_vec;
-    // vector holding parent solutions selected by selection scheme
-    ids_t parent_set;
+
 
     // select.h var
     emp::Ptr<Selection> selection;
@@ -251,214 +262,220 @@ class DiagWorld : public emp::World<Org>
 
 void DiagWorld::Initialize()
 {
-  // reset the world upon start
-  Reset();
+// reset the world upon start
+Reset();
 
-  // set world to well mixed so we don't over populate
-  SetPopStruct_Mixed(true);
+// set world to well mixed so we don't over populate
+SetPopStruct_Mixed(true);
 
-  std::cerr << "==========================================" << std::endl;
-  std::cerr << "BEGINNING INITIAL SETUP" << std::endl;
-  std::cerr << "==========================================" << std::endl;
+std::cerr << "==========================================" << std::endl;
+std::cerr << "BEGINNING INITIAL SETUP" << std::endl;
+std::cerr << "==========================================" << std::endl;
 
-  // stuff we need to initialize for the experiment
-  SetMutation();
-  SetEvaluation();
-  SetOnUpdate();
-  SetDataTracking();
-  SetSelection();
-  SetOnOffspringReady();
-  InitializeWorld();
+// stuff we need to initialize for the experiment
+SetMutation();
+SetEvaluation();
+SetOnUpdate();
+SetDataTracking();
+SetSelection();
+SetOnOffspringReady();
+InitializeWorld();
 
-  std::cerr << "==========================================" << std::endl;
-  std::cerr << "FINISHED INITIAL SETUP" << std::endl;
-  std::cerr << "==========================================" << std::endl;
+std::cerr << "==========================================" << std::endl;
+std::cerr << "FINISHED INITIAL SETUP" << std::endl;
+std::cerr << "==========================================" << std::endl;
 }
 
 void DiagWorld::SetOnUpdate()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting OnUpdate function..." << std::endl;
+std::cerr << "------------------------------------------------" << std::endl;
+std::cerr << "Setting OnUpdate function..." << std::endl;
 
-  // set up the evolutionary algorithm
-  OnUpdate([this](size_t gen)
-  {
-    // step 1: evaluate all solutions on diagnostic
-    EvaluationStep();
+// set up the evolutionary algorithm
+OnUpdate([this](size_t gen)
+{
+// step 0: reset all data collection variables
+ResetData();
 
-    // step 2: select parent solutions for
-    SelectionStep();
+// step 1: evaluate all solutions on diagnostic
+EvaluationStep();
 
-    // step 3
-    ReproductionStep();
+// step 2: select parent solutions for
+SelectionStep();
 
-  });
+// step 3: reproduce and create new solutions
+ReproductionStep();
 
-  std::cerr << "Finished setting the OnUpdate function! \n" << std::endl;
+// step 4: gather and record data
+RecordData();
+
+});
+
+std::cerr << "Finished setting the OnUpdate function! \n" << std::endl;
 }
 
 void DiagWorld::SetMutation()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting mutation function..." << std::endl;
+std::cerr << "------------------------------------------------" << std::endl;
+std::cerr << "Setting mutation function..." << std::endl;
 
-  // set the mutation function
-  SetMutFun([this](Org & org, emp::Random & random)
+// set the mutation function
+SetMutFun([this](Org & org, emp::Random & random)
+{
+// number of mutations and solution genome
+size_t mcnt = 0;
+genome_t & genome = org.GetGenome();
+
+// quick checks
+emp_assert(genome.size() == config.OBJECTIVE_CNT());
+emp_assert(target.size() == config.OBJECTIVE_CNT());
+
+for(size_t i = 0; i < genome.size(); ++i)
+{
+  // if we do a mutation at this objective
+  if(random_ptr->P(config.MUTATE_PER()))
   {
-    // number of mutations and solution genome
-    size_t mcnt = 0;
-    genome_t & genome = org.GetGenome();
+    double mut = random_ptr->GetRandNormal(config.MEAN(), config.STD());
 
-    // quick checks
-    emp_assert(genome.size() == config.OBJECTIVE_CNT());
-    emp_assert(target.size() == config.OBJECTIVE_CNT());
-
-    for(size_t i = 0; i < genome.size(); ++i)
+    // mutation puts objective above target
+    if(config.TARGET() < genome[i] + mut)
     {
-      // if we do a mutation at this objective
-      if(random_ptr->P(config.MUTATE_PER()))
-      {
-        double mut = random_ptr->GetRandNormal(config.MEAN(), config.STD());
-
-        // mutation puts objective above target
-        if(config.TARGET() < genome[i] + mut)
-        {
-          // we wrap it back around target value
-          genome[i] = target[i] - (genome[i] + mut - target[i]);
-        }
-        // mutation puts objective in the negatives
-        else if(genome[i] + mut < 0)
-        {
-          genome[i] = 0.0;
-        }
-        // else we can simply add mutation
-        else
-        {
-          genome[i] = genome[i] + mut;
-        }
-
-        ++mcnt;
-      }
+      // we wrap it back around target value
+      genome[i] = target[i] - (genome[i] + mut - target[i]);
+    }
+    // mutation puts objective in the negatives
+    else if(genome[i] + mut < 0)
+    {
+      genome[i] = 0.0;
+    }
+    // else we can simply add mutation
+    else
+    {
+      genome[i] = genome[i] + mut;
     }
 
-    return mcnt;
-  });
+    ++mcnt;
+  }
+}
 
-  std::cerr << "Mutation function set!\n" << std::endl;
+return mcnt;
+});
+
+std::cerr << "Mutation function set!\n" << std::endl;
 }
 
 void DiagWorld::SetSelection()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting Selection function..." << std::endl;
+std::cerr << "------------------------------------------------" << std::endl;
+std::cerr << "Setting Selection function..." << std::endl;
 
-  selection = emp::NewPtr<Selection>(random_ptr);
-  std::cerr << "Created selection emp::Ptr" << std::endl;
+selection = emp::NewPtr<Selection>(random_ptr);
+std::cerr << "Created selection emp::Ptr" << std::endl;
 
-  switch (config.SELECTION())
-  {
-    // mu lambda
-    case 0:
-      MuLambda();
-      break;
+switch (config.SELECTION())
+{
+// mu lambda
+case 0:
+  MuLambda();
+  break;
 
-    // tournament
-    case 1:
-      Tournament();
-      break;
+// tournament
+case 1:
+  Tournament();
+  break;
 
-    // fitness sharing
-    case 2:
-      FitnessSharing();
-      break;
+// fitness sharing
+case 2:
+  FitnessSharing();
+  break;
 
-    // novelty search
-    case 3:
-      NoveltySearch();
-      break;
+// novelty search
+case 3:
+  NoveltySearch();
+  break;
 
-    // epsilon lexicase
-    case 4:
-      EpsilonLexicase();
-      break;
+// epsilon lexicase
+case 4:
+  EpsilonLexicase();
+  break;
 
-    default:
-      std::cerr << "ERROR UNKNOWN SELECTION CALL" << std::endl;
-      exit(-1);
-      break;
-  }
+default:
+  std::cerr << "ERROR UNKNOWN SELECTION CALL" << std::endl;
+  exit(-1);
+  break;
+}
 
-  std::cerr << "Finished setting the Selection function! \n" << std::endl;
+std::cerr << "Finished setting the Selection function! \n" << std::endl;
 }
 
 void DiagWorld::SetOnOffspringReady()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting OnOffspringReady function..." << std::endl;
+std::cerr << "------------------------------------------------" << std::endl;
+std::cerr << "Setting OnOffspringReady function..." << std::endl;
 
-  OnOffspringReady([this](Org & org, size_t parent_pos)
-  {
-    // quick checks
-    emp_assert(fun_do_mutations); emp_assert(random_ptr);
-    emp_assert(org.GetGenome().size() == config.OBJECTIVE_CNT());
-    emp_assert(org.GetM() == config.OBJECTIVE_CNT());
+OnOffspringReady([this](Org & org, size_t parent_pos)
+{
+// quick checks
+emp_assert(fun_do_mutations); emp_assert(random_ptr);
+emp_assert(org.GetGenome().size() == config.OBJECTIVE_CNT());
+emp_assert(org.GetM() == config.OBJECTIVE_CNT());
 
-    // do mutations on offspring
-    size_t mcnt = fun_do_mutations(org, *random_ptr);
+// do mutations on offspring
+size_t mcnt = fun_do_mutations(org, *random_ptr);
 
-    // no mutations were applied to offspring
-    if(mcnt == 0)
-    {
-      Org & parent = *pop[parent_pos];
+// no mutations were applied to offspring
+if(mcnt == 0)
+{
+  Org & parent = *pop[parent_pos];
 
-      // quick checks
-      emp_assert(parent.GetGenome().size() == config.OBJECTIVE_CNT());
-      emp_assert(parent.GetM() == config.OBJECTIVE_CNT());
+  // quick checks
+  emp_assert(parent.GetGenome().size() == config.OBJECTIVE_CNT());
+  emp_assert(parent.GetM() == config.OBJECTIVE_CNT());
 
-      // give everything to offspring from parent
-      org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate());
-    }
-    else
-    {
-      org.Reset();
-    }
-  });
+  // give everything to offspring from parent
+  org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate());
+}
+else
+{
+  org.Reset();
+}
+});
 
-  std::cerr << "Finished setting OnOffspringReady function!\n" << std::endl;
+std::cerr << "Finished setting OnOffspringReady function!\n" << std::endl;
 }
 
 void DiagWorld::SetEvaluation()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting Selection function..." << std::endl;
+std::cerr << "------------------------------------------------" << std::endl;
+std::cerr << "Setting Selection function..." << std::endl;
 
-  target_t target(config.POP_SIZE(), config.TARGET());
-  diagnostic = emp::NewPtr<Diagnostic>(target, config.CREDIT());
-  std::cerr << "Created diagnostic emp::Ptr" << std::endl;
+target_t target(config.POP_SIZE(), config.TARGET());
+diagnostic = emp::NewPtr<Diagnostic>(target, config.CREDIT());
+std::cerr << "Created diagnostic emp::Ptr" << std::endl;
 
-  switch (config.DIAGNOSTIC())
-  {
-  case 0: // exploitation
-    Exploitation();
-    break;
+switch (config.DIAGNOSTIC())
+{
+case 0: // exploitation
+Exploitation();
+break;
 
-  case 1: // structured exploitation
-    StructuredExploitation();
-    break;
+case 1: // structured exploitation
+StructuredExploitation();
+break;
 
-  case 2: // contradictory ecology
-    ContraEcology();
-    break;
+case 2: // contradictory ecology
+ContraEcology();
+break;
 
-  case 3: // exploration
-    Exploration();
-    break;
+case 3: // exploration
+Exploration();
+break;
 
-  default:
-    break;
-  }
+default:
+break;
+}
 
-  std::cerr << "Evaluation function set!\n" <<std::endl;
+std::cerr << "Evaluation function set!\n" <<std::endl;
 }
 
 void DiagWorld::SetDataTracking()
@@ -498,105 +515,148 @@ void DiagWorld::SetDataTracking()
 
   std::cerr << "Added all data nodes to data file!" << std::endl;
 
+  data_file.AddFun<size_t>([this]()
+  {
+    return update;
+  }, "gen", "Current generation at!");
+
   // unique optimized objectives count
   data_file.AddFun<size_t>([this]()
   {
-    return UniqueObjective();
+  return UniqueObjective();
   }, "pop_uni_obj", "Number of unique optimized traits per generation!");
 
   // number of genetically distinct solutions
   data_file.AddFun<size_t>([this]()
   {
-    // quick checks
-    emp_assert(0 < common.size());
-    emp_assert(comm_pos != config.POP_SIZE());
+  // quick checks
+  emp_assert(0 < common.size());
+  emp_assert(comm_pos != config.POP_SIZE());
 
-    // find iterator to common org
-    const auto it = common.find(comm_pos);
-    emp_assert(it != common.end());
-    emp_assert(0 < it->second.size());
+  // find iterator to common org
+  const auto it = common.find(comm_pos);
+  emp_assert(it != common.end());
+  emp_assert(0 < it->second.size());
 
-    return it->second.size();
+  return it->second.size();
   }, "com_sol_cnt", "Count of genetically common solution!");
 
   // elite solution aggregate performance
   data_file.AddFun<double>([this]()
   {
-    // quick checks
-    emp_assert(elite_pos != config.POP_SIZE());
-    emp_assert(pop.size() == config.POP_SIZE());
+  // quick checks
+  emp_assert(elite_pos != config.POP_SIZE());
+  emp_assert(pop.size() == config.POP_SIZE());
 
-    Org & org = *pop[elite_pos];
+  Org & org = *pop[elite_pos];
 
-    return org.GetAggregate();
+  return org.GetAggregate();
   }, "ele_agg_per", "Elite solution aggregate performance!");
 
   // elite solution optimized objectives count
   data_file.AddFun<size_t>([this]()
   {
-    // quick checks
-    emp_assert(elite_pos != config.POP_SIZE());
-    emp_assert(pop.size() == config.POP_SIZE());
+  // quick checks
+  emp_assert(elite_pos != config.POP_SIZE());
+  emp_assert(pop.size() == config.POP_SIZE());
 
-    Org & org = *pop[elite_pos];
+  Org & org = *pop[elite_pos];
 
-    return org.GetCount();
+  return org.GetCount();
   }, "ele_opt_cnt", "Elite solution optimized objective count!");
 
   // common solution aggregate performance
   data_file.AddFun<double>([this]()
   {
-    // quick checks
-    emp_assert(comm_pos != config.POP_SIZE());
-    emp_assert(pop.size() == config.POP_SIZE());
+  // quick checks
+  emp_assert(comm_pos != config.POP_SIZE());
+  emp_assert(pop.size() == config.POP_SIZE());
 
-    Org & org = *pop[comm_pos];
+  Org & org = *pop[comm_pos];
 
-    return org.GetAggregate();
+  return org.GetAggregate();
   }, "com_agg_per", "Common solution aggregate performance!");
 
   // common solution optimized objectives count
   data_file.AddFun<size_t>([this]()
   {
-    // quick checks
-    emp_assert(comm_pos != config.POP_SIZE());
-    emp_assert(pop.size() == config.POP_SIZE());
+  // quick checks
+  emp_assert(comm_pos != config.POP_SIZE());
+  emp_assert(pop.size() == config.POP_SIZE());
 
-    Org & org = *pop[comm_pos];
+  Org & org = *pop[comm_pos];
 
-    return org.GetCount();
+  return org.GetCount();
   }, "com_opt_cnt", "Common solution optimized objective count!");
 
   // optimized solution aggregate performance
   data_file.AddFun<double>([this]()
   {
-    // quick checks
-    emp_assert(opti_pos != config.POP_SIZE());
-    emp_assert(pop.size() == config.POP_SIZE());
+  // quick checks
+  emp_assert(opti_pos != config.POP_SIZE());
+  emp_assert(pop.size() == config.POP_SIZE());
 
-    Org & org = *pop[opti_pos];
+  Org & org = *pop[opti_pos];
 
-    return org.GetAggregate();
+  return org.GetAggregate();
   }, "opt_agg_per", "Otpimal solution aggregate performance");
 
   // optimized solution optimized objectives count
   data_file.AddFun<size_t>([this]()
   {
-    // quick checks
-    emp_assert(opti_pos != config.POP_SIZE());
-    emp_assert(pop.size() == config.POP_SIZE());
+  // quick checks
+  emp_assert(opti_pos != config.POP_SIZE());
+  emp_assert(pop.size() == config.POP_SIZE());
 
-    Org & org = *pop[opti_pos];
+  Org & org = *pop[opti_pos];
 
-    return org.GetCount();
+  return org.GetCount();
   }, "opt_obj_cnt", "Otpimal solution aggregate performance");
+
+  // loss of diversity
+  data_file.AddFun<double>([this]()
+  {
+    // quick checks
+    emp_assert(parent_vec.size() == config.POP_SIZE());
+
+    std::set<size_t> unique;
+    for(auto & id : parent_vec) {unique.insert(id);}
+
+    double num = static_cast<double>(unique.size());
+    double dem = static_cast<double>(config.POP_SIZE());
+
+    return num / dem;
+  }, "los_div", "Loss in diversity generated by the selection scheme!");
+
+  // selection pressure
+  data_file.AddFun<double>([this]()
+  {
+    // quick checks
+    emp_assert(pop_fit->GetCount() == config.POP_SIZE());
+    emp_assert(pnt_fit->GetCount() == config.POP_SIZE());
+
+    const double pop = pop_fit->GetMean();
+    const double pnt = pnt_fit->GetMean();
+    const double var = pop_fit->GetVariance();
+
+    return (pop - pnt) / var;
+  }, "sel_pre", "Selection pressure applied by selection scheme!");
+
+  // selection variance
+  data_file.AddFun<double>([this]()
+  {
+    // quick checks
+    emp_assert(pop_fit->GetCount() == config.POP_SIZE());
+    emp_assert(pnt_fit->GetCount() == config.POP_SIZE());
+
+    const double pop = pop_fit->GetVariance();
+    const double pnt = pnt_fit->GetVariance();
+
+    return pop / pnt;
+  }, "sel_pre", "Selection pressure applied by selection scheme!");
 
   std::cerr << "Finished setting data tracking!\n" << std::endl;
 }
-
-
-
-
 
 void DiagWorld::InitializeWorld()
 {
@@ -604,39 +664,106 @@ void DiagWorld::InitializeWorld()
 }
 
 
-
-
-
-
 ///< principle steps during an evolutionary run
+
+void DiagWorld::ResetData()
+{
+// reset all data nodes
+pop_fit->Reset();
+pop_opti->Reset();
+pnt_fit->Reset();
+pnt_opti->Reset();
+
+// reset all positon ids
+elite_pos = config.POP_SIZE();
+comm_pos = config.POP_SIZE();
+opti_pos = config.POP_SIZE();
+
+// reset all vectors/maps holding current gen data
+fit_vec.clear();
+parent_vec.clear();
+common.clear();
+}
 
 void DiagWorld::EvaluationStep()
 {
-  // quick checks
-  emp_assert(fit_vec.size() == 0); emp_assert(0 < pop.size());
-  emp_assert(pop.size() == config.POP_SIZE());
+// quick checks
+emp_assert(fit_vec.size() == 0); emp_assert(0 < pop.size());
+emp_assert(pop.size() == config.POP_SIZE());
 
-  // iterate through the world and populate fitness vector
-  fit_vec.clear();
-  fit_vec.resize(config.POP_SIZE());
-  for(size_t i = 0; i < pop.size(); ++i)
-  {
-    auto & org = *pop[i];
+// iterate through the world and populate fitness vector
+fit_vec.clear();
+fit_vec.resize(config.POP_SIZE());
+for(size_t i = 0; i < pop.size(); ++i)
+{
+auto & org = *pop[i];
 
-    // no evaluate needed if offspring is a clone
-    fit_vec[i] = (org.GetClone()) ? org.GetAggregate() : evaluate(org);
-  }
+// no evaluate needed if offspring is a clone
+fit_vec[i] = (org.GetClone()) ? org.GetAggregate() : evaluate(org);
+}
 }
 
-DiagWorld::ids_t DiagWorld::SelectionStep()
+void DiagWorld::SelectionStep()
 {
+// quick checks
+emp_assert(parent_vec.size() == 0); emp_assert(0 < pop.size());
+emp_assert(pop.size() == config.POP_SIZE());
 
-  return 0;
+parent_vec = select();
+emp_assert(parent_vec.size() == config.POP_SIZE());
 }
 
 void DiagWorld::ReproductionStep()
 {
+// quick checks
+emp_assert(parent_vec.size() == config.POP_SIZE());
+emp_assert(pop.size() == config.POP_SIZE());
 
+// go through parent ids and do births
+for(auto & id : parent_vec)
+{
+DoBirth(GetGenomeAt(id), id);
+}
+}
+
+void DiagWorld::RecordData()
+{
+  /// Add data to all nodes
+
+  // get pop data
+  for(size_t i = 0; i < pop.size(); ++i)
+  {
+    Org & org = *pop[i];
+    pop_fit->Add(org.GetAggregate());
+    pop_opti->Add(org.GetCount());
+  }
+  emp_assert(pop_fit->GetCount() == config.POP_SIZE());
+  emp_assert(pop_opti->GetCount() == config.POP_SIZE());
+
+  // get parent data
+  emp_assert(parent_vec.size() == config.POP_SIZE());
+  for(size_t i = 0; i < parent_vec.size(); ++i)
+  {
+    Org & org = *pop[parent_vec[i]];
+    pnt_fit->Add(org.GetAggregate());
+    pnt_opti->Add(org.GetCount());
+  }
+  emp_assert(pnt_fit->GetCount() == config.POP_SIZE());
+  emp_assert(pnt_opti->GetCount() == config.POP_SIZE());
+
+  /// get all position ids
+
+  elite_pos = FindElite();
+  comm_pos = FindCommon();
+  opti_pos = FindOptimized();
+
+  /// fill vectors & map
+  emp_assert(fit_vec.size() == config.POP_SIZE()); // should be set already
+  emp_assert(parent_vec.size() == config.POP_SIZE()); // should be set already
+  comm_pos = FindCommon();
+
+  /// update the file
+  data_file.Update();
 }
 
 
