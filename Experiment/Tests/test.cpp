@@ -216,3 +216,29 @@ TEST_CASE("Problem class contradictory ecology function", "[contra-ecology]")
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 }
+
+TEST_CASE("Problme class exploitation function", "[exploit]")
+{
+  // set up our genome and diagnostic to score with structured exploitation
+  const size_t size = 10; const double cred = 0.0;
+  emp::vector<double> g(size);
+  emp::vector<double> correct(size);
+  emp::vector<double> score(size);
+  Diagnostic diag(g, cred);
+
+
+  // create decending vector, start the optimum
+  g = {10,9,8,7,6,5,4,3,2,1};
+  correct = {10,9,8,7,6,5,4,3,2,1};
+  // create diagnostic & test function with descending order
+  score = diag.Exploitation(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+  // reverse order for both
+  std::reverse(g.begin(), g.end()); std::reverse(correct.begin(), correct.end());
+  // create diagnostic & test function with descending order
+  score = diag.Exploitation(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+}
