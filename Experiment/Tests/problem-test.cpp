@@ -11,7 +11,8 @@
 #include <algorithm>
 #include <string>
 
-// To run: clang++ -std=c++17 -I ../../../Empirical/source/ test.cpp -o test; ./test
+// In Tests directory, to run:
+// clang++ -std=c++17 -I ../../../Empirical/source/ problem-test.cpp -o problem-test; ./problem-test
 
 void PrintVec(const emp::vector<double> &v, const std::string s)
 {
