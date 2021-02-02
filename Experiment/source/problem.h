@@ -30,7 +30,7 @@ class Diagnostic
 
     // getters
     target_t GetTarget() const {return target;}
-    // const target_t & GetTarget() const {return target;}
+    double GetCredit() const {return max_cred;}
 
     //setters
     void SetTarget(target_t & t) {target.clear(); target.resize(t.size()); std::copy(t.begin(), t.end(), target.begin());}
