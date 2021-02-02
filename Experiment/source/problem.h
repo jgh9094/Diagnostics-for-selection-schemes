@@ -181,11 +181,9 @@ Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
   // set all score vector values except where max value is
   for(size_t i = 0; i < score.size(); ++i)
   {
-    if(i == max_v) {continue;}
-    score[i] = g[max_v] - g[i];
+    if(g[i] == g[max_v]) {score[i] = g[max_v];}
+    else{score[i] = g[max_v] - g[i];}
   }
-
-  score[max_v] = g[max_v];
 
   return score;
 }
