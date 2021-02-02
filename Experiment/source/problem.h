@@ -133,7 +133,7 @@ class Diagnostic
 Diagnostic::score_t Diagnostic::Exploration(const genome_t & g)
 {
   // quick checks
-  emp_assert(0 < g.size()); emp_assert(max_cred);
+  emp_assert(0 < g.size()); emp_assert(cred_set);
 
   // intialize vector with size g
   score_t score(g.size());
@@ -143,7 +143,7 @@ Diagnostic::score_t Diagnostic::Exploration(const genome_t & g)
   size_t opti = std::distance(g.begin(), opti_it);
 
   // find where order breaks
-  size_t sort = std::distance(g.begin(), std::is_sorted_until(opti_it, g.end(), std::greater_equal<>()));
+  size_t sort = std::distance(g.begin(), std::is_sorted_until(opti_it, g.end(), std::greater<>()));
 
   // left of optimal value found
   for(size_t i = 0; i < opti; ++i) {score[i] = max_cred;}
@@ -198,7 +198,7 @@ Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g)
   score_t score(g.size());
 
   // find where descending order breaks
-  auto it = std::is_sorted_until(g.begin(), g.end(), std::greater_equal<>());
+  auto it = std::is_sorted_until(g.begin(), g.end(), std::greater<>());
 
   // if sorted, return same vector
   if(it == g.end()) {std::copy(g.begin(), g.end(), score.begin());}
