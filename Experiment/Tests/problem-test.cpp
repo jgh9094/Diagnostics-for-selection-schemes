@@ -14,7 +14,8 @@
 // In Tests directory, to run:
 // clang++ -std=c++17 -I ../../../Empirical/source/ problem-test.cpp -o problem-test; ./problem-test
 
-void PrintVec(const emp::vector<double> &v, const std::string s)
+template <class T>
+void PrintVec(const emp::vector<T> &v, const std::string s)
 {
   std::cerr << s << ": ";
   for(auto x : v) {std::cerr << (double) x << ",";}
@@ -110,7 +111,7 @@ TEST_CASE("Problem class exploration function", "[exploration]")
   score = diag.Exploration(g);
   //create correct vector
   correct = {cred,cred,cred,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
-  PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 }
 
@@ -228,7 +229,7 @@ TEST_CASE("Problem class contradictory ecology function", "[contra-ecology]")
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 }
 
-TEST_CASE("Problme class exploitation function", "[exploit]")
+TEST_CASE("Problem class exploitation function", "[exploit]")
 {
   // set up our genome and diagnostic to score with structured exploitation
   const size_t size = 10; const double cred = 0.0;
@@ -252,4 +253,62 @@ TEST_CASE("Problme class exploitation function", "[exploit]")
   score = diag.Exploitation(g);
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+}
+
+TEST_CASE("Problem class optimized vector function", "[opimized]")
+{
+  // set up our genome and diagnostic to score with structured exploitation
+  const size_t size = 10; const double cred = 0.0; const double max = 100.00; const double acc = .99;
+  emp::vector<double> g(size);
+  emp::vector<double> target(size, max);
+  emp::vector<bool> opti(size);
+  emp::vector<bool> correct(size);
+  Diagnostic diag(target, cred);
+
+
+  // make sure it can calculate a genome with no optimal objectives
+  g = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+  opti = diag.OptimizedVector(g, acc);
+  // create correct vector
+  correct = {false,false,false,false,false,false,false,false,false,false};
+  // PrintVec(g, "g"); PrintVec(opti, "o"); PrintVec(correct, "c");
+  REQUIRE_THAT(opti, Catch::Matchers::Equals(correct));
+
+
+  // make sure it can calculate a genome with all max optimal objectives
+  g = {max,max,max,max,max,max,max,max,max,max};
+  opti = diag.OptimizedVector(g, acc);
+  // create correct vector
+  correct = {true,true,true,true,true,true,true,true,true,true};
+  // PrintVec(g, "g"); PrintVec(opti, "o"); PrintVec(correct, "c");
+  REQUIRE_THAT(opti, Catch::Matchers::Equals(correct));
+
+
+  // make sure that the border accuacy value is correctly assesed
+  double border = max * acc;
+  g = {border,border,border,border,border,border,border,border,border,border};
+  opti = diag.OptimizedVector(g, acc);
+  //create correct vector
+  correct = {true,true,true,true,true,true,true,true,true,true};
+  // PrintVec(g, "g"); PrintVec(opti, "o"); PrintVec(correct, "c");
+  REQUIRE_THAT(opti, Catch::Matchers::Equals(correct));
+
+
+  // make sure that right below border is assesed correctly
+  border -= .1;
+  g = {border,border,border,border,border,border,border,border,border,border};
+  opti = diag.OptimizedVector(g, acc);
+  //create correct vector
+  correct = {false,false,false,false,false,false,false,false,false,false};
+  // PrintVec(g, "g"); PrintVec(opti, "o"); PrintVec(correct, "c");
+  REQUIRE_THAT(opti, Catch::Matchers::Equals(correct));
+
+
+  // make sure it can calculate a genome with some max optimal objectives
+  g = {0,max,max,max,max,max,max,max,max,0};
+  opti = diag.OptimizedVector(g, acc);
+  // create correct vector
+  correct = {false,true,true,true,true,true,true,true,true,false};
+  PrintVec(g, "g"); PrintVec(opti, "o"); PrintVec(correct, "c");
+  REQUIRE_THAT(opti, Catch::Matchers::Equals(correct));
 }
