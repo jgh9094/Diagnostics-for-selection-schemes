@@ -102,6 +102,16 @@ TEST_CASE("Problem class exploration function", "[exploration]")
   correct = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // all the same values after starting point
+  // <1,1,1,1,1,1,1,1,1,1>
+  g = {0,0,0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+  score = diag.Exploration(g);
+  //create correct vector
+  correct = {cred,cred,cred,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+  PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 }
 
 TEST_CASE("Problem class structured exploitation function", "[struct-exploit]")
@@ -154,7 +164,7 @@ TEST_CASE("Problem class structured exploitation function", "[struct-exploit]")
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 
 
-  // checking for accending vector middle to end
+  // checking for accending order at vector middle to end
   g = {1,9,8,7,6,5,4,3,2,1};
   score = diag.StructExploitation(g);
   //create correct vector
