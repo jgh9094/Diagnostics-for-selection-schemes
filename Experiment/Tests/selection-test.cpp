@@ -25,6 +25,7 @@ constexpr double SIMP_EXP = 2.0;
 constexpr double SIMP_ERR = -1.0;
 
 constexpr size_t NEAR_K = 3;
+constexpr double DOUB_K = 3.0;
 
 constexpr double FIT_ERR = -1.0;
 
@@ -404,8 +405,80 @@ TEST_CASE("Selection class fitness sharing function", "[fit-share]")
   REQUIRE(exp.size() == tscore.size());
   REQUIRE_THAT(exp, Catch::Matchers::Equals(tscore));
 
+
+  // test function with partial fitness sharing different scores
+  score = {1.0,2.0,3.0};
+  // create distance matrix with similar values
+  dmat ={ {FIT_ERR, FIT_ERR, FIT_ERR},
+          {1.0, FIT_ERR, FIT_ERR},
+          {.5, .5, FIT_ERR}
+        };
+  // expected output
+  exp = {1.0/1.5,2.0/1.5,3.0/2.0};
+  // get fucntion input with alpha=1.0, sigma=1.0
+  tscore = select.FitnessSharing(dmat, score, 1.0, 1.0);
+  // level 1 checks
+  REQUIRE(exp.size() == tscore.size());
+  REQUIRE_THAT(exp, Catch::Matchers::Equals(tscore));
+
   random.Delete();
 }
+
+TEST_CASE("Selection class novelty scoreing function", "[novelty]")
+{
+  // all the vars we will be altering
+  const size_t pop = 10;
+  emp::Ptr<emp::Random> random = emp::NewPtr<emp::Random>(SEED);
+  emp::vector<double> score(pop);
+  emp::vector<double> tscore(pop);
+  emp::vector<double> exp(pop);
+  emp::vector<emp::vector<double>> neigh;
+  Selection select(random);
+
+
+  // create simple score vector
+  score = {1.0,1.0,1.0,1.0,1.0};
+  // create neighborhoods
+  neigh = {{1.0,1.0,1.0},{1.0,1.0,1.0},{1.0,1.0,1.0},{1.0,1.0,1.0},{1.0,1.0,1.0}};
+  // create expected output
+  exp = {0.0,0.0,0.0,0.0,0.0};
+  // get function novelty score
+  tscore = select.Novelty(score, neigh, NEAR_K);
+  // checks
+  REQUIRE(exp.size() == tscore.size());
+  REQUIRE_THAT(exp, Catch::Matchers::Equals(tscore));
+
+
+  // create ascending score vector
+  score = {1.0,2.0,3.0,4.0,5.0};
+  // create neighborhoods
+  //            1.0           2.0           3.0           4.0       5.0
+  neigh = {{2.0,3.0,4.0},{3.0,1.0,4.0},{4.0,2.0,5.0},{5.0,3.0,2.0},{4.0,3.0,2.0}};
+  // expected output
+  exp = {6.0/DOUB_K,4.0/DOUB_K,4.0/DOUB_K,4.0/DOUB_K,6.0/DOUB_K};
+  // get novelty score
+  tscore = select.Novelty(score, neigh, NEAR_K);
+  // checks
+  REQUIRE(exp.size() == tscore.size());
+  REQUIRE_THAT(exp, Catch::Matchers::Equals(tscore));
+
+
+  // create ascending score vector
+  score = {1.0,2.0,3.0,4.0,5.0};
+  // create same neighborhoods - don't care about realistic neighborhoods, just computations
+  //            1.0           2.0           3.0           4.0            5.0
+  neigh = {{1.0,1.0,1.0},{1.0,1.0,1.0},{1.0,1.0,1.0},{1.0,1.0,1.0},{1.0,1.0,1.0}};
+  // expected output
+  exp = {0.0/DOUB_K,3.0/DOUB_K,6.0/DOUB_K,9.0/DOUB_K,12.0/DOUB_K};
+  // get novelty score
+  tscore = select.Novelty(score, neigh, NEAR_K);
+  // checks
+  REQUIRE(exp.size() == tscore.size());
+  REQUIRE_THAT(exp, Catch::Matchers::Equals(tscore));
+
+  random.Delete();
+}
+
 
 
 
