@@ -327,6 +327,7 @@ Selection::score_t Selection::FitnessSharing(const fmatrix_t & dmat, const score
       }
     }
 
+    if(mi == 0.0) {mi = 1;}
     tscore[i] = score[i] / mi;
   }
 
