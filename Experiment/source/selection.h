@@ -307,11 +307,12 @@ Selection::score_t Selection::FitnessSharing(const fmatrix_t & dmat, const score
     emp_assert(dmat[i].size() == score.size());
 
     // mi value that holds niche count (or scaling factor)
-    double mi = 0.0;
+    // we can start at 1 because sh(d_ij) (where i == j), will equal 1.0
+    double mi = 1.0;
 
     for(size_t j = 0; j < dmat.size(); ++j)
     {
-      // ignore similar pairs
+      // ignore similar pairs, already accounted for
       if(i == j) {continue;}
 
       // only look at lower triangular diagonal values
@@ -327,7 +328,6 @@ Selection::score_t Selection::FitnessSharing(const fmatrix_t & dmat, const score
       }
     }
 
-    if(mi == 0.0) {mi = 1;}
     tscore[i] = score[i] / mi;
   }
 
