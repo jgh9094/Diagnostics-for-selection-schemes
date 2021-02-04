@@ -241,6 +241,28 @@ TEST_CASE("Selection class fitness nearest neigbor function", "[neighbor]")
     REQUIRE_THAT(neigh[i], Catch::Matchers::UnorderedEquals(output[i]));
   }
 
+
+  // redundant ransdom scores
+  score = {10,4,8,1,1,8,4,8,4,1};
+  // build correct vector of fitnesses groups ~ the neighborhoods are ordered according to scoring position and value
+  //         10       4       8        1       1       8        4       8        4       1
+  neigh = {{8,8,8},{4,4,1},{8,8,10},{1,1,4},{1,1,4},{8,8,10},{4,4,1},{8,8,10},{4,4,1},{1,1,4}};
+  // get the fuction output
+  output = select.FitNearestN(score, NEAR_K);
+  // level one checks
+  REQUIRE(neigh.size() == output.size());
+  // level two checks
+  for(size_t i = 0; i < pop; ++i)
+  {
+    REQUIRE(output[i].size() == NEAR_K);
+    REQUIRE(neigh[i].size() == output[i].size());
+  }
+  // level three checks
+  for(size_t i = 0; i < pop; ++i)
+  {
+    REQUIRE_THAT(neigh[i], Catch::Matchers::UnorderedEquals(output[i]));
+  }
+
   random.Delete();
 }
 
