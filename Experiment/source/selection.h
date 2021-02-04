@@ -10,14 +10,16 @@
 #include <map>
 #include <utility>
 #include <cmath>
+#include <numeric>
 
 ///< empirical headers
 #include "base/vector.h"
 #include "tools/Random.h"
+#include "tools/random_utils.h"
 
 ///< constant vars
 constexpr size_t DRIFT_SIZE = 1;
-double ERROR_VALD = -1.0;
+constexpr double ERROR_VALD = -1.0;
 
 class Selection
 {
@@ -205,7 +207,7 @@ class Selection
 Selection::neigh_t Selection::FitNearestN(const score_t & score, const size_t K)
 {
   // quick checks
-  emp_assert(0 < score.size()); emp_assert(score.size()-1 < K);
+  emp_assert(0 < score.size()); emp_assert(K < score.size());
 
   // create group vector returning
   neigh_t group(score.size());
@@ -220,6 +222,8 @@ Selection::neigh_t Selection::FitNearestN(const score_t & score, const size_t K)
     return left.second < right.second;
   });
 
+  emp_assert(order.size() == score.size());
+
   // walk through sorted vector and create the k neighborhood per score value
   for(size_t i = 0; i < order.size(); ++i)
   {
@@ -230,7 +234,7 @@ Selection::neigh_t Selection::FitNearestN(const score_t & score, const size_t K)
     while(neigh.size() != K)
     {
       //quick checks
-      emp_assert((left < 0) && (order.size() <= right));
+      emp_assert(!(left < 0 && order.size() <= right));
 
       // reached all left neighbors possible for i
       if(left < 0)
