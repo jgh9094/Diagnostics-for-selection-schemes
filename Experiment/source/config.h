@@ -34,7 +34,7 @@ EMP_BUILD_CONFIG(DiaConfig,
   GROUP(SYSTEMATICS, "Output rates for OpenWorld"),
   VALUE(SNAP_INTERVAL,             size_t,             10000,          "How many updates between prints?"),
   VALUE(PRINT_INTERVAL,            size_t,              1000,          "How many updates between prints?"),
-  VALUE(OUTPUT_DIR,           std::string,        "../Data/",          "What directory are we dumping all this data")
+  VALUE(OUTPUT_DIR,           std::string,        "./",          "What directory are we dumping all this data")
 )
 
 #endif
