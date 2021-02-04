@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <string>
 #include <cmath>
+#include <map>
 
 // const vars for test
 constexpr size_t SEED = 17;
@@ -195,7 +196,7 @@ TEST_CASE("Selection class fitness nearest neigbor function", "[neighbor]")
   // level two checks
   for(size_t i = 0; i < pop; ++i){REQUIRE(output[i].size() == NEAR_K); REQUIRE(neigh[i].size() == output[i].size());}
   // level three checks
-  for(size_t i = 0; i < pop; ++i){REQUIRE_THAT(neigh[i], Catch::Matchers::UnorderedEquals(output[i]));}
+  for(size_t i = 0; i < pop; ++i){REQUIRE_THAT(neigh[i], Catch::Matchers::Equals(output[i]));}
 
 
   // random order
@@ -216,7 +217,7 @@ TEST_CASE("Selection class fitness nearest neigbor function", "[neighbor]")
   // level three checks
   for(size_t i = 0; i < pop; ++i)
   {
-    REQUIRE_THAT(neigh[i], Catch::Matchers::UnorderedEquals(output[i]));
+    REQUIRE_THAT(neigh[i], Catch::Matchers::Equals(output[i]));
   }
 
 
@@ -238,7 +239,7 @@ TEST_CASE("Selection class fitness nearest neigbor function", "[neighbor]")
   // level three checks
   for(size_t i = 0; i < pop; ++i)
   {
-    REQUIRE_THAT(neigh[i], Catch::Matchers::UnorderedEquals(output[i]));
+    REQUIRE_THAT(neigh[i], Catch::Matchers::Equals(output[i]));
   }
 
 
@@ -260,11 +261,89 @@ TEST_CASE("Selection class fitness nearest neigbor function", "[neighbor]")
   // level three checks
   for(size_t i = 0; i < pop; ++i)
   {
-    REQUIRE_THAT(neigh[i], Catch::Matchers::UnorderedEquals(output[i]));
+    REQUIRE_THAT(neigh[i], Catch::Matchers::Equals(output[i]));
   }
 
   random.Delete();
 }
+
+TEST_CASE("Selection class fitness group function", "[fit-group]")
+{
+  // all the vars we will be altering
+  const size_t pop = 10;
+  emp::Ptr<emp::Random> random = emp::NewPtr<emp::Random>(SEED);
+  std::map<double, emp::vector<size_t>, std::greater<int>> map;
+  std::map<double, emp::vector<size_t>, std::greater<int>> output;
+  emp::vector<double> score(pop);
+  emp::vector<emp::vector<size_t>> fgroups;
+  Selection select(random);
+
+
+  // create a set of scores
+  score = {1,2,3,4,5,6,7,8,9,10};
+  // build correct vector of fitnesses groups ~ the neighborhoods are ordered according to scoring position and value
+  //          1   2   3   4   5   6   7   8   9   10
+  fgroups = {{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}};
+  // generate the map
+  for(size_t i = 0; i < pop; ++i){map[score[i]] = fgroups[i];}
+  // get map from function output
+  output = select.FitnessGroup(score);
+  // gather keys for both maps
+  emp::vector<size_t> keys;
+  for(const auto & p : map){keys.push_back(p.first);}
+  emp::vector<size_t> out_keys;
+  for(const auto & p : output){out_keys.push_back(p.first);}
+  // level one checks
+  REQUIRE(keys.size() == out_keys.size());
+  REQUIRE_THAT(keys, Catch::Matchers::Equals(out_keys));
+  // loop through and check that the
+  for(const auto & k : keys){REQUIRE_THAT(map[k], Catch::Matchers::Equals(output[k]));}
+
+
+  // redundant scores
+  output.clear(); map.clear(); keys.clear(); out_keys.clear();
+  score = {1,1,1,2,2,2,3,3,3,7};
+  // build correct vector of fitnesses groups ~ the neighborhoods are ordered according to scoring position and value
+  //          7     3       2       1
+  fgroups = {{9},{6,7,8},{3,4,5},{0,1,2}};
+  keys = {7,3,2,1};
+  //generate the map
+  for(size_t i = 0; i < keys.size(); ++i){map[keys[i]] = fgroups[i];}
+  // get map from function output
+  output = select.FitnessGroup(score);
+  // get map from function output
+  for(const auto & p : output){out_keys.push_back(p.first);}
+  // level one checks
+  REQUIRE(keys.size() == out_keys.size());
+  REQUIRE_THAT(keys, Catch::Matchers::Equals(out_keys));
+  // loop through and check that the
+  for(const auto & k : keys){REQUIRE_THAT(map[k], Catch::Matchers::Equals(output[k]));}
+
+
+  // redundant and random scores
+  output.clear(); map.clear(); keys.clear(); out_keys.clear();
+  score = {2,3,1,3,1,2,7,2,1,3};
+  // build correct vector of fitnesses groups ~ the neighborhoods are ordered according to scoring position and value
+  //          7     3       2       1
+  fgroups = {{6},{1,3,9},{0,5,7},{2,4,8}};
+  keys = {7,3,2,1};
+  //generate the map
+  for(size_t i = 0; i < keys.size(); ++i){map[keys[i]] = fgroups[i];}
+  // get map from function output
+  output = select.FitnessGroup(score);
+  // get map from function output
+  for(const auto & p : output){out_keys.push_back(p.first);}
+  // level one checks
+  REQUIRE(keys.size() == out_keys.size());
+  REQUIRE_THAT(keys, Catch::Matchers::Equals(out_keys));
+  // loop through and check that the
+  for(const auto & k : keys){REQUIRE_THAT(map[k], Catch::Matchers::Equals(output[k]));}
+
+
+  random.Delete();
+}
+
+
 
 
 
