@@ -26,6 +26,8 @@ constexpr double SIMP_ERR = -1.0;
 
 constexpr size_t NEAR_K = 3;
 
+constexpr double FIT_ERR = -1.0;
+
 
 // In Tests directory, to run:
 // clang++ -std=c++17 -I ../../../Empirical/source/ selection-test.cpp -o selection-test; ./selection-test
@@ -343,7 +345,67 @@ TEST_CASE("Selection class fitness group function", "[fit-group]")
   random.Delete();
 }
 
+TEST_CASE("Selection class fitness sharing function", "[fit-share]")
+{
+  // all the vars we will be altering
+  const size_t pop = 10;
+  emp::Ptr<emp::Random> random = emp::NewPtr<emp::Random>(SEED);
+  emp::vector<double> score(pop);
+  emp::vector<double> tscore(pop);
+  emp::vector<double> exp(pop);
+  emp::vector<emp::vector<double>> dmat;
+  Selection select(random);
 
+
+  // test function with easy set up
+  score = {1,1,1};
+  // create distance matrix with similar values
+  dmat ={ {FIT_ERR, FIT_ERR, FIT_ERR},
+          {.5, FIT_ERR, FIT_ERR},
+          {.5, .5, FIT_ERR}
+        };
+  // expected output
+  exp = {0.5,0.5,0.5};
+  // get fucntion input with alpha=1.0, sigma=1.0
+  tscore = select.FitnessSharing(dmat, score, 1.0, 1.0);
+  // level 1 checks
+  REQUIRE(exp.size() == tscore.size());
+  REQUIRE_THAT(exp, Catch::Matchers::Equals(tscore));
+
+
+  // test function with easy set up and no fitness sharing applied to score
+  score = {1,1,1};
+  // create distance matrix with similar values
+  dmat ={ {FIT_ERR, FIT_ERR, FIT_ERR},
+          {.5, FIT_ERR, FIT_ERR},
+          {.5, .5, FIT_ERR}
+        };
+  // expected output
+  exp = {1.0,1.0,1.0};
+  // get fucntion input with alpha=1.0, sigma=0.5
+  tscore = select.FitnessSharing(dmat, score, 1.0, 0.5);
+  // level 1 checks
+  REQUIRE(exp.size() == tscore.size());
+  REQUIRE_THAT(exp, Catch::Matchers::Equals(tscore));
+
+
+  // test function with partial fitness sharing
+  score = {1,1,1};
+  // create distance matrix with similar values
+  dmat ={ {FIT_ERR, FIT_ERR, FIT_ERR},
+          {1.0, FIT_ERR, FIT_ERR},
+          {.5, .5, FIT_ERR}
+        };
+  // expected output
+  exp = {1.0/1.5,1.0/1.5,1.0/2.0};
+  // get fucntion input with alpha=1.0, sigma=1.0
+  tscore = select.FitnessSharing(dmat, score, 1.0, 1.0);
+  // level 1 checks
+  REQUIRE(exp.size() == tscore.size());
+  REQUIRE_THAT(exp, Catch::Matchers::Equals(tscore));
+
+  random.Delete();
+}
 
 
 
