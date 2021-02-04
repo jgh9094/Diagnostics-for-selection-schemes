@@ -177,19 +177,69 @@ TEST_CASE("Selection class fitness nearest neigbor function", "[neighbor]")
   const size_t pop = 10;
   emp::Ptr<emp::Random> random = emp::NewPtr<emp::Random>(SEED);
   emp::vector<emp::vector<double>> neigh(pop);
+  emp::vector<emp::vector<double>> output(pop);
   emp::vector<double> score(pop);
   Selection select(random);
 
 
-  // strict ascending order
+  // ascending order
   score = {1,2,3,4,5,6,7,8,9,10};
   // get neighborhood scores
   neigh = select.FitNearestN(score, NEAR_K);
-  // build correct vector of vecotr fitnesses
-  
+  // build correct vector of fitnesses groups ~ in the event of ties we get the right one
+  neigh = {{2,3,4},{3,1,4},{4,2,5},{5,3,6},{6,4,7},{7,5,8},{8,6,9},{9,7,10},{10,8,7},{9,8,7}};
+  // get the fuction output
+  output = select.FitNearestN(score, NEAR_K);
+  // level one checks
+  REQUIRE(neigh.size() == output.size());
+  // level two checks
+  for(size_t i = 0; i < pop; ++i){REQUIRE(output[i].size() == NEAR_K); REQUIRE(neigh[i].size() == output[i].size());}
+  // level three checks
+  for(size_t i = 0; i < pop; ++i){REQUIRE_THAT(neigh[i], Catch::Matchers::UnorderedEquals(output[i]));}
 
 
+  // random order
+  score = {10,2,3,5,4,8,7,6,9,1};
+  // build correct vector of fitnesses groups ~ the neighborhoods are ordered according to scoring position and value
+  //         10       2       3       5       4       8        7       6        9       1
+  neigh = {{9,8,7},{3,1,4},{4,2,5},{6,4,7},{5,3,6},{9,7,10},{8,6,9},{7,5,8},{10,8,7},{2,3,4}};
+  // get the fuction output
+  output = select.FitNearestN(score, NEAR_K);
+  // level one checks
+  REQUIRE(neigh.size() == output.size());
+  // level two checks
+  for(size_t i = 0; i < pop; ++i)
+  {
+    REQUIRE(output[i].size() == NEAR_K);
+    REQUIRE(neigh[i].size() == output[i].size());
+  }
+  // level three checks
+  for(size_t i = 0; i < pop; ++i)
+  {
+    REQUIRE_THAT(neigh[i], Catch::Matchers::UnorderedEquals(output[i]));
+  }
 
+
+  // redundant scores
+  score = {1,1,1,4,4,4,8,8,8,10};
+  // build correct vector of fitnesses groups ~ the neighborhoods are ordered according to scoring position and value
+  //          1       1       1       4       4       4       8       8        8       10
+  neigh = {{1,1,4},{1,1,4},{1,1,4},{4,4,1},{4,4,1},{4,4,1},{8,8,10},{8,8,10},{8,8,10},{8,8,8}};
+  // get the fuction output
+  output = select.FitNearestN(score, NEAR_K);
+  // level one checks
+  REQUIRE(neigh.size() == output.size());
+  // level two checks
+  for(size_t i = 0; i < pop; ++i)
+  {
+    REQUIRE(output[i].size() == NEAR_K);
+    REQUIRE(neigh[i].size() == output[i].size());
+  }
+  // level three checks
+  for(size_t i = 0; i < pop; ++i)
+  {
+    REQUIRE_THAT(neigh[i], Catch::Matchers::UnorderedEquals(output[i]));
+  }
 
   random.Delete();
 }
