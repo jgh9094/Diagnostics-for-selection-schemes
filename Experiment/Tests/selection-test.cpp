@@ -14,6 +14,7 @@
 #include <string>
 #include <cmath>
 #include <map>
+#include <set>
 
 // const vars for test
 constexpr size_t SEED = 17;
@@ -29,6 +30,37 @@ constexpr double DOUB_K = 3.0;
 
 constexpr double FIT_ERR = -1.0;
 
+constexpr size_t LAMBDA = 20;
+constexpr size_t L_RUNS = 5000;
+
+
+// get unique elements in vector
+emp::vector<size_t> Unique(const emp::vector<size_t> & v)
+{
+  emp::vector<size_t> u;
+  std::set<size_t> s;
+
+  for(const auto & i : v){s.insert(i);}
+  for(const auto & i : s){u.push_back(i);}
+
+  return u;
+}
+
+// check if vector x is a subset of vector y
+bool Subset(const emp::vector<size_t> & x, const emp::vector<size_t> & y)
+{
+  // get the unique elements from each vector
+  auto xs = Unique(x);
+  // auto ys = Unique(y);
+
+  // make sure we can find every element in x, in y
+  for(const auto & v : x)
+  {
+    if(!std::binary_search(y.begin(), y.end(), v)){return false;}
+  }
+
+  return true;
+}
 
 // In Tests directory, to run:
 // clang++ -std=c++17 -I ../../../Empirical/source/ selection-test.cpp -o selection-test; ./selection-test
@@ -478,6 +510,52 @@ TEST_CASE("Selection class novelty scoreing function", "[novelty]")
 
   random.Delete();
 }
+
+TEST_CASE("Selection class mu lambda selector function", "[mu-lambda]")
+{
+  // all the vars we will be altering
+  emp::Ptr<emp::Random> random = emp::NewPtr<emp::Random>(SEED);
+  std::map<double, emp::vector<size_t>, std::greater<int>> fmap;
+  emp::vector<emp::vector<size_t>> groups; emp::vector<emp::vector<size_t>> container;
+  emp::vector<emp::vector<size_t>> parent;
+  emp::vector<size_t> output;
+  emp::vector<size_t> mu{1,2,4,5,10,20};
+  emp::vector<double> scores;
+  Selection select(random);
+
+
+  // create keys of fitnesses we are using
+  scores = {5.0,4.0,3.0,2.0,1.0};
+  // create position ids for each score;
+  groups = {{1},{6,7},{11,12},{16,17,18,19},{22,23,24,25,26,27,28,29,30,31,32}};
+  // create fitness map
+  for(size_t i = 0; i < scores.size(); ++i){fmap[scores[i]] = groups[i];}
+  // create expected parent ids to see with per iteration
+  //  mu =   1     2           4                  5                                   10                                                        20
+  parent = {{1},{1,6,7},{1,6,7,11,12},{1,6,7,11,12,16,17,18,19},{1,6,7,11,12,16,17,18,19,22,23,24,25,26,27,28,29,30,31,32},{1,6,7,11,12,16,17,18,19,22,23,24,25,26,27,28,29,30,31,32}};
+  // create a for loop that iterates through the expected parent subsets
+  for(size_t i = 0; i < parent.size(); ++i)
+  {
+    // how many do we wanna test the expected output
+    for(size_t j = 0; j < L_RUNS; ++j)
+    {
+      // expected output
+      output = select.MLSelect(mu[i], LAMBDA, fmap);
+
+      // level one checks
+      REQUIRE(output.size() == LAMBDA);
+      // make sure that output is a subset of expected parent set
+      REQUIRE(Subset(output, parent[i]) == true);
+      emp::vector<size_t>p{0};
+    }
+  }
+
+  random.Delete();
+}
+
+
+
+
 
 
 
