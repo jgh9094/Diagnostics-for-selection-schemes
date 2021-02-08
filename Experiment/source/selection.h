@@ -512,6 +512,7 @@ size_t Selection::EpsiLexicase(const fmatrix_t & mscore, const double epsi, cons
   }
 
   // Get a random position from the remaining filtered solutions (may be one left too)
+  emp_assert(0 < filter.size());
   size_t wid = emp::Choose(*random, filter.size(), 1)[0];
 
   return filter[wid];
