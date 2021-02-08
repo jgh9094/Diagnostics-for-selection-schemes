@@ -33,6 +33,9 @@ constexpr double FIT_ERR = -1.0;
 constexpr size_t LAMBDA = 20;
 constexpr size_t L_RUNS = 5000;
 
+constexpr size_t T_RUNS = 500;
+constexpr size_t T_INNER = 500;
+
 
 // get unique elements in vector
 emp::vector<size_t> Unique(const emp::vector<size_t> & v)
@@ -62,10 +65,19 @@ bool Subset(const emp::vector<size_t> & x, const emp::vector<size_t> & y)
   return true;
 }
 
+
+template <class T>
+void PrintVec(const emp::vector<T> &v, const std::string s)
+{
+  std::cerr << s << ": ";
+  for(auto x : v) {std::cerr << (double) x << ",";}
+  std::cerr << std::endl;
+}
+
 // In Tests directory, to run:
 // clang++ -std=c++17 -I ../../../Empirical/source/ selection-test.cpp -o selection-test; ./selection-test
 
-TEST_CASE("Selection class Pnorm function", "[initialization]")
+TEST_CASE("Pnorm function", "[initialization]")
 {
   // all the vars we will be altering
   const size_t size = 5; double res; double exp;
@@ -122,7 +134,7 @@ TEST_CASE("Selection class Pnorm function", "[initialization]")
   random.Delete();
 }
 
-TEST_CASE("Selection class similarity matrix function","[similarity]")
+TEST_CASE("Similarity matrix function","[similarity]")
 {
   // all the vars we will be altering
   const size_t size = 5; const size_t pop = 4; double diff;
@@ -207,7 +219,7 @@ TEST_CASE("Selection class similarity matrix function","[similarity]")
   random.Delete();
 }
 
-TEST_CASE("Selection class fitness nearest neigbor function", "[neighbor]")
+TEST_CASE("Fitness nearest neigbor function", "[neighbor]")
 {
   // all the vars we will be altering
   const size_t pop = 10;
@@ -302,7 +314,7 @@ TEST_CASE("Selection class fitness nearest neigbor function", "[neighbor]")
   random.Delete();
 }
 
-TEST_CASE("Selection class fitness group function", "[fit-group]")
+TEST_CASE("Fitness group function", "[fit-group]")
 {
   // all the vars we will be altering
   const size_t pop = 10;
@@ -378,7 +390,7 @@ TEST_CASE("Selection class fitness group function", "[fit-group]")
   random.Delete();
 }
 
-TEST_CASE("Selection class fitness sharing function", "[fit-share]")
+TEST_CASE("Fitness sharing function", "[fit-share]")
 {
   // all the vars we will be altering
   const size_t pop = 10;
@@ -456,7 +468,7 @@ TEST_CASE("Selection class fitness sharing function", "[fit-share]")
   random.Delete();
 }
 
-TEST_CASE("Selection class novelty scoreing function", "[novelty]")
+TEST_CASE("Novelty scoreing function", "[novelty]")
 {
   // all the vars we will be altering
   const size_t pop = 10;
@@ -511,7 +523,7 @@ TEST_CASE("Selection class novelty scoreing function", "[novelty]")
   random.Delete();
 }
 
-TEST_CASE("Selection class mu lambda selector function", "[mu-lambda]")
+TEST_CASE("Mu lambda selector function", "[mu-lambda]")
 {
   // all the vars we will be altering
   emp::Ptr<emp::Random> random = emp::NewPtr<emp::Random>(SEED);
@@ -553,7 +565,100 @@ TEST_CASE("Selection class mu lambda selector function", "[mu-lambda]")
   random.Delete();
 }
 
+TEST_CASE("Tournmanent selector function", "[tournament]")
+{
+  // all the vars we will be altering
+  emp::Ptr<emp::Random> random = emp::NewPtr<emp::Random>(SEED);
+  size_t output; const size_t pop = 100;
+  emp::vector<double> scores(pop);
+  Selection select(random);
 
+
+  // elitest tournament selection
+  // create scores
+  std::iota(scores.begin(), scores.end(), 0.0);
+  emp::vector<double> current_scores;
+  // iterate through scores and make sure that we getting the right one
+  // the last add score to current_scores should be the output returned
+  for(size_t i = 0; i < pop; ++i)
+  {
+    current_scores.push_back(scores[i]);
+    for(size_t j = 0; j < T_RUNS; ++j)
+    {
+      // get function output
+      output = select.Tournament(i+1, current_scores);
+
+      // make sure that we get the correct output
+      REQUIRE(output == i);
+    }
+  }
+
+
+  // allow for random tournament size to be selected
+  for(size_t i = 0; i < T_RUNS; ++i)
+  {
+    // create the subset of scores we expect tournaments to return
+    // must make sure to do +1 or else will never get the max tournament size
+    const size_t t = random->GetInt(1,(int)scores.size()+1);
+    // const size_t t = 2;
+    REQUIRE(0 < t); REQUIRE(t <= scores.size());
+    emp::vector<size_t> subs(scores.size() - t + 1);
+    std::copy(scores.begin()+t-1, scores.end(), subs.begin());
+
+    for(size_t j = 0; j < T_INNER; ++j)
+    {
+      // get the output from function
+      output = select.Tournament(t, scores);
+      REQUIRE(std::binary_search(subs.begin(), subs.end(), output));
+
+    }
+  }
+
+
+  // allow for random subsets + shuffle of score vector (find max element in subset vector)
+  for(size_t i = 0; i < T_RUNS; ++i)
+  {
+    // create subset of population we want to go with
+    emp::vector<double> newpop;
+    const size_t newp = random->GetInt(1,(int)scores.size()+1);
+    auto npop = emp::Choose(*random, scores.size(), newp);
+    for(const auto & v : npop) {newpop.push_back(scores[v]);}
+    REQUIRE(newpop.size() == newp);
+
+    // test this new subset and tournament size repeatedly
+    for(size_t j = 0; j < T_INNER; ++j)
+    {
+      emp::Shuffle(*random, newpop);
+
+      // get function output
+      output = select.Tournament(newp, newpop);
+      auto win = std::max_element(newpop.begin(), newpop.end(),
+              [](double const lhs, double const rhs)
+              {
+                return lhs < rhs;
+              });
+      REQUIRE(output == std::distance(newpop.begin(), win));
+    }
+  }
+
+
+  // check if similar scores are accounted for
+  scores = {1,2,3,4,5,6,7,10,10,10};
+  emp::vector<size_t> opt{7,8,9};
+  for(size_t i = 0; i < T_RUNS; ++i)
+  {
+    // get random tournament that scores of 10 are in the tournament
+    const size_t t = random->GetInt(8, scores.size()+1);
+
+    for(size_t j = 0; j < T_INNER; ++j)
+    {
+      output = select.Tournament(t, scores);
+      std::binary_search(opt.begin(), opt.end(), output);
+    }
+  }
+
+  random.Delete();
+}
 
 
 
