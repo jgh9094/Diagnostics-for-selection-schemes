@@ -31,10 +31,13 @@ constexpr double DOUB_K = 3.0;
 constexpr double FIT_ERR = -1.0;
 
 constexpr size_t LAMBDA = 20;
-constexpr size_t L_RUNS = 5000;
+constexpr size_t L_RUNS = 5;
 
-constexpr size_t T_RUNS = 500;
-constexpr size_t T_INNER = 500;
+constexpr size_t T_RUNS = 5;
+constexpr size_t T_INNER = 5;
+
+constexpr double ESPI_L = 1.1;
+constexpr size_t EL_RUNS = 10000;
 
 
 // get unique elements in vector
@@ -610,7 +613,6 @@ TEST_CASE("Tournmanent selector function", "[tournament]")
       // get the output from function
       output = select.Tournament(t, scores);
       REQUIRE(std::binary_search(subs.begin(), subs.end(), output));
-
     }
   }
 
@@ -660,8 +662,106 @@ TEST_CASE("Tournmanent selector function", "[tournament]")
   random.Delete();
 }
 
+TEST_CASE ("Epsilon lexicase selector function", "[lexicase]")
+{
+  // all the vars we will be altering
+  emp::Ptr<emp::Random> random = emp::NewPtr<emp::Random>(SEED);
+  emp::vector<emp::vector<double>> dmat;
+  emp::vector<size_t> opt;
+  const size_t M = 4; size_t output;
+  Selection select(random);
 
 
+  // create all unique score vectors for pop of 4 solutions
+  dmat = { {2,0,0,0}
+          ,{0,2,0,0}
+          ,{0,0,2,0}
+          ,{0,0,0,2}};
+  opt = {0,1,2,3};
+  // we know what one of the solutions position ids should be returned
+  // because of the shuffling of testcases we know that its random who wins
+  for(size_t i = 0; i < EL_RUNS; ++i)
+  {
+    output = select.EpsiLexicase(dmat, ESPI_L, M);
+    REQUIRE(std::binary_search(opt.begin(), opt.end(), output));
+  }
 
 
+  // create two similar vectors, the rest unique
+  dmat = { {2,2,2,2}
+          ,{2,2,2,2}
+          ,{0,0,2,0}
+          ,{0,0,0,2}};
+  opt = {0,1};
+  // we know what one of the first two solutions position ids should be returned
+  // because of the shuffling of testcases we know that its random who wins
+  for(size_t i = 0; i < EL_RUNS; ++i)
+  {
+    output = select.EpsiLexicase(dmat, ESPI_L, M);
+    REQUIRE(std::binary_search(opt.begin(), opt.end(), output));
+  }
 
+
+  // create two same element vectors, the rest unique
+  dmat = { {2,2,2,2}
+          ,{1,1,1,1}
+          ,{0,0,2,0}
+          ,{0,0,0,2}};
+  opt = {0,1};
+  // we know what one of the first two solutions position ids should be returned
+  // because of the shuffling of testcases we know that its random who wins
+  // the second vector should be returned because epsilon = 1.1s
+  for(size_t i = 0; i < EL_RUNS; ++i)
+  {
+    output = select.EpsiLexicase(dmat, ESPI_L, M);
+    REQUIRE(std::binary_search(opt.begin(), opt.end(), output));
+  }
+
+  // create two same element vectors, the rest unique
+  dmat = { {2,2,2,2}
+          ,{1,1,1,1}
+          ,{0,2,2,0}
+          ,{2,0,0,2}};
+  opt = {0,1};
+  // we know what one of the first two solutions position ids should be returned
+  // because of the shuffling of testcases we know that its random who wins
+  // the second vector should be returned because epsilon = 1.1s
+  for(size_t i = 0; i < EL_RUNS; ++i)
+  {
+    output = select.EpsiLexicase(dmat, ESPI_L, M);
+    REQUIRE(std::binary_search(opt.begin(), opt.end(), output));
+  }
+
+
+  // create two same element vectors, the rest unique
+  dmat = { {2,2,2,2}
+          ,{2,0,0,2}
+          ,{0,2,2,0}
+          ,{1,1,1,1}};
+  opt = {0,3};
+  // we know what one of the first two solutions position ids should be returned
+  // because of the shuffling of testcases we know that its random who wins
+  // the second vector should be returned because epsilon = 1.1s
+  for(size_t i = 0; i < EL_RUNS; ++i)
+  {
+    output = select.EpsiLexicase(dmat, ESPI_L, M);
+    REQUIRE(std::binary_search(opt.begin(), opt.end(), output));
+  }
+  // create two same element vectors, the rest unique
+  dmat = { {2,2,2,2}
+          ,{1,1,1,1}
+          ,{1,2,2,1}
+          ,{2,0,0,2}};
+  opt = {0,1,2};
+  // we know what one of the first two solutions position ids should be returned
+  // because of the shuffling of testcases we know that its random who wins
+  // the second vector should be returned because epsilon = 1.1s
+  for(size_t i = 0; i < EL_RUNS; ++i)
+  {
+    output = select.EpsiLexicase(dmat, ESPI_L, M);
+    REQUIRE(std::binary_search(opt.begin(), opt.end(), output));
+  }
+
+
+  random.Delete();
+}
