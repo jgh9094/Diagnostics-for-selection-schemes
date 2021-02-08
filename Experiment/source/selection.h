@@ -57,6 +57,15 @@ class Selection
     // similarity matrix generator
     fmatrix_t SimilarityMatrix(const gmatrix_t & genome, const double exp);
 
+    // print vectors
+    template <class T>
+    void PrintVec(const emp::vector<T> &v, const std::string s)
+    {
+      std::cerr << s << ": ";
+      for(auto x : v) {std::cerr << (double) x << ",";}
+      std::cerr << std::endl;
+    }
+
 
     ///< population structure
 
@@ -336,7 +345,7 @@ Selection::score_t Selection::FitnessSharing(const fmatrix_t & dmat, const score
 double Selection::SharingFunction(const double dist, const double sig, const double alph)
 {
   // quick checks
-  emp_assert(0 <= dist); emp_assert(0 <= sig); emp_assert(0 <= alph);
+  emp_assert(0.0 <= dist); emp_assert(0.0 <= sig); emp_assert(0.0 <= alph);
 
   if(dist < sig)
   {
@@ -404,10 +413,10 @@ Selection::ids_t Selection::MLSelect(const size_t mu, const size_t lambda, const
 
   // insert the correct amount of ids
   ids_t parent;
-  size_t ml = mu / lambda;
+  size_t lm = lambda / mu;
   for(auto id : topmu)
   {
-    for(size_t i = 0; i < ml; ++i){parent.push_back(id);}
+    for(size_t i = 0; i < lm; ++i){parent.push_back(id);}
   }
 
   emp_assert(parent.size() == lambda);
@@ -422,7 +431,7 @@ size_t Selection::Tournament(const size_t t, const score_t & score)
   emp_assert(t <= score.size());
 
   // get tournament ids
-  auto tour = emp::Choose(*random, score.size(), t);
+  emp::vector<size_t> tour = emp::Choose(*random, score.size(), t);
 
   auto win = std::max_element(tour.begin(), tour.end(),
               [score](double const lhs, double const rhs)
@@ -430,7 +439,9 @@ size_t Selection::Tournament(const size_t t, const score_t & score)
                 return score[lhs] < score[rhs];
               });
 
-  return std::distance(tour.begin(), win);
+  size_t id = tour[std::distance(tour.begin(), win)];
+
+  return id;
 }
 
 size_t Selection::Drift(const size_t size)
