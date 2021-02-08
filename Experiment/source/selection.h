@@ -433,13 +433,19 @@ size_t Selection::Tournament(const size_t t, const score_t & score)
   // get tournament ids
   emp::vector<size_t> tour = emp::Choose(*random, score.size(), t);
 
-  auto win = std::max_element(tour.begin(), tour.end(),
-              [score](double const lhs, double const rhs)
-              {
-                return score[lhs] < score[rhs];
-              });
+  // store all scores for the tournament
+  emp::vector<double> subscore(t);
+  for(size_t i = 0; i < tour.size(); ++i) {subscore[i] = score[tour[i]];}
 
-  return tour[std::distance(tour.begin(), win)];
+  // group scores by fitness and position;
+  auto group = FitnessGroup(subscore);
+  emp::vector<size_t> opt = group.begin()->second;
+
+  //shuffle the vector with best fitness ids
+  emp::Shuffle(*random, opt);
+  emp_assert(0 < opt.size());
+
+  return opt[0];
 }
 
 size_t Selection::Drift(const size_t size)
