@@ -439,9 +439,7 @@ size_t Selection::Tournament(const size_t t, const score_t & score)
                 return score[lhs] < score[rhs];
               });
 
-  size_t id = tour[std::distance(tour.begin(), win)];
-
-  return id;
+  return tour[std::distance(tour.begin(), win)];
 }
 
 size_t Selection::Drift(const size_t size)
