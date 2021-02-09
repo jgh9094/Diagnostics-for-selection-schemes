@@ -24,7 +24,6 @@ class Org
     // optimal gene vector type
     using optimal_t = emp::vector<bool>;
 
-
   public:
     // for initial population
     Org(size_t _m)
@@ -71,7 +70,7 @@ class Org
     // get gene count
     size_t GetM() {emp_assert(0 < M); return M;}
     // Are we optimized at this objective?
-    bool OptimizedAt(size_t obj);
+    bool OptimizedAt(const size_t obj);
 
     ///< setters
 
@@ -200,7 +199,7 @@ class Org
 };
 
 ///< getters with extra
-bool Org::OptimizedAt(size_t obj)
+bool Org::OptimizedAt(const size_t obj)
 {
   // quick checks
   emp_assert(0 <= obj); emp_assert(obj < M);
