@@ -148,7 +148,12 @@ TEST_CASE("Simulating birth offspring", "[birth]")
   // x -> reset, y -> inherit from parent, z -> reset
   x.Reset(); y.MeClone(); z.Reset();
 
-  // genome checks first
+  // size checks
+  REQUIRE(x.GetM() == M10);
+  REQUIRE(y.GetM() == M10);
+  REQUIRE(z.GetM() == M11);
+
+  // genome checks
   REQUIRE_THAT(x.GetGenome(), Catch::Matchers::Equals(start));
   REQUIRE_THAT(y.GetGenome(), Catch::Matchers::Equals(x10));
   REQUIRE_THAT(z.GetGenome(), Catch::Matchers::Equals(y11));
