@@ -147,8 +147,7 @@ class DiagWorld : public emp::World<Org>
 
   public:
 
-    DiagWorld(DiaConfig & _config) : config(_config), data_file("data.csv"), elite_pos(config.POP_SIZE()),
-    comm_pos(config.POP_SIZE()), opti_pos(config.POP_SIZE())
+    DiagWorld(DiaConfig & _config) : config(_config), data_file("data.csv")
     {
       // set random pointer seed
       random_ptr = emp::NewPtr<emp::Random>(config.SEED());
@@ -250,9 +249,6 @@ class DiagWorld : public emp::World<Org>
 
 
     ///< helper functions
-
-    // create a vector of population aggregate scores
-    score_t PopAggFit();
 
     // create a matrix of popultion score vectors
     fmatrix_t PopFitMat();
@@ -360,11 +356,11 @@ void DiagWorld::SetOnUpdate()
     // step 2: select parent solutions for
     SelectionStep();
 
-    // step 3: reproduce and create new solutions
-    ReproductionStep();
-
-    // step 4: gather and record data
+    // step 3: gather and record data
     RecordData();
+
+    // step 4: reproduce and create new solutions
+    ReproductionStep();
   });
 
   std::cerr << "Finished setting the OnUpdate function! \n" << std::endl;
@@ -753,21 +749,21 @@ void DiagWorld::PopulateWorld()
 
 void DiagWorld::ResetData()
 {
-// reset all data nodes
-pop_fit->Reset();
-pop_opti->Reset();
-pnt_fit->Reset();
-pnt_opti->Reset();
+  // reset all data nodes
+  pop_fit->Reset();
+  pop_opti->Reset();
+  pnt_fit->Reset();
+  pnt_opti->Reset();
 
-// reset all positon ids
-elite_pos = config.POP_SIZE();
-comm_pos = config.POP_SIZE();
-opti_pos = config.POP_SIZE();
+  // reset all positon ids
+  elite_pos = config.POP_SIZE();
+  comm_pos = config.POP_SIZE();
+  opti_pos = config.POP_SIZE();
 
-// reset all vectors/maps holding current gen data
-fit_vec.clear();
-parent_vec.clear();
-common.clear();
+  // reset all vectors/maps holding current gen data
+  fit_vec.clear();
+  parent_vec.clear();
+  common.clear();
 }
 
 void DiagWorld::EvaluationStep()
@@ -777,7 +773,6 @@ void DiagWorld::EvaluationStep()
   emp_assert(pop.size() == config.POP_SIZE());
 
   // iterate through the world and populate fitness vector
-  fit_vec.clear();
   fit_vec.resize(config.POP_SIZE());
   for(size_t i = 0; i < pop.size(); ++i)
   {
@@ -795,25 +790,16 @@ void DiagWorld::EvaluationStep()
 
 void DiagWorld::SelectionStep()
 {
-// quick checks
-emp_assert(parent_vec.size() == 0); emp_assert(0 < pop.size());
-emp_assert(pop.size() == config.POP_SIZE());
-
-parent_vec = select();
-emp_assert(parent_vec.size() == config.POP_SIZE());
-}
-
-void DiagWorld::ReproductionStep()
-{
   // quick checks
-  emp_assert(parent_vec.size() == config.POP_SIZE());
+  emp_assert(parent_vec.size() == 0); emp_assert(0 < pop.size());
   emp_assert(pop.size() == config.POP_SIZE());
 
-  // go through parent ids and do births
-  for(auto & id : parent_vec)
-  {
-    DoBirth(GetGenomeAt(id), id);
-  }
+  // store parents
+  auto parents = select();
+  emp_assert(parents.size() == config.POP_SIZE());
+
+  parent_vec.resize(config.POP_SIZE());
+  std::copy(parents.begin(), parents.end(), parent_vec.begin());
 }
 
 void DiagWorld::RecordData()
@@ -821,6 +807,7 @@ void DiagWorld::RecordData()
   /// Add data to all nodes
 
   // get pop data
+  emp_assert(pop.size() == config.POP_SIZE());
   for(size_t i = 0; i < pop.size(); ++i)
   {
     Org & org = *pop[i];
@@ -844,16 +831,31 @@ void DiagWorld::RecordData()
   /// get all position ids
 
   elite_pos = FindElite();
+  emp_assert(elite_pos != config.POP_SIZE());
+
   comm_pos = FindCommon();
+  emp_assert(comm_pos != config.POP_SIZE());
+
   opti_pos = FindOptimized();
+  emp_assert(opti_pos != config.POP_SIZE());
 
   /// fill vectors & map
   emp_assert(fit_vec.size() == config.POP_SIZE()); // should be set already
   emp_assert(parent_vec.size() == config.POP_SIZE()); // should be set already
-  comm_pos = FindCommon();
+  emp_assert(0 < common.size());  // should already be set in FindCommon
 
   /// update the file
   data_file.Update();
+}
+
+void DiagWorld::ReproductionStep()
+{
+  // quick checks
+  emp_assert(parent_vec.size() == config.POP_SIZE());
+  emp_assert(pop.size() == config.POP_SIZE());
+
+  // go through parent ids and do births
+  for(auto & id : parent_vec){DoBirth(GetGenomeAt(id), id);}
 }
 
 
@@ -1117,13 +1119,12 @@ size_t DiagWorld::FindElite()
   // quick checks
   emp_assert(0 < fit_vec.size()); emp_assert(fit_vec.size() == pop.size());
   emp_assert(fit_vec.size() == config.POP_SIZE());
-
+  emp_assert(elite_pos == config.POP_SIZE());
 
   // find max value position
   auto elite_it = std::max_element(fit_vec.begin(), fit_vec.end());
-  elite_pos = std::distance(fit_vec.begin(), elite_it);
 
-  return elite_pos;
+  return std::distance(fit_vec.begin(), elite_it);;
 }
 
 size_t DiagWorld::FindCommon()
@@ -1131,6 +1132,7 @@ size_t DiagWorld::FindCommon()
   // quick checks
   emp_assert(pop.size() == config.POP_SIZE());
   emp_assert(common.size() == 0);
+  emp_assert(comm_pos == config.POP_SIZE());
 
   // iterate through pop and place in appropiate bin
   for(size_t i = 0; i < pop.size(); ++i)
@@ -1141,6 +1143,7 @@ size_t DiagWorld::FindCommon()
     // check if current org matches any of the existing keys
     for(const auto & p : common)
     {
+      // get key orgs data
       const Org & korg = *pop[p.first];
 
       // get euclidean distance between both genomes
@@ -1163,37 +1166,39 @@ size_t DiagWorld::FindCommon()
   }
 
   // iterate through common dictionary and find common org id
-  size_t max = 0;
+  size_t max = 0; size_t max_pos = 0;
   for(const auto & p : common)
   {
     if(max < p.second.size())
     {
-      comm_pos = p.first;
+      max_pos = p.first;
       max = p.second.size();
     }
   }
 
-  return comm_pos;
+  return max_pos;
 }
 
 size_t DiagWorld::FindOptimized()
 {
   // quick checks
   emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
+  emp_assert(opti_pos == config.POP_SIZE());
 
   // iterate through pop and find optimal solution
-  size_t max = 0;
+  size_t max = 0; size_t max_pos = 0;
   for(size_t i = 0; i < pop.size(); ++i)
   {
     const Org & org = *pop[i];
+
     if(max < org.GetCount())
     {
       max = org.GetCount();
-      opti_pos = i;
+      max_pos = i;
     }
   }
 
-  return opti_pos;
+  return max_pos;
 }
 
 void DiagWorld::SnapshotPhylogony()
@@ -1203,23 +1208,6 @@ void DiagWorld::SnapshotPhylogony()
 
 
 ///< helper functions
-
-DiagWorld::score_t DiagWorld::PopAggFit()
-{
-  //quick checks
-  emp_assert(pop.size() == config.POP_SIZE());
-
-  // create vector of population aggregate scores
-  score_t pscore(config.POP_SIZE());
-
-  for(size_t i = 0; i < pop.size(); ++i)
-  {
-    Org & org = *pop[i];
-    pscore[i] = org.GetAggregate();
-  }
-
-  return pscore;
-}
 
 DiagWorld::fmatrix_t DiagWorld::PopFitMat()
 {
