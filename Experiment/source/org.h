@@ -71,6 +71,14 @@ class Org
     size_t GetM() {emp_assert(0 < M); return M;}
     // Are we optimized at this objective?
     bool OptimizedAt(const size_t obj);
+    // get scored bool
+    bool GetScored() {return scored;}
+    // get optimal bool
+    bool GetOpti() {return opti;}
+    // get aggregated bool
+    bool GetAggregated() {return aggregated;}
+    // get counted bool
+    bool GetCounted() {return counted;}
 
     ///< setters
 
@@ -264,7 +272,7 @@ void Org::Reset()
 void Org::Inherit(const score_t & s, const optimal_t & o, size_t c, double a)
 {
   // quick checks
-  emp_assert(0 < M); emp_assert(0 < genome.size()); emp_assert(!clone);
+  emp_assert(0 < M); emp_assert(0 < genome.size()); emp_assert(clone);
 
   // copy everything into offspring solution
   SetScore(s);
