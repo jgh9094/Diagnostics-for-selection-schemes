@@ -1096,7 +1096,7 @@ size_t DiagWorld::UniqueObjective()
 
   // iterate through objectives
   size_t cnt = 0;
-  for(size_t o = 0; 0 < config.OBJECTIVE_CNT(); ++o)
+  for(size_t o = 0; o < config.OBJECTIVE_CNT(); ++o)
   {
     // iterate pop to check is a solution has the objective optimized
     for(size_t p = 0; p < pop.size(); ++p)
