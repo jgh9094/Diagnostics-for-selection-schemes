@@ -15,7 +15,7 @@
  * DIAGNOSTICS:
  * [P]: Exploitation
  * [P]: Structured Exploitation
- * [P]: Contradictory Traits Ecologoy
+ * [P]: Contradictory Traits Ecology
  * [P]: Exploitation
  *
  * PERFORMANCE METRICS:
@@ -323,8 +323,8 @@ void DiagWorld::Initialize()
 
 
   // stuff we need to initialize for the experiment
-  SetMutation();
   SetEvaluation();
+  SetMutation();
   SetOnUpdate();
   SetDataTracking();
   SetSelection();
@@ -480,8 +480,8 @@ void DiagWorld::SetOnOffspringReady()
       emp_assert(parent.GetM() == config.OBJECTIVE_CNT());
 
       // give everything to offspring from parent
-      org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate());
       org.MeClone();
+      org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate());
     }
     else{org.Reset();}
   });
@@ -494,7 +494,10 @@ void DiagWorld::SetEvaluation()
   std::cerr << "------------------------------------------------" << std::endl;
   std::cerr << "Setting Evaluation function..." << std::endl;
 
-  target_t target(config.OBJECTIVE_CNT(), config.TARGET());
+  target_t tar(config.OBJECTIVE_CNT(), config.TARGET());
+  target.clear(); target.resize(config.OBJECTIVE_CNT());
+  std::copy(tar.begin(), tar.end(), target.begin());
+
   diagnostic = emp::NewPtr<Diagnostic>(target, config.CREDIT());
   std::cerr << "Created diagnostic emp::Ptr" << std::endl;
 
@@ -711,6 +714,8 @@ void DiagWorld::SetDataTracking()
     const double pnt = pnt_fit->GetMean();
     const double var = pop_fit->GetVariance();
 
+    if(var == 0.0) {return 0.0;}
+
     return (pop - pnt) / var;
   }, "sel_pre", "Selection pressure applied by selection scheme!");
 
@@ -724,8 +729,12 @@ void DiagWorld::SetDataTracking()
     const double pop = pop_fit->GetVariance();
     const double pnt = pnt_fit->GetVariance();
 
+    if(pnt_fit == 0.0) {return 0.0;}
+
     return pop / pnt;
   }, "sel_pre", "Selection pressure applied by selection scheme!");
+
+  data_file.PrintHeaderKeys();
 
   std::cerr << "Finished setting data tracking!\n" << std::endl;
 }
