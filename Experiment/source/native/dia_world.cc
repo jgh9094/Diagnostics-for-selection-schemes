@@ -6,9 +6,9 @@
 #include "config/command_line.h"
 #include "config/ArgManager.h"
 
-#include "../dia-config.h"
-#include "../DiaWorld.h"
-#include "../dia-org.h"
+#include "../config.h"
+#include "../world.h"
+#include "../org.h"
 
 // Hello world
 
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
             << std::endl;
 
 
-  DiaWorld world(config);
+  DiagWorld world(config);
 
   for (size_t ud = 0; ud < config.MAX_GENS(); ud++)
   {
