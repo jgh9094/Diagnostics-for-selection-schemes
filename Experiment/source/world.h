@@ -481,11 +481,9 @@ void DiagWorld::SetOnOffspringReady()
 
       // give everything to offspring from parent
       org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate());
+      org.MeClone();
     }
-    else
-    {
-      org.Reset();
-    }
+    else{org.Reset();}
   });
 
   std::cerr << "Finished setting OnOffspringReady function!\n" << std::endl;
@@ -846,6 +844,11 @@ void DiagWorld::RecordData()
 
   /// update the file
   data_file.Update();
+
+
+  // output this so we know where we are in terms of generations and fitness
+  Org & org = *pop[elite_pos];
+  std::cout << "gen=" << GetUpdate() << ", max_fit=" << org.GetAggregate()  << ", max_opt=" << org.GetCount() << std::endl;
 }
 
 void DiagWorld::ReproductionStep()
