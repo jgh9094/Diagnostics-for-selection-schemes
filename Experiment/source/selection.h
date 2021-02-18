@@ -396,6 +396,23 @@ Selection::ids_t Selection::MLSelect(const size_t mu, const size_t lambda, const
   emp_assert(0 < mu); emp_assert(0 < lambda);
   emp_assert(mu <= lambda); emp_assert(0 < group.size());
 
+  // in the event that we are asking for the whole population
+  // just return the vector of ids from 0 to pop size (lambda)
+  if(mu == lambda)
+  {
+    ids_t pop;
+    for(const auto & g : group)
+    {
+      for(const auto & id : g)
+      {
+        pop.push_back(id);
+      }
+    }
+
+    emp_assert(pop.size() == lambda);
+    return pop;
+  }
+
   // go through the ordered scores and get our top mu solutions
   ids_t topmu;
   for(auto & g : group)
