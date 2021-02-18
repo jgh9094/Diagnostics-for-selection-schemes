@@ -729,10 +729,10 @@ void DiagWorld::SetDataTracking()
     const double pop = pop_fit->GetVariance();
     const double pnt = pnt_fit->GetVariance();
 
-    if(pnt_fit == 0.0) {return 0.0;}
+    if(pnt == 0.0) {return 0.0;}
 
     return pop / pnt;
-  }, "sel_pre", "Selection pressure applied by selection scheme!");
+  }, "sel_var", "Selection pressure applied by selection scheme!");
 
   data_file.PrintHeaderKeys();
 
