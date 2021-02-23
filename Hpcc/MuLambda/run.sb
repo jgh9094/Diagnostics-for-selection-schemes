@@ -10,7 +10,7 @@
 ##################################
 # Setup relevant directories
 ##################################
-DATA_DIR=/mnt/ls15/scratch/users/herna383
+DATA_DIR=/mnt/ls15/scratch/users/herna383/MU
 
 ##################################
 # Setup relevant directories
