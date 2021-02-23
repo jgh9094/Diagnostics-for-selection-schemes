@@ -403,7 +403,7 @@ Selection::ids_t Selection::MLSelect(const size_t mu, const size_t lambda, const
     ids_t pop;
     for(const auto & g : group)
     {
-      for(const auto & id : g)
+      for(const auto & id : g.second)
       {
         pop.push_back(id);
       }
