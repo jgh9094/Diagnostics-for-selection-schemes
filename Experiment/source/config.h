@@ -6,7 +6,7 @@
 EMP_BUILD_CONFIG(DiaConfig,
   GROUP(WORLD, "How should the world be setup?"),
   VALUE(POP_SIZE,     size_t,      512,    "Population size."),
-  VALUE(MAX_GENS,     size_t,        0,    "Maximum number of generations."),
+  VALUE(MAX_GENS,     size_t,    40001,    "Maximum number of generations."),
   VALUE(SEED,           int,         0,    "Random number seed."),
 
   GROUP(DIAGNOSTICS, "How are the diagnostics setup?"),
@@ -23,18 +23,18 @@ EMP_BUILD_CONFIG(DiaConfig,
   VALUE(STD,              double,     1.0,          "Standard Deviation of Gaussian Distribution for mutations"),
 
   GROUP(PARAMETERS, "Parameter estimations all selection schemes."),
-  VALUE(MU,               size_t,           256,       "Parameter estiamte for μ."),
-  VALUE(TOUR_SIZE,        size_t,           256,       "Parameter estiamte for tournament size."),
+  VALUE(MU,               size_t,           512,       "Parameter estiamte for μ."),
+  VALUE(TOUR_SIZE,        size_t,           512,       "Parameter estiamte for tournament size."),
   VALUE(FIT_SIGMA,        double,         250.0,       "Parameter estiamte for similarity threshold sigma."),
   VALUE(FIT_ALPHA,        double,           1.0,       "Parameter estiamte for penalty function shape alpha."),
-  VALUE(PNORM_EXP,        double,           2.0,       "Parameter estiamte for penalty function shape alpha."),
+  VALUE(PNORM_EXP,        double,           2.0,       "Paramter we are using for the p-norm function."),
   VALUE(NOVEL_K,          size_t,           256,       "Parameter estiamte k-nearest neighbors."),
-  VALUE(LEX_EPS,          double,          10.0,       "Parameter estimate for lexicase epsilon."),
+  VALUE(LEX_EPS,          double,           1.0,       "Parameter estimate for lexicase epsilon."),
 
   GROUP(SYSTEMATICS, "Output rates for OpenWorld"),
   VALUE(SNAP_INTERVAL,             size_t,             10000,          "How many updates between prints?"),
   VALUE(PRINT_INTERVAL,            size_t,              1000,          "How many updates between prints?"),
-  VALUE(OUTPUT_DIR,           std::string,        "./",          "What directory are we dumping all this data")
+  VALUE(OUTPUT_DIR,           std::string,              "./",          "What directory are we dumping all this data")
 )
 
 #endif
