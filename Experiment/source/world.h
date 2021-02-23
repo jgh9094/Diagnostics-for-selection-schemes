@@ -147,7 +147,7 @@ class DiagWorld : public emp::World<Org>
 
   public:
 
-    DiagWorld(DiaConfig & _config) : config(_config), data_file("data.csv")
+    DiagWorld(DiaConfig & _config) : config(_config), data_file(_config.OUTPUT_DIR() + "data.csv")
     {
       // set random pointer seed
       random_ptr = emp::NewPtr<emp::Random>(config.SEED());
