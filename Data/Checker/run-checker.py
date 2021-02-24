@@ -2,9 +2,14 @@
 #####################################################################################################
 # Will list all of the incomplete id's that need to finish running, per selection/diagnotic treatment
 #
-# Input 1: file directory where all the folders are located
+# Command Line Inputs
 #
-# Output : list of seeds that need to be reran, along with specific cause of rerun
+# Input 1: file directory where all the folders are located
+# Input 2: Selection scheme we are for
+# Input 3: Diagnostic we are looking for
+# Input 4: Experiment seed offset
+#
+# Output : list of seeds that need to be reran in terminal display
 #
 # python3
 #####################################################################################################
