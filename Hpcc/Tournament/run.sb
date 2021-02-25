@@ -21,7 +21,7 @@ REPLICATION_OFFSET=0
 ##################################
 # Setup random seed info
 ##################################
-PROBLEM_SEED_OFFSET=501
+PROBLEM_SEED_OFFSET=500
 SEED=$((SLURM_ARRAY_TASK_ID + PROBLEM_SEED_OFFSET + REPLICATION_OFFSET))
 
 ##################################
