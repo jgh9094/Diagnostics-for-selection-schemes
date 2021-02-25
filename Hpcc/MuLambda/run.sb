@@ -21,7 +21,6 @@ REPLICATION_OFFSET=0
 ##################################
 # Setup random seed info
 ##################################
-SEL_MODE=MULAMBDA
 PROBLEM_SEED_OFFSET=0
 SEED=$((SLURM_ARRAY_TASK_ID + PROBLEM_SEED_OFFSET + REPLICATION_OFFSET))
 
@@ -38,11 +37,6 @@ MU__64=64
 MU__128=128
 MU__256=256
 MU__512=512
-
-##################################
-# Setup trait size
-##################################
-TRAIT_SIZE=100
 
 ##################################
 # Folder naming
