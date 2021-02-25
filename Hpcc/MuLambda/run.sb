@@ -150,7 +150,7 @@ mkdir -p ${RUN_DIR}
 
 echo "../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLOITATION} -OUTPUT_DIR ${RUN_DIR} -MU ${MU} > run.log" > ./cmd-coh.txt
 
-../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLOITATION} -OUTPUT_DIR ${RUN_DIR} -MU ${MU}
+../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLOITATION} -SELECTION ${MULAMBDA} -OUTPUT_DIR ${RUN_DIR} -MU ${MU}
 
 
 ### Exploratory runs
