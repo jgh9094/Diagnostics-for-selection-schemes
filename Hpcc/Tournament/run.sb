@@ -151,3 +151,6 @@ mkdir -p ${RUN_DIR}
 echo "../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLOITATION} -OUTPUT_DIR ${RUN_DIR} -TOUR_SIZE ${T} > run.log" > ./cmd-coh.txt
 
 ../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLOITATION} -OUTPUT_DIR ${RUN_DIR} -TOUR_SIZE ${T}
+
+
+### Exploratory runs!
