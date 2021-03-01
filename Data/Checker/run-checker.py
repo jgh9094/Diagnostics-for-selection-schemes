@@ -26,8 +26,7 @@ import os
 # variables we are testing for each replicate range
 MU_LIST = [1,2,4,8,16,32,64,128,256,512]
 TR_LIST = [1,2,4,8,16,32,64,128,256,512]
-# holds seeds
-SEEDS = [x for x in range(1,501)]
+LX_LIST = [0.0,0.1,0.3,0.6,1.2,2.5,5.0,10.0]
 # seed experiements replicates range
 SMAX = 50
 # 40001 gens + 1 header row
@@ -69,6 +68,15 @@ def SetSelectionVar(s):
     else:
         sys.exit("UNKNOWN SELECTION VAR")
 
+def SetSeeds(s):
+    # case by case
+    if s == 0:
+        return [x for x in range(1,501)]
+    elif s == 1:
+        return [x for x in range(1,501)]
+    elif s == 4:
+        return [x for x in range(1,401)]
+
 # Will set the appropiate list of variables we are checking for
 def SetVarList(s):
     # case by case
@@ -105,7 +113,6 @@ def CheckDir(dir, sel, dia, offs):
         print('SELECTION DIRECTORY DOES NOT EXIST=', SEL_DIR)
         sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
 
-
     # SET ALL THE DATA DIRECTORY VARIABLES HERE!
 
     # step 2: create seed data directories and check if exist
@@ -116,6 +123,8 @@ def CheckDir(dir, sel, dia, offs):
 
     print('Full data Dir=', SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_XXX' + '__SEED_XXX' + '/')
     print('Now checking data replicates sub directories')
+
+    SEEDS = SetSeeds(sel)
 
     for s in SEEDS:
         seed = str(s + offs)
