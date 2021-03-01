@@ -40,6 +40,8 @@ def SetSelection(s):
         return 'MULAMBDA'
     elif s == 1:
         return 'TOURNAMENT'
+    elif s == 4:
+        return 'LEXICASE'
     else:
         sys.exit("UNKNOWN SELECTION")
 
