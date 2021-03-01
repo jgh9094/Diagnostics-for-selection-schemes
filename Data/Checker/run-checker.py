@@ -84,6 +84,8 @@ def SetVarList(s):
         return MU_LIST
     elif s == 1:
         return TR_LIST
+    elif s == 4:
+        return LX_LIST
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
 
