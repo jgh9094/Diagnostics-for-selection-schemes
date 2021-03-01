@@ -18,6 +18,7 @@
 
 ######################## IMPORTS ########################
 import argparse
+import pandas as pd
 import csv
 import sys
 import os
@@ -30,7 +31,7 @@ SEEDS = [x for x in range(1,501)]
 # seed experiements replicates range
 SMAX = 50
 # 40001 gens + 1 header row
-EXPECTED_ROWS = 40002
+EXPECTED_GENS = 40000
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s):
@@ -38,7 +39,7 @@ def SetSelection(s):
     if s == 0:
         return 'MULAMBDA'
     elif s == 1:
-        return 'TOUR'
+        return 'TOURNAMENT'
     else:
         sys.exit("UNKNOWN SELECTION")
 
@@ -78,9 +79,11 @@ def SetVarList(s):
 
 # return the number of rows in a csv file
 def CountRows(file_name):
-    file = open(file_name)
-    reader = csv.reader(file)
-    return len(list(reader))
+    # create pandas data frame of entire csv
+    df = pd.read_csv(file_name)
+    gens = df['gen'].to_list()
+
+    return gens[-1]
 
 # responsible for looking through the data directories for success
 def CheckDir(dir, sel, dia, offs):
@@ -104,7 +107,7 @@ def CheckDir(dir, sel, dia, offs):
     # SET ALL THE DATA DIRECTORY VARIABLES HERE!
 
     # step 2: create seed data directories and check if exist
-    VLIST = MU_LIST
+    VLIST = SetVarList(sel)
     DIR_DNE = []
     DAT_DNE = []
     DAT_DNF = []
@@ -127,7 +130,7 @@ def CheckDir(dir, sel, dia, offs):
             continue
 
         # make sure that the data.csv file did in fact finish all generations
-        if CountRows(DATA_DIR + 'data.csv') != EXPECTED_ROWS:
+        if CountRows(DATA_DIR + 'data.csv') != EXPECTED_GENS:
             DAT_DNF.append(int(seed))
             continue
 
