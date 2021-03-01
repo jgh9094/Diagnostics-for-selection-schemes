@@ -515,7 +515,7 @@ size_t Selection::EpsiLexicase(const fmatrix_t & mscore, const double epsi, cons
     filter.clear();
     for(const auto & p : group)
     {
-      if(Distance(group.begin()->first, p.first) < epsi)
+      if(Distance(group.begin()->first, p.first) <= epsi)
       {
         for(auto id : p.second)
         {
