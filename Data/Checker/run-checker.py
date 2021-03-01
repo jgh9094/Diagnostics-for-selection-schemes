@@ -113,11 +113,13 @@ def CheckDir(dir, sel, dia, offs):
     DAT_DNF = []
 
     print('Full data Dir=', SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_XXX' + '__SEED_XXX' + '/')
+    print('Now checking data replicates sub directories')
 
     for s in SEEDS:
         seed = str(s + offs)
         var_val = str(VLIST[int((s-1)/SMAX)])
         DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/'
+        print('Sub directory:', DATA_DIR)
 
         # add full directory to missing list if not there
         if os.path.isdir(DATA_DIR) == False:
