@@ -65,6 +65,8 @@ def SetSelectionVar(s):
         return 'MU'
     elif s == 1:
         return 'T'
+    elif s == 4:
+        return 'EPS'
     else:
         sys.exit("UNKNOWN SELECTION VAR")
 
