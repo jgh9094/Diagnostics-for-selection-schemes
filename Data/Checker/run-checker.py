@@ -27,6 +27,8 @@ import os
 MU_LIST = [1,2,4,8,16,32,64,128,256,512]
 TR_LIST = [1,2,4,8,16,32,64,128,256,512]
 LX_LIST = [0.0,0.1,0.3,0.6,1.2,2.5,5.0,10.0]
+FS_LIST = [0.0,10.0,30.0,60.0,12.0,250.0,500.0,1000.0]
+NS_LIST = [0,1,2,4,8,15,30,60]
 # seed experiements replicates range
 SMAX = 50
 # 40001 gens + 1 header row
@@ -39,6 +41,10 @@ def SetSelection(s):
         return 'MULAMBDA'
     elif s == 1:
         return 'TOURNAMENT'
+    elif s == 2:
+        return 'SHARING'
+    elif s == 3:
+        return 'NOVELTY'
     elif s == 4:
         return 'LEXICASE'
     else:
@@ -65,19 +71,30 @@ def SetSelectionVar(s):
         return 'MU'
     elif s == 1:
         return 'T'
+    elif s == 2:
+        return 'SIG'
+    elif s == 3:
+        return 'K'
     elif s == 4:
         return 'EPS'
     else:
         sys.exit("UNKNOWN SELECTION VAR")
 
+# return the correct amount of seed ran by experiment treatment
 def SetSeeds(s):
     # case by case
     if s == 0:
         return [x for x in range(1,501)]
     elif s == 1:
         return [x for x in range(1,501)]
+    elif s == 2:
+        return [x for x in range(1,401)]
+    elif s == 3:
+        return [x for x in range(1,401)]
     elif s == 4:
         return [x for x in range(1,401)]
+    else:
+        sys.exit('SEEDS SELECTION UNKNOWN')
 
 # Will set the appropiate list of variables we are checking for
 def SetVarList(s):
@@ -86,6 +103,10 @@ def SetVarList(s):
         return MU_LIST
     elif s == 1:
         return TR_LIST
+    elif s == 2:
+        return FS_LIST
+    elif s == 3:
+        return NS_LIST
     elif s == 4:
         return LX_LIST
     else:
@@ -116,8 +137,6 @@ def CheckDir(dir, sel, dia, offs):
     else:
         print('SELECTION DIRECTORY DOES NOT EXIST=', SEL_DIR)
         sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
-
-    # SET ALL THE DATA DIRECTORY VARIABLES HERE!
 
     # step 2: create seed data directories and check if exist
     VLIST = SetVarList(sel)
@@ -166,7 +185,6 @@ def CheckDir(dir, sel, dia, offs):
     # print out the sorted list
     print(fins[:len(fins)-1])
     print('-'*(len(fins)-1))
-
 
 
 def main():
