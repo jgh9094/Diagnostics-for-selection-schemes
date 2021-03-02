@@ -223,7 +223,6 @@ def DirExplore(data, dump, sel, dia, offs):
         var_val = str(VLIST[it])
         DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/'
         print('Sub data directory:', DATA_DIR+'data.csv')
-        print('it=', it)
 
         # get data from file and check if can store it
         sol = FindSolGen(DATA_DIR+'data.csv')
