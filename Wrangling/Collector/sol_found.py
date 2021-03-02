@@ -153,7 +153,7 @@ def SetSolList(s):
 
     elif s == 2 or s == 3 or s == 4:
         for i in range(8):
-            sol.append(8)
+            sol.append([])
         return sol
 
     else:
