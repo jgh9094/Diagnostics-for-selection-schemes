@@ -135,12 +135,6 @@ def FindSolGen(file):
     df = df[df[POP_OPT_MAX] == OPTI_CNT]
     gens = df['gen'].tolist()
 
-    # make sure that csv is complete
-    if gens[-1] != EXPECTED_GENS:
-        print('INCOMPLETE DATA=', len(df.index))
-        print('DIR OF FILE=', file)
-        sys.exit('')
-
     # check if there are any gens where optimal solution is found
     if(len(gens) == 0):
         return -1
