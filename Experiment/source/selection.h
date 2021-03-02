@@ -462,7 +462,7 @@ size_t Selection::Tournament(const size_t t, const score_t & score)
   emp::Shuffle(*random, opt);
   emp_assert(0 < opt.size());
 
-  return opt[0];
+  return tour[opt[0]];
 }
 
 size_t Selection::Drift(const size_t size)
