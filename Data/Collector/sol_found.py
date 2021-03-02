@@ -179,7 +179,7 @@ def ExportCSV(sol_list, var_list,s,d,dump):
                            var_list[8]: pd.Series(sol_list[8]),
                            var_list[9]: pd.Series(sol_list[9])})
 
-        df.to_csv(path_or_buf= dump + SetDiagnostic(d) + '_SOL_FND.csv')
+        df.to_csv(path_or_buf= dump + SetDiagnostic(d) + '_SOL_FND.csv', index=False)
 
     elif s == 2 or s == 3 or s == 4:
         df = pd.DataFrame({var_list[0]: pd.Series(sol_list[0]),
@@ -191,7 +191,7 @@ def ExportCSV(sol_list, var_list,s,d,dump):
                            var_list[6]: pd.Series(sol_list[6]),
                            var_list[7]: pd.Series(sol_list[7])})
 
-        df.to_csv(path_or_buf= dump + SetDiagnostic(d) + '_SOL_FND.csv')
+        df.to_csv(path_or_buf= dump + SetDiagnostic(d) + '_SOL_FND.csv', index=False)
 
     else:
         sol_list.exit('SOL LIST SELECTION UKNOWN')
@@ -265,20 +265,6 @@ def main():
     # Get to work!
     print("\nChecking all related data directories now!")
     DirExplore(data_dir, dump_dir, selection, diagnostic, offset)
-
-    # data = [[1,2,3],[1,2,3],[3,4],[1],[2,2,3],[2,3,5],[3,3,1],[1]]
-
-    # df  = pd.DataFrame({NS_LIST[0]: pd.Series(data[0]),
-    #                     NS_LIST[1]: pd.Series(data[1]),
-    #                     NS_LIST[2]: pd.Series(data[2]),
-    #                     NS_LIST[3]: pd.Series(data[3]),
-    #                     NS_LIST[4]: pd.Series(data[4]),
-    #                     NS_LIST[5]: pd.Series(data[5]),
-    #                     NS_LIST[6]: pd.Series(data[6]),
-    #                     NS_LIST[7]: pd.Series(data[7])})
-
-    # df.to_csv(path_or_buf=dump_dir+'dum.csv', index=False)
-
 
 if __name__ == "__main__":
     main()
