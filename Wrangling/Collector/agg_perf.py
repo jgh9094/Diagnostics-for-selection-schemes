@@ -31,7 +31,7 @@ NS_LIST = [0,1,2,4,8,15,30,60]
 # seed experiements replicates range
 SMAX = 50
 # 40001 gens=
-GENERATIONS = 10
+GENERATIONS = 40001
 # name of column we need to extract
 POP_FIT_AVG = 'pop_fit_avg'
 GEN = 'gen'
