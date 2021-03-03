@@ -1,0 +1,73 @@
+#!/bin/bash
+########## Define Resources Needed with SBATCH Lines ##########
+
+#SBATCH --time=5:00:00               # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --array=1-2                  # number of jobs being created, each with its array id
+#SBATCH --mem=10G                    # memory required per node - amount of memory (in gigs)
+#SBATCH --job-name agg-per           # you can give your job a name for easier identification (same as -J)
+#SBATCH --account=devolab            # research group account being used
+
+##################################
+# Setup relevant directories
+##################################
+DATA_DIR=/mnt/ls15/scratch/users/herna383/
+
+##################################
+# Setup relevant directories
+# Previously used ones will be commented out
+##################################
+SLURM_ID=$((SLURM_ARRAY_TASK_ID))
+
+##################################
+# Setup selection scheme
+##################################
+MULAMBDA=0
+TOURNAMENT=1
+FITSHARING=2
+NOVELTY=3
+LEXICASE=4
+
+##################################
+# Setup diagnostic
+##################################
+EXPLOITATION=0
+STRUCTURED_EXPLOITATION=1
+CONTRADICTORY_ECOLOGY=2
+EXPLORATION=3
+
+###### Treatments #######
+TREATMENT__1=1 # MU LAMBDA
+TREATMENT__2=2 # TOURNAMENT
+TREATMENT__3=3 # LEXICASE
+
+####################################################################
+
+if [ ${SLURM_ID} -eq ${TREATMENT__1} ] ] ; then
+  DUMP=../../Data/MULAMBDA/
+  OFFSET=0
+  DIAGNOSTIC=${EXPLOITATION}
+  SELECTION=${MULAMBDA}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2} ] ; then
+  DUMP=../../Data/TOURNAMENT/
+  OFFSET=500
+  DIAGNOSTIC=${EXPLOITATION}
+  SELECTION=${TOURNAMENT}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3} ] ; then
+  DUMP=../../Data/LEXICASE/
+  OFFSET=1000
+  DIAGNOSTIC=${EXPLOITATION}
+  SELECTION=${LEXICASE}
+else
+  echo "${SEED} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
+
+fi
+
+####################################################################
+
+
+echo "python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${DIAGNOSTIC} ${SELECTION} ${OFFSET} > run.log" > ./cmd-coh.txt
+
+python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${DIAGNOSTIC} ${SELECTION} ${OFFSET}
+
+
+### Data Wrangling
