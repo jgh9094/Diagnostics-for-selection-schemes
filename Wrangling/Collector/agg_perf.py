@@ -211,7 +211,7 @@ def DirExplore(data, dump, sel, dia, offs):
         TREATEMENT = TREATEMENT + [var_val] * GENERATIONS
 
     # time to export the data
-    df = pd.DataFrame({'gen': pd.Series(GENERATIONS),
+    df = pd.DataFrame({'gen': pd.Series(GENERATION),
                        'agg': pd.Series(AGGREGATE),
                        'dev': pd.Series(DEVIATION),
                        'trt': pd.Series(TREATEMENT)})
