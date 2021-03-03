@@ -13,12 +13,11 @@
 #####################################################################################################
 #####################################################################################################
 
-
 ######################## IMPORTS ########################
 import pandas as pd
 import numpy as np
 import argparse
-import csv
+import math as mth
 import sys
 import os
 
@@ -29,14 +28,15 @@ LX_LIST = [0.0,0.1,0.3,0.6,1.2,2.5,5.0,10.0]
 FS_LIST = [0.0,10.0,30.0,60.0,12.0,250.0,500.0,1000.0]
 NS_LIST = [0,1,2,4,8,15,30,60]
 # seed experiements replicates range
-SMAX = 50
+REP_NUM = 50
 # 40001 gens=
 GENERATIONS = 40001
 # name of column we need to extract
 POP_FIT_AVG = 'pop_fit_avg'
-GEN = 'gen'
 # optimal count expecting (depending on experiment config)
 OPTI_CNT = 100
+# list of total generations
+GEN_LIST = [x for x in range(GENERATIONS)]
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s):
@@ -132,103 +132,124 @@ def SetVarList(s):
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
 
+
 # loop through differnt files that exist
 def DirExplore(data, dump, sel, dia, offs):
-  # check if data dir exists
-  if os.path.isdir(data) == False:
-      print('DATA=', data)
-      sys.exit('DATA DIRECTORY DOES NOT EXIST')
+    # check if data dir exists
+    if os.path.isdir(data) == False:
+        print('DATA=', data)
+        sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
-  # check if data dir exists
-  if os.path.isdir(dump) == False:
-      print('DATA=', data)
-      sys.exit('DATA DIRECTORY DOES NOT EXIST')
+    # check if data dir exists
+    if os.path.isdir(dump) == False:
+        print('DATA=', data)
+        sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
-  # check that selection data folder exists
-  SEL_DIR = data + SetSelection(sel) + '/'
-  if os.path.isdir(SEL_DIR) == False:
-      print('SEL_DIR=', SEL_DIR)
-      sys.exit('EXIT -1')
+    # check that selection data folder exists
+    SEL_DIR = data + SetSelection(sel) + '/'
+    if os.path.isdir(SEL_DIR) == False:
+        print('SEL_DIR=', SEL_DIR)
+        sys.exit('EXIT -1')
 
-  # Set vars that we need to loop through
-  VLIST = SetVarList(sel)
-  SEEDS = SetSeeds(sel)
+    # Set vars that we need to loop through
+    VLIST = SetVarList(sel)
+    SEEDS = SetSeeds(sel)
 
-  # create list for each thing we need to track
-  GENERATION = []
-  AGGREGATE = []
-  DEVIATION = []
-  TREATEMENT = []
+    # create list for each thing we need to track
+    GENERATION = []
+    AGGREGATE = []
+    DEVIATION = []
+    TREATEMENT = []
 
-  # iterate through the sets of seeds
-  for i in range(len(SEEDS)):
-    seeds = SEEDS[i]
-    print('i=',i)
-    # iterate through each generation
-    for g in range(GENERATIONS):
-      # iterate through each individual seed
-      GEN_AGG = []
-      for s in seeds:
-        x = 0
-        seed = str(s + offs)
+    # iterate through the sets of seeds
+    for i in range(len(SEEDS)):
+        seeds = SEEDS[i]
         var_val = str(VLIST[i])
-        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/data.csv'
+        print('i=',i)
 
-        # get the population average agg performance
+        # iterate through seeds to get the mean treatment
+        mean = [0] * GENERATIONS
+        for s in seeds:
+            seed = str(s + offs)
+            DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/data.csv'
 
-        # create pandas data frame of entire csv and grab the row
-        df = pd.read_csv(DATA_DIR)
-        df = df[df[GEN] == g]
-        agg = df[POP_FIT_AVG].tolist()
+            # create pandas data frame of entire csv and grab the row
+            df = pd.read_csv(DATA_DIR)
+            agg = df[POP_FIT_AVG].tolist()
 
-        # quick checks
-        if len(agg) != 1:
-          sys.exit('NOT ONE ROW ERROR')
+            # check to make sure its the correct length
+            if len(agg) != GENERATIONS:
+                sys.exit('AGG NOT CORRECT LENGTH')
 
-        GEN_AGG.append(agg[0])
+            # add lists and continue
+            mean = np.add(mean, agg)
 
-      # now that all seeds are collected do the stats we needs
-      GENERATION.append(g)
-      AGGREGATE.append(np.mean(GEN_AGG))
-      DEVIATION.append(np.std(GEN_AGG))
-      TREATEMENT.append(VLIST[i])
+        # final touches to mean
+        mean = [x/REP_NUM for x in mean]
 
-  print('Creating new data frame!')
-  # now we can export the csv
-  df = pd.DataFrame({'gen': pd.Series(GENERATION),
-                     'agg': pd.Series(AGGREGATE),
-                     'dev': pd.Series(DEVIATION),
-                     'trt': pd.Series(TREATEMENT)})
+        # iterate through seeds to std var per treatment
+        std = [0] * GENERATIONS
+        for s in seeds:
+            seed = str(s + offs)
+            DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/data.csv'
 
-  df.to_csv(path_or_buf= dump + SetDiagnostic(dia) + '_AVG_AGG.csv', index=False)
-  print('COMPLETE!')
+            # create pandas data frame of entire csv and grab the row
+            df = pd.read_csv(DATA_DIR)
+            agg = df[POP_FIT_AVG].tolist()
+
+            # substract agg from mean and square it
+            summ = np.subtract(agg, mean)
+            summ = [x**2 for x in summ]
+            std = np.add(std, summ)
+
+        # finishing touches on standard deviation: divide by repliation number and square root
+        std = [mth.sqrt(x/REP_NUM) for x in std]
+
+        GENERATION = GENERATION + GEN_LIST
+        AGGREGATE = AGGREGATE + mean
+        DEVIATION = DEVIATION + std
+        TREATEMENT = TREATEMENT + [var_val] * GENERATIONS
+
+    # time to export the data
+    df = pd.DataFrame({'gen': pd.Series(GENERATIONS),
+                       'agg': pd.Series(AGGREGATE),
+                       'dev': pd.Series(DEVIATION),
+                       'trt': pd.Series(TREATEMENT)})
+
+    df.to_csv(path_or_buf= dump + SetDiagnostic(dia) + '_AGG_TIME.csv', index=False)
 
 
 def main():
-  # Generate and get the arguments
-  parser = argparse.ArgumentParser(description="Data aggregation script.")
-  parser.add_argument("data_dir",    type=str, help="Target experiment directory.")
-  parser.add_argument("dump_dir",    type=str, help="Data dumping directory")
-  parser.add_argument("selection",   type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase")
-  parser.add_argument("diagnostic",  type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
-  parser.add_argument("seed_offset", type=int, help="Experiment seed offset. (REPLICATION_OFFSET + PROBLEM_SEED_OFFSET")
+    # Generate and get the arguments
+    parser = argparse.ArgumentParser(description="Data aggregation script.")
+    parser.add_argument("data_dir",    type=str, help="Target experiment directory.")
+    parser.add_argument("dump_dir",    type=str, help="Data dumping directory")
+    parser.add_argument("selection",   type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase")
+    parser.add_argument("diagnostic",  type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
+    parser.add_argument("seed_offset", type=int, help="Experiment seed offset. (REPLICATION_OFFSET + PROBLEM_SEED_OFFSET")
 
-  # Parse all the arguments
-  args = parser.parse_args()
-  data_dir = args.data_dir.strip()
-  print('Data directory=',data_dir)
-  dump_dir = args.dump_dir.strip()
-  print('Dump directory=', dump_dir)
-  selection = args.selection
-  print('Selection scheme=', SetSelection(selection))
-  diagnostic = args.diagnostic
-  print('Diagnostic=',SetDiagnostic(diagnostic))
-  offset = args.seed_offset
-  print('Offset=', offset)
+    # Parse all the arguments
+    args = parser.parse_args()
+    data_dir = args.data_dir.strip()
+    print('Data directory=',data_dir)
+    dump_dir = args.dump_dir.strip()
+    print('Dump directory=', dump_dir)
+    selection = args.selection
+    print('Selection scheme=', SetSelection(selection))
+    diagnostic = args.diagnostic
+    print('Diagnostic=',SetDiagnostic(diagnostic))
+    offset = args.seed_offset
+    print('Offset=', offset)
 
-  # Get to work!
-  print("\nChecking all related data directories now!")
-  DirExplore(data_dir, dump_dir, selection, diagnostic, offset)
+    # Get to work!
+    print("\nChecking all related data directories now!")
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset)
+
 
 if __name__ == "__main__":
-  main()
+    main()
+
+
+# DO NOT USE PANDAS
+# TOO SLOW
+# USE https://stackoverflow.com/questions/27307385/best-way-to-access-the-nth-line-of-csv-file/27307452
