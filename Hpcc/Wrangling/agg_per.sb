@@ -65,9 +65,9 @@ fi
 ####################################################################
 
 
-echo "python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${DIAGNOSTIC} ${SELECTION} ${OFFSET} > run.log" > ./cmd-coh.txt
+echo "python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} > run.log" > ./cmd-coh.txt
 
-python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${DIAGNOSTIC} ${SELECTION} ${OFFSET}
+python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET}
 
 
 ### Data Wrangling
