@@ -42,7 +42,7 @@ TREATMENT__3=3 # LEXICASE
 
 ####################################################################
 
-if [ ${SLURM_ID} -eq ${TREATMENT__1} ] ] ; then
+if [ ${SLURM_ID} -eq ${TREATMENT__1} ] ; then
   DUMP=../../Data/MULAMBDA/
   OFFSET=0
   DIAGNOSTIC=${EXPLOITATION}
