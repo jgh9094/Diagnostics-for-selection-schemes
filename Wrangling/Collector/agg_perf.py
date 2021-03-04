@@ -134,7 +134,7 @@ def SetVarList(s):
 
 
 # loop through differnt files that exist
-def DirExplore(data, dump, sel, dia, offs):
+def DirExplore(data, dump, sel, dia, offs, res):
     # check if data dir exists
     if os.path.isdir(data) == False:
         print('DATA=', data)
@@ -168,18 +168,15 @@ def DirExplore(data, dump, sel, dia, offs):
         print('i=',i)
 
         # iterate through seeds to get the mean treatment
-        mean = [0] * GENERATIONS
+        mean = [0] * int(GENERATIONS/res)
         for s in seeds:
             seed = str(s + offs)
             DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/data.csv'
 
             # create pandas data frame of entire csv and grab the row
             df = pd.read_csv(DATA_DIR)
+            df = df.iloc[::res, :]
             agg = df[POP_FIT_AVG].tolist()
-
-            # check to make sure its the correct length
-            if len(agg) != GENERATIONS:
-                sys.exit('AGG NOT CORRECT LENGTH')
 
             # add lists and continue
             mean = np.add(mean, agg)
@@ -188,13 +185,14 @@ def DirExplore(data, dump, sel, dia, offs):
         mean = [x/REP_NUM for x in mean]
 
         # iterate through seeds to std var per treatment
-        std = [0] * GENERATIONS
+        std = [0] * int(GENERATIONS/res)
         for s in seeds:
             seed = str(s + offs)
             DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/data.csv'
 
             # create pandas data frame of entire csv and grab the row
             df = pd.read_csv(DATA_DIR)
+            df = df.iloc[::res, :]
             agg = df[POP_FIT_AVG].tolist()
 
             # substract agg from mean and square it
@@ -205,7 +203,7 @@ def DirExplore(data, dump, sel, dia, offs):
         # finishing touches on standard deviation: divide by repliation number and square root
         std = [mth.sqrt(x/REP_NUM) for x in std]
 
-        GENERATION = GENERATION + GEN_LIST
+        GENERATION = GENERATION + GEN_LIST[::res]
         AGGREGATE = AGGREGATE + mean
         DEVIATION = DEVIATION + std
         TREATEMENT = TREATEMENT + [var_val] * GENERATIONS
@@ -227,6 +225,7 @@ def main():
     parser.add_argument("selection",   type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase")
     parser.add_argument("diagnostic",  type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
     parser.add_argument("seed_offset", type=int, help="Experiment seed offset. (REPLICATION_OFFSET + PROBLEM_SEED_OFFSET")
+    parser.add_argument("resolution",  type=int, help="The resolution desired for the data extraction")
 
     # Parse all the arguments
     args = parser.parse_args()
@@ -240,11 +239,12 @@ def main():
     print('Diagnostic=',SetDiagnostic(diagnostic))
     offset = args.seed_offset
     print('Offset=', offset)
+    resolution = args.resolution
+    print('Resolution=', resolution)
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    DirExplore(data_dir, dump_dir, selection, diagnostic, offset)
-
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, resolution)
 
 if __name__ == "__main__":
     main()
