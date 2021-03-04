@@ -206,7 +206,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
         GENERATION = GENERATION + GEN_LIST[::res]
         AGGREGATE = AGGREGATE + mean
         DEVIATION = DEVIATION + std
-        TREATEMENT = TREATEMENT + [var_val] * GENERATIONS
+        TREATEMENT = TREATEMENT + [var_val] * int(GENERATIONS/res)
 
     # time to export the data
     df = pd.DataFrame({'gen': pd.Series(GENERATION),
@@ -214,7 +214,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
                        'dev': pd.Series(DEVIATION),
                        'trt': pd.Series(TREATEMENT)})
 
-    df.to_csv(path_or_buf= dump + SetDiagnostic(dia) + '_AGG_TIME.csv', index=False)
+    df.to_csv(path_or_buf= dump + SetDiagnostic(dia) + 'PERF_AGG.csv', index=False)
 
 
 def main():
