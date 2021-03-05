@@ -216,7 +216,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
                        'dev': pd.Series(DEVIATION),
                        'trt': pd.Series(TREATEMENT)})
 
-    df.to_csv(path_or_buf= dump + SetDiagnostic(dia) + 'PERF_AGG.csv', index=False)
+    df.to_csv(path_or_buf= dump + SetDiagnostic(dia) + '_PERF_AGG.csv', index=False)
 
 
 def main():
