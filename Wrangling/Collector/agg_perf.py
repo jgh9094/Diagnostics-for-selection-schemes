@@ -36,7 +36,7 @@ POP_FIT_AVG = 'pop_fit_avg'
 # optimal count expecting (depending on experiment config)
 OPTI_CNT = 100
 # list of total generations
-GEN_LIST = [x for x in range(GENERATIONS)]
+TOTA_GEN_LIST = [x for x in range(GENERATIONS)]
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s):
@@ -161,7 +161,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
     DEVIATION = []
     TREATEMENT = []
 
-    GEN_LIST = GEN_LIST[::res]
+    GEN_LIST = TOTA_GEN_LIST[::res]
 
     # iterate through the sets of seeds
     for i in range(len(SEEDS)):
@@ -208,7 +208,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
         GENERATION = GENERATION + GEN_LIST
         AGGREGATE = AGGREGATE + mean
         DEVIATION = DEVIATION + std
-        TREATEMENT = TREATEMENT + [var_val] * int(GENERATIONS/res)
+        TREATEMENT = TREATEMENT + [var_val] * len(GEN_LIST)
 
     # time to export the data
     df = pd.DataFrame({'gen': pd.Series(GENERATION),
