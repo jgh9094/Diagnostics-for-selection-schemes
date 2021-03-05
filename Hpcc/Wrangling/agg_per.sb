@@ -50,17 +50,17 @@ RESOLUTION=100
 ####################################################################
 
 if [ ${SLURM_ID} -eq ${TREATMENT__1} ] ; then
-  DUMP=/mnt/home/herna383/Diagnostics/SelectionData/MULAMBDA/
+  DUMP=/mnt/home/herna383/Diagnostics/Data/MULAMBDA/
   OFFSET=0
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${MULAMBDA}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2} ] ; then
-  DUMP=/mnt/home/herna383/Diagnostics/SelectionData/TOURNAMENT/
+  DUMP=/mnt/home/herna383/Diagnostics/Data/TOURNAMENT/
   OFFSET=500
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3} ] ; then
-  DUMP=/mnt/home/herna383/Diagnostics/SelectionData/LEXICASE/
+  DUMP=/mnt/home/herna383/Diagnostics/Data/LEXICASE/
   OFFSET=1000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${LEXICASE}
