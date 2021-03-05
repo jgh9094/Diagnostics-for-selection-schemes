@@ -178,6 +178,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
             df = df.iloc[::res, :]
             agg = df[POP_FIT_AVG].tolist()
 
+            print('agg=', agg)
             # add lists and continue
             mean = np.add(mean, agg)
 
@@ -248,8 +249,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# DO NOT USE PANDAS
-# TOO SLOW
-# USE https://stackoverflow.com/questions/27307385/best-way-to-access-the-nth-line-of-csv-file/27307452
