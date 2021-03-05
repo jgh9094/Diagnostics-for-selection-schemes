@@ -161,6 +161,8 @@ def DirExplore(data, dump, sel, dia, offs, res):
     DEVIATION = []
     TREATEMENT = []
 
+    GEN_LIST = GEN_LIST[::res]
+
     # iterate through the sets of seeds
     for i in range(len(SEEDS)):
         seeds = SEEDS[i]
@@ -168,7 +170,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
         print('i=',i)
 
         # iterate through seeds to get the mean treatment
-        mean = [0] * int(GENERATIONS/res)
+        mean = [0] * len(GEN_LIST)
         for s in seeds:
             seed = str(s + offs)
             DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/data.csv'
@@ -178,7 +180,6 @@ def DirExplore(data, dump, sel, dia, offs, res):
             df = df.iloc[::res, :]
             agg = df[POP_FIT_AVG].tolist()
 
-            print('agg=', agg)
             # add lists and continue
             mean = np.add(mean, agg)
 
@@ -186,7 +187,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
         mean = [x/REP_NUM for x in mean]
 
         # iterate through seeds to std var per treatment
-        std = [0] * int(GENERATIONS/res)
+        std = [0] * len(GEN_LIST)
         for s in seeds:
             seed = str(s + offs)
             DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/data.csv'
@@ -204,7 +205,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
         # finishing touches on standard deviation: divide by repliation number and square root
         std = [mth.sqrt(x/REP_NUM) for x in std]
 
-        GENERATION = GENERATION + GEN_LIST[::res]
+        GENERATION = GENERATION + GEN_LIST
         AGGREGATE = AGGREGATE + mean
         DEVIATION = DEVIATION + std
         TREATEMENT = TREATEMENT + [var_val] * int(GENERATIONS/res)
