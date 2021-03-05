@@ -35,25 +35,32 @@ STRUCTURED_EXPLOITATION=1
 CONTRADICTORY_ECOLOGY=2
 EXPLORATION=3
 
-###### Treatments #######
+##################################
+# Treatments
+##################################
 TREATMENT__1=1 # MU LAMBDA
 TREATMENT__2=2 # TOURNAMENT
 TREATMENT__3=3 # LEXICASE
 
+##################################
+# Resolution
+##################################
+RESOLUTION=100
+
 ####################################################################
 
 if [ ${SLURM_ID} -eq ${TREATMENT__1} ] ; then
-  DUMP=../../Data/MULAMBDA/
+  DUMP=/mnt/home/herna383/Diagnostics/SelectionData/MULAMBDA/
   OFFSET=0
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${MULAMBDA}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2} ] ; then
-  DUMP=../../Data/TOURNAMENT/
+  DUMP=/mnt/home/herna383/Diagnostics/SelectionData/TOURNAMENT/
   OFFSET=500
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3} ] ; then
-  DUMP=../../Data/LEXICASE/
+  DUMP=/mnt/home/herna383/Diagnostics/SelectionData/LEXICASE/
   OFFSET=1000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${LEXICASE}
@@ -65,9 +72,9 @@ fi
 ####################################################################
 
 
-echo "python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} > run.log" > ./cmd-coh.txt
+echo "python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} > run.log" > ./cmd-coh.txt
 
-python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET}
+python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION}
 
 
 ### Data Wrangling
