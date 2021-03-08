@@ -10,7 +10,7 @@
 ##################################
 # Data Directory
 ##################################
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/
+DATA_DIR=/mnt/home/herna383/Diagnostics/Daclearta/
 
 ##################################
 # Setup relevant directories
