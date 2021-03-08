@@ -8,6 +8,11 @@
 #SBATCH --account=devolab            # research group account being used
 
 ##################################
+# Data Directory
+##################################
+  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/
+
+##################################
 # Setup relevant directories
 # Previously used ones will be commented out
 ##################################
@@ -60,62 +65,50 @@ RESOLUTION=100
 ####################################################################
 
 if [ ${SLURM_ID} -eq ${TREATMENT__1__1} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/MULAMBDA/
   OFFSET=0
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${MULAMBDA}
 elif [ ${SLURM_ID} -eq ${TREATMENT__1__2} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/MULAMBDA/
   OFFSET=7000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${MULAMBDA}
 elif [ ${SLURM_ID} -eq ${TREATMENT__1__3} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/MULAMBDA/
   OFFSET=5000
   DIAGNOSTIC=${CONTRADICTORY_ECOLOGY}
   SELECTION=${MULAMBDA}
 elif [ ${SLURM_ID} -eq ${TREATMENT__1__4} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/MULAMBDA/
   OFFSET=6000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${MULAMBDA}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__1} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/TOURNAMENT/
   OFFSET=500
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__2} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/TOURNAMENT/
   OFFSET=11000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__3} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/TOURNAMENT/
   OFFSET=9000
   DIAGNOSTIC=${CONTRADICTORY_ECOLOGY}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__4} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/TOURNAMENT/
   OFFSET=10000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__1} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/LEXICASE/
   OFFSET=1000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__2} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/LEXICASE/
   OFFSET=4000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__3} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/LEXICASE/
   OFFSET=3000
   DIAGNOSTIC=${CONTRADICTORY_ECOLOGY}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__4} ] ; then
-  DATA_DIR=/mnt/home/herna383/Diagnostics/Data/LEXICASE/
   OFFSET=2000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${LEXICASE}
