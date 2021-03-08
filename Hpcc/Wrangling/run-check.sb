@@ -10,7 +10,7 @@
 ##################################
 # Data Directory
 ##################################
-DATA_DIR=/mnt/home/herna383/Diagnostics/Data/
+DATA_DIR=/mnt/ls15/scratch/users/herna383/
 
 ##################################
 # Setup relevant directories
