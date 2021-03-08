@@ -127,6 +127,6 @@ fi
 ####################################################################
 
 
-echo "python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} > run.log" > ./cmd-coh.txt
+echo "python3 ../../DataTools/Checker/run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} > run.log" > ./cmd-coh.txt
 
-python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${OFFSET}
+python3 ../../DataTools/Checker/run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${OFFSET}
