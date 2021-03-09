@@ -2,7 +2,7 @@
 ########## Define Resources Needed with SBATCH Lines ##########
 
 #SBATCH --time=1:00:00               # limit of wall clock time - how long the job will run (same as -t)
-#SBATCH --array=1-3                  # number of jobs being created, each with its array id
+#SBATCH --array=1-12                 # number of jobs being created, each with its array id
 #SBATCH --mem=10G                    # memory required per node - amount of memory (in gigs)
 #SBATCH --job-name agg-per           # you can give your job a name for easier identification (same as -J)
 #SBATCH --account=devolab            # research group account being used
@@ -38,9 +38,23 @@ EXPLORATION=3
 ##################################
 # TREATMENTS
 ##################################
-TREATMENT__1=1 # MU LAMBDA
-TREATMENT__2=2 # TOURNAMENT
-TREATMENT__3=3 # LEXICASE
+# MULAMBDA REPLICATES
+TREATMENT__1__1=1
+TREATMENT__1__2=2
+TREATMENT__1__3=3
+TREATMENT__1__4=4
+
+# TOURNAMENTS REPLICATES
+TREATMENT__2__1=5
+TREATMENT__2__2=6
+TREATMENT__2__3=7
+TREATMENT__2__4=8
+
+# LEXICASE REPLICATES
+TREATMENT__3__1=9
+TREATMENT__3__2=10
+TREATMENT__3__3=11
+TREATMENT__3__4=12
 
 ##################################
 # COLUMNS
@@ -65,27 +79,80 @@ RESOLUTION=100
 
 ####################################################################
 
-if [ ${SLURM_ID} -eq ${TREATMENT__1} ] ; then
+if [ ${SLURM_ID} -eq ${TREATMENT__1__1} ] ; then
   DUMP=/mnt/home/herna383/Diagnostics/Data/MULAMBDA/
   OFFSET=0
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${MULAMBDA}
   COLUMN=${POP_FIT_AVG}
-elif [ ${SLURM_ID} -eq ${TREATMENT__2} ] ; then
+elif [ ${SLURM_ID} -eq ${TREATMENT__1__2} ] ; then
+  DUMP=/mnt/home/herna383/Diagnostics/Data/MULAMBDA/
+  OFFSET=7000
+  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
+  SELECTION=${MULAMBDA}
+  COLUMN=${POP_FIT_AVG}
+elif [ ${SLURM_ID} -eq ${TREATMENT__1__3} ] ; then
+  DUMP=/mnt/home/herna383/Diagnostics/Data/MULAMBDA/
+  OFFSET=5000
+  DIAGNOSTIC=${CONTRADICTORY_ECOLOGY}
+  SELECTION=${MULAMBDA}
+  COLUMN=${POP_FIT_AVG}
+elif [ ${SLURM_ID} -eq ${TREATMENT__1__4} ] ; then
+  DUMP=/mnt/home/herna383/Diagnostics/Data/MULAMBDA/
+  OFFSET=6000
+  DIAGNOSTIC=${EXPLORATION}
+  SELECTION=${MULAMBDA}
+  COLUMN=${POP_FIT_AVG}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__1} ] ; then
   DUMP=/mnt/home/herna383/Diagnostics/Data/TOURNAMENT/
   OFFSET=500
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${TOURNAMENT}
   COLUMN=${POP_FIT_AVG}
-elif [ ${SLURM_ID} -eq ${TREATMENT__3} ] ; then
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__2} ] ; then
+  DUMP=/mnt/home/herna383/Diagnostics/Data/TOURNAMENT/
+  OFFSET=11000
+  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
+  SELECTION=${TOURNAMENT}
+  COLUMN=${POP_FIT_AVG}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__3} ] ; then
+  DUMP=/mnt/home/herna383/Diagnostics/Data/TOURNAMENT/
+  OFFSET=9000
+  DIAGNOSTIC=${CONTRADICTORY_ECOLOGY}
+  SELECTION=${TOURNAMENT}
+  COLUMN=${POP_FIT_AVG}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__4} ] ; then
+  DUMP=/mnt/home/herna383/Diagnostics/Data/TOURNAMENT/
+  OFFSET=10000
+  DIAGNOSTIC=${EXPLORATION}
+  SELECTION=${TOURNAMENT}
+  COLUMN=${POP_FIT_AVG}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__1} ] ; then
   DUMP=/mnt/home/herna383/Diagnostics/Data/LEXICASE/
   OFFSET=1000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${LEXICASE}
   COLUMN=${POP_FIT_AVG}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__2} ] ; then
+  DUMP=/mnt/home/herna383/Diagnostics/Data/LEXICASE/
+  OFFSET=4000
+  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
+  SELECTION=${LEXICASE}
+  COLUMN=${POP_FIT_AVG}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__3} ] ; then
+  DUMP=/mnt/home/herna383/Diagnostics/Data/LEXICASE/
+  OFFSET=3000
+  DIAGNOSTIC=${CONTRADICTORY_ECOLOGY}
+  SELECTION=${LEXICASE}
+  COLUMN=${POP_FIT_AVG}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__4} ] ; then
+  DUMP=/mnt/home/herna383/Diagnostics/Data/LEXICASE/
+  OFFSET=2000
+  DIAGNOSTIC=${EXPLORATION}
+  SELECTION=${LEXICASE}
+  COLUMN=${POP_FIT_AVG}
 else
   echo "${SEED} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
-
 fi
 
 ####################################################################
@@ -94,6 +161,3 @@ fi
 echo "python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${COLUMN}  > run.log" > ./cmd-coh.txt
 
 python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${COLUMN}
-
-
-### Data Wrangling
