@@ -158,6 +158,6 @@ fi
 ####################################################################
 
 
-echo "python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${COLUMN}  > run.log" > ./cmd-coh.txt
+echo "python3 ../../Wrangling/Collector/data-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${COLUMN}  > run.log" > ./cmd-coh.txt
 
-python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${COLUMN}
+python3 ../../Wrangling/Collector/data-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${COLUMN}
