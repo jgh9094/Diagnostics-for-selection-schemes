@@ -246,7 +246,6 @@ def DirExplore(data, dump, sel, dia, offs, res, col):
 
     df.to_csv(path_or_buf= dump + SetDiagnostic(dia).lower() + '_' + SetColumn(col).lower() +'.csv', index=False)
 
-
 def main():
     # Generate and get the arguments
     parser = argparse.ArgumentParser(description="Data aggregation script.")
