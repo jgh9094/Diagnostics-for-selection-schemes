@@ -173,7 +173,7 @@ def ExportCSV(sol_list, var_list,s,d,dump):
                            var_list[8]: pd.Series(sol_list[8]),
                            var_list[9]: pd.Series(sol_list[9])})
 
-        df.to_csv(path_or_buf= dump + SetDiagnostic(d) + '_SOL_FND.csv', index=False)
+        df.to_csv(path_or_buf= dump + SetDiagnostic(d).lower() + '_SOL_FND.csv'.lower(), index=False)
 
     elif s == 2 or s == 3 or s == 4:
         df = pd.DataFrame({var_list[0]: pd.Series(sol_list[0]),
@@ -185,7 +185,7 @@ def ExportCSV(sol_list, var_list,s,d,dump):
                            var_list[6]: pd.Series(sol_list[6]),
                            var_list[7]: pd.Series(sol_list[7])})
 
-        df.to_csv(path_or_buf= dump + SetDiagnostic(d) + '_SOL_FND.csv', index=False)
+        df.to_csv(path_or_buf= dump + SetDiagnostic(d).lower() + '_SOL_FND.csv'.lower(), index=False)
 
     else:
         sol_list.exit('SOL LIST SELECTION UKNOWN')
