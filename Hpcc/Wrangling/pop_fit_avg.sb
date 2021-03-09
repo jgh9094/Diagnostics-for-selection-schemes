@@ -8,18 +8,18 @@
 #SBATCH --account=devolab            # research group account being used
 
 ##################################
-# Setup relevant directories
+# SETUP RELEVANT DIRECTORIES
 ##################################
 DATA_DIR=/mnt/ls15/scratch/users/herna383/
 
 ##################################
-# Setup relevant directories
-# Previously used ones will be commented out
+# SETUP RELEVANT DIRECTORIES
+# PREVIOUSLY USED ONES WILL BE COMMENTED OUT
 ##################################
 SLURM_ID=$((SLURM_ARRAY_TASK_ID))
 
 ##################################
-# Setup selection scheme
+# SETUP SELECTION SCHEME
 ##################################
 MULAMBDA=0
 TOURNAMENT=1
@@ -28,7 +28,7 @@ NOVELTY=3
 LEXICASE=4
 
 ##################################
-# Setup diagnostic
+# SETUP DIAGNOSTIC
 ##################################
 EXPLOITATION=0
 STRUCTURED_EXPLOITATION=1
@@ -36,11 +36,27 @@ CONTRADICTORY_ECOLOGY=2
 EXPLORATION=3
 
 ##################################
-# Treatments
+# TREATMENTS
 ##################################
 TREATMENT__1=1 # MU LAMBDA
 TREATMENT__2=2 # TOURNAMENT
 TREATMENT__3=3 # LEXICASE
+
+##################################
+# COLUMNS
+##################################
+POP_FIT_AVG=0
+POP_OPT_AVG=1
+POP_UNI_OBJ=2
+COM_SOL_CNT=3
+LOS_DIV=4
+SEL_PRE=5
+ELE_AGG_PER=6
+ELE_OPT_CNT=7
+COM_AGG_PER=8
+COM_OPT_CNT=9
+OPT_AGG_PER=10
+OPT_OBJ_CNT=11
 
 ##################################
 # Resolution
@@ -54,16 +70,19 @@ if [ ${SLURM_ID} -eq ${TREATMENT__1} ] ; then
   OFFSET=0
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${MULAMBDA}
+  COLUMN=${POP_FIT_AVG}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2} ] ; then
   DUMP=/mnt/home/herna383/Diagnostics/Data/TOURNAMENT/
   OFFSET=500
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${TOURNAMENT}
+  COLUMN=${POP_FIT_AVG}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3} ] ; then
   DUMP=/mnt/home/herna383/Diagnostics/Data/LEXICASE/
   OFFSET=1000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${LEXICASE}
+  COLUMN=${POP_FIT_AVG}
 else
   echo "${SEED} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
 
@@ -72,9 +91,9 @@ fi
 ####################################################################
 
 
-echo "python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} > run.log" > ./cmd-coh.txt
+echo "python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${COLUMN}  > run.log" > ./cmd-coh.txt
 
-python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION}
+python3 ../../Wrangling/Collector/agg_perf.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${COLUMN}
 
 
 ### Data Wrangling
