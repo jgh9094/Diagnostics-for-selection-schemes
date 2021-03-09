@@ -31,8 +31,6 @@ NS_LIST = [0,1,2,4,8,15,30,60]
 REP_NUM = 50
 # 40001 gens=
 GENERATIONS = 40001
-# name of column we need to extract
-POP_FIT_AVG = 'pop_fit_avg'
 # optimal count expecting (depending on experiment config)
 OPTI_CNT = 100
 # list of total generations
@@ -132,9 +130,38 @@ def SetVarList(s):
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
 
+# Will set the column we are looking at in the data.csv
+def SetColumn(c):
+    # case by case
+    if c == 0:
+        return 'pop_fit_avg'
+    elif c == 1:
+        return 'pop_opt_avg'
+    elif c == 2:
+        return 'pop_uni_obj'
+    elif c == 3:
+        return 'com_sol_cnt'
+    elif c == 4:
+        return 'los_div'
+    elif c == 5:
+        return 'sel_pre'
+    elif c == 6:
+        return 'ele_agg_per'
+    elif c == 7:
+        return 'ele_opt_cnt'
+    elif c == 8:
+        return 'com_agg_per'
+    elif c == 9:
+        return 'com_opt_cnt'
+    elif c == 10:
+        return 'opt_agg_per'
+    elif c == 11:
+        return 'opt_obj_cnt'
+    else:
+        sys.exit('UNKNOWN COLUMN SELECTED')
 
 # loop through differnt files that exist
-def DirExplore(data, dump, sel, dia, offs, res):
+def DirExplore(data, dump, sel, dia, offs, res, col):
     # check if data dir exists
     if os.path.isdir(data) == False:
         print('DATA=', data)
@@ -162,6 +189,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
     TREATEMENT = []
 
     GEN_LIST = TOTA_GEN_LIST[::res]
+    COLUMN = SetColumn(col)
 
     # iterate through the sets of seeds
     for i in range(len(SEEDS)):
@@ -178,7 +206,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
             # create pandas data frame of entire csv and grab the row
             df = pd.read_csv(DATA_DIR)
             df = df.iloc[::res, :]
-            agg = df[POP_FIT_AVG].tolist()
+            agg = df[COLUMN].tolist()
 
             # add lists and continue
             mean = np.add(mean, agg)
@@ -195,7 +223,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
             # create pandas data frame of entire csv and grab the row
             df = pd.read_csv(DATA_DIR)
             df = df.iloc[::res, :]
-            agg = df[POP_FIT_AVG].tolist()
+            agg = df[COLUMN].tolist()
 
             # substract agg from mean and square it
             summ = np.subtract(agg, mean)
@@ -216,7 +244,7 @@ def DirExplore(data, dump, sel, dia, offs, res):
                        'dev': pd.Series(DEVIATION),
                        'trt': pd.Series(TREATEMENT)})
 
-    df.to_csv(path_or_buf= dump + SetDiagnostic(dia) + '_PERF_AGG.csv', index=False)
+    df.to_csv(path_or_buf= dump + SetDiagnostic(dia).lower() + '_' + SetColumn(col).lower() +'.csv', index=False)
 
 
 def main():
@@ -228,6 +256,7 @@ def main():
     parser.add_argument("diagnostic",  type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
     parser.add_argument("seed_offset", type=int, help="Experiment seed offset. (REPLICATION_OFFSET + PROBLEM_SEED_OFFSET")
     parser.add_argument("resolution",  type=int, help="The resolution desired for the data extraction")
+    parser.add_argument("column",      type=int, help="Data column extracting: \n0: pop_fit_avg\n1: pop_opt_avg\n2: pop_uni_obj \n3: com_sol_cnt \n4: los_div \n5:sel_pre \n6:ele_agg_per \n7: ele_opt_cnt \n8: com_agg_per \n9: com_opt_cnt \n10: opt_agg_per \n11:opt_obj_cnt")
 
     # Parse all the arguments
     args = parser.parse_args()
@@ -243,10 +272,12 @@ def main():
     print('Offset=', offset)
     resolution = args.resolution
     print('Resolution=', resolution)
+    column = args.column
+    print('Column=', column)
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, resolution)
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, resolution, column)
 
 if __name__ == "__main__":
     main()
