@@ -21,7 +21,7 @@ REPLICATION_OFFSET=0
 ##################################
 # Setup random seed info
 ##################################
-PROBLEM_SEED_OFFSET=3000
+PROBLEM_SEED_OFFSET=22000
 SEED=$((SLURM_ARRAY_TASK_ID + PROBLEM_SEED_OFFSET + REPLICATION_OFFSET))
 
 ##################################
@@ -61,7 +61,10 @@ STRUCTURED_EXPLOITATION=1
 CONTRADICTORY_ECOLOGY=2
 EXPLORATION=3
 
-###### Treatments #######
+##################################
+# Treatments
+##################################
+
 TREATMENT__EPS_0__MIN=1
 TREATMENT__EPS_0__MAX=50
 
@@ -85,6 +88,14 @@ TREATMENT__EPS_50__MAX=350
 
 TREATMENT__EPS_100__MIN=351
 TREATMENT__EPS_100__MAX=400
+
+##################################
+# Config file parameters
+##################################
+OBJECTIVE_CNT=50
+ACCURACY=.99
+GENERATIONS=40001
+ACCURACY_DIR=99
 
 ####################################################################
 
@@ -127,14 +138,11 @@ fi
 
 ####################################################################
 
-RUN_DIR=${DATA_DIR}/${NAME}/
+RUN_DIR=${DATA_DIR}/TRT_${OBJECTIVE_CNT}__ACC_${ACCURACY_DIR}__GEN_${GENERATIONS}/${NAME}/
 
 # make a run directory
 mkdir -p ${RUN_DIR}
 
-echo "../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${CONTRADICTORY_ECOLOGY} -SELECTION ${LEXICASE} -OUTPUT_DIR ${RUN_DIR} -LEX_EPS ${EPS} > run.log" > ./cmd-coh.txt
+echo "../../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${CONTRADICTORY_ECOLOGY} -SELECTION ${LEXICASE} -OUTPUT_DIR ${RUN_DIR} -LEX_EPS ${EPS} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS} > run.log" > ./cmd-coh.txt
 
-../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${CONTRADICTORY_ECOLOGY} -SELECTION ${LEXICASE} -OUTPUT_DIR ${RUN_DIR} -LEX_EPS ${EPS}
-
-
-### Exploratory runs
+../../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${CONTRADICTORY_ECOLOGY} -SELECTION ${LEXICASE} -OUTPUT_DIR ${RUN_DIR} -LEX_EPS ${EPS} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS}
