@@ -33,8 +33,6 @@ SMAX = 50
 EXPECTED_GENS = 40000
 # name of column we need to extract
 POP_OPT_MAX = 'pop_opt_max'
-# optimal count expecting (depending on experiment config)
-OPTI_CNT = 100
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s):
@@ -123,7 +121,7 @@ def sorted(v):
     return True
 
 # create a pandas dataframe of csv and find if optimal solutions exist
-def FindSolGen(file):
+def FindSolGen(file, cnt):
     # check and make sure that the file exists
     if os.path.isfile(file) == False:
         sys.exit('DATA FILE DOES NOT EXIST')
@@ -132,7 +130,7 @@ def FindSolGen(file):
     df = pd.read_csv(file)
 
     # create subset of data frame with only winning solutions
-    df = df[df[POP_OPT_MAX] == OPTI_CNT]
+    df = df[df[POP_OPT_MAX] == int(cnt)]
     gens = df['gen'].tolist()
 
     # check if there are any gens where optimal solution is found
@@ -225,7 +223,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
         print('Sub data directory:', DATA_DIR+'data.csv')
 
         # get data from file and check if can store it
-        sol = FindSolGen(DATA_DIR+'data.csv')
+        sol = FindSolGen(DATA_DIR+'data.csv', obj)
         if 0 <= sol:
             SOL_LIST[it].append(sol)
 
