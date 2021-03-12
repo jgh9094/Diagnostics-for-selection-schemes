@@ -164,7 +164,7 @@ def CheckDir(dir, sel, dia, offs, obj, acc, gens):
             continue
 
         # make sure that the data.csv file did in fact finish all generations
-        if CountRows(DATA_DIR + 'data.csv') != gens:
+        if CountRows(DATA_DIR + 'data.csv') != int(gens) - 1:
             DAT_DNF.append(int(seed))
             continue
 
