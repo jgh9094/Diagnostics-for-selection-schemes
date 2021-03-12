@@ -91,7 +91,7 @@ TREATMENT__EPS_100__MAX=400
 ##################################
 OBJECTIVE_CNT=50
 ACCURACY=.99
-GENERATIONS=40000
+GENERATIONS=50000
 ACCURACY_DIR=99
 
 ####################################################################
