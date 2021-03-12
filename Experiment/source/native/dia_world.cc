@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
   DiagWorld world(config);
 
-  for (size_t ud = 0; ud < config.MAX_GENS(); ud++)
+  for (size_t ud = 0; ud <= config.MAX_GENS(); ud++)
   {
     world.Update();
   }
