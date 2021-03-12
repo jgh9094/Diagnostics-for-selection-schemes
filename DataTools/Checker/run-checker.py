@@ -31,8 +31,6 @@ FS_LIST = [0.0,10.0,30.0,60.0,12.0,250.0,500.0,1000.0]
 NS_LIST = [0,1,2,4,8,15,30,60]
 # seed experiements replicates range
 SMAX = 50
-# 40001 gens + 1 header row
-EXPECTED_GENS = 40000
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s):
@@ -121,22 +119,22 @@ def CountRows(file_name):
     return gens[-1]
 
 # responsible for looking through the data directories for success
-def CheckDir(dir, sel, dia, offs):
+def CheckDir(dir, sel, dia, offs, obj, acc, gens):
 
     # check if data dir exists
     if os.path.isdir(dir):
         print('Data dirctory exists=', dir)
     else:
         print('DOES NOT EXIST=', dir)
-        sys.exit('DATA DIRECTORY DOES NOT EXIST')
+        # sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check if selection scheme data folder exists
-    SEL_DIR = dir + SetSelection(sel) + '/'
+    SEL_DIR = dir + SetSelection(sel) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
     if os.path.isdir(SEL_DIR):
         print('Selection scheme data folder exists', SEL_DIR)
     else:
         print('SELECTION DIRECTORY DOES NOT EXIST=', SEL_DIR)
-        sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
+        # sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
 
     # step 2: create seed data directories and check if exist
     VLIST = SetVarList(sel)
@@ -166,7 +164,7 @@ def CheckDir(dir, sel, dia, offs):
             continue
 
         # make sure that the data.csv file did in fact finish all generations
-        if CountRows(DATA_DIR + 'data.csv') != EXPECTED_GENS:
+        if CountRows(DATA_DIR + 'data.csv') != gens:
             DAT_DNF.append(int(seed))
             continue
 
@@ -194,6 +192,9 @@ def main():
     parser.add_argument("selection", type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase")
     parser.add_argument("diagnostic", type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
     parser.add_argument("seed_offset", type=int, help="Experiment seed offset.")
+    parser.add_argument("objectives", type=str, help="Number of objectives being optimized")
+    parser.add_argument("accuracy", type=str, help="Accuracy for experiment")
+    parser.add_argument("generations", type=str, help="Number of generations experiments ran for")
 
     # Parse all the arguments
     args = parser.parse_args()
@@ -205,10 +206,17 @@ def main():
     print('Diagnostic=',SetDiagnostic(diagnostic))
     offset = args.seed_offset
     print('Offset=', offset)
+    objectives = args.objectives
+    print('Objectives=', objectives)
+    accuracy = args.accuracy
+    print('Accuracy=', accuracy)
+    generations = args.generations
+    print('Generations=', generations)
+
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    CheckDir(data_dir, selection, diagnostic, offset)
+    CheckDir(data_dir, selection, diagnostic, offset, objectives, accuracy, generations)
 
 
 if __name__ == "__main__":
