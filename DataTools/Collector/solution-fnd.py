@@ -191,7 +191,7 @@ def ExportCSV(sol_list, var_list,s,d,dump):
         sol_list.exit('SOL LIST SELECTION UKNOWN')
 
 # loop through differnt files that exist
-def DirExplore(data, dump, sel, dia, offs):
+def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
     # check if data dir exists
     if os.path.isdir(data) == False:
         print('DATA=', data)
@@ -203,7 +203,7 @@ def DirExplore(data, dump, sel, dia, offs):
         sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check that selection data folder exists
-    SEL_DIR = data + SetSelection(sel) + '/'
+    SEL_DIR = data + SetSelection(sel) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
     if os.path.isdir(SEL_DIR) == False:
         print('SEL_DIR=', SEL_DIR)
         sys.exit('EXIT -1')
@@ -241,6 +241,9 @@ def main():
     parser.add_argument("selection",   type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase")
     parser.add_argument("diagnostic",  type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
     parser.add_argument("seed_offset", type=int, help="Experiment seed offset. (REPLICATION_OFFSET + PROBLEM_SEED_OFFSET")
+    parser.add_argument("objectives", type=str, help="Number of objectives being optimized")
+    parser.add_argument("accuracy", type=str, help="Accuracy for experiment")
+    parser.add_argument("generations", type=str, help="Number of generations experiments ran for")
 
     # Parse all the arguments
     args = parser.parse_args()
@@ -254,10 +257,16 @@ def main():
     print('Diagnostic=',SetDiagnostic(diagnostic))
     offset = args.seed_offset
     print('Offset=', offset)
+    objectives = args.objectives
+    print('Objectives=', objectives)
+    accuracy = args.accuracy
+    print('Accuracy=', accuracy)
+    generations = args.generations
+    print('Generations=', generations)
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    DirExplore(data_dir, dump_dir, selection, diagnostic, offset)
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, objectives, accuracy, generations)
 
 if __name__ == "__main__":
     main()
