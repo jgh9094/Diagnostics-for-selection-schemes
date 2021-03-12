@@ -126,7 +126,7 @@ def CheckDir(dir, sel, dia, offs, obj, acc, gens):
         print('Data dirctory exists=', dir)
     else:
         print('DOES NOT EXIST=', dir)
-        # sys.exit('DATA DIRECTORY DOES NOT EXIST')
+        sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check if selection scheme data folder exists
     SEL_DIR = dir + SetSelection(sel) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
@@ -134,7 +134,7 @@ def CheckDir(dir, sel, dia, offs, obj, acc, gens):
         print('Selection scheme data folder exists', SEL_DIR)
     else:
         print('SELECTION DIRECTORY DOES NOT EXIST=', SEL_DIR)
-        # sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
+        sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
 
     # step 2: create seed data directories and check if exist
     VLIST = SetVarList(sel)
