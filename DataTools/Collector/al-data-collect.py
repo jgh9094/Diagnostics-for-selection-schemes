@@ -169,7 +169,7 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens):
         var_val = str(VLIST[i])
         print('i=',i)
 
-        TRT = [VLIST[i]] * len(DF_LIST)
+        TRT = [VLIST[i]] * len(GEN_LIST)
 
         # iterate through seeds to collect data
         for s in seeds:
