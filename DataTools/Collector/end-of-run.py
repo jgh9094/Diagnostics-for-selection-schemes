@@ -172,7 +172,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
         DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/'
         print('Sub data directory:', DATA_DIR+'data.csv')
 
-        df = pd.read_csv(DATA_DIR)
+        df = pd.read_csv(DATA_DIR + 'data.csv')
         dfl = df.iloc[[-1]]
 
         if dfl[GEN].tolist()[0] != int(gens):
