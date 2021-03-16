@@ -183,7 +183,7 @@ def ExportCSV(sol_list, var_list,s,d,dump):
                            var_list[6]: pd.Series(sol_list[6]),
                            var_list[7]: pd.Series(sol_list[7])})
 
-        df.to_csv(path_or_buf= dump + 'sf-' + SetDiagnostic(d).lower() + '.csv', index=False)
+        df.to_csv(path_or_buf= dump + 'sf-' + SetDiagnostic(d).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
 
     else:
         sol_list.exit('SOL LIST SELECTION UKNOWN')
