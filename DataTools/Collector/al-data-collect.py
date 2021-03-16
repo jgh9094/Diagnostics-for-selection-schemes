@@ -193,7 +193,7 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens):
 
     fin_df = pd.concat(DF_LIST)
 
-    fin_df.to_csv(path_or_buf= dump + SetDiagnostic(dia).lower() + '.csv', index=False)
+    fin_df.to_csv(path_or_buf= dump + SetDiagnostic(dia).lower() + '-' + gens + '.csv', index=False)
 
 def main():
     # Generate and get the arguments
