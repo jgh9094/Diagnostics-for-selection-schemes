@@ -158,7 +158,7 @@ def SetSolList(s):
         sys.exit('SOL LIST SELECTION UKNOWN')
 
 # create csv time
-def ExportCSV(sol_list, var_list,s,d,dump):
+def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens):
     if s == 0 or s == 1:
         df = pd.DataFrame({var_list[0]: pd.Series(sol_list[0]),
                            var_list[1]: pd.Series(sol_list[1]),
@@ -171,7 +171,7 @@ def ExportCSV(sol_list, var_list,s,d,dump):
                            var_list[8]: pd.Series(sol_list[8]),
                            var_list[9]: pd.Series(sol_list[9])})
 
-        df.to_csv(path_or_buf= dump + SetDiagnostic(d).lower() + '_SOL_FND.csv'.lower(), index=False)
+        df.to_csv(path_or_buf= dump + 'sf-' + SetDiagnostic(d).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
 
     elif s == 2 or s == 3 or s == 4:
         df = pd.DataFrame({var_list[0]: pd.Series(sol_list[0]),
@@ -228,7 +228,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
             SOL_LIST[it].append(sol)
 
     # Time to export the csv file
-    ExportCSV(SOL_LIST, VLIST, sel, dia, dump)
+    ExportCSV(SOL_LIST, VLIST, sel, dia, dump, obj, acc, gens)
 
 
 def main():
