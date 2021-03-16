@@ -33,6 +33,7 @@ REP_NUM = 50
 POP_FIT_AVG = 'pop_fit_avg'
 POP_FIT_MAX = 'pop_fit_max'
 POP_OPT_AVG = 'pop_opt_avg'
+POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
 COM_SOL_CNT = 'com_sol_cnt'
 ELE_AGG_PER = 'ele_agg_per'
@@ -193,7 +194,7 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens):
 
     fin_df = pd.concat(DF_LIST)
 
-    fin_df.to_csv(path_or_buf= dump + SetDiagnostic(dia).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
+    fin_df.to_csv(path_or_buf= dump + 'al-' + SetDiagnostic(dia).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
 
 def main():
     # Generate and get the arguments
