@@ -183,10 +183,11 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens):
 
             # time to export the data
             cdf = pd.DataFrame({'gen': pd.Series(GEN_LIST),
-                            'treatnt': pd.Series(TRT),
+                            'trt': pd.Series(TRT),
                             'fit_avg': pd.Series(df[POP_FIT_AVG].tolist()),
                             'fit_max': pd.Series(df[POP_FIT_MAX].tolist()),
                             'opt_avg': pd.Series(df[POP_OPT_AVG].tolist()),
+                            'opt_max': pd.Series(df[POP_OPT_MAX].tolist()),
                             'uni_avg': pd.Series(df[POP_UNI_OBJ].tolist()),
                             'com_cnt': pd.Series(df[COM_SOL_CNT].tolist())})
 
