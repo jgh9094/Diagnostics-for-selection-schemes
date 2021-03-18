@@ -29,8 +29,6 @@ FS_LIST = [0.0,10.0,30.0,60.0,12.0,250.0,500.0,1000.0]
 NS_LIST = [0,1,2,4,8,15,30,60]
 # seed experiements replicates range
 SMAX = 50
-# 40001 gens=
-EXPECTED_GENS = 40000
 # name of column we need to extract
 POP_FIT_AVG = 'pop_fit_avg'
 POP_FIT_MAX = 'pop_fit_max'
@@ -38,7 +36,7 @@ POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
 COM_SOL_CNT = 'com_sol_cnt'
-GEN = 'gen'
+GENERATION = 'gen'
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s):
@@ -204,30 +202,17 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
         df = pd.read_csv(DATA_DIR+'data.csv')
 
         # Population fit average
+        # Population fit max
         max_val = df[POP_FIT_AVG].max()
-        print('max_val=', max_val)
-
-        print('==', df[df[POP_FIT_AVG] == max_val])
-
-        max_df = df[df[POP_FIT_AVG] == max_val]
-        print('max_df=', max_df)
-
-
-
-        max_gen = df[df[POP_FIT_AVG] == max_val]['gen'].values.tolist()[0]
-        print('max_gen', max_gen)
-
-
+        max_gen = df[df[POP_FIT_AVG] == max_val][GENERATION].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
-        COL.append('pfa')
-
-        sys.exit(-1)
+        COL.append('pfm')
 
         # Population fit max
         max_val = df[POP_FIT_MAX].max()
-        max_gen = df[df[POP_FIT_MAX] == max_val][GEN].values.tolist()[0]
+        max_gen = df[df[POP_FIT_MAX] == max_val][GENERATION].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
@@ -235,7 +220,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
         # Population optimal avg
         max_val = df[POP_OPT_AVG].max()
-        max_gen = df[df[POP_OPT_AVG] == max_val][GEN].values.tolist()[0]
+        max_gen = df[df[POP_OPT_AVG] == max_val][GENERATION].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
@@ -243,7 +228,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
         # Population optimal max
         max_val = df[POP_OPT_MAX].max()
-        max_gen = df[df[POP_OPT_MAX] == max_val][GEN].values.tolist()[0]
+        max_gen = df[df[POP_OPT_MAX] == max_val][GENERATION].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
@@ -251,7 +236,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
         # Population unique objectives
         max_val = df[POP_UNI_OBJ].max()
-        max_gen = df[df[POP_UNI_OBJ] == max_val][GEN].values.tolist()[0]
+        max_gen = df[df[POP_UNI_OBJ] == max_val][GENERATION].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
@@ -259,7 +244,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
         # Population common solution count
         max_val = df[COM_SOL_CNT].max()
-        max_gen = df[df[COM_SOL_CNT] == max_val][GEN].values.tolist()[0]
+        max_gen = df[df[COM_SOL_CNT] == max_val][GENERATION].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
