@@ -188,7 +188,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
 
     # time to export the data
-    fdf = pd.DataFrame({'treatment': pd.Series(TRT),
+    fdf = pd.DataFrame({'trt': pd.Series(TRT),
                     'fit_avg': pd.Series(PFA),
                     'fit_max': pd.Series(PFM),
                     'opt_avg': pd.Series(POA),
