@@ -206,6 +206,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
         # Population fit average
         max_val = df[POP_FIT_AVG].max()
         max_gen = df[df[POP_FIT_AVG] == max_val][GEN].values.tolist()[0]
+        print('max_gen', max_gen)
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
