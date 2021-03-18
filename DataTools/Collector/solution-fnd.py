@@ -29,8 +29,6 @@ FS_LIST = [0.0,10.0,30.0,60.0,12.0,250.0,500.0,1000.0]
 NS_LIST = [0,1,2,4,8,15,30,60]
 # seed experiements replicates range
 SMAX = 50
-# 40001 gens=
-EXPECTED_GENS = 40000
 # name of column we need to extract
 POP_OPT_MAX = 'pop_opt_max'
 
