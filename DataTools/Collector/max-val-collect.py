@@ -205,7 +205,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
         # Population fit average
         max_val = df[POP_FIT_AVG].max()
-        max_gen = df[df[POP_FIT_AVG] == max_val][GEN].values.tolist()
+        max_gen = df[df[POP_FIT_AVG] == max_val][GEN].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
@@ -213,7 +213,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
         # Population fit max
         max_val = df[POP_FIT_MAX].max()
-        max_gen = df[df[POP_FIT_MAX] == max_val][GEN].tolist()[0]
+        max_gen = df[df[POP_FIT_MAX] == max_val][GEN].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
@@ -221,7 +221,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
         # Population optimal avg
         max_val = df[POP_OPT_AVG].max()
-        max_gen = df[df[POP_OPT_AVG] == max_val][GEN].tolist()[0]
+        max_gen = df[df[POP_OPT_AVG] == max_val][GEN].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
@@ -229,7 +229,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
         # Population optimal max
         max_val = df[POP_OPT_MAX].max()
-        max_gen = df[df[POP_OPT_MAX] == max_val][GEN].tolist()[0]
+        max_gen = df[df[POP_OPT_MAX] == max_val][GEN].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
@@ -237,7 +237,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
         # Population unique objectives
         max_val = df[POP_UNI_OBJ].max()
-        max_gen = df[df[POP_UNI_OBJ] == max_val][GEN].tolist()[0]
+        max_gen = df[df[POP_UNI_OBJ] == max_val][GEN].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
@@ -245,7 +245,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
         # Population common solution count
         max_val = df[COM_SOL_CNT].max()
-        max_gen = df[df[COM_SOL_CNT] == max_val][GEN].tolist()[0]
+        max_gen = df[df[COM_SOL_CNT] == max_val][GEN].values.tolist()[0]
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
