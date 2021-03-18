@@ -133,6 +133,6 @@ fi
 ####################################################################
 
 
-echo "python3 ../../../DataTools/Collector/max-val-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS}  > run.log" > ./cmd-coh.txt
+echo "python3 ../../../DataTools/Collector/max-val-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS}  > run.log" > ./cmd-coh.txt
 
-python3 ../../../DataTools/Collector/max-val-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS}
+python3 ../../../DataTools/Collector/max-val-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS}
