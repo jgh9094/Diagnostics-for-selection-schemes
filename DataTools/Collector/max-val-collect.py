@@ -293,14 +293,7 @@ def main():
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    # DirExplore(data_dir, dump_dir, selection, diagnostic, offset, objectives, accuracy, generations)
-
-    # df = pd.read_csv('data.csv')
-    # pop_fit_avg = df[POP_FIT_MAX].max()
-    # pfa_gen = df[df[POP_FIT_MAX] == pop_fit_avg][GEN].tolist()[0]
-
-    # print(pop_fit_avg)
-    # print(pfa_gen)
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, objectives, accuracy, generations)
 
 if __name__ == "__main__":
     main()
