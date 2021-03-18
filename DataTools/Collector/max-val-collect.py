@@ -212,7 +212,9 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
         max_df = df[df[POP_FIT_AVG] == max_val]
         print('max_df=', max_df)
 
-        max_gen = df[df[POP_FIT_AVG] == max_val][GEN].values.tolist()[0]
+
+
+        max_gen = df[df[POP_FIT_AVG] == max_val]['gen'].values.tolist()[0]
         print('max_gen', max_gen)
 
 
