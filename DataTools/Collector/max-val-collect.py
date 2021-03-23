@@ -208,7 +208,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
         TRT.append(VLIST[it])
         VAL.append(max_val)
         GEN.append(max_gen)
-        COL.append('pfm')
+        COL.append('pfa')
 
         # Population fit max
         max_val = df[POP_FIT_MAX].max()
