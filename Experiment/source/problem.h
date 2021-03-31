@@ -71,7 +71,22 @@ class Diagnostic
     score_t Exploitation(const genome_t & g);
 
     /**
-     * Contradicting Ecology function:
+     * Weak Phenotypic Diversity Ecology function:
+     *
+     * All genes are associated with a single type of resource.
+     * Solutions are pressured to optimize one maximaly, while other genes drift if they are not the maximum one.
+     * To calculate score vector, first we find the maximum gene value i*.
+     * Once i* is found, score vector value at every other position every other is 0.
+     * Score vector value where i* is found is i*.
+     *
+     * @param g Genome from organism being evaluated.
+     *
+     * @return score vector that is calculated from 'g'.
+     */
+    score_t WeakEcology(const genome_t & g);
+
+    /**
+     * Hard Phenotypic Diversity Ecology function:
      *
      * All genes are associated with a single type of resource.
      * Solutions are pressured to optimize one maximaly, while keeping others close to 0.
@@ -80,11 +95,10 @@ class Diagnostic
      * Score vector value where i* is found is just i*.
      *
      * @param g Genome from organism being evaluated.
-     * @param max_credit This value is the maximum credit assigned when structure broken
      *
      * @return score vector that is calculated from 'g'.
      */
-    score_t ContraEcology(const genome_t & g);
+    score_t HardEcology(const genome_t & g);
 
     /**
      * Structured Exploitation function:
@@ -96,7 +110,6 @@ class Diagnostic
      * Note that this problem explicitly forces optimization from start to end.
      *
      * @param g Genome from organism being evaluated.
-     * @param max_credit This value is the maximum credit assigned when structure broken
      *
      * @return score vector that is calculated from 'g'.
      */
@@ -154,6 +167,7 @@ Diagnostic::score_t Diagnostic::Exploration(const genome_t & g)
 
   return score;
 }
+
 Diagnostic::score_t Diagnostic::Exploitation(const genome_t & g)
 {
   // quick checks
@@ -167,7 +181,8 @@ Diagnostic::score_t Diagnostic::Exploitation(const genome_t & g)
 
   return score;
 }
-Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
+
+Diagnotic::score_t Diagnostic::WeakEcology(const genome_t & g)
 {
   // quick checks
   emp_assert(g.size() > 0);
@@ -178,7 +193,28 @@ Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
   // find max value position
   size_t max_v = std::distance(g.begin(), std::max_element(g.begin(), g.end()));
 
-  // set all score vector values except where max value is
+  // set all score vector values
+  for(size_t i = 0; i < score.size(); ++i)
+  {
+    if(g[i] == g[max_v]) {score[i] = g[max_v];}
+    else{score[i] = 0;}
+  }
+
+  return score;
+}
+
+Diagnostic::score_t Diagnostic::HardEcology(const genome_t & g)
+{
+  // quick checks
+  emp_assert(g.size() > 0);
+
+  // intialize score vector
+  score_t score(g.size());
+
+  // find max value position
+  size_t max_v = std::distance(g.begin(), std::max_element(g.begin(), g.end()));
+
+  // set all score vector values
   for(size_t i = 0; i < score.size(); ++i)
   {
     if(g[i] == g[max_v]) {score[i] = g[max_v];}
@@ -187,6 +223,7 @@ Diagnostic::score_t Diagnostic::ContraEcology(const genome_t & g)
 
   return score;
 }
+
 Diagnostic::score_t Diagnostic::StructExploitation(const genome_t & g)
 {
   // quick checks
