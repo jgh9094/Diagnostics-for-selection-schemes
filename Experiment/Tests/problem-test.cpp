@@ -183,7 +183,7 @@ TEST_CASE("Problem class structured exploitation function", "[struct-exploit]")
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 }
 
-TEST_CASE("Problem class contradictory ecology function", "[contra-ecology]")
+TEST_CASE("Problem class strong ecology function", "[strong-ecology]")
 {
   // set up our genome and diagnostic to score with structured exploitation
   const size_t size = 10; const double cred = 0.0;
@@ -197,7 +197,7 @@ TEST_CASE("Problem class contradictory ecology function", "[contra-ecology]")
   g = {10,9,8,7,6,5,4,3,2,1};
   correct = {10,1,2,3,4,5,6,7,8,9};
   // create diagnostic & test function with descending order
-  score = diag.ContraEcology(g);
+  score = diag.StrongEcology(g);
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 
@@ -206,7 +206,7 @@ TEST_CASE("Problem class contradictory ecology function", "[contra-ecology]")
   g = {10,9,8,7,6,5,4,3,2,20};
   correct = {10,11,12,13,14,15,16,17,18,20};
   // create diagnostic & test function with descending order
-  score = diag.ContraEcology(g);
+  score = diag.StrongEcology(g);
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 
@@ -215,14 +215,60 @@ TEST_CASE("Problem class contradictory ecology function", "[contra-ecology]")
   g = {20,9,8,7,6,5,4,3,2,20};
   correct = {20,11,12,13,14,15,16,17,18,20};
   // create diagnostic & test function with descending order
-  score = diag.ContraEcology(g);
+  score = diag.StrongEcology(g);
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
   REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
 
 
   // all the same values
   g = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
-  score = diag.ContraEcology(g);
+  score = diag.StrongEcology(g);
+  //create correct vector
+  correct = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+}
+
+TEST_CASE("Problem class weak ecology function", "[weak-ecology]")
+{
+  // set up our genome and diagnostic to score with structured exploitation
+  const size_t size = 10; const double cred = 0.0;
+  emp::vector<double> g(size);
+  emp::vector<double> correct(size);
+  emp::vector<double> score(size);
+  Diagnostic diag(g, cred);
+
+
+  // create decending vector, start the optimum
+  g = {10,9,8,7,6,5,4,3,2,1};
+  correct = {10,0,0,0,0,0,0,0,0,0};
+  // create diagnostic & test function with descending order
+  score = diag.WeakEcology(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // end of vector is optimum
+  g = {10,9,8,7,6,5,4,3,2,20};
+  correct = {0,0,0,0,0,0,0,0,0,20};
+  // create diagnostic & test function with descending order
+  score = diag.WeakEcology(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // start and end of vector is optimum
+  g = {20,9,8,7,6,5,4,3,2,20};
+  correct = {20,0,0,0,0,0,0,0,0,20};
+  // create diagnostic & test function with descending order
+  score = diag.WeakEcology(g);
+  // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
+  REQUIRE_THAT(score, Catch::Matchers::Equals(correct));
+
+
+  // all the same values
+  g = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+  score = diag.WeakEcology(g);
   //create correct vector
   correct = {1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
   // PrintVec(g, "g"); PrintVec(score, "s"); PrintVec(correct, "c");
