@@ -1,55 +1,5 @@
 /// World that will manage solutions during the evolutionary run
 
-/* TODO SECTION
- * [X]: Finished coding
- * [P]: Process of coding
- * []: Nothing done yet
- *
- * SELECTION SCHEME:
- * [X]: (μ,λ)
- * [X]: Tournament
- * [X]: Fitness Sharing
- * [X]: Novelty Search
- * [X]: Epsilon-Lexicae
- *
- * DIAGNOSTICS:
- * [P]: Exploitation
- * [P]: Structured Exploitation
- * [P]: Contradictory Traits Ecology
- * [P]: Exploitation
- *
- * PERFORMANCE METRICS:
- *
- * Individual Level:
- * []: Optimized Trait Count
- * []: Fitness Aggregate
- * []: Average Trait Fitness
- *
- * Population Level:
- * []: Average Optimized Trait Count
- * []: Maximum Optimized Trait Count
- * []: Unique Optimized Trait Count
- * []: Fitness Aggregate Average
- * []: Optimial Solution Count
- *
- * Solutions Of Interest
- *
- * Solution With Maximum Fitness
- * []: Record Everything From Individual Level
- *
- * Solution With Maximum Optimized Trait Count
- * []: Record Everything From Individual Level
- *
- * Most Common Solution
- * []: Record Everything From Individual Level
- *
- * DIVERSITY METRICS:
- * []: Emperical Systematics Tracker
- * []: Loss in Diversity
- * []: Selection Presure
- * []: Selection Variance
-*/
-
 #ifndef DIA_WORLD_H
 #define DIA_WORLD_H
 
@@ -230,9 +180,11 @@ class DiagWorld : public emp::World<Org>
 
     void StructuredExploitation();
 
-    void ContraEcology();
+    void StrongEcology();
 
     void Exploration();
+
+    void WeakEcology();
 
 
     ///< data tracking
@@ -511,12 +463,16 @@ void DiagWorld::SetEvaluation()
       StructuredExploitation();
       break;
 
-    case 2: // contradictory ecology
-      ContraEcology();
+    case 2: // strong ecology
+      StrongEcology();
       break;
 
     case 3: // exploration
       Exploration();
+      break;
+
+    case 4: // weak ecology
+      WeakEcology();
       break;
 
     default: // error, unknown diganotic
@@ -1052,14 +1008,14 @@ void DiagWorld::StructuredExploitation()
   std::cerr << "Structured exploitation diagnotic set!" << std::endl;
 }
 
-void DiagWorld::ContraEcology()
+void DiagWorld::StrongEcology()
 {
-  std::cerr << "Setting contradictory ecology diagnostic..." << std::endl;
+  std::cerr << "Setting strong ecology diagnostic..." << std::endl;
 
   evaluate = [this](Org & org)
   {
     // set score & aggregate
-    score_t score = diagnostic->ContraEcology(org.GetGenome());
+    score_t score = diagnostic->StrongEcology(org.GetGenome());
     org.SetScore(score);
     org.AggregateScore();
 
@@ -1071,7 +1027,7 @@ void DiagWorld::ContraEcology()
     return org.GetAggregate();
   };
 
-  std::cerr << "Contradictory ecology diagnotic set!" << std::endl;
+  std::cerr << "Strong ecology diagnotic set!" << std::endl;
 }
 
 void DiagWorld::Exploration()
@@ -1096,6 +1052,27 @@ void DiagWorld::Exploration()
   std::cerr << "Exploration diagnotic set!" << std::endl;
 }
 
+void DiagWorld::WeakEcology()
+{
+  std::cerr << "Setting weak ecology diagnostic..." << std::endl;
+
+  evaluate = [this](Org & org)
+  {
+    // set score & aggregate
+    score_t score = diagnostic->WeakEcology(org.GetGenome());
+    org.SetScore(score);
+    org.AggregateScore();
+
+    // set optimal vector and count
+    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
+    org.SetOptimal(opti);
+    org.CountOptimized();
+
+    return org.GetAggregate();
+  };
+
+  std::cerr << "Weak ecology diagnotic set!" << std::endl;
+}
 
 ///< data tracking
 

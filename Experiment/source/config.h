@@ -15,7 +15,7 @@ EMP_BUILD_CONFIG(DiaConfig,
   VALUE(CREDIT,              double,      0.00,      "Maximum credit a solution can get on an objective if applicable"),
   VALUE(OBJECTIVE_CNT,       size_t,       100,      "Number of traits an organism has"),
   VALUE(SELECTION,           size_t,         0,      "Which selection are we doing? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase"),
-  VALUE(DIAGNOSTIC,          size_t,         0,      "Which diagnostic are we doing? \n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration"),
+  VALUE(DIAGNOSTIC,          size_t,         0,      "Which diagnostic are we doing? \n0: Exploitation\n1: Structured Exploitation\n2: Strong Ecology \n3: Exploration \n4: Weak Ecology"),
 
   GROUP(MUTATIONS, "Mutation rates for organisms."),
   VALUE(MUTATE_PER,       double,     0.007,        "Probability of instructions being mutated"),
