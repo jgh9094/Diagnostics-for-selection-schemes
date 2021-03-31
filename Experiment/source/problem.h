@@ -86,7 +86,7 @@ class Diagnostic
     score_t WeakEcology(const genome_t & g);
 
     /**
-     * Hard Phenotypic Diversity Ecology function:
+     * Strong Phenotypic Diversity Ecology function:
      *
      * All genes are associated with a single type of resource.
      * Solutions are pressured to optimize one maximaly, while keeping others close to 0.
@@ -98,7 +98,7 @@ class Diagnostic
      *
      * @return score vector that is calculated from 'g'.
      */
-    score_t HardEcology(const genome_t & g);
+    score_t StrongEcology(const genome_t & g);
 
     /**
      * Structured Exploitation function:
@@ -182,7 +182,7 @@ Diagnostic::score_t Diagnostic::Exploitation(const genome_t & g)
   return score;
 }
 
-Diagnotic::score_t Diagnostic::WeakEcology(const genome_t & g)
+Diagnostic::score_t Diagnostic::WeakEcology(const genome_t & g)
 {
   // quick checks
   emp_assert(g.size() > 0);
@@ -203,7 +203,7 @@ Diagnotic::score_t Diagnostic::WeakEcology(const genome_t & g)
   return score;
 }
 
-Diagnostic::score_t Diagnostic::HardEcology(const genome_t & g)
+Diagnostic::score_t Diagnostic::StrongEcology(const genome_t & g)
 {
   // quick checks
   emp_assert(g.size() > 0);
