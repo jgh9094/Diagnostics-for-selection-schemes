@@ -212,6 +212,7 @@ class DiagWorld : public emp::World<Org>
   private:
     // experiment configurations
     DiaConfig & config;
+    double SIGMA = -1.0;
 
 
     // target vector
@@ -878,18 +879,32 @@ void DiagWorld::Tournament()
 void DiagWorld::FitnessSharing()
 {
   std::cerr << "Setting selection scheme: FitnessSharing" << std::endl;
+  std::cerr << "Calculating SIGMA..." << std::endl;
+
+  // calculate the sigma we are using
+
+  // max possible
+  genome_t high(config.OBJECTIVE_CNT(), config.TARGET());
+  // lowest possbile
+  genome_t low(config.OBJECTIVE_CNT(), 0.0);
+  // caclulate sigma
+  SIGMA = selection->Pnorm(high, low, config.PNORM_EXP()) * config.FIT_SIGMA();
+
+  std::cerr << "SIGMA=" << SIGMA << std::endl;
+
 
   select = [this]()
   {
     // quick checks
     emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
     emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
+    emp_assert(0 <= SIGMA);
 
     gmatrix_t genomes = PopGenomes();
 
     // generate distance matrix + fitness transformation
     fmatrix_t dist_mat = selection->SimilarityMatrix(genomes, config.PNORM_EXP());
-    score_t tscore = selection->FitnessSharing(dist_mat, fit_vec, config.FIT_ALPHA(), config.FIT_SIGMA());
+    score_t tscore = selection->FitnessSharing(dist_mat, fit_vec, config.FIT_ALPHA(), SIGMA);
 
     // select parent ids
     ids_t parent(pop.size());
@@ -908,6 +923,7 @@ void DiagWorld::FitnessSharing()
 void DiagWorld::NoveltySearch()
 {
   std::cerr << "Setting selection scheme: NoveltySearch" << std::endl;
+  std::cerr << "Tournament size for novelty: " << config.TOUR_SIZE() << std::endl;
 
   select = [this]()
   {
