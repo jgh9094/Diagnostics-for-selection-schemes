@@ -366,6 +366,15 @@ Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & nei
   // novelty score transformed from orignial scores
   score_t nscore(score.size());
 
+  // edge case where K == 0
+  if(K == 0){
+    std::copy(score.begin(), score.end(), nscore.begin());
+
+    // quick checks and return the score vector unaltered
+    emp_assert(score[0] == nscore[0]);
+    return nscore;
+  }
+
   // iterate through both score and neighborhood vectors
   for(size_t i = 0; i < score.size(); ++i)
   {
