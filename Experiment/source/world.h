@@ -968,9 +968,9 @@ void DiagWorld::NoveltySearch()
     // transform original fitness into novelty fitness
     score_t tscore = selection->Novelty(fit_vec, neighborhood, config.NOVEL_K());
 
-    std::cout << std::endl;
-    selection->PrintVec(fit_vec, "fitvec");
-    selection->PrintVec(tscore, "tscore");
+    // std::cout << std::endl;
+    // selection->PrintVec(fit_vec, "fitvec");
+    // selection->PrintVec(tscore, "tscore");
 
     // select parent ids
     ids_t parent(pop.size());
