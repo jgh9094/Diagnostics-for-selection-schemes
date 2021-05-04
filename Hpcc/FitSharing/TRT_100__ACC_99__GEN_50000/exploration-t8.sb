@@ -1,16 +1,16 @@
 #!/bin/bash
 ########## Define Resources Needed with SBATCH Lines ##########
 
-#SBATCH --time=24:00:00               # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --time=10:00:00               # limit of wall clock time - how long the job will run (same as -t)
 #SBATCH --array=1-400                 # number of jobs being created, each with its array id
 #SBATCH --mem=20G                     # memory required per node - amount of memory (in gigs)
-#SBATCH --job-name fs-weco            # you can give your job a name for easier identification (same as -J)
+#SBATCH --job-name fs-eplr            # you can give your job a name for easier identification (same as -J)
 #SBATCH --account=devolab             # research group account being used
 
 ##################################
 # Setup relevant directories
 ##################################
-DATA_DIR=/mnt/ls15/scratch/users/herna383/FITSHARING
+DATA_DIR=/mnt/ls15/scratch/users/herna383/IEEE-EC-2021/FITSHARING
 
 ##################################
 # Setup relevant directories
@@ -21,7 +21,7 @@ REPLICATION_OFFSET=0
 ##################################
 # Setup random seed info
 ##################################
-PROBLEM_SEED_OFFSET=30000
+PROBLEM_SEED_OFFSET=1000
 SEED=$((SLURM_ARRAY_TASK_ID + PROBLEM_SEED_OFFSET + REPLICATION_OFFSET))
 
 ##################################
@@ -105,7 +105,7 @@ TREATMENT__SIG__100__MAX=400
 ##################################
 # Config file parameters
 ##################################
-OBJECTIVE_CNT=50
+OBJECTIVE_CNT=100
 ACCURACY=.99
 GENERATIONS=50000
 ACCURACY_DIR=99
@@ -113,35 +113,35 @@ ACCURACY_DIR=99
 ####################################################################
 
 if [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__SIG__0__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__SIG__0__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_5}__SIG_${SIG__0}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__SIG_${SIG__0}__SEED_${SEED}
   SIG=${SIG__0}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__SIG__1__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__SIG__1__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_5}__SIG_${SIG__1}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__SIG_${SIG__1}__SEED_${SEED}
   SIG=${SIG__1}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__SIG__3__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__SIG__3__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_5}__SIG_${SIG__3}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__SIG_${SIG__3}__SEED_${SEED}
   SIG=${SIG__3}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__SIG__6__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__SIG__6__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_5}__SIG_${SIG__6}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__SIG_${SIG__6}__SEED_${SEED}
   SIG=${SIG__6}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__SIG__12__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__SIG__12__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_5}__SIG_${SIG__12}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__SIG_${SIG__12}__SEED_${SEED}
   SIG=${SIG__12}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__SIG__25__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__SIG__25__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_5}__SIG_${SIG__25}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__SIG_${SIG__25}__SEED_${SEED}
   SIG=${SIG__25}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__SIG__50__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__SIG__50__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_5}__SIG_${SIG__50}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__SIG_${SIG__50}__SEED_${SEED}
   SIG=${SIG__50}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__SIG__100__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__SIG__100__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_5}__SIG_${SIG__100}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__SIG_${SIG__100}__SEED_${SEED}
   SIG=${SIG__100}
 
 else
@@ -155,6 +155,6 @@ RUN_DIR=${DATA_DIR}/TRT_${OBJECTIVE_CNT}__ACC_${ACCURACY_DIR}__GEN_${GENERATIONS
 # make a run directory
 mkdir -p ${RUN_DIR}
 
-echo "../../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${WEAK_ECOLOGY} -SELECTION ${FITSHARING} -FIT_SIGMA ${SIG} -OUTPUT_DIR ${RUN_DIR} -TOUR_SIZE ${T__8} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS} > run.log" > ./cmd-coh.txt
+echo "../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLORATION} -SELECTION ${FITSHARING} -FIT_SIGMA ${SIG} -OUTPUT_DIR ${RUN_DIR} -TOUR_SIZE ${T__8} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS} > run.log" > ./cmd-coh.txt
 
-../../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${WEAK_ECOLOGY} -SELECTION ${FITSHARING} -FIT_SIGMA ${SIG} -OUTPUT_DIR ${RUN_DIR} -TOUR_SIZE ${T__8} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS}
+../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLORATION} -SELECTION ${FITSHARING} -FIT_SIGMA ${SIG} -OUTPUT_DIR ${RUN_DIR} -TOUR_SIZE ${T__8} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS}
