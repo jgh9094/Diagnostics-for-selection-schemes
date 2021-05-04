@@ -6,7 +6,7 @@
 EMP_BUILD_CONFIG(DiaConfig,
   GROUP(WORLD, "How should the world be setup?"),
   VALUE(POP_SIZE,     size_t,      512,    "Population size."),
-  VALUE(MAX_GENS,     size_t,    40001,    "Maximum number of generations."),
+  VALUE(MAX_GENS,     size_t,    50000,    "Maximum number of generations."),
   VALUE(SEED,           int,         0,    "Random number seed."),
 
   GROUP(DIAGNOSTICS, "How are the diagnostics setup?"),
