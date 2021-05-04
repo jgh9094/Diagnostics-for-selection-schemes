@@ -7,6 +7,8 @@
 #include <functional>
 #include <map>
 #include <set>
+#include <fstream>
+#include <string.h>
 
 ///< empirical headers
 #include "Evolve/World.h"
@@ -18,37 +20,37 @@
 #include "selection.h"
 
 
-template <typename PHEN_TYPE>
-struct pheno_info
-{
-  /// Track information related to the mutational landscape
-  /// Maps a string representing a type of mutation to a count representing
-  /// the number of that type of mutation that occured to bring about this taxon.
-  using phen_t = PHEN_TYPE;
-  using has_phen_t = std::true_type;
-  using has_mutations_t = std::false_type;
-  using has_fitness_t = std::true_type;
-  // using has_phenotype_t = true;
+// template <typename PHEN_TYPE>
+// struct pheno_info
+// {
+//   /// Track information related to the mutational landscape
+//   /// Maps a string representing a type of mutation to a count representing
+//   /// the number of that type of mutation that occured to bring about this taxon.
+//   using phen_t = PHEN_TYPE;
+//   using has_phen_t = std::true_type;
+//   using has_mutations_t = std::false_type;
+//   using has_fitness_t = std::true_type;
+//   // using has_phenotype_t = true;
 
-  emp::DataNode<double, emp::data::Current, emp::data::Range> fitness; /// This taxon's fitness (for assessing deleterious mutational steps)
-  PHEN_TYPE phenotype; /// This taxon's phenotype (for assessing phenotypic change)
+//   emp::DataNode<double, emp::data::Current, emp::data::Range> fitness; /// This taxon's fitness (for assessing deleterious mutational steps)
+//   PHEN_TYPE phenotype; /// This taxon's phenotype (for assessing phenotypic change)
 
-  const PHEN_TYPE & GetPhenotype() const {
-    return phenotype;
-  }
+//   const PHEN_TYPE & GetPhenotype() const {
+//     return phenotype;
+//   }
 
-  const double GetFitness() const {
-    return fitness.GetMean();
-  }
+//   const double GetFitness() const {
+//     return fitness.GetMean();
+//   }
 
-  void RecordFitness(double fit) {
-    fitness.Add(fit);
-  }
+//   void RecordFitness(double fit) {
+//     fitness.Add(fit);
+//   }
 
-  void RecordPhenotype(PHEN_TYPE phen) {
-    phenotype = phen;
-  }
-};
+//   void RecordPhenotype(PHEN_TYPE phen) {
+//     phenotype = phen;
+//   }
+// };
 
 class DiagWorld : public emp::World<Org>
 {
@@ -91,8 +93,8 @@ class DiagWorld : public emp::World<Org>
     using como_t = std::map<size_t, ids_t>;
 
     ///< systematics tracking types
-    using systematics_t = emp::Systematics<Org, Org::genome_t, pheno_info<typename Org::score_t>>;
-    using taxon_t = typename systematics_t::taxon_t;
+    // using systematics_t = emp::Systematics<Org, Org::genome_t, pheno_info<typename Org::score_t>>;
+    // using taxon_t = typename systematics_t::taxon_t;
 
 
   public:
@@ -197,7 +199,7 @@ class DiagWorld : public emp::World<Org>
 
     size_t FindOptimized();
 
-    void SnapshotPhylogony();
+    // void SnapshotPhylogony();
 
 
     ///< helper functions
@@ -239,7 +241,7 @@ class DiagWorld : public emp::World<Org>
     // file we are working with
     emp::DataFile data_file;
     // systematics tracking
-    emp::Ptr<systematics_t> sys_ptr;
+    // emp::Ptr<systematics_t> sys_ptr;
     // node to track population fitnesses
     nodef_t pop_fit;
     // node to track population opitmized count
@@ -248,6 +250,8 @@ class DiagWorld : public emp::World<Org>
     nodef_t pnt_fit;
     // node to track parent optimized count
     nodeo_t pnt_opti;
+    // csv file to track best performing solutions
+    std::ofstream elite_csv;
 
     ///< data we are tracking during an evolutionary run
 
@@ -304,7 +308,7 @@ void DiagWorld::SetOnUpdate()
     EvaluationStep();
 
     // take a snapshot if nessecaryn (ask if appropiate place to take snapshot)
-    if(GetUpdate() == config.MAX_GENS() - 1){SnapshotPhylogony();}
+    // if(GetUpdate() == config.MAX_GENS() - 1){SnapshotPhylogony();}
 
     // step 2: select parent solutions for
     SelectionStep();
@@ -490,29 +494,29 @@ void DiagWorld::SetDataTracking()
   std::cerr << "------------------------------------------------" << std::endl;
   std::cerr << "Setting up data tracking..." << std::endl;
 
-  // systematic tracking (ask alex about it)
-  std::cerr << "Setting up systematics tracking..." << std::endl;
+  // // systematic tracking (ask alex about it)
+  // std::cerr << "Setting up systematics tracking..." << std::endl;
 
-  sys_ptr = emp::NewPtr<systematics_t>([](const Org & o) {return o.GetGenome();});
+  // sys_ptr = emp::NewPtr<systematics_t>([](const Org & o) {return o.GetGenome();});
 
-  sys_ptr->AddSnapshotFun([](const taxon_t & taxon) {
-    return emp::to_string(taxon.GetData().GetFitness());
-  }, "fitness", "Taxon fitness");
+  // sys_ptr->AddSnapshotFun([](const taxon_t & taxon) {
+  //   return emp::to_string(taxon.GetData().GetFitness());
+  // }, "fitness", "Taxon fitness");
 
-  sys_ptr->AddSnapshotFun([](const taxon_t & taxon) {
-    return emp::ToString(taxon.GetData().GetPhenotype());
-  }, "phenotype", "Taxon Phenotype");
+  // sys_ptr->AddSnapshotFun([](const taxon_t & taxon) {
+  //   return emp::ToString(taxon.GetData().GetPhenotype());
+  // }, "phenotype", "Taxon Phenotype");
 
-  sys_ptr->AddSnapshotFun([](const taxon_t & taxon) {
-    return emp::ToString(taxon.GetInfo());
-  }, "genotype", "Taxon Genotype");
+  // sys_ptr->AddSnapshotFun([](const taxon_t & taxon) {
+  //   return emp::ToString(taxon.GetInfo());
+  // }, "genotype", "Taxon Genotype");
 
-  // will add it to the world for tracking purposes
-  AddSystematics(sys_ptr);
-  // summary stats (whatever resolution we want)
-  SetupSystematicsFile(0, config.OUTPUT_DIR() + "systematics.csv").SetTimingRepeat(config.PRINT_INTERVAL());
+  // // will add it to the world for tracking purposes
+  // AddSystematics(sys_ptr);
+  // // summary stats (whatever resolution we want)
+  // SetupSystematicsFile(0, config.OUTPUT_DIR() + "systematics.csv").SetTimingRepeat(config.PRINT_INTERVAL());
 
-  std::cerr << "Systematics tracking complete!" << std::endl;
+  // std::cerr << "Systematics tracking complete!" << std::endl;
 
   // initialize all nodes (ask charles)
   std::cerr << "Initializing nodes..." << std::endl;
@@ -693,6 +697,18 @@ void DiagWorld::SetDataTracking()
 
   data_file.PrintHeaderKeys();
 
+  // create elite csv plus headers
+  elite_csv.open(config.OUTPUT_DIR() + "elite.csv");
+
+  std::string header = "Gen";
+  for(size_t i = 0; i < config.OBJECTIVE_CNT(); ++i)
+  {
+    header += ",t";
+    header += std::to_string(i);
+  }
+  elite_csv << header << "\n";
+
+
   std::cerr << "Finished setting data tracking!\n" << std::endl;
 }
 
@@ -745,10 +761,10 @@ void DiagWorld::EvaluationStep()
     // no evaluate needed if offspring is a clone
     fit_vec[i] = (org.GetClone()) ? org.GetAggregate() : evaluate(org);
 
-    // systematic stuff
-    emp::Ptr<taxon_t> taxon = sys_ptr->GetTaxonAt(i);
-    taxon->GetData().RecordFitness(org.GetAggregate());
-    taxon->GetData().RecordPhenotype(org.GetScore());
+    // // systematic stuff
+    // emp::Ptr<taxon_t> taxon = sys_ptr->GetTaxonAt(i);
+    // taxon->GetData().RecordFitness(org.GetAggregate());
+    // taxon->GetData().RecordPhenotype(org.GetScore());
   }
 }
 
@@ -810,6 +826,17 @@ void DiagWorld::RecordData()
 
   /// update the file
   data_file.Update();
+
+  // record elite solution traits
+  std::string traits = std::to_string(update);
+  Org & ele = *pop[elite_pos];
+  const auto & g = ele.GetScore();
+  for(size_t i = 0; i < g.size(); ++i)
+  {
+    traits += ",";
+    traits += std::to_string(g[i]);
+  }
+  elite_csv << traits << "\n";
 
 
   // output this so we know where we are in terms of generations and fitness
@@ -906,6 +933,10 @@ void DiagWorld::FitnessSharing()
     fmatrix_t dist_mat = selection->SimilarityMatrix(genomes, config.PNORM_EXP());
     score_t tscore = selection->FitnessSharing(dist_mat, fit_vec, config.FIT_ALPHA(), SIGMA);
 
+    // std::cout << std::endl;
+    // selection->PrintVec(fit_vec, "fitvec");
+    // selection->PrintVec(tscore, "tscore");
+
     // select parent ids
     ids_t parent(pop.size());
 
@@ -936,6 +967,10 @@ void DiagWorld::NoveltySearch()
 
     // transform original fitness into novelty fitness
     score_t tscore = selection->Novelty(fit_vec, neighborhood, config.NOVEL_K());
+
+    std::cout << std::endl;
+    selection->PrintVec(fit_vec, "fitvec");
+    selection->PrintVec(tscore, "tscore");
 
     // select parent ids
     ids_t parent(pop.size());
@@ -1207,10 +1242,10 @@ size_t DiagWorld::FindOptimized()
   return max_pos;
 }
 
-void DiagWorld::SnapshotPhylogony()
-{
-  sys_ptr->Snapshot(config.OUTPUT_DIR() + "phylo_" + emp::to_string(GetUpdate()) + ".csv");
-}
+// void DiagWorld::SnapshotPhylogony()
+// {
+//   sys_ptr->Snapshot(config.OUTPUT_DIR() + "phylo_" + emp::to_string(GetUpdate()) + ".csv");
+// }
 
 
 ///< helper functions
