@@ -75,97 +75,97 @@ ACCURACY_DIR=99
 
 if [ ${SLURM_ID} -eq ${TREATMENT__1__1} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/MULAMBDA/
   OFFSET=9000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${MULAMBDA}
 elif [ ${SLURM_ID} -eq ${TREATMENT__1__2} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/MULAMBDA/
   OFFSET=11000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${MULAMBDA}
 elif [ ${SLURM_ID} -eq ${TREATMENT__1__3} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/MULAMBDA/
   OFFSET=8000
   DIAGNOSTIC=${WEAK_ECOLOGY}
   SELECTION=${MULAMBDA}
 elif [ ${SLURM_ID} -eq ${TREATMENT__1__4} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/MULAMBDA/
   OFFSET=10000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${MULAMBDA}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__1} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/TOURNAMENT/
   OFFSET=17000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__2} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/TOURNAMENT/
   OFFSET=19000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__3} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/TOURNAMENT/
   OFFSET=16000
   DIAGNOSTIC=${WEAK_ECOLOGY}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__4} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/TOURNAMENT/
   OFFSET=18000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__1} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/LEXICASE/
   OFFSET=5000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__2} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/LEXICASE/
   OFFSET=7000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__3} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/LEXICASE/
   OFFSET=4000
   DIAGNOSTIC=${WEAK_ECOLOGY}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__4} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/LEXICASE/
   OFFSET=6000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__4__1} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/NOVELTY/
   OFFSET=12000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${NOVELTY}
 elif [ ${SLURM_ID} -eq ${TREATMENT__4__2} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/NOVELTY/
   OFFSET=14000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${NOVELTY}
 elif [ ${SLURM_ID} -eq ${TREATMENT__4__3} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/NOVELTY/
   OFFSET=15000
   DIAGNOSTIC=${WEAK_ECOLOGY}
   SELECTION=${NOVELTY}
 elif [ ${SLURM_ID} -eq ${TREATMENT__4__4} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/
+  DUMP=/mnt/home/herna383/Diagnostics/IEEE_EC_2021_DATA/NOVELTY/
   OFFSET=13000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${NOVELTY}
@@ -175,6 +175,8 @@ fi
 
 ####################################################################
 
+# make a dump directory
+mkdir -p ${DUMP}
 
 echo "python3 ../../../DataTools/Collector/al-data-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${RESOLUTION} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
 
