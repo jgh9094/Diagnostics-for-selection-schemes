@@ -19,15 +19,6 @@ DATA_DIR=/mnt/ls15/scratch/users/herna383/IEEE-EC-2021/
 SLURM_ID=$((SLURM_ARRAY_TASK_ID))
 
 ##################################
-# Folder naming
-##################################
-DIAGNOSTIC_1=EXPLOITATION
-DIAGNOSTIC_2=STRUCTEXPLOITATION
-DIAGNOSTIC_3=STRONGECOLOGY
-DIAGNOSTIC_4=EXPLORATION
-DIAGNOSTIC_5=WEAKECOLOGY
-
-##################################
 # Setup selection scheme
 ##################################
 MULAMBDA=0
