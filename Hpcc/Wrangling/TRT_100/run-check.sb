@@ -147,6 +147,6 @@ fi
 ####################################################################
 
 
-echo "python3 ../../DataTools/Checker/run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
+echo "python3 ../../../DataTools/Checker/run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
 
-python3 ../../DataTools/Checker/run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
+python3 ../../../DataTools/Checker/run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
