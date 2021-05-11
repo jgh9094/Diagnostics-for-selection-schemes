@@ -1,13 +1,9 @@
 #####################################################################################################
 #####################################################################################################
-# Will create a csv how alex's r code expects data
+# Will create a csv how r code expects data
 #
-# Command Line Inputs
 #
-# Input 1: file directory location
-# Input 2: file dump directory
-#
-# Output : csv with generations found in dump directory
+# Output : csv with for data over time
 #
 # python3
 #####################################################################################################

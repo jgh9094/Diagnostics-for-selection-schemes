@@ -2,12 +2,7 @@
 #####################################################################################################
 # Will create a csv per treatment of generation a perfect solution is found
 #
-# Command Line Inputs
-#
-# Input 1: file directory location
-# Input 2: file dump directory
-#
-# Output : csv with generations found in dump directory
+# Output : csv with data found at the end of a run
 #
 # python3
 #####################################################################################################
