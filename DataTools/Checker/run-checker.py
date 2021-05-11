@@ -96,7 +96,7 @@ def SetSeeds(s):
     else:
         sys.exit('SEEDS SELECTION UNKNOWN')
 
-# Will set the appropiate list of variables we are checking for
+# set the appropiate list of variables we are checking for
 def SetVarList(s):
     # case by case
     if s == 0:
@@ -112,6 +112,7 @@ def SetVarList(s):
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
 
+# return extra parameter directory if needed
 def SetSecondParam(s, pt):
     # case by case
     if s == 0:
