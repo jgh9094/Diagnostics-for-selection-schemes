@@ -2,12 +2,7 @@
 #####################################################################################################
 # Will create a csv per treatment of generation a perfect solution is found
 #
-# Command Line Inputs
-#
-# Input 1: file directory location
-# Input 2: file dump directory
-#
-# Output : csv with generations found in dump directory
+# Output : csv with maximum value for data found at a specific generaiton
 #
 # python3
 #####################################################################################################
@@ -35,7 +30,6 @@ POP_FIT_MAX = 'pop_fit_max'
 POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
-COM_SOL_CNT = 'com_sol_cnt'
 GENERATION = 'gen'
 
 # return appropiate string dir name (based off run.sb file naming system)
@@ -62,9 +56,11 @@ def SetDiagnostic(s):
     elif s == 1:
         return 'STRUCTEXPLOITATION'
     elif s == 2:
-        return 'CONTRAECOLOGY'
+        return 'STRONGECOLOGY'
     elif s == 3:
         return 'EXPLORATION'
+    elif s == 4:
+        return 'WEAKECOLOGY'
     else:
         sys.exit('UNKNOWN DIAGNOSTIC')
 
@@ -78,7 +74,7 @@ def SetSelectionVar(s):
     elif s == 2:
         return 'SIG'
     elif s == 3:
-        return 'K'
+        return 'NOV'
     elif s == 4:
         return 'EPS'
     else:
@@ -124,6 +120,22 @@ def sorted(v):
 
     return True
 
+# return extra parameter directory if needed
+def SetSecondParam(s, pt):
+    # case by case
+    if s == 0:
+        return ''
+    elif s == 1:
+        return ''
+    elif s == 2:
+        return 'TOUR_' + pt + '/'
+    elif s == 3:
+        return 'TOUR_' + pt + '/'
+    elif s == 4:
+        return ''
+    else:
+        sys.exit("UNKNOWN SELECTION")
+
 # create a pandas dataframe of csv and find if optimal solutions exist
 def FindSolGen(file, cnt):
     # check and make sure that the file exists
@@ -162,7 +174,7 @@ def SetSolList(s):
         sys.exit('SOL LIST SELECTION UKNOWN')
 
 # loop through differnt files that exist
-def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
+def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     # check if data dir exists
     if os.path.isdir(data) == False:
         print('DATA=', data)
@@ -190,12 +202,14 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
     VAL = []
     COL = []
     GEN = []
+    # second parameter dir
+    SECOND_PARAM = SetSecondParam(sel, pt)
 
     for s in SEEDS:
         seed = str(s + offs)
         it = int((s-1)/SMAX)
         var_val = str(VLIST[it])
-        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/'
+        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM
         print('Sub data directory:', DATA_DIR+'data.csv')
 
         # get data from file and check if can store it
@@ -242,14 +256,6 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
         GEN.append(max_gen)
         COL.append('puo')
 
-        # Population common solution count
-        max_val = df[COM_SOL_CNT].max()
-        max_gen = df[df[COM_SOL_CNT] == max_val][GENERATION].values.tolist()[0]
-        TRT.append(VLIST[it])
-        VAL.append(max_val)
-        GEN.append(max_gen)
-        COL.append('csc')
-
     # Time to export the csv file
     # time to export the data
     fdf = pd.DataFrame({'trt': pd.Series(TRT),
@@ -270,6 +276,7 @@ def main():
     parser.add_argument("objectives", type=str, help="Number of objectives being optimized")
     parser.add_argument("accuracy", type=str, help="Accuracy for experiment")
     parser.add_argument("generations", type=str, help="Number of generations experiments ran for")
+    parser.add_argument("param_two",    type=str, help="Second paramater for any selection scheme")
 
     # Parse all the arguments
     args = parser.parse_args()
@@ -289,10 +296,12 @@ def main():
     print('Accuracy=', accuracy)
     generations = args.generations
     print('Generations=', generations)
+    param_two = args.param_two
+    print('2nd param=', param_two)
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, objectives, accuracy, generations)
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, objectives, accuracy, generations, param_two)
 
 if __name__ == "__main__":
     main()
