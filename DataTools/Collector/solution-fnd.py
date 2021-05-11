@@ -56,9 +56,11 @@ def SetDiagnostic(s):
     elif s == 1:
         return 'STRUCTEXPLOITATION'
     elif s == 2:
-        return 'CONTRAECOLOGY'
+        return 'STRONGECOLOGY'
     elif s == 3:
         return 'EXPLORATION'
+    elif s == 4:
+        return 'WEAKECOLOGY'
     else:
         sys.exit('UNKNOWN DIAGNOSTIC')
 
@@ -72,7 +74,7 @@ def SetSelectionVar(s):
     elif s == 2:
         return 'SIG'
     elif s == 3:
-        return 'K'
+        return 'NOV'
     elif s == 4:
         return 'EPS'
     else:
@@ -117,6 +119,22 @@ def sorted(v):
             return False
 
     return True
+
+# return extra parameter directory if needed
+def SetSecondParam(s, pt):
+    # case by case
+    if s == 0:
+        return ''
+    elif s == 1:
+        return ''
+    elif s == 2:
+        return 'TOUR_' + pt + '/'
+    elif s == 3:
+        return 'TOUR_' + pt + '/'
+    elif s == 4:
+        return ''
+    else:
+        sys.exit("UNKNOWN SELECTION")
 
 # create a pandas dataframe of csv and find if optimal solutions exist
 def FindSolGen(file, cnt):
@@ -187,7 +205,7 @@ def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens):
         sol_list.exit('SOL LIST SELECTION UKNOWN')
 
 # loop through differnt files that exist
-def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
+def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     # check if data dir exists
     if os.path.isdir(data) == False:
         print('DATA=', data)
@@ -212,12 +230,14 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 
     # create list of list solution counts
     SOL_LIST = SetSolList(sel)
+    # second parameter dir
+    SECOND_PARAM = SetSecondParam(sel, pt)
 
     for s in SEEDS:
         seed = str(s + offs)
         it = int((s-1)/SMAX)
         var_val = str(VLIST[it])
-        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/'
+        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM
         print('Sub data directory:', DATA_DIR+'data.csv')
 
         # get data from file and check if can store it
@@ -232,14 +252,15 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
 def main():
     # Generate and get the arguments
     parser = argparse.ArgumentParser(description="Data aggregation script.")
-    parser.add_argument("data_dir",    type=str, help="Target experiment directory.")
-    parser.add_argument("dump_dir",    type=str, help="Data dumping directory")
-    parser.add_argument("selection",   type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase")
-    parser.add_argument("diagnostic",  type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
-    parser.add_argument("seed_offset", type=int, help="Experiment seed offset. (REPLICATION_OFFSET + PROBLEM_SEED_OFFSET")
-    parser.add_argument("objectives", type=str, help="Number of objectives being optimized")
-    parser.add_argument("accuracy", type=str, help="Accuracy for experiment")
-    parser.add_argument("generations", type=str, help="Number of generations experiments ran for")
+    parser.add_argument("data_dir",     type=str, help="Target experiment directory.")
+    parser.add_argument("dump_dir",     type=str, help="Data dumping directory")
+    parser.add_argument("selection",    type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase")
+    parser.add_argument("diagnostic",   type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
+    parser.add_argument("seed_offset",  type=int, help="Experiment seed offset. (REPLICATION_OFFSET + PROBLEM_SEED_OFFSET")
+    parser.add_argument("objectives",   type=str, help="Number of objectives being optimized")
+    parser.add_argument("accuracy",     type=str, help="Accuracy for experiment")
+    parser.add_argument("generations",  type=str, help="Number of generations experiments ran for")
+    parser.add_argument("param_two",    type=str, help="Second paramater for any selection scheme")
 
     # Parse all the arguments
     args = parser.parse_args()
@@ -259,10 +280,12 @@ def main():
     print('Accuracy=', accuracy)
     generations = args.generations
     print('Generations=', generations)
+    param_two = args.param_two
+    print('2nd param=', param_two)
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, objectives, accuracy, generations)
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, objectives, accuracy, generations, param_two)
 
 if __name__ == "__main__":
     main()
