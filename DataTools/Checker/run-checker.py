@@ -56,9 +56,11 @@ def SetDiagnostic(s):
     elif s == 1:
         return 'STRUCTEXPLOITATION'
     elif s == 2:
-        return 'CONTRAECOLOGY'
+        return 'STRONGECOLOGY'
     elif s == 3:
         return 'EXPLORATION'
+    elif s == 4:
+        return 'WEAKECOLOGY'
     else:
         sys.exit('UNKNOWN DIAGNOSTIC')
 
