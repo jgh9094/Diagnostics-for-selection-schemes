@@ -110,6 +110,21 @@ def SetVarList(s):
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
 
+def SetSecondParam(s, pt):
+    # case by case
+    if s == 0:
+        return ''
+    elif s == 1:
+        return ''
+    elif s == 2:
+        return 'TOUR_' + pt + '/'
+    elif s == 3:
+        return 'TOUR_' + pt + '/'
+    elif s == 4:
+        return ''
+    else:
+        sys.exit("UNKNOWN SELECTION")
+
 # return the number of rows in a csv file
 def CountRows(file_name):
     # create pandas data frame of entire csv
@@ -119,7 +134,7 @@ def CountRows(file_name):
     return gens[-1]
 
 # responsible for looking through the data directories for success
-def CheckDir(dir, sel, dia, offs, obj, acc, gens):
+def CheckDir(dir, sel, dia, offs, obj, acc, gens, pt):
 
     # check if data dir exists
     if os.path.isdir(dir):
@@ -136,13 +151,15 @@ def CheckDir(dir, sel, dia, offs, obj, acc, gens):
         print('SELECTION DIRECTORY DOES NOT EXIST=', SEL_DIR)
         sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
 
-    # step 2: create seed data directories and check if exist
+    # create seed data directories and check if exist
     VLIST = SetVarList(sel)
     DIR_DNE = []
     DAT_DNE = []
     DAT_DNF = []
 
-    print('Full data Dir=', SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_XXX' + '__SEED_XXX' + '/')
+    SECOND_PARAM = SetSecondParam(sel, pt)
+
+    print('Full data Dir=', SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_XXX' + '__SEED_XXX' + '/' + SECOND_PARAM)
     print('Now checking data replicates sub directories')
 
     SEEDS = SetSeeds(sel)
@@ -189,12 +206,13 @@ def main():
     # Generate and get the arguments
     parser = argparse.ArgumentParser(description="Data aggregation script.")
     parser.add_argument("data_directory", type=str, help="Target experiment directory.")
-    parser.add_argument("selection", type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase")
-    parser.add_argument("diagnostic", type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
-    parser.add_argument("seed_offset", type=int, help="Experiment seed offset.")
-    parser.add_argument("objectives", type=str, help="Number of objectives being optimized")
-    parser.add_argument("accuracy", type=str, help="Accuracy for experiment")
-    parser.add_argument("generations", type=str, help="Number of generations experiments ran for")
+    parser.add_argument("selection",      type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase")
+    parser.add_argument("diagnostic",     type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
+    parser.add_argument("seed_offset",    type=int, help="Experiment seed offset.")
+    parser.add_argument("objectives",     type=str, help="Number of objectives being optimized")
+    parser.add_argument("accuracy",       type=str, help="Accuracy for experiment")
+    parser.add_argument("generations",    type=str, help="Number of generations experiments ran for")
+    parser.add_argument("param_two",      type=str, help="Second paramater for any selection scheme")
 
     # Parse all the arguments
     args = parser.parse_args()
@@ -212,11 +230,13 @@ def main():
     print('Accuracy=', accuracy)
     generations = args.generations
     print('Generations=', generations)
+    param_two = args.param_two
+    print('2nd param=', param_two)
 
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    CheckDir(data_dir, selection, diagnostic, offset, objectives, accuracy, generations)
+    CheckDir(data_dir, selection, diagnostic, offset, objectives, accuracy, generations, param_two)
 
 
 if __name__ == "__main__":
