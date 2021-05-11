@@ -72,7 +72,7 @@ def SetSelectionVar(s):
     elif s == 2:
         return 'SIG'
     elif s == 3:
-        return 'K'
+        return 'NOV'
     elif s == 4:
         return 'EPS'
     else:
