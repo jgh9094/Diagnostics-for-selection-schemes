@@ -36,7 +36,6 @@ POP_FIT_MAX = 'pop_fit_max'
 POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
-COM_SOL_CNT = 'com_sol_cnt'
 GEN = 'gen'
 
 # return appropiate string dir name (based off run.sb file naming system)
@@ -63,9 +62,11 @@ def SetDiagnostic(s):
     elif s == 1:
         return 'STRUCTEXPLOITATION'
     elif s == 2:
-        return 'CONTRAECOLOGY'
+        return 'STRONGECOLOGY'
     elif s == 3:
         return 'EXPLORATION'
+    elif s == 4:
+        return 'WEAKECOLOGY'
     else:
         sys.exit('UNKNOWN DIAGNOSTIC')
 
@@ -79,7 +80,7 @@ def SetSelectionVar(s):
     elif s == 2:
         return 'SIG'
     elif s == 3:
-        return 'K'
+        return 'NOV'
     elif s == 4:
         return 'EPS'
     else:
@@ -117,24 +118,24 @@ def SetVarList(s):
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
 
-# create solution list with appropiate number of lists
-def SetSolList(s):
-    sol = []
-    if s == 0 or s == 1:
-        for i in range(10):
-            sol.append([])
-        return sol
-
-    elif s == 2 or s == 3 or s == 4:
-        for i in range(8):
-            sol.append([])
-        return sol
-
+# return extra parameter directory if needed
+def SetSecondParam(s, pt):
+    # case by case
+    if s == 0:
+        return ''
+    elif s == 1:
+        return ''
+    elif s == 2:
+        return 'TOUR_' + pt + '/'
+    elif s == 3:
+        return 'TOUR_' + pt + '/'
+    elif s == 4:
+        return ''
     else:
-        sys.exit('SOL LIST SELECTION UKNOWN')
+        sys.exit("UNKNOWN SELECTION")
 
 # loop through differnt files that exist
-def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
+def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     # check if data dir exists
     if os.path.isdir(data) == False:
         print('DATA=', data)
@@ -157,19 +158,21 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
     VLIST = SetVarList(sel)
     SEEDS = SetSeeds(sel)
 
+    # lists that will hold all the date
     TRT = []
     PFA = []
     PFM = []
     POA = []
     POM = []
     POU = []
-    COM = []
+    # second parameter dir
+    SECOND_PARAM = SetSecondParam(sel, pt)
 
     for s in SEEDS:
         seed = str(s + offs)
         it = int((s-1)/SMAX)
         var_val = str(VLIST[it])
-        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/'
+        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM
         print('Sub data directory:', DATA_DIR+'data.csv')
 
         df = pd.read_csv(DATA_DIR + 'data.csv')
@@ -184,7 +187,6 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
         POA.append(dfl[POP_OPT_AVG].tolist()[0])
         POM.append(dfl[POP_OPT_MAX].tolist()[0])
         POU.append(dfl[POP_UNI_OBJ].tolist()[0])
-        COM.append(dfl[COM_SOL_CNT].tolist()[0])
 
 
     # time to export the data
@@ -193,8 +195,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens):
                     'fit_max': pd.Series(PFM),
                     'opt_avg': pd.Series(POA),
                     'opt_max': pd.Series(POM),
-                    'uni_avg': pd.Series(POU),
-                    'com_cnt': pd.Series(COM)})
+                    'uni_avg': pd.Series(POU)})
 
     fdf.to_csv(path_or_buf= dump + 'eor-' + SetDiagnostic(dia).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
 
@@ -211,6 +212,7 @@ def main():
     parser.add_argument("objectives", type=str, help="Number of objectives being optimized")
     parser.add_argument("accuracy", type=str, help="Accuracy for experiment")
     parser.add_argument("generations", type=str, help="Number of generations experiments ran for")
+    parser.add_argument("param_two",      type=str, help="Second paramater for any selection scheme")
 
     # Parse all the arguments
     args = parser.parse_args()
@@ -230,10 +232,12 @@ def main():
     print('Accuracy=', accuracy)
     generations = args.generations
     print('Generations=', generations)
+    param_two = args.param_two
+    print('2nd param=', param_two)
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, objectives, accuracy, generations)
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, objectives, accuracy, generations, param_two)
 
 if __name__ == "__main__":
     main()
