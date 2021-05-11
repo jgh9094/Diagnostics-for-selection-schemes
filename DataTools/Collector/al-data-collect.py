@@ -67,9 +67,11 @@ def SetDiagnostic(s):
     elif s == 1:
         return 'STRUCTEXPLOITATION'
     elif s == 2:
-        return 'CONTRAECOLOGY'
+        return 'STRONGECOLOGY'
     elif s == 3:
         return 'EXPLORATION'
+    elif s == 4:
+        return 'WEAKECOLOGY'
     else:
         sys.exit('UNKNOWN DIAGNOSTIC')
 
@@ -83,7 +85,7 @@ def SetSelectionVar(s):
     elif s == 2:
         return 'SIG'
     elif s == 3:
-        return 'K'
+        return 'NOV'
     elif s == 4:
         return 'EPS'
     else:
@@ -137,8 +139,24 @@ def SetVarList(s):
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
 
+# return extra parameter directory if needed
+def SetSecondParam(s, pt):
+    # case by case
+    if s == 0:
+        return ''
+    elif s == 1:
+        return ''
+    elif s == 2:
+        return 'TOUR_' + pt + '/'
+    elif s == 3:
+        return 'TOUR_' + pt + '/'
+    elif s == 4:
+        return ''
+    else:
+        sys.exit("UNKNOWN SELECTION")
+
 # loop through differnt files that exist
-def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens):
+def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
     # check if data dir exists
     if os.path.isdir(data) == False:
         print('DATA=', data)
@@ -163,6 +181,8 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens):
     GEN_LIST = [x for x in range(int(gens)+1) if x%res == 0]
     # data frame list for concatanation
     DF_LIST = []
+    # second parameter dir
+    SECOND_PARAM = SetSecondParam(sel, pt)
 
     # iterate through the sets of seeds
     for i in range(len(SEEDS)):
@@ -175,7 +195,7 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens):
         # iterate through seeds to collect data
         for s in seeds:
             seed = str(s + offs)
-            DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/data.csv'
+            DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM + '/data.csv'
 
             # create pandas data frame of entire csv and grab the row
             df = pd.read_csv(DATA_DIR)
@@ -209,6 +229,7 @@ def main():
     parser.add_argument("objectives", type=str, help="Number of objectives being optimized")
     parser.add_argument("accuracy", type=str, help="Accuracy for experiment")
     parser.add_argument("generations", type=str, help="Number of generations experiments ran for")
+    parser.add_argument("param_two",      type=str, help="Second paramater for any selection scheme")
 
     # Parse all the arguments
     args = parser.parse_args()
@@ -230,10 +251,12 @@ def main():
     print('Accuracy=', accuracy)
     generations = args.generations
     print('Generations=', generations)
+    param_two = args.param_two
+    print('2nd param=', param_two)
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, resolution, objectives, accuracy, generations)
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, resolution, objectives, accuracy, generations, param_two)
 
 if __name__ == "__main__":
     main()
