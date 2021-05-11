@@ -167,7 +167,7 @@ def CheckDir(dir, sel, dia, offs, obj, acc, gens, pt):
     for s in SEEDS:
         seed = str(s + offs)
         var_val = str(VLIST[int((s-1)/SMAX)])
-        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/'
+        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM
         print('Sub directory:', DATA_DIR)
 
         # add full directory to missing list if not there
