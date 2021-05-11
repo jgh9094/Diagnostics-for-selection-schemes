@@ -177,6 +177,6 @@ fi
 # make a dump directory
 mkdir -p ${DUMP}
 
-echo "python3 ../../DataTools/Collector/solution-fnd.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM} > run.log" > ./cmd-coh.txt
+echo "python3 ../../../DataTools/Collector/solution-fnd.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM} > run.log" > ./cmd-coh.txt
 
-python3 ../../DataTools/Collector/solution-fnd.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
+python3 ../../../DataTools/Collector/solution-fnd.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
