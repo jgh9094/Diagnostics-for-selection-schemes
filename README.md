@@ -45,10 +45,21 @@ This section discusses the isolated component that different problems share.
 
 A more detailed description of the experiment set up can be found [here](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/experiment_setup.html).
 
-## Preliminary Results
+## Preliminary Graphs
+
+Below you will find the preliminary graphs that help us understand how the selection schemes perform on the diagnostics.
+
+- [Exploitation](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/exploitation-graphs.html)
+- [Structured Exploitation](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/structured-exploitation-graphs.html)
+- [Exploration](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/exploration-graphs.html)
+- [Ecological Niche Filling](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/niching-graphs.html)
+
+## Preliminary Stats
 
 Below you will find the preliminary results that drive the final selection scheme parameters that we will be testing.
 In each file there are statistics that provide evidence as to why each final selection scheme parameter is selected.
+
+**Need to update**
 
 - [Exploitation](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/stats-prelim-exploitation.html)
 - [Structured Exploitation](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/stats-prelim-struct-exploitation.html)
