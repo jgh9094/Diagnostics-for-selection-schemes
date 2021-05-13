@@ -310,6 +310,16 @@ Selection::score_t Selection::FitnessSharing(const fmatrix_t & dmat, const score
 
   score_t tscore(score.size());
 
+  // edge case where K == 0
+  if(sig == 0.0)
+  {
+    std::copy(score.begin(), score.end(), tscore.begin());
+
+    // quick checks and return the score vector unaltered
+    emp_assert(score[0] == tscore[0]);
+    return tscore;
+  }
+
   for(size_t i = 0; i < dmat.size(); ++i)
   {
     // quick checks
