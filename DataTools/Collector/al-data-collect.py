@@ -209,7 +209,7 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
         # iterate through seeds to collect data
         for s in seeds:
             seed = str(s + offs)
-            DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM + '/data.csv'
+            DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM + 'data.csv'
 
             # create pandas data frame of entire csv and grab the row
             df = pd.read_csv(DATA_DIR)

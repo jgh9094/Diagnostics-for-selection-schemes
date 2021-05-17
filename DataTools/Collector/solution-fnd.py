@@ -194,7 +194,7 @@ def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens):
 
         df.to_csv(path_or_buf= dump + 'sf-' + SetDiagnostic(d).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
 
-    elif s == 2 or s == 3 or s == 4:
+    elif s == 2 or s == 3 or s == 4 or s == 5:
         df = pd.DataFrame({var_list[0]: pd.Series(sol_list[0]),
                            var_list[1]: pd.Series(sol_list[1]),
                            var_list[2]: pd.Series(sol_list[2]),
