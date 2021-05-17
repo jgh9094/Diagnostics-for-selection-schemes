@@ -10,7 +10,7 @@
 ##################################
 # Setup relevant directories
 ##################################
-DATA_DIR=/mnt/ls15/scratch/users/herna383/IEEE-EC-2021/FITSHARING
+DATA_DIR=/mnt/ls15/scratch/users/herna383/IEEE-EC-2021/NOVELTY-ECULID
 
 ##################################
 # Setup tournament size
@@ -80,7 +80,7 @@ ACCURACY_DIR=99
 ####################################################################
 
 if [ ${SLURM_ARRAY_TASK_ID} -eq ${TREATMENT__1} ] ; then
-  DIAGNOSTIC=${WEAK_ECOLOGY}
+  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SEED=36165
   NAME=DIA_${DIAGNOSTIC_2}__NOV_${NOV__6}__SEED_${SEED}
   NOV=${NOV__6}
