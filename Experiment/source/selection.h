@@ -11,6 +11,7 @@
 #include <utility>
 #include <cmath>
 #include <numeric>
+#include <set>
 
 ///< empirical headers
 #include "base/vector.h"
@@ -73,16 +74,31 @@ class Selection
      * K-Nearest Neighbor Structure:
      *
      * This function will return a vector of vectors, where
-     * each individual vector corresponds to that solutions nearest neighbor
+     * each individual vector corresponds to that solutions nearest neighbors
      *
      * In the event of ties, we take right neighbor score.
      *
      * @param score Vector containing all solution scores.
-     * @param K Size of neighborhood looking for
+     * @param K Size of neighborhood.
      *
-     * @return Vector of vector ids groups as nearest neighbors.
+     * @return Vector of vector scores.
      */
     neigh_t FitNearestN(const score_t & score, const size_t K);
+
+    /**
+     * K-Nearest Neighbor Structure for Pairwise Euclidean Distances
+     *
+     * This function will return a vector of vectors, where
+     * each individual vector corresponds to that solutions nearest neighbors
+     *
+     * In the event of ties, we take the right neighbor score.
+     *
+     * @param dmat Matrix containing the pairwise distances.
+     * @param K Size of nighborhood.
+     *
+     * @return Vector of vector scores.
+     */
+    neigh_t EuclideanNearestN(const fmatrix_t & dmat, const size_t K);
 
     /**
      * Fitness Group Structure:
@@ -197,7 +213,7 @@ class Selection
      *
      * In the event of ties on the last testcase being used, a solution will be selected at random.
      *
-     * @param mscore Matrix of solution fitnesses (must be the same amount of fitness per solution)(mscore.size => # of orgs).
+     * @param mscore Matrix of solution fitnesses (must be the same amount of fitnesses per solution)(mscore.size => # of orgs).
      * @param epsi Epsilon threshold value.
      * @param M Number of traits we are expecting.
      *
@@ -299,6 +315,54 @@ Selection::fitgp_t Selection::FitnessGroup(const score_t & score)
   return group;
 }
 
+Selection::neigh_t Selection::EuclideanNearestN(const fmatrix_t & dmat, const size_t K)
+{
+  // quick checks
+  emp_assert(0 < dmat.size()); emp_assert(K < dmat.size()); emp_assert(0 <= K);
+
+  // create group vector returning
+  neigh_t group(dmat.size());
+
+  // iterate through the distance vector
+  for(size_t i = 0; i < dmat.size(); ++i)
+  {
+    // quick checks
+    emp_assert(dmat.size() == dmat[i].size());
+
+    // container to hold distances
+    std::multiset<double> distance;
+
+    // grab values from lower diagonal
+    for(size_t j = 0; j < dmat[i].size(); ++j)
+    {
+      // ignore i == j case
+      if(i == j) {continue;}
+
+      // only look at lower diagnoal
+      if(j < i)
+      {
+        emp_assert(dmat[i][j] != ERROR_VALD);
+        distance.insert(dmat[i][j]);
+      }
+      else
+      {
+        emp_assert(dmat[j][i] != ERROR_VALD);
+        distance.insert(dmat[j][i]);
+      }
+    }
+
+    // make sure we have all the required data
+    emp_assert(distance.size() == dmat.size() - 1);
+
+    // grab the k nearest neighbors
+    auto it = distance.begin();
+    for(size_t k = 0; k < K; ++k) {group[i].push_back(*it++);}
+
+    emp_assert(group[i].size() == K);
+  }
+
+  return group;
+}
 
 ///< fitness transformation >///
 
@@ -377,7 +441,11 @@ Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & nei
   score_t nscore(score.size());
 
   // edge case where K == 0
-  if(K == 0){
+  if(K == 0)
+  {
+    // should never get hit
+    emp_assert(false);
+
     std::copy(score.begin(), score.end(), nscore.begin());
 
     // quick checks and return the score vector unaltered
