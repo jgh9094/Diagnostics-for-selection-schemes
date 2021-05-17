@@ -45,6 +45,8 @@ def SetSelection(s):
         return 'NOVELTY'
     elif s == 4:
         return 'LEXICASE'
+    elif s == 5:
+        return 'NOVELTY-ECULID'
     else:
         sys.exit("UNKNOWN SELECTION")
 
@@ -77,6 +79,8 @@ def SetSelectionVar(s):
         return 'NOV'
     elif s == 4:
         return 'EPS'
+    elif s == 5:
+        return 'NOV'
     else:
         sys.exit("UNKNOWN SELECTION VAR")
 
@@ -93,6 +97,8 @@ def SetSeeds(s):
         return [x for x in range(1,401)]
     elif s == 4:
         return [x for x in range(1,351)]
+    elif s == 5:
+        return [x for x in range(1,401)]
     else:
         sys.exit('SEEDS SELECTION UNKNOWN')
 
@@ -109,6 +115,8 @@ def SetVarList(s):
         return NS_LIST
     elif s == 4:
         return LX_LIST
+    elif s == 5:
+        return NS_LIST
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
 
@@ -125,6 +133,8 @@ def SetSecondParam(s, pt):
         return 'TOUR_' + pt + '/'
     elif s == 4:
         return ''
+    elif s == 5:
+        return 'TOUR_' + pt + '/'
     else:
         sys.exit("UNKNOWN SELECTION")
 
@@ -209,8 +219,8 @@ def main():
     # Generate and get the arguments
     parser = argparse.ArgumentParser(description="Data aggregation script.")
     parser.add_argument("data_directory", type=str, help="Target experiment directory.")
-    parser.add_argument("selection",      type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Novelty Search\n4: Espilon Lexicase")
-    parser.add_argument("diagnostic",     type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Ecology Contradictory Traits\n3: Exploration")
+    parser.add_argument("selection",      type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Aggregate Novelty\n4: Espilon Lexicase\n5: Euclidean Novelty")
+    parser.add_argument("diagnostic",     type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Strong Ecology\n3: Exploration\n4: Weak Ecology")
     parser.add_argument("seed_offset",    type=int, help="Experiment seed offset.")
     parser.add_argument("objectives",     type=str, help="Number of objectives being optimized")
     parser.add_argument("accuracy",       type=str, help="Accuracy for experiment")
