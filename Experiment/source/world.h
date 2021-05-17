@@ -171,7 +171,9 @@ class DiagWorld : public emp::World<Org>
 
     void FitnessSharing();
 
-    void NoveltySearch();
+    void NoveltyAggregate();
+
+    void NoveltyEuclidean();
 
     void EpsilonLexicase();
 
@@ -394,11 +396,15 @@ void DiagWorld::SetSelection()
       break;
 
     case 3: // novelty search
-      NoveltySearch();
+      NoveltyAggregate();
       break;
 
     case 4: // epsilon lexicase
       EpsilonLexicase();
+      break;
+
+    case 5: // novelty euclidean
+      NoveltyEuclidean();
       break;
 
     default:
@@ -945,9 +951,9 @@ void DiagWorld::FitnessSharing()
   std::cerr << "Fitness sharing selection scheme set!" << std::endl;
 }
 
-void DiagWorld::NoveltySearch()
+void DiagWorld::NoveltyAggregate()
 {
-  std::cerr << "Setting selection scheme: NoveltySearch" << std::endl;
+  std::cerr << "Setting selection scheme: NoveltyAggregate" << std::endl;
   std::cerr << "Tournament size for novelty: " << config.TOUR_SIZE() << std::endl;
 
   select = [this]()
@@ -956,15 +962,74 @@ void DiagWorld::NoveltySearch()
     emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
     emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
 
+    // If we get asked to do standard tournament selection with novelty euclidean selected
+    if(config.NOVEL_K() == 0)
+    {
+      // select parent ids
+      ids_t parent(pop.size());
+
+      for(size_t i = 0; i < parent.size(); ++i)
+      {
+        parent[i] = selection->Tournament(config.TOUR_SIZE(), fit_vec);
+      }
+
+      return parent;
+    }
+
     // generate nearest neighbor pop structure
     neigh_t neighborhood = selection->FitNearestN(fit_vec, config.NOVEL_K());
 
     // transform original fitness into novelty fitness
     score_t tscore = selection->Novelty(fit_vec, neighborhood, config.NOVEL_K());
 
-    // std::cout << std::endl;
-    // selection->PrintVec(fit_vec, "fitvec");
-    // selection->PrintVec(tscore, "tscore");
+    // select parent ids
+    ids_t parent(pop.size());
+
+    for(size_t i = 0; i < parent.size(); ++i)
+    {
+      parent[i] = selection->Tournament(config.TOUR_SIZE(), tscore);
+    }
+
+    return parent;
+  };
+
+  std::cerr << "Novelty search selection scheme set!" << std::endl;
+}
+
+void DiagWorld::NoveltyEuclidean()
+{
+  std::cerr << "Setting selection scheme: NoveltyEuclidean" << std::endl;
+  std::cerr << "Tournament size for novelty: " << config.TOUR_SIZE() << std::endl;
+
+  select = [this]()
+  {
+    // quick checks
+    emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
+    emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
+
+    // If we get asked to do standard tournament selection with novelty euclidean selected
+    if(config.NOVEL_K() == 0)
+    {
+      // select parent ids
+      ids_t parent(pop.size());
+
+      for(size_t i = 0; i < parent.size(); ++i)
+      {
+        parent[i] = selection->Tournament(config.TOUR_SIZE(), fit_vec);
+      }
+
+      return parent;
+    }
+
+    // generate distance matrix
+    fmatrix_t fit_mat = PopFitMat();
+    fmatrix_t dist_mat = selection->SimilarityMatrix(fit_mat, config.PNORM_EXP());
+    // generate neighbors for distances
+    neigh_t neighborhood = selection->EuclideanNearestN(dist_mat, config.NOVEL_K());
+    // generate 0 vector for novelty scoring
+    score_t zeros(pop.size(), 0.0);
+    // transform original fitness into novelty fitness
+    score_t tscore = selection->Novelty(zeros, neighborhood, config.NOVEL_K());
 
     // select parent ids
     ids_t parent(pop.size());
