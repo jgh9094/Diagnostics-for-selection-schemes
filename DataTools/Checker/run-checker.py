@@ -40,7 +40,7 @@ def SetSelection(s):
     elif s == 1:
         return 'TOURNAMENT'
     elif s == 2:
-        return 'SHARING'
+        return 'FITSHARING'
     elif s == 3:
         return 'NOVELTY'
     elif s == 4:
