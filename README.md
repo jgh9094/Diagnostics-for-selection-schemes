@@ -64,4 +64,4 @@ In each file there are statistics that provide evidence as to why each final sel
 - [Exploitation](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/stats-prelim-exploitation.html)
 - [Structured Exploitation](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/stats-prelim-struct-exploitation.html)
 - [Exploration](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/stats-prelim-exploration.html)
-- Ecological Niche Filling [TODO]
+- [Ecological Niche Filling](https://jgh9094.github.io/Selection-Scheme-Diagnotics-Part-I/Descriptions/stats-prelim-niching.html)
