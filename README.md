@@ -29,8 +29,9 @@ This will allow for a better understanding of the strengths and weaknesses of di
 This section discusses the kinds selection schemes we are analyzing in this project. These selection schemes were selected because of we believe they
 
 - Mu-Lambda Selection
+- Tournament Selection
 - Fitness Sharing
-- Novelty Search
+- Novelty Search (Aggregate Performance & Euclidean Distance)
 - Epsilon Lexicase
 
 ## Diagnostic Problems
