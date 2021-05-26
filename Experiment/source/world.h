@@ -9,6 +9,8 @@
 #include <set>
 #include <fstream>
 #include <string.h>
+#include <set>
+#include <string>
 
 ///< empirical headers
 #include "Evolve/World.h"
@@ -76,7 +78,7 @@ class DiagWorld : public emp::World<Org>
     // matrix of population genomes
     using gmatrix_t = emp::vector<genome_t>;
     // map holding population id groupings by fitness (keys in decending order)
-    using fitgp_t = std::map<double, ids_t, std::greater<int>>;
+    using fitgp_t = std::map<double, ids_t, std::greater<double>>;
     // vector of double vectors for K neighborhoods
     using neigh_t = emp::vector<score_t>;
 
@@ -201,6 +203,8 @@ class DiagWorld : public emp::World<Org>
 
     size_t FindOptimized();
 
+    size_t FindUniqueStart();
+
     // void SnapshotPhylogony();
 
 
@@ -269,9 +273,9 @@ class DiagWorld : public emp::World<Org>
 
 void DiagWorld::Initialize()
 {
-  std::cerr << "==========================================" << std::endl;
-  std::cerr << "BEGINNING INITIAL SETUP" << std::endl;
-  std::cerr << "==========================================" << std::endl;
+  std::cout << "==========================================" << std::endl;
+  std::cout << "BEGINNING INITIAL SETUP" << std::endl;
+  std::cout << "==========================================" << std::endl;
 
   // reset the world upon start
   Reset();
@@ -288,15 +292,15 @@ void DiagWorld::Initialize()
   SetOnOffspringReady();
   PopulateWorld();
 
-  std::cerr << "==========================================" << std::endl;
-  std::cerr << "FINISHED INITIAL SETUP" << std::endl;
-  std::cerr << "==========================================" << std::endl;
+  std::cout << "==========================================" << std::endl;
+  std::cout << "FINISHED INITIAL SETUP" << std::endl;
+  std::cout << "==========================================" << std::endl;
 }
 
 void DiagWorld::SetOnUpdate()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting OnUpdate function..." << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
+  std::cout << "Setting OnUpdate function..." << std::endl;
 
   // set up the evolutionary algorithm
   OnUpdate([this](size_t gen)
@@ -320,13 +324,13 @@ void DiagWorld::SetOnUpdate()
     ReproductionStep();
   });
 
-  std::cerr << "Finished setting the OnUpdate function! \n" << std::endl;
+  std::cout << "Finished setting the OnUpdate function! \n" << std::endl;
 }
 
 void DiagWorld::SetMutation()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting mutation function..." << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
+  std::cout << "Setting mutation function..." << std::endl;
 
   // set the mutation function
   SetMutFun([this](Org & org, emp::Random & random)
@@ -370,16 +374,16 @@ void DiagWorld::SetMutation()
     return mcnt;
   });
 
-  std::cerr << "Mutation function set!\n" << std::endl;
+  std::cout << "Mutation function set!\n" << std::endl;
 }
 
 void DiagWorld::SetSelection()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting Selection function..." << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
+  std::cout << "Setting Selection function..." << std::endl;
 
   selection = emp::NewPtr<Selection>(random_ptr);
-  std::cerr << "Created selection emp::Ptr" << std::endl;
+  std::cout << "Created selection emp::Ptr" << std::endl;
 
   switch (config.SELECTION())
   {
@@ -408,18 +412,18 @@ void DiagWorld::SetSelection()
       break;
 
     default:
-      std::cerr << "ERROR UNKNOWN SELECTION CALL" << std::endl;
+      std::cout << "ERROR UNKNOWN SELECTION CALL" << std::endl;
       emp_assert(true);
       break;
   }
 
-  std::cerr << "Finished setting the Selection function! \n" << std::endl;
+  std::cout << "Finished setting the Selection function! \n" << std::endl;
 }
 
 void DiagWorld::SetOnOffspringReady()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting OnOffspringReady function..." << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
+  std::cout << "Setting OnOffspringReady function..." << std::endl;
 
   OnOffspringReady([this](Org & org, size_t parent_pos)
   {
@@ -442,25 +446,25 @@ void DiagWorld::SetOnOffspringReady()
 
       // give everything to offspring from parent
       org.MeClone();
-      org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate());
+      org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate(), parent.GetStart());
     }
     else{org.Reset();}
   });
 
-  std::cerr << "Finished setting OnOffspringReady function!\n" << std::endl;
+  std::cout << "Finished setting OnOffspringReady function!\n" << std::endl;
 }
 
 void DiagWorld::SetEvaluation()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting Evaluation function..." << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
+  std::cout << "Setting Evaluation function..." << std::endl;
 
   target_t tar(config.OBJECTIVE_CNT(), config.TARGET());
   target.clear(); target.resize(config.OBJECTIVE_CNT());
   std::copy(tar.begin(), tar.end(), target.begin());
 
   diagnostic = emp::NewPtr<Diagnostic>(target, config.CREDIT());
-  std::cerr << "Created diagnostic emp::Ptr" << std::endl;
+  std::cout << "Created diagnostic emp::Ptr" << std::endl;
 
   switch (config.DIAGNOSTIC())
   {
@@ -485,21 +489,21 @@ void DiagWorld::SetEvaluation()
       break;
 
     default: // error, unknown diganotic
-      std::cerr << "ERROR: UNKNOWN DIAGNOSTIC" << std::endl;
+      std::cout << "ERROR: UNKNOWN DIAGNOSTIC" << std::endl;
       emp_assert(true);
       break;
   }
 
-  std::cerr << "Evaluation function set!\n" <<std::endl;
+  std::cout << "Evaluation function set!\n" <<std::endl;
 }
 
 void DiagWorld::SetDataTracking()
 {
-  std::cerr << "------------------------------------------------" << std::endl;
-  std::cerr << "Setting up data tracking..." << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
+  std::cout << "Setting up data tracking..." << std::endl;
 
   // // systematic tracking (ask alex about it)
-  // std::cerr << "Setting up systematics tracking..." << std::endl;
+  // std::cout << "Setting up systematics tracking..." << std::endl;
 
   // sys_ptr = emp::NewPtr<systematics_t>([](const Org & o) {return o.GetGenome();});
 
@@ -520,12 +524,12 @@ void DiagWorld::SetDataTracking()
   // // summary stats (whatever resolution we want)
   // SetupSystematicsFile(0, config.OUTPUT_DIR() + "systematics.csv").SetTimingRepeat(config.PRINT_INTERVAL());
 
-  // std::cerr << "Systematics tracking complete!" << std::endl;
+  // std::cout << "Systematics tracking complete!" << std::endl;
 
   // initialize all nodes (ask charles)
-  std::cerr << "Initializing nodes..." << std::endl;
+  std::cout << "Initializing nodes..." << std::endl;
   pop_fit.New(); pop_opti.New(); pnt_fit.New(); pnt_opti.New();
-  std::cerr << "Nodes initialized!" << std::endl;
+  std::cout << "Nodes initialized!" << std::endl;
 
   // track population aggregate score stats: average, variance, min, max
   data_file.AddMean(*pop_fit, "pop_fit_avg", "Population average aggregate performance.");
@@ -551,7 +555,7 @@ void DiagWorld::SetDataTracking()
   data_file.AddMax(*pnt_opti, "pnt_opt_max", "Parent maximum objective optimization count.");
   data_file.AddMin(*pnt_opti, "pnt_opt_min", "Parent minimum objective optimization count.");
 
-  std::cerr << "Added all data nodes to data file!" << std::endl;
+  std::cout << "Added all data nodes to data file!" << std::endl;
 
   // update we are at
   data_file.AddFun<size_t>([this]()
@@ -699,6 +703,12 @@ void DiagWorld::SetDataTracking()
     return pop / pnt;
   }, "sel_var", "Selection pressure applied by selection scheme!");
 
+  // unique starting positions
+  data_file.AddFun<size_t>([this]()
+  {
+    return FindUniqueStart();
+  }, "uni_str_pos", "Number of unique optimized positions in the population!");
+
   data_file.PrintHeaderKeys();
 
   // create elite csv plus headers
@@ -713,19 +723,19 @@ void DiagWorld::SetDataTracking()
   elite_csv << header << "\n";
 
 
-  std::cerr << "Finished setting data tracking!\n" << std::endl;
+  std::cout << "Finished setting data tracking!\n" << std::endl;
 }
 
 void DiagWorld::PopulateWorld()
 {
-  std::cerr << "------------------------------------------" << std::endl;
-  std::cerr << "Populating world with initial solutions..." << std::endl;
+  std::cout << "------------------------------------------" << std::endl;
+  std::cout << "Populating world with initial solutions..." << std::endl;
 
   // Fill the workd with requested population size!
   Org org(config.OBJECTIVE_CNT());
   Inject(org.GetGenome(), config.POP_SIZE());
 
-  std::cerr << "Initialing world complete!" << std::endl;
+  std::cout << "Initialing world complete!" << std::endl;
 }
 
 
@@ -864,7 +874,7 @@ void DiagWorld::ReproductionStep()
 
 void DiagWorld::MuLambda()
 {
-  std::cerr << "Setting selection scheme: MuLambda" << std::endl;
+  std::cout << "Setting selection scheme: MuLambda" << std::endl;
 
   // set select lambda to mu lambda selection
   select = [this]()
@@ -879,12 +889,12 @@ void DiagWorld::MuLambda()
     return selection->MLSelect(config.MU(), config.POP_SIZE(), group);
   };
 
-  std::cerr << "MuLambda selection scheme set!" << std::endl;
+  std::cout << "MuLambda selection scheme set!" << std::endl;
 }
 
 void DiagWorld::Tournament()
 {
-  std::cerr << "Setting selection scheme: Tournament" << std::endl;
+  std::cout << "Setting selection scheme: Tournament" << std::endl;
 
   select = [this]()
   {
@@ -904,12 +914,12 @@ void DiagWorld::Tournament()
     return parent;
   };
 
-  std::cerr << "Tournament selection scheme set!" << std::endl;
+  std::cout << "Tournament selection scheme set!" << std::endl;
 }
 
 void DiagWorld::FitnessSharing()
 {
-  std::cerr << "Setting selection scheme: FitnessSharing" << std::endl;
+  std::cout << "Setting selection scheme: FitnessSharing" << std::endl;
 
   select = [this]()
   {
@@ -948,13 +958,13 @@ void DiagWorld::FitnessSharing()
     return parent;
   };
 
-  std::cerr << "Fitness sharing selection scheme set!" << std::endl;
+  std::cout << "Fitness sharing selection scheme set!" << std::endl;
 }
 
 void DiagWorld::NoveltyAggregate()
 {
-  std::cerr << "Setting selection scheme: NoveltyAggregate" << std::endl;
-  std::cerr << "Tournament size for novelty: " << config.TOUR_SIZE() << std::endl;
+  std::cout << "Setting selection scheme: NoveltyAggregate" << std::endl;
+  std::cout << "Tournament size for novelty: " << config.TOUR_SIZE() << std::endl;
 
   select = [this]()
   {
@@ -993,13 +1003,13 @@ void DiagWorld::NoveltyAggregate()
     return parent;
   };
 
-  std::cerr << "Novelty search selection scheme set!" << std::endl;
+  std::cout << "Novelty search selection scheme set!" << std::endl;
 }
 
 void DiagWorld::NoveltyEuclidean()
 {
-  std::cerr << "Setting selection scheme: NoveltyEuclidean" << std::endl;
-  std::cerr << "Tournament size for novelty: " << config.TOUR_SIZE() << std::endl;
+  std::cout << "Setting selection scheme: NoveltyEuclidean" << std::endl;
+  std::cout << "Tournament size for novelty: " << config.TOUR_SIZE() << std::endl;
 
   select = [this]()
   {
@@ -1042,12 +1052,13 @@ void DiagWorld::NoveltyEuclidean()
     return parent;
   };
 
-  std::cerr << "Novelty search selection scheme set!" << std::endl;
+  std::cout << "Novelty search selection scheme set!" << std::endl;
 }
 
 void DiagWorld::EpsilonLexicase()
 {
-  std::cerr << "Setting selection scheme: EpsilonLexicase" << std::endl;
+  std::cout << "Setting selection scheme: EpsilonLexicase" << std::endl;
+  std::cout << "Epsilon: " << config.LEX_EPS() << std::endl;
 
   select = [this]()
   {
@@ -1068,7 +1079,7 @@ void DiagWorld::EpsilonLexicase()
     return parent;
   };
 
-  std::cerr << "Epsilon Lexicase selection scheme set!" << std::endl;
+  std::cout << "Epsilon Lexicase selection scheme set!" << std::endl;
 }
 
 
@@ -1076,7 +1087,7 @@ void DiagWorld::EpsilonLexicase()
 
 void DiagWorld::Exploitation()
 {
-  std::cerr << "Setting exploitation diagnostic..." << std::endl;
+  std::cout << "Setting exploitation diagnostic..." << std::endl;
 
   evaluate = [this](Org & org)
   {
@@ -1085,6 +1096,9 @@ void DiagWorld::Exploitation()
     org.SetScore(score);
     org.AggregateScore();
 
+    // set the starting position
+    org.StartPosition();
+
     // set optimal vector and count
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
@@ -1093,12 +1107,12 @@ void DiagWorld::Exploitation()
     return org.GetAggregate();
   };
 
-  std::cerr << "Exploitation diagnotic set!" << std::endl;
+  std::cout << "Exploitation diagnotic set!" << std::endl;
 }
 
 void DiagWorld::StructuredExploitation()
 {
-  std::cerr << "Setting structured exploitation diagnostic..." << std::endl;
+  std::cout << "Setting structured exploitation diagnostic..." << std::endl;
 
   evaluate = [this](Org & org)
   {
@@ -1107,6 +1121,9 @@ void DiagWorld::StructuredExploitation()
     org.SetScore(score);
     org.AggregateScore();
 
+    // set the starting position
+    org.StartPosition();
+
     // set optimal vector and count
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
@@ -1115,12 +1132,12 @@ void DiagWorld::StructuredExploitation()
     return org.GetAggregate();
   };
 
-  std::cerr << "Structured exploitation diagnotic set!" << std::endl;
+  std::cout << "Structured exploitation diagnotic set!" << std::endl;
 }
 
 void DiagWorld::StrongEcology()
 {
-  std::cerr << "Setting strong ecology diagnostic..." << std::endl;
+  std::cout << "Setting strong ecology diagnostic..." << std::endl;
 
   evaluate = [this](Org & org)
   {
@@ -1129,6 +1146,9 @@ void DiagWorld::StrongEcology()
     org.SetScore(score);
     org.AggregateScore();
 
+    // set the starting position
+    org.StartPosition();
+
     // set optimal vector and count
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
@@ -1137,12 +1157,12 @@ void DiagWorld::StrongEcology()
     return org.GetAggregate();
   };
 
-  std::cerr << "Strong ecology diagnotic set!" << std::endl;
+  std::cout << "Strong ecology diagnotic set!" << std::endl;
 }
 
 void DiagWorld::Exploration()
 {
-  std::cerr << "Setting exploration diagnostic..." << std::endl;
+  std::cout << "Setting exploration diagnostic..." << std::endl;
 
   evaluate = [this](Org & org)
   {
@@ -1151,6 +1171,9 @@ void DiagWorld::Exploration()
     org.SetScore(score);
     org.AggregateScore();
 
+    // set the starting position
+    org.StartPosition();
+
     // set optimal vector and count
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
@@ -1159,12 +1182,12 @@ void DiagWorld::Exploration()
     return org.GetAggregate();
   };
 
-  std::cerr << "Exploration diagnotic set!" << std::endl;
+  std::cout << "Exploration diagnotic set!" << std::endl;
 }
 
 void DiagWorld::WeakEcology()
 {
-  std::cerr << "Setting weak ecology diagnostic..." << std::endl;
+  std::cout << "Setting weak ecology diagnostic..." << std::endl;
 
   evaluate = [this](Org & org)
   {
@@ -1173,6 +1196,9 @@ void DiagWorld::WeakEcology()
     org.SetScore(score);
     org.AggregateScore();
 
+    // set the starting position
+    org.StartPosition();
+
     // set optimal vector and count
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
@@ -1181,7 +1207,7 @@ void DiagWorld::WeakEcology()
     return org.GetAggregate();
   };
 
-  std::cerr << "Weak ecology diagnotic set!" << std::endl;
+  std::cout << "Weak ecology diagnotic set!" << std::endl;
 }
 
 ///< data tracking
@@ -1299,6 +1325,29 @@ size_t DiagWorld::FindOptimized()
   }
 
   return max_pos;
+}
+
+size_t DiagWorld::FindUniqueStart()
+{
+  // quick checks
+  emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
+
+  // collect number of unique starting positions
+  std::set<size_t> position;
+
+  // iterate pop to check is a solution has the objective optimized
+  for(size_t p = 0; p < pop.size(); ++p)
+  {
+    Org & org = *pop[p];
+
+    // check that the position has be set
+    emp_assert(org.GetStart() != config.OBJECTIVE_CNT());
+
+    // insert position into set
+    position.insert(org.GetStart());
+  }
+
+  return position.size();
 }
 
 // void DiagWorld::SnapshotPhylogony()
