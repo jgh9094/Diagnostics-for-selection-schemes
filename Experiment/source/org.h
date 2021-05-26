@@ -31,6 +31,7 @@ class Org
       // make sure nun weird is happening
       emp_assert(genome.size() == 0); emp_assert(M == 0);
       M = _m;
+      start_pos = _m;
       genome.resize(_m, START_DB);
     }
 
@@ -40,6 +41,7 @@ class Org
       // make sure we aren't seeing anything weird
       emp_assert(genome.size() == 0); emp_assert(M == 0);
       M = _g.size();
+      start_pos = _g.size();
       genome.resize(M);
       std::copy(_g.begin(), _g.end(), genome.begin());
     }
@@ -69,6 +71,8 @@ class Org
     size_t GetCount() const {emp_assert(counted); return count;}
     // get gene count
     size_t GetM() {emp_assert(0 < M); return M;}
+    // get start position
+    size_t GetStart() {emp_assert(start_pos != M); return start_pos;}
     // Are we optimized at this objective?
     bool OptimizedAt(const size_t obj);
     // get scored bool
@@ -118,6 +122,13 @@ class Org
       agg_score = a_;
     }
 
+    // set the starting position
+    void SetStart(size_t s_)
+    {
+      emp_assert(!start); emp_assert(0 < M);
+      start = true;
+      start_pos = s_;
+    }
 
     ///< functions to calculate scores and related data
 
@@ -143,6 +154,13 @@ class Org
     */
     size_t CountOptimized();
 
+    /**
+     * Find Starting Position
+     *
+     * Find the staring position in the phenotype vector.
+     */
+    size_t StartPosition();
+
 
     ///< functions related to the birth of an organism
 
@@ -166,7 +184,7 @@ class Org
      * @param a aggregate score recieved
      *
     */
-    void Inherit(const score_t & s, const optimal_t & o, size_t c, double a);
+    void Inherit(const score_t & s, const optimal_t & o, const size_t c, const double a, const size_t st);
 
     /**
      * Me Clone function:
@@ -201,6 +219,11 @@ class Org
 
     // Number of genes in genome
     size_t M = 0;
+
+    // starting position
+    size_t start_pos;
+    // starting position located?
+    bool start = false;
 
     // Are we a clone?
     bool clone = false;
@@ -242,6 +265,20 @@ size_t Org::CountOptimized()
   return count;
 }
 
+size_t Org::StartPosition()
+{
+  // quick checks
+  emp_assert(!start); emp_assert(0 < M);
+  emp_assert(score.size() == M);
+
+  // find max value position
+  auto opti_it = std::max_element(score.begin(), score.end());
+  start_pos = std::distance(score.begin(), opti_it);
+
+  return start_pos;
+}
+
+
 ///< functions related to the birth of an organism
 
 void Org::Reset()
@@ -265,11 +302,15 @@ void Org::Reset()
   agg_score = 0.0;
   aggregated = false;
 
+  // reset starting position info
+  start_pos = genome.size();
+  start = false;
+
   // reset clone var
   clone = false;
 }
 
-void Org::Inherit(const score_t & s, const optimal_t & o, size_t c, double a)
+void Org::Inherit(const score_t & s, const optimal_t & o, const size_t c, const double a, const size_t st)
 {
   // quick checks
   emp_assert(0 < M); emp_assert(0 < genome.size()); emp_assert(clone);
@@ -279,6 +320,7 @@ void Org::Inherit(const score_t & s, const optimal_t & o, size_t c, double a)
   SetOptimal(o);
   SetCount(c);
   SetAggregate(a);
+  SetStart(st);
 }
 
 #endif
