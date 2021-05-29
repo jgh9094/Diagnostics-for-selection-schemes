@@ -143,8 +143,8 @@ def CountRows(file_name):
     # create pandas data frame of entire csv
     df = pd.read_csv(file_name)
 
-    print('df.shape[0]:', df.shape[0])
-    if(df.shape[0] == 0):
+    print('df.empty:', df.empty)
+    if(df.empty):
         return 0
 
     gens = df['gen'].to_list()
