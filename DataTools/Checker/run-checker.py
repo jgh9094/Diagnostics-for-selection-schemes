@@ -141,10 +141,12 @@ def SetSecondParam(s, pt):
 # return the number of rows in a csv file
 def CountRows(file_name):
     # create pandas data frame of entire csv
-    df = pd.read_csv(file_name)
+    try:
+        df = pd.read_csv(file_name)
+    except EmptyDataError:
+        df = pd.DataFrame()
 
-    print('df.empty:', df.empty)
-    if(df.empty):
+    if(df.shape[0] == 0):
         return 0
 
     gens = df['gen'].to_list()
