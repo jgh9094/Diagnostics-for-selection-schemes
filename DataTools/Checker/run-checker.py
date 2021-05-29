@@ -143,6 +143,7 @@ def CountRows(file_name):
     # create pandas data frame of entire csv
     df = pd.read_csv(file_name)
 
+    print('df.shape[0]:', df.shape[0])
     if(df.shape[0] == 0):
         return 0
 
