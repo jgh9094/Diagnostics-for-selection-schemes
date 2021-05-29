@@ -2,15 +2,15 @@
 ########## Define Resources Needed with SBATCH Lines ##########
 
 #SBATCH --time=17:00:00               # limit of wall clock time - how long the job will run (same as -t)
-#SBATCH --array=1-2                   # number of jobs being created, each with its array id
+#SBATCH --array=1                     # number of jobs being created, each with its array id
 #SBATCH --mem=20G                     # memory required per node - amount of memory (in gigs)
-#SBATCH --job-name fs-rr              # you can give your job a name for easier identification (same as -J)
+#SBATCH --job-name ts-rr              # you can give your job a name for easier identification (same as -J)
 #SBATCH --account=devolab             # research group account being used
 
 ##################################
 # Setup relevant directories
 ##################################
-DATA_DIR=/mnt/ls15/scratch/users/herna383/IEEE-EC-2021/FITSHARING
+DATA_DIR=/mnt/ls15/scratch/users/herna383/IEEE-EC-2021/TOURNAMENT
 
 ##################################
 # Setup tournament size
@@ -25,18 +25,6 @@ T__64=64
 T__128=128
 T__256=256
 T__512=512
-
-##################################
-# Set up fitness sharing prportion
-##################################
-SIG__0=0.0
-SIG__1=0.1
-SIG__3=0.3
-SIG__6=0.6
-SIG__12=1.2
-SIG__25=2.5
-SIG__50=5.0
-SIG__100=10.0
 
 ##################################
 # Folder naming
@@ -67,7 +55,6 @@ WEAK_ECOLOGY=4
 
 ###### Treatments #######
 TREATMENT__1=1
-TREATMENT__2=2
 
 ##################################
 # Config file parameters
@@ -80,15 +67,10 @@ ACCURACY_DIR=99
 ####################################################################
 
 if [ ${SLURM_ARRAY_TASK_ID} -eq ${TREATMENT__1} ] ; then
-  DIAGNOSTIC=${EXPLOITATION}
-  SEED=296
-  NAME=DIA_${DIAGNOSTIC_1}__SIG_${SIG__25}__SEED_${SEED}
-  SIG=${SIG__25}
-elif [ ${SLURM_ARRAY_TASK_ID} -eq ${TREATMENT__2} ] ; then
-  DIAGNOSTIC=${WEAK_ECOLOGY}
-  SEED=3254
-  NAME=DIA_${DIAGNOSTIC_5}__SIG_${SIG__25}__SEED_${SEED}
-  SIG=${SIG__25}
+  DIAGNOSTIC=${EXPLORATION}
+  SEED=18060
+  NAME=DIA_${DIAGNOSTIC_4}__MU_${T__2}__SEED_${SEED}
+  T=${T__2}
 else
   echo "${SEED} from ${PROBLEM} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
 fi
@@ -100,6 +82,6 @@ RUN_DIR=${DATA_DIR}/TRT_${OBJECTIVE_CNT}__ACC_${ACCURACY_DIR}__GEN_${GENERATIONS
 # make a run directory
 mkdir -p ${RUN_DIR}
 
-echo "../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${DIAGNOSTIC} -SELECTION ${FITSHARING} -FIT_SIGMA ${SIG} -OUTPUT_DIR ${RUN_DIR} -TOUR_SIZE ${T__8} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS} > run.log" > ./cmd-coh.txt
+echo "../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${DIAGNOSTIC} -SELECTION ${TOURNAMENT} -TOUR_SIZE ${T} -OUTPUT_DIR ${RUN_DIR} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS} > run.log" > ./cmd-coh.txt
 
-../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${DIAGNOSTIC} -SELECTION ${FITSHARING} -FIT_SIGMA ${SIG} -OUTPUT_DIR ${RUN_DIR} -TOUR_SIZE ${T__8} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS}
+../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${DIAGNOSTIC} -SELECTION ${TOURNAMENT} -TOUR_SIZE ${T} -OUTPUT_DIR ${RUN_DIR} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS}
