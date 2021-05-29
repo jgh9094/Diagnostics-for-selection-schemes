@@ -142,6 +142,10 @@ def SetSecondParam(s, pt):
 def CountRows(file_name):
     # create pandas data frame of entire csv
     df = pd.read_csv(file_name)
+
+    if(df.shape[0] == 0):
+        return 0
+
     gens = df['gen'].to_list()
 
     return gens[-1]
