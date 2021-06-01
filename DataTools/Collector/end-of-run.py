@@ -31,6 +31,7 @@ POP_FIT_MAX = 'pop_fit_max'
 POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
+UNI_STR_POS = 'uni_str_pos'
 GEN = 'gen'
 
 # return appropiate string dir name (based off run.sb file naming system)
@@ -170,6 +171,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     POA = []
     POM = []
     POU = []
+    STR = []
     # second parameter dir
     SECOND_PARAM = SetSecondParam(sel, pt)
 
@@ -192,6 +194,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         POA.append(dfl[POP_OPT_AVG].tolist()[0])
         POM.append(dfl[POP_OPT_MAX].tolist()[0])
         POU.append(dfl[POP_UNI_OBJ].tolist()[0])
+        STR.append(dfl[UNI_STR_POS].tolist()[0])
 
 
     # time to export the data
@@ -200,7 +203,8 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
                     'fit_max': pd.Series(PFM),
                     'opt_avg': pd.Series(POA),
                     'opt_max': pd.Series(POM),
-                    'uni_avg': pd.Series(POU)})
+                    'uni_avg': pd.Series(POU),
+                    'uni_str': pd.Series(STR)})
 
     fdf.to_csv(path_or_buf= dump + 'eor-' + SetDiagnostic(dia).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
 

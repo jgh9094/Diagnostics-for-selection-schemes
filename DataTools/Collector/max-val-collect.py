@@ -30,6 +30,7 @@ POP_FIT_MAX = 'pop_fit_max'
 POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
+UNI_STR_POS = 'uni_str_pos'
 GENERATION = 'gen'
 
 # return appropiate string dir name (based off run.sb file naming system)
@@ -265,6 +266,14 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         VAL.append(max_val)
         GEN.append(max_gen)
         COL.append('puo')
+
+        # Population starting positions
+        max_val = df[UNI_STR_POS].max()
+        max_gen = df[df[UNI_STR_POS] == max_val][GENERATION].values.tolist()[0]
+        TRT.append(VLIST[it])
+        VAL.append(max_val)
+        GEN.append(max_gen)
+        COL.append('str')
 
     # Time to export the csv file
     # time to export the data

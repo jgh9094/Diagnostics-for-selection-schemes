@@ -38,6 +38,7 @@ COM_AGG_PER = 'com_agg_per'
 COM_OPT_CNT = 'com_opt_cnt'
 OPT_AGG_PER = 'opt_agg_per'
 OPT_OBJ_CNT = 'opt_obj_cnt'
+UNI_STR_POS = 'uni_str_pos'
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s):
@@ -223,7 +224,8 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
                             'opt_avg': pd.Series(df[POP_OPT_AVG].tolist()),
                             'opt_max': pd.Series(df[POP_OPT_MAX].tolist()),
                             'uni_avg': pd.Series(df[POP_UNI_OBJ].tolist()),
-                            'com_cnt': pd.Series(df[COM_SOL_CNT].tolist())})
+                            'com_cnt': pd.Series(df[COM_SOL_CNT].tolist()),
+                            'uni_str': pd.Series(df[UNI_STR_POS].tolist())})
 
             DF_LIST.append(cdf)
 
