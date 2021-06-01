@@ -78,12 +78,12 @@ elif [ ${SLURM_ARRAY_TASK_ID} -eq ${TREATMENT__2} ] ; then
   NAME=DIA_${DIAGNOSTIC_5}__MU_${MU__256}__SEED_${SEED}
   MU=${MU__256}
 else
-  echo "${SEED} from ${PROBLEM} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
+  echo "${SEED} from ${MULAMBDA} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
 fi
 
 ####################################################################
 
-RUN_DIR=${DATA_DIR}/TRT_${OBJECTIVE_CNT}__ACC_${ACCURACY_DIR}__GEN_${GENERATIONS}/${NAME}/TOUR_${T__8}/
+RUN_DIR=${DATA_DIR}/TRT_${OBJECTIVE_CNT}__ACC_${ACCURACY_DIR}__GEN_${GENERATIONS}/${NAME}/
 
 # make a run directory
 mkdir -p ${RUN_DIR}
