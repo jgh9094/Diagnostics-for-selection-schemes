@@ -13,16 +13,10 @@
 DATA_DIR=/mnt/ls15/scratch/users/herna383/IEEE-EC-2021/TOURNAMENT
 
 ##################################
-# Setup relevant directories
-# Previously used ones will be commented out
-##################################
-REPLICATION_OFFSET=0
-
-##################################
 # Setup random seed info
 ##################################
 PROBLEM_SEED_OFFSET=18000
-SEED=$((SLURM_ARRAY_TASK_ID + PROBLEM_SEED_OFFSET + REPLICATION_OFFSET))
+SEED=$((SLURM_ARRAY_TASK_ID + PROBLEM_SEED_OFFSET))
 
 ##################################
 # Setup tournament size
@@ -146,7 +140,6 @@ elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__T_512__MIN} ] && [ ${SLURM_ARRAY_
 
 else
   echo "${SEED} from ${PROBLEM} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
-
 fi
 
 ####################################################################
