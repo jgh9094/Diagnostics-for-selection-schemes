@@ -21,39 +21,6 @@
 #include "problem.h"
 #include "selection.h"
 
-
-// template <typename PHEN_TYPE>
-// struct pheno_info
-// {
-//   /// Track information related to the mutational landscape
-//   /// Maps a string representing a type of mutation to a count representing
-//   /// the number of that type of mutation that occured to bring about this taxon.
-//   using phen_t = PHEN_TYPE;
-//   using has_phen_t = std::true_type;
-//   using has_mutations_t = std::false_type;
-//   using has_fitness_t = std::true_type;
-//   // using has_phenotype_t = true;
-
-//   emp::DataNode<double, emp::data::Current, emp::data::Range> fitness; /// This taxon's fitness (for assessing deleterious mutational steps)
-//   PHEN_TYPE phenotype; /// This taxon's phenotype (for assessing phenotypic change)
-
-//   const PHEN_TYPE & GetPhenotype() const {
-//     return phenotype;
-//   }
-
-//   const double GetFitness() const {
-//     return fitness.GetMean();
-//   }
-
-//   void RecordFitness(double fit) {
-//     fitness.Add(fit);
-//   }
-
-//   void RecordPhenotype(PHEN_TYPE phen) {
-//     phenotype = phen;
-//   }
-// };
-
 class DiagWorld : public emp::World<Org>
 {
   // object types for consistency between working class
@@ -93,11 +60,6 @@ class DiagWorld : public emp::World<Org>
     using nodef_t = emp::Ptr<emp::DataMonitor<double>>;
     using nodeo_t = emp::Ptr<emp::DataMonitor<size_t>>;
     using como_t = std::map<size_t, ids_t>;
-
-    ///< systematics tracking types
-    // using systematics_t = emp::Systematics<Org, Org::genome_t, pheno_info<typename Org::score_t>>;
-    // using taxon_t = typename systematics_t::taxon_t;
-
 
   public:
 
@@ -502,30 +464,6 @@ void DiagWorld::SetDataTracking()
   std::cout << "------------------------------------------------" << std::endl;
   std::cout << "Setting up data tracking..." << std::endl;
 
-  // // systematic tracking (ask alex about it)
-  // std::cout << "Setting up systematics tracking..." << std::endl;
-
-  // sys_ptr = emp::NewPtr<systematics_t>([](const Org & o) {return o.GetGenome();});
-
-  // sys_ptr->AddSnapshotFun([](const taxon_t & taxon) {
-  //   return emp::to_string(taxon.GetData().GetFitness());
-  // }, "fitness", "Taxon fitness");
-
-  // sys_ptr->AddSnapshotFun([](const taxon_t & taxon) {
-  //   return emp::ToString(taxon.GetData().GetPhenotype());
-  // }, "phenotype", "Taxon Phenotype");
-
-  // sys_ptr->AddSnapshotFun([](const taxon_t & taxon) {
-  //   return emp::ToString(taxon.GetInfo());
-  // }, "genotype", "Taxon Genotype");
-
-  // // will add it to the world for tracking purposes
-  // AddSystematics(sys_ptr);
-  // // summary stats (whatever resolution we want)
-  // SetupSystematicsFile(0, config.OUTPUT_DIR() + "systematics.csv").SetTimingRepeat(config.PRINT_INTERVAL());
-
-  // std::cout << "Systematics tracking complete!" << std::endl;
-
   // initialize all nodes (ask charles)
   std::cout << "Initializing nodes..." << std::endl;
   pop_fit.New(); pop_opti.New(); pnt_fit.New(); pnt_opti.New();
@@ -774,11 +712,6 @@ void DiagWorld::EvaluationStep()
 
     // no evaluate needed if offspring is a clone
     fit_vec[i] = (org.GetClone()) ? org.GetAggregate() : evaluate(org);
-
-    // // systematic stuff
-    // emp::Ptr<taxon_t> taxon = sys_ptr->GetTaxonAt(i);
-    // taxon->GetData().RecordFitness(org.GetAggregate());
-    // taxon->GetData().RecordPhenotype(org.GetScore());
   }
 }
 
