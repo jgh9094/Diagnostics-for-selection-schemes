@@ -10,7 +10,7 @@
 ##################################
 # Setup relevant directories
 ##################################
-DATA_DIR=/mnt/ls15/scratch/users/herna383/DIAGNOSTICS-PROJ/NOVELTY-ECULID
+DATA_DIR=/mnt/gs18/scratch/users/herna383/DIAGNOSTICS-PROJ/NOVELTY-ECULID
 
 ##################################
 # Setup random seed info
@@ -140,7 +140,7 @@ elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__NOV__100__MIN} ] && [ ${SLURM_ARR
   NOV=${NOV__100}
 
 else
-  echo "${SEED} from ${PROBLEM} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
+  echo "${SEED} from ${PROBLEM} failed to launch" >> /mnt/gs18/scratch/users/herna383/ps-coh-failtolaunch.txt
 fi
 
 ####################################################################
