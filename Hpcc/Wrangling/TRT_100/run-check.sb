@@ -10,7 +10,7 @@
 ##################################
 # Data Directory
 ##################################
-DATA_DIR=/mnt/ls15/scratch/users/herna383/IEEE-EC-2021/
+DATA_DIR=/mnt/scratch/herna383/DIAGNOSTICS-PROJ/
 
 ##################################
 # Setup relevant directories
