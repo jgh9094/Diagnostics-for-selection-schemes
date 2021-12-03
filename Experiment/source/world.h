@@ -11,6 +11,7 @@
 #include <string.h>
 #include <set>
 #include <string>
+#include <algorithm>
 
 ///< empirical headers
 #include "Evolve/World.h"
@@ -167,6 +168,8 @@ class DiagWorld : public emp::World<Org>
 
     size_t FindUniqueStart();
 
+    size_t FindStreak();
+
     // void SnapshotPhylogony();
 
 
@@ -216,6 +219,8 @@ class DiagWorld : public emp::World<Org>
     nodef_t pnt_fit;
     // node to track parent optimized count
     nodeo_t pnt_opti;
+    // node to track streak counts
+    nodeo_t pop_str;
     // csv file to track best performing solutions
     std::ofstream elite_csv;
 
@@ -227,6 +232,8 @@ class DiagWorld : public emp::World<Org>
     size_t comm_pos;
     // optimal solution position
     size_t opti_pos;
+    // streak solution position
+    size_t strk_pos;
     // common solution dictionary
     como_t common;
 };
@@ -345,7 +352,7 @@ void DiagWorld::SetSelection()
   std::cout << "Setting Selection function..." << std::endl;
 
   selection = emp::NewPtr<Selection>(random_ptr);
-  std::cout << "Created selection emp::Ptr" << std::endl;
+  std::cout << "Created selection" << std::endl;
 
   switch (config.SELECTION())
   {
@@ -408,7 +415,7 @@ void DiagWorld::SetOnOffspringReady()
 
       // give everything to offspring from parent
       org.MeClone();
-      org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate(), parent.GetStart());
+      org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate(), parent.GetStart(), parent.GetStreak());
     }
     else{org.Reset();}
   });
@@ -464,9 +471,9 @@ void DiagWorld::SetDataTracking()
   std::cout << "------------------------------------------------" << std::endl;
   std::cout << "Setting up data tracking..." << std::endl;
 
-  // initialize all nodes (ask charles)
+  // initialize all nodes
   std::cout << "Initializing nodes..." << std::endl;
-  pop_fit.New(); pop_opti.New(); pnt_fit.New(); pnt_opti.New();
+  pop_fit.New(); pop_opti.New(); pnt_fit.New(); pnt_opti.New(); pop_str.New();
   std::cout << "Nodes initialized!" << std::endl;
 
   // track population aggregate score stats: average, variance, min, max
@@ -492,6 +499,12 @@ void DiagWorld::SetDataTracking()
   data_file.AddVariance(*pnt_opti, "pnt_opt_var", "Parent variance objective optimization count.");
   data_file.AddMax(*pnt_opti, "pnt_opt_max", "Parent maximum objective optimization count.");
   data_file.AddMin(*pnt_opti, "pnt_opt_min", "Parent minimum objective optimization count.");
+
+  // track parent optimized objective count stats: average, variance, min, max
+  data_file.AddMean(*pop_str, "pop_str_avg", "Population average streak count.");
+  data_file.AddVariance(*pop_str, "pop_str_var", "Population variance streak count.");
+  data_file.AddMax(*pop_str, "pop_str_max", "Population maximum streak count.");
+  data_file.AddMin(*pop_str, "pop_str_min", "Population minimum streak count.");
 
   std::cout << "Added all data nodes to data file!" << std::endl;
 
@@ -594,6 +607,30 @@ void DiagWorld::SetDataTracking()
     return org.GetCount();
   }, "opt_obj_cnt", "Otpimal solution aggregate performance");
 
+  // streak solution aggregate performance
+  data_file.AddFun<double>([this]()
+  {
+    // quick checks
+    emp_assert(strk_pos != config.POP_SIZE());
+    emp_assert(pop.size() == config.POP_SIZE());
+
+    Org & org = *pop[strk_pos];
+
+    return org.GetAggregate();
+  }, "str_agg_per", "Otpimal solution aggregate performance");
+
+  // streak solution optimized objectives count
+  data_file.AddFun<size_t>([this]()
+  {
+    // quick checks
+    emp_assert(strk_pos != config.POP_SIZE());
+    emp_assert(pop.size() == config.POP_SIZE());
+
+    Org & org = *pop[strk_pos];
+
+    return org.GetCount();
+  }, "str_obj_cnt", "Otpimal solution aggregate performance");
+
   // loss of diversity
   data_file.AddFun<double>([this]()
   {
@@ -686,11 +723,13 @@ void DiagWorld::ResetData()
   pop_opti->Reset();
   pnt_fit->Reset();
   pnt_opti->Reset();
+  pop_str->Reset();
 
   // reset all positon ids
   elite_pos = config.POP_SIZE();
   comm_pos = config.POP_SIZE();
   opti_pos = config.POP_SIZE();
+  strk_pos = config.POP_SIZE();
 
   // reset all vectors/maps holding current gen data
   fit_vec.clear();
@@ -740,9 +779,11 @@ void DiagWorld::RecordData()
     Org & org = *pop[i];
     pop_fit->Add(org.GetAggregate());
     pop_opti->Add(org.GetCount());
+    pop_str->Add(org.GetStreak());
   }
   emp_assert(pop_fit->GetCount() == config.POP_SIZE());
   emp_assert(pop_opti->GetCount() == config.POP_SIZE());
+  emp_assert(pop_str->GetCount() == config.POP_SIZE());
 
   // get parent data
   emp_assert(parent_vec.size() == config.POP_SIZE());
@@ -765,6 +806,9 @@ void DiagWorld::RecordData()
 
   opti_pos = FindOptimized();
   emp_assert(opti_pos != config.POP_SIZE());
+
+  strk_pos = FindStreak();
+  emp_assert(strk_pos != config.POP_SIZE());
 
   /// fill vectors & map
   emp_assert(fit_vec.size() == config.POP_SIZE()); // should be set already
@@ -853,6 +897,14 @@ void DiagWorld::Tournament()
 void DiagWorld::FitnessSharing()
 {
   std::cout << "Setting selection scheme: FitnessSharing" << std::endl;
+  std::cout << "Fitness Sharing applied on: ";
+  if(!config.FIT_APPLI()){
+    std::cout << "Genome" << std::endl;
+  }
+  else
+  {
+    std::cout << "Phenotype" << std::endl;
+  }
 
   select = [this]()
   {
@@ -874,10 +926,11 @@ void DiagWorld::FitnessSharing()
       return parent;
     }
 
-    gmatrix_t genomes = PopGenomes();
+    // are we using genomes or phenotypes for similarity comparison?
+    gmatrix_t comps = (config.FIT_APPLI()) ? PopFitMat() : PopGenomes();
 
     // generate distance matrix + fitness transformation
-    fmatrix_t dist_mat = selection->SimilarityMatrix(genomes, config.PNORM_EXP());
+    fmatrix_t dist_mat = selection->SimilarityMatrix(comps, config.PNORM_EXP());
     score_t tscore = selection->FitnessSharing(dist_mat, fit_vec, config.FIT_ALPHA(), config.FIT_SIGMA());
 
     // select parent ids
@@ -1037,6 +1090,9 @@ void DiagWorld::Exploitation()
     org.SetOptimal(opti);
     org.CountOptimized();
 
+    // set streak
+    org.CalcStreak();
+
     return org.GetAggregate();
   };
 
@@ -1061,6 +1117,9 @@ void DiagWorld::StructuredExploitation()
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
     org.CountOptimized();
+
+    // set streak
+    org.CalcStreak();
 
     return org.GetAggregate();
   };
@@ -1087,6 +1146,9 @@ void DiagWorld::StrongEcology()
     org.SetOptimal(opti);
     org.CountOptimized();
 
+    // set streak
+    org.CalcStreak();
+
     return org.GetAggregate();
   };
 
@@ -1112,6 +1174,9 @@ void DiagWorld::Exploration()
     org.SetOptimal(opti);
     org.CountOptimized();
 
+    // set streak
+    org.CalcStreak();
+
     return org.GetAggregate();
   };
 
@@ -1136,6 +1201,9 @@ void DiagWorld::WeakEcology()
     optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
     org.SetOptimal(opti);
     org.CountOptimized();
+
+    // set streak
+    org.CalcStreak();
 
     return org.GetAggregate();
   };
@@ -1183,7 +1251,7 @@ size_t DiagWorld::FindElite()
   // find max value position
   auto elite_it = std::max_element(fit_vec.begin(), fit_vec.end());
 
-  return std::distance(fit_vec.begin(), elite_it);;
+  return std::distance(fit_vec.begin(), elite_it);
 }
 
 size_t DiagWorld::FindCommon()
@@ -1283,10 +1351,52 @@ size_t DiagWorld::FindUniqueStart()
   return position.size();
 }
 
-// void DiagWorld::SnapshotPhylogony()
-// {
-//   sys_ptr->Snapshot(config.OUTPUT_DIR() + "phylo_" + emp::to_string(GetUpdate()) + ".csv");
-// }
+size_t DiagWorld::FindStreak()
+{
+  // quick checks
+  emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
+  emp_assert(strk_pos == config.POP_SIZE());
+
+  // get all solution streaks & find max
+  size_t maxx = 0;
+  for(size_t i = 0; i < pop.size(); ++i)
+  {
+    const Org & org = *pop[i];
+
+    if(maxx < org.GetStreak())
+    {
+      maxx = org.GetStreak();
+    }
+  }
+
+  // collect all solutions with max streak
+  ids_t candidate;
+  for(size_t i = 0; i < pop.size(); ++i)
+  {
+    const Org & org = *pop[i];
+
+    if(maxx == org.GetStreak())
+    {
+      candidate.push_back(i);
+    }
+  }
+
+  // find highest performer from existing candiates
+  double best_score = 0.0;
+  size_t best_org = 0;
+  for(size_t i = 0; i < candidate.size(); i++)
+  {
+    const Org & org = *pop[candidate[i]];
+
+    if(best_score < org.GetAggregate())
+    {
+      best_score = org.GetAggregate();
+      best_org = candidate[i];
+    }
+  }
+
+  return best_org;
+}
 
 
 ///< helper functions

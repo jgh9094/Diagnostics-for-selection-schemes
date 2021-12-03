@@ -32,6 +32,7 @@ class Org
       emp_assert(genome.size() == 0); emp_assert(M == 0);
       M = _m;
       start_pos = _m;
+      streak = _m;
       genome.resize(_m, START_DB);
     }
 
@@ -42,6 +43,7 @@ class Org
       emp_assert(genome.size() == 0); emp_assert(M == 0);
       M = _g.size();
       start_pos = _g.size();
+      streak = _g.size();
       genome.resize(M);
       std::copy(_g.begin(), _g.end(), genome.begin());
     }
@@ -65,6 +67,8 @@ class Org
     optimal_t & GetOptimal() {emp_assert(opti); return optimal;}
     // get const aggregate fitness
     double GetAggregate() {emp_assert(aggregated); return agg_score;}
+    // get const aggregate fitness
+    double GetAggregate()const {emp_assert(aggregated); return agg_score;}
     // get clone bool
     bool GetClone() const {emp_assert(0 < genome.size()); return clone;}
     // get optimal
@@ -73,6 +77,10 @@ class Org
     size_t GetM() {emp_assert(0 < M); return M;}
     // get start position
     size_t GetStart() {emp_assert(start_pos != M); return start_pos;}
+    // get streak count
+    size_t GetStreak() {emp_assert(streak != M); return streak;}
+    // get streak count
+    size_t GetStreak() const {emp_assert(streak != M); return streak;}
     // Are we optimized at this objective?
     bool OptimizedAt(const size_t obj);
     // get scored bool
@@ -83,6 +91,8 @@ class Org
     bool GetAggregated() {return aggregated;}
     // get counted bool
     bool GetCounted() {return counted;}
+    // get streak bool
+    bool GetStreaked() {return streaked;}
 
     ///< setters
 
@@ -130,6 +140,14 @@ class Org
       start_pos = s_;
     }
 
+    // set the starting position
+    void SetStreak(size_t s_)
+    {
+      emp_assert(!streaked); emp_assert(0 < M);
+      streaked = true;
+      streak = s_;
+    }
+
     ///< functions to calculate scores and related data
 
     /**
@@ -162,6 +180,14 @@ class Org
     size_t StartPosition();
 
 
+    /**
+     * Find Maximum Streak
+     *
+     * Find the biggest streak.
+     */
+    size_t CalcStreak();
+
+
     ///< functions related to the birth of an organism
 
     /**
@@ -184,7 +210,7 @@ class Org
      * @param a aggregate score recieved
      *
     */
-    void Inherit(const score_t & s, const optimal_t & o, const size_t c, const double a, const size_t st);
+    void Inherit(const score_t & s, const optimal_t & o, const size_t c, const double a, const size_t st, const size_t sr);
 
     /**
      * Me Clone function:
@@ -216,6 +242,11 @@ class Org
     double agg_score = 0.0;
     // aggregate calculate?
     bool aggregated = false;
+
+    // streak count
+    size_t streak = 0;
+    // streak calculated?
+    bool streaked = false;
 
     // Number of genes in genome
     size_t M = 0;
@@ -278,6 +309,35 @@ size_t Org::StartPosition()
   return start_pos;
 }
 
+size_t Org::CalcStreak()
+{
+  // quick checks
+  emp_assert(!streaked); emp_assert(0 < M);
+  emp_assert(score.size() == M);
+
+  // get longest streak
+  size_t count = 0;
+  size_t max_cnt = 0;
+  for(auto & s : score)
+  {
+    if(s > 0.0)
+    {
+      count++;
+    }
+    else
+    {
+      if(count > max_cnt)
+      {
+        max_cnt = count;
+      }
+      count = 0;
+    }
+  }
+
+  streak = max_cnt;
+
+  return streak;
+}
 
 ///< functions related to the birth of an organism
 
@@ -310,7 +370,7 @@ void Org::Reset()
   clone = false;
 }
 
-void Org::Inherit(const score_t & s, const optimal_t & o, const size_t c, const double a, const size_t st)
+void Org::Inherit(const score_t & s, const optimal_t & o, const size_t c, const double a, const size_t st, const size_t sr)
 {
   // quick checks
   emp_assert(0 < M); emp_assert(0 < genome.size()); emp_assert(clone);
@@ -321,6 +381,7 @@ void Org::Inherit(const score_t & s, const optimal_t & o, const size_t c, const 
   SetCount(c);
   SetAggregate(a);
   SetStart(st);
+  SetStreak(sr);
 }
 
 #endif

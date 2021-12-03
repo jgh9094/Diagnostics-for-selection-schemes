@@ -14,7 +14,7 @@ EMP_BUILD_CONFIG(DiaConfig,
   VALUE(ACCURACY,            double,      0.99,      "Accuracy percentage needed to be considered an optimal trait"),
   VALUE(CREDIT,              double,      0.00,      "Maximum credit a solution can get on an objective if applicable"),
   VALUE(OBJECTIVE_CNT,       size_t,       100,      "Number of traits an organism has"),
-  VALUE(SELECTION,           size_t,         5,      "Which selection are we doing? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n"
+  VALUE(SELECTION,           size_t,         0,      "Which selection are we doing? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n"
                                                      "3: Novelty Aggregate\n4: Espilon Lexicase\n5: Novelty Euclidean"),
   VALUE(DIAGNOSTIC,          size_t,         0,      "Which diagnostic are we doing? \n0: Exploitation\n1: Structured Exploitation\n"
                                                      "2: Strong Ecology \n3: Exploration \n4: Weak Ecology"),
@@ -29,6 +29,7 @@ EMP_BUILD_CONFIG(DiaConfig,
   VALUE(TOUR_SIZE,        size_t,             8,       "Parameter estiamte for tournament size."),
   VALUE(FIT_SIGMA,        double,           0.0,       "Parameter estiamte for proportion of similarity threshold sigma (based on maximum distance between solutions)."),
   VALUE(FIT_ALPHA,        double,           1.0,       "Parameter estiamte for penalty function shape alpha."),
+  VALUE(FIT_APPLI,        bool,           false,       "Fitness sharing applied: 0->Genome, 1->Phenotype"),
   VALUE(PNORM_EXP,        double,           2.0,       "Paramter we are using for the p-norm function."),
   VALUE(NOVEL_K,          size_t,            10,       "Parameter estiamte k-nearest neighbors."),
   VALUE(LEX_EPS,          double,           1.0,       "Parameter estimate for lexicase epsilon."),
