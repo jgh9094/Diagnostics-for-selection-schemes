@@ -12,6 +12,7 @@
 #include <set>
 #include <string>
 #include <algorithm>
+#include <cmath>
 
 ///< empirical headers
 #include "Evolve/World.h"
@@ -320,15 +321,15 @@ void DiagWorld::SetMutation()
         const double mut = random_ptr->GetRandNormal(config.MEAN(), config.STD());
 
         // mutation puts objective above target
-        if(config.TARGET() < genome[i] + mut)
+        if(config.UPPER_BND() < genome[i] + mut)
         {
-          // we wrap it back around target value (discuss with Charles)
+          // we wrap it back around target value
           genome[i] = target[i] - (genome[i] + mut - target[i]);
         }
-        // mutation puts objective in the negatives (discuss with Charles)
-        else if(genome[i] + mut < 0.0)
+        // mutation puts objective in the negatives 
+        else if(genome[i] + mut < config.LOWER_BND())
         {
-          genome[i] = 0.0;
+          genome[i] = std::abs(genome[i] + mut) + config.LOWER_BND();
         }
         else
         {
