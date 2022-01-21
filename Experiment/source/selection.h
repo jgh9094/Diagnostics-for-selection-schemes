@@ -40,12 +40,45 @@ class Selection
     using sorted_t = emp::vector<std::pair<size_t,double>>;
     // vector of double vectors for K neighborhoods
     using neigh_t = emp::vector<score_t>;
+    // vector of vector size_t for Pareto grouping
+    using pareto_g_t = emp::vector<emp::vector<size_t>>;
+    // pairing of position_id and fitness associated with id
+    using id_f_t = std::pair<size_t,double>;
 
 
   public:
 
     Selection(emp::Ptr<emp::Random> rng = nullptr) : random(rng) {emp_assert(rng);}
 
+    ///< sanity check functions
+
+    // make sure all ids are unique
+    template <class T>
+    bool ParetoUnique(const emp::vector<emp::vector<T>> & v, const size_t & size)
+    {
+      std::set<T> check;
+      for(const emp::vector<T> & u : v)
+      {
+        for(T x : u)
+        {
+          check.insert(x);
+        }
+      }
+
+      return size == check.size();
+    }
+
+    bool ParetoNonZero(const score_t & score)
+    {
+      for(const auto & s : score)
+      {
+        if(s==0.0)
+        {
+          return false;
+        }
+      }
+      return true;
+    }
 
     ///< helper functions
 
@@ -66,6 +99,14 @@ class Selection
       for(auto x : v) {std::cout << (double) x << ",";}
       std::cout << std::endl;
     }
+
+    // does A dominate B?
+    // Is A > B?
+    // Is A partially greater than B?
+    bool PartiallyGreater(const score_t & A, const score_t & B);
+
+    // construct a similarity matrix with current phenotypes and archive
+    fmatrix_t NoveltySimilarityMatrix(const fmatrix_t & phenos, const std::deque<score_t> & archive, const double exp);
 
 
     ///< population structure
@@ -112,6 +153,38 @@ class Selection
      */
     fitgp_t FitnessGroup(const score_t & score);
 
+    /**
+     * Pareto Front Group Structure:
+     *
+     * This function will return a vector of vectors, where
+     * each individual vector corresponds to the Pareto group that
+     * each solution belongs to. The first vector consists of the first
+     * Pareto front, and so on.
+     *
+     * @param score Vector containing all solution phenotypes.
+     *
+     * @return Vector of vector groupings.
+     */
+    pareto_g_t ParetoFrontGroups(const fmatrix_t & scores);
+
+
+    /**
+     * K-Nearest Neighbor Structure for Pairwise Euclidean Distances for Novelty Search
+     *
+     * This function will return a vector of vectors, where
+     * each individual vector corresponds to that solutions nearest neighbors.
+     * We are given a matrix with both population and archive (in that order.)
+     * We must only find neighbors for the first POP_SIZE vectors in the matrix given.
+     *
+     * In the event of ties, we take the right neighbor score.
+     *
+     * @param dmat Matrix containing the pairwise distances.
+     * @param K Size of nighborhood.
+     * @param N Number of neighborhoods we need to find
+     *
+     * @return Vector of vector scores.
+     */
+    neigh_t NoveltySearchNearestN(const fmatrix_t & dmat, const size_t K, const size_t N);
 
     ///< fitness transformation
 
@@ -162,6 +235,19 @@ class Selection
      */
     score_t Novelty(const score_t & score, const neigh_t & neigh, const size_t K);
 
+    /**
+     * Pareto Fitness Sharing:
+     *
+     * Fitness sharing is applied within grouping.
+     *
+     * @param groups  Vector containing Pareto groups (earlier ones are better).
+     * @param phenos  Vector of phenotypes
+     * @param alpha   Alpha value used for fitness sharing
+     * @param beta    Beta value used for fitness sharing
+     *
+     * @return Void.
+     */
+    score_t ParetoFitness(const pareto_g_t & groups, const fmatrix_t & phenos, const double alpha, const double sigma, const double low, const double high);
 
     ///< selector functions
 
@@ -220,6 +306,26 @@ class Selection
      * @return A single winning solution id.
      */
     size_t EpsiLexicase(const fmatrix_t & mscore, const double epsi, const size_t M);
+
+    /**
+     * Stochastic Remainder Selector:
+     *
+     * This function will implement the selector for stochastic remainder selection with replacement.
+     *
+     * We start by checking if there exist any solutions with a score greater than 0.
+     * If there isn't we assign all solutions a dummy score of 1.0, and allow seleciton to continue.
+     * If there are, then we proceed with placing them into a set (to keep them sorted high to low).
+     *
+     * After we go through each solution in the set, and divde all fitness by the population fitness mean.
+     * Next, we iterate through each solutinon and add them as parrents according the interger portion
+     * of thier fitness score. The decimal portion of their adjusted fitness is the probability of them
+     * being selected again as parent. We loop through the population until enough parents are selected.
+     *
+     * @param mscore vector of solution fitnesses.
+     *
+     * @return A vector with parent ids.
+     */
+    ids_t StochasticRemainder(const score_t & scores);
 
   private:
 
@@ -294,6 +400,7 @@ Selection::neigh_t Selection::FitNearestN(const score_t & score, const size_t K)
 
   return group;
 }
+
 Selection::fitgp_t Selection::FitnessGroup(const score_t & score)
 {
   // quick checks
@@ -364,6 +471,115 @@ Selection::neigh_t Selection::EuclideanNearestN(const fmatrix_t & dmat, const si
   return group;
 }
 
+Selection::pareto_g_t Selection::ParetoFrontGroups(const fmatrix_t & scores)
+{
+  // quick checks
+  emp_assert(0 < scores.size());
+
+  // will hold the Pareto groups
+  pareto_g_t groups;
+  // initialize current candidates
+  ids_t current(scores.size());
+  std::iota(current.begin(), current.end(), 0);
+
+  // loop through current while there are solutions to be placed
+  while(0 < current.size())
+  {
+    // holds current front
+    ids_t front;
+    // holds next iteration of candidate ids
+    ids_t next_current;
+
+    // loop through pairs for comparisons
+    for(size_t i = 0; i < current.size(); ++i)
+    {
+      bool dominated = false;
+      for(size_t j = 0; j < current.size(); ++j)
+      {
+        if(i == j) {continue;}
+
+        // check if any j dominates i
+        if(PartiallyGreater(scores[current[j]], scores[current[i]]))
+        {
+          dominated = true;
+          break;
+        }
+      }
+      // if i is not dominated by anyone we add it to the front
+      if(!dominated)
+      {
+        front.push_back(current[i]);
+      }
+      else
+      {
+        next_current.push_back(current[i]);
+      }
+    }
+
+    current.clear();
+    current = next_current;
+    groups.push_back(front);
+  }
+
+  // quick checks
+  // make sure that all ids are accounted for
+  emp_assert(ParetoUnique(groups, scores.size()));
+
+  return groups;
+}
+
+Selection::neigh_t Selection::NoveltySearchNearestN(const fmatrix_t & dmat, const size_t K, const size_t N)
+{
+// quick checks
+  emp_assert(0 < dmat.size()); emp_assert(0 < N);
+  emp_assert(K < N); emp_assert(0 <= K);
+  emp_assert(N <= dmat.size());
+
+  // create group vector returning
+  neigh_t group(N);
+
+  // iterate through the distance vector
+  for(size_t i = 0; i < N; ++i)
+  {
+    // quick checks
+    emp_assert(dmat.size() == dmat[i].size());
+
+    // container to hold distances
+    std::multiset<double> distance;
+
+    // grab values from lower diagonal
+    for(size_t j = 0; j < dmat[i].size(); ++j)
+    {
+      // ignore i == j case
+      if(i == j) {continue;}
+
+      // only look at lower diagnoal
+      if(j < i)
+      {
+        emp_assert(dmat[i][j] != ERROR_VALD);
+        distance.insert(dmat[i][j]);
+      }
+      else
+      {
+        emp_assert(dmat[j][i] != ERROR_VALD);
+        distance.insert(dmat[j][i]);
+      }
+    }
+
+    // make sure we have all the required data
+    emp_assert(distance.size() == dmat.size() - 1);
+
+    // grab the k nearest neighbors
+    auto it = distance.begin();
+    for(size_t k = 0; k < K; ++k) {group[i].push_back(*it++);}
+
+    emp_assert(group[i].size() == K);
+  }
+
+  return group;
+}
+
+
 ///< fitness transformation >///
 
 Selection::score_t Selection::FitnessSharing(const fmatrix_t & dmat, const score_t & score, const double alph, const double sig)
@@ -416,6 +632,7 @@ Selection::score_t Selection::FitnessSharing(const fmatrix_t & dmat, const score
 
   return tscore;
 }
+
 double Selection::SharingFunction(const double dist, const double sig, const double alph)
 {
   // quick checks
@@ -443,9 +660,6 @@ Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & nei
   // edge case where K == 0
   if(K == 0)
   {
-    // should never get hit
-    emp_assert(false);
-
     std::copy(score.begin(), score.end(), nscore.begin());
 
     // quick checks and return the score vector unaltered
@@ -467,11 +681,80 @@ Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & nei
 
     // calculate the average
     const double denom = static_cast<double>(K);
-
+    // std::cout << "Novel: " << numer / denom << std::endl;
     nscore[i] = numer / denom;
   }
 
   return nscore;
+}
+
+Selection::score_t Selection::ParetoFitness(const pareto_g_t & groups, const fmatrix_t & phenos, const double alpha, const double sigma, const double low, const double high)
+{
+  // quick checks
+  emp_assert(0 < groups.size()); emp_assert(0 < phenos.size());
+  emp_assert(0 < alpha); emp_assert(0 < sigma);
+  emp_assert(0 < high); emp_assert(0 < low);
+
+  // initialize starting fitnessess
+  score_t fitness(phenos.size(), 0.0);
+  double group_min = high;
+
+  // update fitness accordingly
+  for(size_t i = 0; i < groups.size(); ++i)
+  {
+    if(group_min < 0) {std::cout << "ERROR::group_min=" << group_min << std::endl; exit(-1);}
+
+    // group
+    ids_t g = groups[i];
+
+    // if g size is 1 continue
+    if(g.size() == 1)
+    {
+      // std::cout << "g.size() == 1 :: " << group_min << std::endl << std::endl;
+      fitness[g[0]] = group_min;
+      group_min-= low;
+      continue;
+    }
+
+    // collect what we need
+    score_t group_scores;
+    fmatrix_t group_phenos;
+
+    // go through each id
+    for(const size_t & id : g)
+    {
+      group_scores.push_back(group_min);
+      group_phenos.push_back(phenos[id]);
+    }
+
+    // get similarity matrix
+    fmatrix_t sim_mat = SimilarityMatrix(group_phenos, 2.0);
+    emp_assert(sim_mat.size() == g.size());
+    // apply fitness sharing
+    score_t gscores = FitnessSharing(sim_mat, group_scores, alpha, sigma);
+    emp_assert(gscores.size() == g.size());
+
+    // std::cout << std::endl;
+    // std::cout << "group " << i << ": ";
+
+    // update fitness vector
+    // score_t x;
+    for(size_t i = 0; i < g.size(); ++i)
+    {
+      // x.push_back(gscores[i]);
+      fitness[g[i]] = gscores[i];
+      if(gscores[i] < group_min) {group_min = gscores[i];}
+    }
+
+    // std::sort(x.begin(), x.end(), std::greater<double>());
+    // for(const auto & y : x) {std::cout << y << ", ";}
+    // std::cout << std::endl << std::endl;
+
+    // lower group_min by low
+    group_min -= low;
+  }
+
+  return fitness;
 }
 
 
@@ -622,6 +905,75 @@ size_t Selection::EpsiLexicase(const fmatrix_t & mscore, const double epsi, cons
   return filter[wid];
 }
 
+Selection::ids_t Selection::StochasticRemainder(const score_t & scores)
+{
+  // quick checks
+  emp_assert(0 < scores.size());
+
+  // average population fitness
+  double normalizer = std::accumulate(scores.begin(), scores.end(), 0.0);
+  normalizer /= static_cast<double>(scores.size());
+
+  // save all solutions with positions and fitness in set
+  // add transformed fitness to the set
+  std::set<id_f_t, std::function< bool(id_f_t,id_f_t)>> ordered(
+    [] (const id_f_t & lhs, const id_f_t & rhs ) { return std::get<1>(lhs) > std::get<1>(rhs); } ) ;
+
+  for(size_t i = 0; i < scores.size(); ++i)
+  {
+    if(0.0 < scores[i] / normalizer)
+    {
+      ordered.insert(std::make_pair(i, scores[i] / normalizer));
+    }
+  }
+
+  // make sure we have solutions with scores to populate
+  if(ordered.size() == 0)
+  {
+    // parents
+    ids_t parents(scores.size());
+    std::iota(parents.begin(), parents.end(), 0);
+    return parents;
+  }
+
+  // parents
+  ids_t parents;
+  emp_assert(0 == parents.size());
+
+  // continue to push parents back until we are done
+  while (parents.size() != scores.size())
+  {
+    // go through and do expected insertions
+    for(const auto & p : ordered)
+    {
+      // sol_id
+      size_t id = std::get<0>(p);
+      // sol_fitness
+      double fi = std::get<1>(p), intPart, fractPart;;
+      fractPart = modf(fi, &intPart);
+
+      // while we can keep adding parents keep going
+      for(size_t i = 0; i < static_cast<size_t>(intPart); ++i)
+      {
+        parents.push_back(id);
+        if(parents.size() == scores.size()) {break;}
+      }
+
+      if(random->P(fractPart) && parents.size() < scores.size())
+      {
+        parents.push_back(id);
+      }
+
+      if(parents.size() == scores.size()) {break;}
+    }
+  }
+  emp_assert(parents.size() == scores.size());
+
+
+  return parents;
+}
+
+
 ///< helper functions
 
 double Selection::Pnorm(const score_t & x, const score_t & y, const double exp)
@@ -657,6 +1009,39 @@ Selection::fmatrix_t Selection::SimilarityMatrix(const gmatrix_t & genome, const
   }
 
   return similar;
+}
+
+bool Selection::PartiallyGreater(const score_t & A, const score_t & B)
+{
+  //quick checks
+  emp_assert(A.size() == B.size());
+
+  // check if A > B
+  bool strict = false;
+  for(size_t i = 0; i < A.size(); ++i)
+  {
+    // check if A[i] < B[i]
+    if(A[i] < B[i]) {return false;}
+
+    // the strictly greater position in A is found
+    else if (A[i] > B[i]) {strict = true;}
+  }
+
+  return strict;
+}
+
+Selection::fmatrix_t Selection::NoveltySimilarityMatrix(const fmatrix_t & phenos, const std::deque<score_t> & archive, const double exp)
+{
+  // quick checks
+  emp_assert(0 < phenos.size()); emp_assert(0 < exp);
+
+  // will hold combined pop phenos and archive of pheno
+  fmatrix_t combo;
+
+  for(size_t i = 0; i < phenos.size(); ++i) {combo.push_back(phenos[i]);}
+  for(size_t i = 0; i < archive.size(); ++i) {combo.push_back(archive[i]);}
+
+  return SimilarityMatrix(combo,exp);
 }
 
 #endif
