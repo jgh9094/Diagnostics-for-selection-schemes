@@ -13,6 +13,7 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <deque>
 
 ///< empirical headers
 #include "Evolve/World.h"
@@ -50,6 +51,8 @@ class DiagWorld : public emp::World<Org>
     using fitgp_t = std::map<double, ids_t, std::greater<double>>;
     // vector of double vectors for K neighborhoods
     using neigh_t = emp::vector<score_t>;
+    // vector of vector size_t for Pareto grouping
+    using pareto_t = emp::vector<emp::vector<size_t>>;
 
     ///< world related types
 
@@ -143,6 +146,10 @@ class DiagWorld : public emp::World<Org>
 
     void EpsilonLexicase();
 
+    void NonDominatedSorting();
+
+    void NoveltySearch();
+
 
     ///< evaluation function implementations
 
@@ -182,6 +189,10 @@ class DiagWorld : public emp::World<Org>
     // create matrix of population genomes
     gmatrix_t PopGenomes();
 
+    // update archive
+    // return true if archive changes
+    bool ArchiveUpdate(const score_t & score, const fmatrix_t & dmat);
+
 
   private:
     // experiment configurations
@@ -193,6 +204,10 @@ class DiagWorld : public emp::World<Org>
     score_t fit_vec;
     // vector holding parent solutions selected by selection scheme
     ids_t parent_vec;
+    // novelty minimum
+    double pmin = 0.0;
+    // generations since solution added to archive
+    size_t archive_gens = 0;
 
 
     // evaluation lambda we set
@@ -237,6 +252,10 @@ class DiagWorld : public emp::World<Org>
     size_t strk_pos;
     // common solution dictionary
     como_t common;
+    // Pareto group count
+    size_t pareto_cnt = 0;
+    // novelty search archive
+    std::deque<score_t> archive;
 };
 
 ///< functions called to setup the world
@@ -321,15 +340,16 @@ void DiagWorld::SetMutation()
         const double mut = random_ptr->GetRandNormal(config.MEAN(), config.STD());
 
         // mutation puts objective above target
-        if(config.UPPER_BND() < genome[i] + mut)
+        if(config.TARGET() < genome[i] + mut)
         {
           // we wrap it back around target value
           genome[i] = target[i] - (genome[i] + mut - target[i]);
         }
-        // mutation puts objective in the negatives 
+        // mutation puts objective in the negatives
         else if(genome[i] + mut < config.LOWER_BND())
         {
-          genome[i] = std::abs(genome[i] + mut) + config.LOWER_BND();
+          // genome[i] = std::abs(genome[i] + mut) + config.LOWER_BND();
+          genome[i] = config.LOWER_BND();
         }
         else
         {
@@ -379,6 +399,14 @@ void DiagWorld::SetSelection()
 
     case 5: // novelty euclidean
       NoveltyEuclidean();
+      break;
+
+    case 6: // Non dominated sorting
+      NonDominatedSorting();
+      break;
+
+    case 7: // Non dominated sorting
+      NoveltySearch();
       break;
 
     default:
@@ -685,6 +713,41 @@ void DiagWorld::SetDataTracking()
     return FindUniqueStart();
   }, "uni_str_pos", "Number of unique optimized positions in the population!");
 
+  // Pareto group count
+  data_file.AddFun<size_t>([this]()
+  {
+    if(config.SELECTION() == 6)
+    {
+      emp_assert(pareto_cnt != 0);
+      return pareto_cnt;
+    }
+    else
+    {
+      emp_assert(pareto_cnt == 0);
+      return pareto_cnt;
+    }
+  }, "pareto_cnt", "Number of Pareto groups generated!");
+
+  // archive group count
+  data_file.AddFun<size_t>([this]()
+  {
+    if(config.SELECTION() == 7)
+    {
+      return archive.size();
+    }
+    else
+    {
+      emp_assert(archive.size() == 0);
+      return archive.size();
+    }
+  }, "archive_cnt", "Number phenotypes in the archive!");
+
+  // archive group count
+  data_file.AddFun<double>([this]()
+  {
+    return pmin;
+  }, "pmin", "pmin used for archive approval!");
+
   data_file.PrintHeaderKeys();
 
   // create elite csv plus headers
@@ -707,9 +770,21 @@ void DiagWorld::PopulateWorld()
   std::cout << "------------------------------------------" << std::endl;
   std::cout << "Populating world with initial solutions..." << std::endl;
 
-  // Fill the workd with requested population size!
-  Org org(config.OBJECTIVE_CNT());
-  Inject(org.GetGenome(), config.POP_SIZE());
+  // random starting organisms
+  if(config.START())
+  {
+    for(int i = 0; i < config.POP_SIZE(); ++i)
+    {
+      genome_t g = emp::RandomDoubleVector(*random_ptr, config.OBJECTIVE_CNT(), config.LOWER_BND(), config.UPPER_BND());
+      Inject(g,1);
+    }
+  }
+  // same starting organisms
+  else
+  {
+    Org org(config.OBJECTIVE_CNT());
+    Inject(org.GetGenome(), config.POP_SIZE());
+  }
 
   std::cout << "Initialing world complete!" << std::endl;
 }
@@ -731,6 +806,7 @@ void DiagWorld::ResetData()
   comm_pos = config.POP_SIZE();
   opti_pos = config.POP_SIZE();
   strk_pos = config.POP_SIZE();
+  pareto_cnt = 0;
 
   // reset all vectors/maps holding current gen data
   fit_vec.clear();
@@ -864,7 +940,7 @@ void DiagWorld::MuLambda()
     // group population by fitness
     fitgp_t group = selection->FitnessGroup(fit_vec);
 
-    return selection->MLSelect(config.MU(), config.POP_SIZE(), group);
+    return selection->MLSelect(config.TRUNC_SIZE(), config.POP_SIZE(), group);
   };
 
   std::cout << "MuLambda selection scheme set!" << std::endl;
@@ -916,15 +992,8 @@ void DiagWorld::FitnessSharing()
     // If we get asked to do standard tournament selection with fitness sharing enabled
     if(config.FIT_SIGMA() == 0.0)
     {
-      // select parent ids
-      ids_t parent(pop.size());
-
-      for(size_t i = 0; i < parent.size(); ++i)
-      {
-        parent[i] = selection->Tournament(config.TOUR_SIZE(), fit_vec);
-      }
-
-      return parent;
+      // do stochastic remainder selection with unmodified fitness
+      return selection->StochasticRemainder(fit_vec);;
     }
 
     // are we using genomes or phenotypes for similarity comparison?
@@ -934,15 +1003,7 @@ void DiagWorld::FitnessSharing()
     fmatrix_t dist_mat = selection->SimilarityMatrix(comps, config.PNORM_EXP());
     score_t tscore = selection->FitnessSharing(dist_mat, fit_vec, config.FIT_ALPHA(), config.FIT_SIGMA());
 
-    // select parent ids
-    ids_t parent(pop.size());
-
-    for(size_t i = 0; i < parent.size(); ++i)
-    {
-      parent[i] = selection->Tournament(config.TOUR_SIZE(), tscore);
-    }
-
-    return parent;
+    return selection->StochasticRemainder(tscore);
   };
 
   std::cout << "Fitness sharing selection scheme set!" << std::endl;
@@ -1067,6 +1128,104 @@ void DiagWorld::EpsilonLexicase()
   };
 
   std::cout << "Epsilon Lexicase selection scheme set!" << std::endl;
+}
+
+void DiagWorld::NonDominatedSorting()
+{
+  std::cout << "Setting selection scheme: NonDominatedSorting" << std::endl;
+
+  select = [this]()
+  {
+    // quick checks
+    emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
+    emp_assert(0 < pop.size()); emp_assert(pareto_cnt == 0);
+
+    // select parent ids
+    ids_t parent(pop.size());
+
+    // get Pareto groups with ids
+    fmatrix_t matrix = PopFitMat();
+    pareto_t pgroups = selection->ParetoFrontGroups(matrix);
+
+    // construct fitnesses
+    // ParetoFitness
+    score_t fitess = selection->ParetoFitness(pgroups, matrix, config.PAT_ALP(), config.PAT_SIG(), config.PAT_DFT(), config.PAT_MAX());
+
+    // track data
+    pareto_cnt = pgroups.size();
+
+    return selection->StochasticRemainder(fitess);
+  };
+
+  std::cout << "NonDominated Sorting selection scheme set!" << std::endl;
+}
+
+void DiagWorld::NoveltySearch()
+{
+  std::cout << "Setting selection scheme: NoveltySearch" << std::endl;
+  std::cout << "Starting PMIN: " << config.NOVEL_PMIN() << std::endl;
+  // save starting pmin
+  pmin = config.NOVEL_PMIN();
+
+  select = [this]()
+  {
+    // quick checks
+    emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
+    emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
+
+    // If we get asked to do standard tournament selection with novelty euclidean selected
+    if(config.NOVEL_K() == 0)
+    {
+      // select parent ids
+      ids_t parent(pop.size());
+
+      for(size_t i = 0; i < parent.size(); ++i)
+      {
+        parent[i] = selection->Tournament(config.TOUR_SIZE(), fit_vec);
+      }
+
+      return parent;
+    }
+
+    // generate distance matrix
+    fmatrix_t fit_mat = PopFitMat();
+    fmatrix_t dist_mat = selection->NoveltySimilarityMatrix(fit_mat, archive, config.PNORM_EXP());
+
+    // generate neighbors for distances
+    neigh_t neighborhood = selection->NoveltySearchNearestN(dist_mat, config.NOVEL_K(), config.POP_SIZE());
+    emp_assert(neighborhood.size() == config.POP_SIZE());
+
+    // generate 0 vector for novelty scoring
+    score_t zeros(pop.size(), 0.0);
+
+    // transform original fitness into novelty fitness
+    score_t tscore = selection->Novelty(zeros, neighborhood, config.NOVEL_K());
+
+    // check if we need to reduce pmin
+    if(archive_gens == config.NOVEL_GEN())
+    {
+      archive_gens = 0;
+      pmin -= pmin * config.NOVEL_DOWN();
+    }
+
+    // archive tracking and updated gen count
+    if(!ArchiveUpdate(tscore, fit_mat))
+    {
+      archive_gens++;
+    }
+
+    // select parent ids
+    ids_t parent(pop.size());
+
+    for(size_t i = 0; i < parent.size(); ++i)
+    {
+      parent[i] = selection->Tournament(config.TOUR_SIZE(), tscore);
+    }
+
+    return parent;
+  };
+
+  std::cout << "Novelty Search - Archive selection scheme set!" << std::endl;
 }
 
 
@@ -1439,6 +1598,43 @@ DiagWorld::gmatrix_t DiagWorld::PopGenomes()
   }
 
   return matrix;
+}
+
+bool DiagWorld::ArchiveUpdate(const score_t & score, const fmatrix_t & dmat)
+{
+  //quick checks
+  emp_assert(0 < score.size()); emp_assert(0 < dmat.size());
+  emp_assert(score.size() == dmat.size());
+
+  // archive insertion count
+  size_t insert = 0;
+
+  // check each solution novelty score
+  for(size_t i = 0; i < score.size(); ++i)
+  {
+    // insert solution into archive is threshold met or luck
+    // if(score[i] > pmin || random_ptr->P(config.NOVEL_RI()))
+    if(random_ptr->P(config.NOVEL_RI()))
+    {
+      // ++insert;
+      archive.push_back(dmat[i]);
+
+      if(config.NOVEL_CAP() < archive.size() && config.NOVEL_CQS()) {archive.pop_front();}
+    }
+    else if(score[i] > pmin)
+    {
+      ++insert;
+      archive.push_back(dmat[i]);
+      if(config.NOVEL_CAP() < archive.size() && config.NOVEL_CQS()) {archive.pop_front();}
+    }
+  }
+
+  if(4 < insert)
+  {
+    pmin += pmin * config.NOVEL_UP();
+  }
+
+  return 0 < insert;
 }
 
 #endif
