@@ -1,0 +1,217 @@
+#!/bin/bash
+########## Define Resources Needed with SBATCH Lines ##########
+
+#SBATCH --time=00:20:00              # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --array=1-24                  # number of jobs being created, each with its array id
+#SBATCH --mem=10G                    # memory required per node - amount of memory (in gigs)
+#SBATCH --job-name run-chk           # you can give your job a name for easier identification (same as -J)
+#SBATCH --account=devolab            # research group account being used
+
+##################################
+# Data Directory
+##################################
+DATA_DIR=/mnt/scratch/herna383/DIAGNOSTICS-PROJ/
+
+##################################
+# Setup relevant directories
+# Previously used ones will be commented out
+##################################
+SLURM_ID=$((SLURM_ARRAY_TASK_ID))
+
+##################################
+# Setup selection scheme
+##################################
+MULAMBDA=0
+TOURNAMENT=1
+FITSHARING=2
+NOVELTY=3
+LEXICASE=4
+NOVEL_EUCLID=5
+
+##################################
+# Setup diagnostic
+##################################
+EXPLOITATION=0
+STRUCTURED_EXPLOITATION=1
+STRONG_ECOLOGY=2
+EXPLORATION=3
+WEAK_ECOLOGY=4
+
+##################################
+# TREATMENTS
+##################################
+# MULAMBDA REPLICATES
+TREATMENT__1__1=1
+TREATMENT__1__2=2
+TREATMENT__1__3=3
+TREATMENT__1__4=4
+
+# TOURNAMENTS REPLICATES
+TREATMENT__2__1=5
+TREATMENT__2__2=6
+TREATMENT__2__3=7
+TREATMENT__2__4=8
+
+# LEXICASE REPLICATES
+TREATMENT__3__1=9
+TREATMENT__3__2=10
+TREATMENT__3__3=11
+TREATMENT__3__4=12
+
+# NOVELTY REPLICATES
+TREATMENT__4__1=13
+TREATMENT__4__2=14
+TREATMENT__4__3=15
+TREATMENT__4__4=16
+
+# NOVELTY EUCLIDEAN REPLICATES
+TREATMENT__5__1=17
+TREATMENT__5__2=18
+TREATMENT__5__3=19
+TREATMENT__5__4=20
+
+# FITNESS SHARING REPLICATES
+TREATMENT__6__1=21
+TREATMENT__6__2=22
+TREATMENT__6__3=23
+TREATMENT__6__4=24
+
+##################################
+# Other variables needed
+##################################
+OBJECTIVE_CNT=100
+GENERATIONS=50000
+ACCURACY_DIR=99
+
+####################################################################
+
+if [ ${SLURM_ID} -eq ${TREATMENT__1__1} ] ; then
+  SECOND_PARAM=0
+  OFFSET=9000
+  DIAGNOSTIC=${EXPLOITATION}
+  SELECTION=${MULAMBDA}
+elif [ ${SLURM_ID} -eq ${TREATMENT__1__2} ] ; then
+  SECOND_PARAM=0
+  OFFSET=11000
+  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
+  SELECTION=${MULAMBDA}
+elif [ ${SLURM_ID} -eq ${TREATMENT__1__3} ] ; then
+  SECOND_PARAM=0
+  OFFSET=8000
+  DIAGNOSTIC=${WEAK_ECOLOGY}
+  SELECTION=${MULAMBDA}
+elif [ ${SLURM_ID} -eq ${TREATMENT__1__4} ] ; then
+  SECOND_PARAM=0
+  OFFSET=10000
+  DIAGNOSTIC=${EXPLORATION}
+  SELECTION=${MULAMBDA}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__1} ] ; then
+  SECOND_PARAM=0
+  OFFSET=17000
+  DIAGNOSTIC=${EXPLOITATION}
+  SELECTION=${TOURNAMENT}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__2} ] ; then
+  SECOND_PARAM=0
+  OFFSET=19000
+  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
+  SELECTION=${TOURNAMENT}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__3} ] ; then
+  SECOND_PARAM=0
+  OFFSET=16000
+  DIAGNOSTIC=${WEAK_ECOLOGY}
+  SELECTION=${TOURNAMENT}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__4} ] ; then
+  SECOND_PARAM=0
+  OFFSET=18000
+  DIAGNOSTIC=${EXPLORATION}
+  SELECTION=${TOURNAMENT}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__1} ] ; then
+  SECOND_PARAM=0
+  OFFSET=5000
+  DIAGNOSTIC=${EXPLOITATION}
+  SELECTION=${LEXICASE}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__2} ] ; then
+  SECOND_PARAM=0
+  OFFSET=7000
+  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
+  SELECTION=${LEXICASE}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__3} ] ; then
+  SECOND_PARAM=0
+  OFFSET=4000
+  DIAGNOSTIC=${WEAK_ECOLOGY}
+  SELECTION=${LEXICASE}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__4} ] ; then
+  SECOND_PARAM=0
+  OFFSET=6000
+  DIAGNOSTIC=${EXPLORATION}
+  SELECTION=${LEXICASE}
+elif [ ${SLURM_ID} -eq ${TREATMENT__4__1} ] ; then
+  SECOND_PARAM=8
+  OFFSET=12000
+  DIAGNOSTIC=${EXPLOITATION}
+  SELECTION=${NOVELTY}
+elif [ ${SLURM_ID} -eq ${TREATMENT__4__2} ] ; then
+  SECOND_PARAM=8
+  OFFSET=14000
+  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
+  SELECTION=${NOVELTY}
+elif [ ${SLURM_ID} -eq ${TREATMENT__4__3} ] ; then
+  SECOND_PARAM=8
+  OFFSET=15000
+  DIAGNOSTIC=${WEAK_ECOLOGY}
+  SELECTION=${NOVELTY}
+elif [ ${SLURM_ID} -eq ${TREATMENT__4__4} ] ; then
+  SECOND_PARAM=8
+  OFFSET=13000
+  DIAGNOSTIC=${EXPLORATION}
+  SELECTION=${NOVELTY}
+elif [ ${SLURM_ID} -eq ${TREATMENT__5__1} ] ; then
+  SECOND_PARAM=8
+  OFFSET=12000
+  DIAGNOSTIC=${EXPLOITATION}
+  SELECTION=${NOVEL_EUCLID}
+elif [ ${SLURM_ID} -eq ${TREATMENT__5__2} ] ; then
+  SECOND_PARAM=8
+  OFFSET=14000
+  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
+  SELECTION=${NOVEL_EUCLID}
+elif [ ${SLURM_ID} -eq ${TREATMENT__5__3} ] ; then
+  SECOND_PARAM=8
+  OFFSET=15000
+  DIAGNOSTIC=${WEAK_ECOLOGY}
+  SELECTION=${NOVEL_EUCLID}
+elif [ ${SLURM_ID} -eq ${TREATMENT__5__4} ] ; then
+  SECOND_PARAM=8
+  OFFSET=13000
+  DIAGNOSTIC=${EXPLORATION}
+  SELECTION=${NOVEL_EUCLID}
+elif [ ${SLURM_ID} -eq ${TREATMENT__6__1} ] ; then
+  SECOND_PARAM=8
+  OFFSET=0
+  DIAGNOSTIC=${EXPLOITATION}
+  SELECTION=${FITSHARING}
+elif [ ${SLURM_ID} -eq ${TREATMENT__6__2} ] ; then
+  SECOND_PARAM=8
+  OFFSET=2000
+  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
+  SELECTION=${FITSHARING}
+elif [ ${SLURM_ID} -eq ${TREATMENT__6__3} ] ; then
+  SECOND_PARAM=8
+  OFFSET=3000
+  DIAGNOSTIC=${WEAK_ECOLOGY}
+  SELECTION=${FITSHARING}
+elif [ ${SLURM_ID} -eq ${TREATMENT__6__4} ] ; then
+  SECOND_PARAM=8
+  OFFSET=1000
+  DIAGNOSTIC=${EXPLORATION}
+  SELECTION=${FITSHARING}
+else
+  echo "${SEED} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
+fi
+
+####################################################################
+
+
+echo "python3 ../../../DataTools/Checker/run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
+
+python3 ../../../DataTools/Checker/run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${OFFSET} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
