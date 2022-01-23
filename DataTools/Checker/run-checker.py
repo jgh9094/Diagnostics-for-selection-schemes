@@ -264,7 +264,7 @@ def main():
     data_dir = args.data_directory.strip()
     print('Data directory=',data_dir)
     selection = args.selection
-    print('Selection scheme=', SetSelection(selection))
+    print('Selection scheme=', SetSelection(selection,args.param_two))
     diagnostic = args.diagnostic
     print('Diagnostic=',SetDiagnostic(diagnostic))
     offset = args.seed_offset
