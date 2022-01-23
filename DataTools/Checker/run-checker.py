@@ -151,7 +151,7 @@ def SetSecondParam(s, pt):
     elif s == 2:
         return 'TOUR_' + pt + '/'
     elif s == 3:
-        return 'TOUR_' + pt + '/'
+        return ''
     elif s == 4:
         return ''
     elif s == 5:
