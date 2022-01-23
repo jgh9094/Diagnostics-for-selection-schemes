@@ -24,29 +24,38 @@ import sys
 import os
 
 # variables we are testing for each replicate range
-MU_LIST = [1,2,4,8,16,32,64,128,256,512]
-TR_LIST = [1,2,4,8,16,32,64,128,256,512]
-LX_LIST = [0.0,0.1,0.3,0.6,1.2,2.5,5.0,10.0]
+TR_LIST = ['1','2','4','8','16','32','64','128','256','512']
+TS_LIST = ['1','2','4','8','16','32','64','128','256','512']
+LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
 FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-NS_LIST = [0,1,2,4,8,15,30,60]
+NS_LIST = ['0','1','2','4','8','15','30','60']
 # seed experiements replicates range
 SMAX = 50
 
 # return appropiate string dir name (based off run.sb file naming system)
-def SetSelection(s):
+def SetSelection(s,p):
     # case by case
     if s == 0:
-        return 'MULAMBDA'
+        return 'TRUNCATION'
     elif s == 1:
         return 'TOURNAMENT'
     elif s == 2:
-        return 'FITSHARING'
+        if p == '0':
+            return 'FITSHARING_G'
+        elif p == '1':
+            return 'FITSHARING_P'
+        else:
+            sys.exit("UNKNOWN SELECTION")
     elif s == 3:
         return 'NOVELTY'
     elif s == 4:
         return 'LEXICASE'
     elif s == 5:
         return 'NOVELTY-ECULID'
+    elif s == 6:
+        return 'NONDOMINATEDSORTING'
+    elif s == 7:
+        return 'NOVELTY'
     else:
         sys.exit("UNKNOWN SELECTION")
 
@@ -70,7 +79,7 @@ def SetDiagnostic(s):
 def SetSelectionVar(s):
     # case by case
     if s == 0:
-        return 'MU'
+        return 'TR'
     elif s == 1:
         return 'T'
     elif s == 2:
@@ -80,6 +89,10 @@ def SetSelectionVar(s):
     elif s == 4:
         return 'EPS'
     elif s == 5:
+        return 'NOV'
+    elif s == 6:
+        return 'SIG'
+    elif s == 7:
         return 'NOV'
     else:
         sys.exit("UNKNOWN SELECTION VAR")
@@ -99,6 +112,10 @@ def SetSeeds(s):
         return [x for x in range(1,351)]
     elif s == 5:
         return [x for x in range(1,401)]
+    elif s == 6:
+        return [x for x in range(1,401)]
+    elif s == 7:
+        return [x for x in range(1,401)]
     else:
         sys.exit('SEEDS SELECTION UNKNOWN')
 
@@ -106,9 +123,9 @@ def SetSeeds(s):
 def SetVarList(s):
     # case by case
     if s == 0:
-        return MU_LIST
-    elif s == 1:
         return TR_LIST
+    elif s == 1:
+        return TS_LIST
     elif s == 2:
         return FS_LIST
     elif s == 3:
@@ -116,6 +133,10 @@ def SetVarList(s):
     elif s == 4:
         return LX_LIST
     elif s == 5:
+        return NS_LIST
+    elif s == 6:
+        return FS_LIST
+    elif s == 7:
         return NS_LIST
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
@@ -135,6 +156,10 @@ def SetSecondParam(s, pt):
         return ''
     elif s == 5:
         return 'TOUR_' + pt + '/'
+    elif s == 6:
+        return ''
+    elif s == 7:
+        return ''
     else:
         sys.exit("UNKNOWN SELECTION")
 
