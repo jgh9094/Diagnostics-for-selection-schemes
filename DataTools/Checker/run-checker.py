@@ -189,7 +189,7 @@ def CheckDir(dir, sel, dia, offs, obj, acc, gens, pt):
         sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check if selection scheme data folder exists
-    SEL_DIR = dir + SetSelection(sel) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
+    SEL_DIR = dir + SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
     if os.path.isdir(SEL_DIR):
         print('Selection scheme data folder exists', SEL_DIR)
     else:
