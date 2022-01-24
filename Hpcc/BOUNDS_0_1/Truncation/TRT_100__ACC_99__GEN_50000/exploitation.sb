@@ -10,7 +10,7 @@
 ##################################
 # Setup relevant directories
 ##################################
-DATA_DIR=/mnt/gs18/scratch/users/herna383/DIAGNOSTICS-PROJ/TRUNCATION
+DATA_DIR=/mnt/gs18/scratch/users/herna383/DIAGNOSTICS-PROJ-01/TRUNCATION
 
 ##################################
 # Setup random seed info
