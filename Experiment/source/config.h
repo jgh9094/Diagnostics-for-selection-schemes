@@ -38,7 +38,7 @@ EMP_BUILD_CONFIG(DiaConfig,
 
   VALUE(PNORM_EXP,        double,            2.0,       "Paramter we are using for the p-norm function."),
   VALUE(NOVEL_K,          size_t,             15,       "Parameter estimate k-nearest neighbors."),
-  VALUE(NOVEL_PMIN,       double,            5.0,       "Minimum novelty score needed to enter archive."),
+  VALUE(NOVEL_PMIN,       double,            7.0,       "Minimum novelty score needed to enter archive."),
   VALUE(NOVEL_UP,         double,           0.25,       "Minimum novelty score needed to enter archive."),
   VALUE(NOVEL_DOWN,       double,           0.05,       "Minimum novelty score needed to enter archive."),
   VALUE(NOVEL_RI,         double,        0.00001,       "Probability of random solution inserted in archive."),
@@ -48,8 +48,8 @@ EMP_BUILD_CONFIG(DiaConfig,
 
   VALUE(LEX_EPS,          double,            0.0,       "Parameter estimate for lexicase epsilon."),
 
-  VALUE(PAT_MAX,          double,      9000000000000000.0,       "Large dummy number ."),
-  VALUE(PAT_DFT,          double,          10.0,       "Default large value for different Pareto groups."),
+  VALUE(PAT_MAX,          double,   9000000000000000.0,       "Large dummy number ."),
+  VALUE(PAT_DFT,          double,            1.0,       "Default large value for different Pareto groups."),
   VALUE(PAT_ALP,          double,            2.0,       "Alpha value for Pareto fitness sharing."),
   VALUE(PAT_SIG,          double,            0.1,       "Sigma value for Pareto fitness sharing."),
 
