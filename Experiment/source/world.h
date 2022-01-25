@@ -1149,7 +1149,7 @@ void DiagWorld::NonDominatedSorting()
 
     // construct fitnesses
     // ParetoFitness
-    score_t fitess = selection->ParetoFitness(pgroups, matrix, config.PAT_ALP(), config.PAT_SIG(), config.PAT_DFT(), config.PAT_MAX());
+    score_t fitess = selection->ParetoFitness(pgroups, matrix, config.PAT_ALP(), config.PAT_SIG(), config.PAT_RED(), config.PAT_MAX());
 
     // track data
     pareto_cnt = pgroups.size();
