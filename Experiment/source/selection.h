@@ -311,15 +311,18 @@ class Selection
      * Stochastic Remainder Selector:
      *
      * This function will implement the selector for stochastic remainder selection with replacement.
+     * Title: A Novel Selection Approach for Genetic Algorithms for GlobalOptimization of Multimodal Continuous Functions
+     * Authors: Ehtasham-ulHaq, IshfaqAhmad, AbidHussain, and Ibrahim M.Almanjahie
      *
      * We start by checking if there exist any solutions with a score greater than 0.
      * If there isn't we assign all solutions a dummy score of 1.0, and allow seleciton to continue.
-     * If there are, then we proceed with placing them into a set (to keep them sorted high to low).
+     * We then shuffle a vector of id's that the solutions will be processed in.
      *
      * After we go through each solution in the set, and divde all fitness by the population fitness mean.
      * Next, we iterate through each solutinon and add them as parrents according the interger portion
      * of thier fitness score. The decimal portion of their adjusted fitness is the probability of them
      * being selected again as parent. We loop through the population until enough parents are selected.
+     * Shuffling the order in which solutions are seen each iteration.
      *
      * @param mscore vector of solution fitnesses.
      *
@@ -710,9 +713,8 @@ Selection::score_t Selection::ParetoFitness(const pareto_g_t & groups, const fma
     // if g size is 1 continue
     if(g.size() == 1)
     {
-      // std::cout << "g.size() == 1 :: " << group_min << std::endl << std::endl;
       fitness[g[0]] = group_min;
-      group_min-= low;
+      group_min *= low;
       continue;
     }
 
@@ -734,26 +736,18 @@ Selection::score_t Selection::ParetoFitness(const pareto_g_t & groups, const fma
     score_t gscores = FitnessSharing(sim_mat, group_scores, alpha, sigma);
     emp_assert(gscores.size() == g.size());
 
-    // std::cout << std::endl;
-    // std::cout << "group " << i << ": ";
-
     // update fitness vector
-    // score_t x;
     for(size_t i = 0; i < g.size(); ++i)
     {
-      // x.push_back(gscores[i]);
       fitness[g[i]] = gscores[i];
       if(gscores[i] < group_min) {group_min = gscores[i];}
     }
 
-    // std::sort(x.begin(), x.end(), std::greater<double>());
-    // for(const auto & y : x) {std::cout << y << ", ";}
-    // std::cout << std::endl << std::endl;
-
     // lower group_min by low
-    group_min -= low;
+    group_min *= low;
   }
 
+  // std::cout << "group_min=" << group_min << std::endl;
   return fitness;
 }
 
@@ -916,19 +910,18 @@ Selection::ids_t Selection::StochasticRemainder(const score_t & scores)
 
   // save all solutions with positions and fitness in set
   // add transformed fitness to the set
-  std::set<id_f_t, std::function< bool(id_f_t,id_f_t)>> ordered(
-    [] (const id_f_t & lhs, const id_f_t & rhs ) { return std::get<1>(lhs) > std::get<1>(rhs); } ) ;
+  emp::vector<id_f_t> id_fit;
 
   for(size_t i = 0; i < scores.size(); ++i)
   {
     if(0.0 < scores[i] / normalizer)
     {
-      ordered.insert(std::make_pair(i, scores[i] / normalizer));
+      id_fit.push_back(std::make_pair(i, scores[i] / normalizer));
     }
   }
 
   // make sure we have solutions with scores to populate
-  if(ordered.size() == 0)
+  if(id_fit.size() == 0)
   {
     // parents
     ids_t parents(scores.size());
@@ -940,25 +933,36 @@ Selection::ids_t Selection::StochasticRemainder(const score_t & scores)
   ids_t parents;
   emp_assert(0 == parents.size());
 
+  // random order we go through
+  ids_t order(id_fit.size());
+  std::iota(order.begin(), order.end(), 0);
+
   // continue to push parents back until we are done
   while (parents.size() != scores.size())
   {
+    //shuffle order in which solutions are being processed
+    emp::Shuffle(*random, order);
+
     // go through and do expected insertions
-    for(const auto & p : ordered)
+    for(const auto & o : order)
     {
       // sol_id
-      size_t id = std::get<0>(p);
-      // sol_fitness
-      double fi = std::get<1>(p), intPart, fractPart;;
-      fractPart = modf(fi, &intPart);
+      size_t id = std::get<0>(id_fit[o]);
+      emp_assert(0 <= id); emp_assert(id < scores.size());
+      emp_assert(0 <= o); emp_assert(o < id_fit.size());
 
-      // while we can keep adding parents keep going
+      // sol_fitness
+      double fi = std::get<1>(id_fit[o]), intPart, fractPart;
+      fractPart = modf(fi, &intPart);
+      emp_assert(0.0 < fi);
+
+      // add parent integer many times, if possible
       for(size_t i = 0; i < static_cast<size_t>(intPart); ++i)
       {
         parents.push_back(id);
         if(parents.size() == scores.size()) {break;}
       }
-
+      // fraction part is probability of being added again, if possible
       if(random->P(fractPart) && parents.size() < scores.size())
       {
         parents.push_back(id);
