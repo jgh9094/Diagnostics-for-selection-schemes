@@ -48,10 +48,10 @@ EMP_BUILD_CONFIG(DiaConfig,
 
   VALUE(LEX_EPS,          double,            0.0,       "Parameter estimate for lexicase epsilon."),
 
-  VALUE(PAT_MAX,          double,   9000000000000000.0,       "Large dummy number ."),
-  VALUE(PAT_DFT,          double,            1.0,       "Default large value for different Pareto groups."),
-  VALUE(PAT_ALP,          double,            2.0,       "Alpha value for Pareto fitness sharing."),
-  VALUE(PAT_SIG,          double,            0.1,       "Sigma value for Pareto fitness sharing."),
+  VALUE(PAT_MAX,      double,   9000000000000000.0,       "Large dummy number ."),
+  VALUE(PAT_RED,      double,                 0.99,       "Default large value for different Pareto groups."),
+  VALUE(PAT_ALP,      double,                  2.0,       "Alpha value for Pareto fitness sharing."),
+  VALUE(PAT_SIG,      double,                  0.1,       "Sigma value for Pareto fitness sharing."),
 
   GROUP(SYSTEMATICS, "Output rates for OpenWorld"),
   VALUE(SNAP_INTERVAL,             size_t,             10000,          "How many updates between prints?"),
