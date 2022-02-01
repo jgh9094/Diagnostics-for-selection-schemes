@@ -163,20 +163,20 @@ def CountRows(file_name):
 # responsible for looking through the data directories for success
 def CheckDir(dir, sel, dia, offs, obj, acc, gens, pt):
 
-    # # check if data dir exists
-    # if os.path.isdir(dir):
-    #     print('Data dirctory exists=', dir)
-    # else:
-    #     print('DOES NOT EXIST=', dir)
-    #     sys.exit('DATA DIRECTORY DOES NOT EXIST')
+    # check if data dir exists
+    if os.path.isdir(dir):
+        print('Data dirctory exists=', dir)
+    else:
+        print('DOES NOT EXIST=', dir)
+        sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check if selection scheme data folder exists
     SEL_DIR = dir + SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
-    # if os.path.isdir(SEL_DIR):
-    #     print('Selection scheme data folder exists', SEL_DIR)
-    # else:
-    #     print('SELECTION DIRECTORY DOES NOT EXIST=', SEL_DIR)
-    #     sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
+    if os.path.isdir(SEL_DIR):
+        print('Selection scheme data folder exists', SEL_DIR)
+    else:
+        print('SELECTION DIRECTORY DOES NOT EXIST=', SEL_DIR)
+        sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
 
     # create seed data directories and check if exist
     VLIST = SetVarList(sel)
