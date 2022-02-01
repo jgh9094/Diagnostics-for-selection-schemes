@@ -2,7 +2,7 @@
 ########## Define Resources Needed with SBATCH Lines ##########
 
 #SBATCH --time=00:20:00               # limit of wall clock time - how long the job will run (same as -t)
-#SBATCH --array=1-24                  # number of jobs being created, each with its array id
+#SBATCH --array=1-28                  # number of jobs being created, each with its array id
 #SBATCH --mem=10G                     # memory required per node - amount of memory (in gigs)
 #SBATCH --job-name eor-dat            # you can give your job a name for easier identification (same as -J)
 #SBATCH --account=devolab             # research group account being used
@@ -10,7 +10,7 @@
 ##################################
 # SETUP RELEVANT DIRECTORIES
 ##################################
-DATA_DIR=/mnt/scratch/herna383/DIAGNOSTICS-PROJ/
+DATA_DIR=/mnt/scratch/herna383/DIAGNOSTICS-PROJ-01/
 
 ##################################
 # SETUP RELEVANT DIRECTORIES
@@ -21,12 +21,12 @@ SLURM_ID=$((SLURM_ARRAY_TASK_ID))
 ##################################
 # Setup selection scheme
 ##################################
-MULAMBDA=0
+TRUNCATION=0
 TOURNAMENT=1
 FITSHARING=2
-NOVELTY=3
 LEXICASE=4
-NOVEL_EUCLID=5
+PARETO=6
+NOVELTY=7
 
 ##################################
 # Setup diagnostic
@@ -40,7 +40,8 @@ WEAK_ECOLOGY=4
 ##################################
 # TREATMENTS
 ##################################
-# MULAMBDA REPLICATES
+
+# TRUNCATION REPLICATES
 TREATMENT__1__1=1
 TREATMENT__1__2=2
 TREATMENT__1__3=3
@@ -64,17 +65,23 @@ TREATMENT__4__2=14
 TREATMENT__4__3=15
 TREATMENT__4__4=16
 
-# NOVELTY EUCLIDEAN REPLICATES
+# NONDOMINATED SORTING REPLICATES
 TREATMENT__5__1=17
 TREATMENT__5__2=18
 TREATMENT__5__3=19
 TREATMENT__5__4=20
 
-# FITNESS SHARING REPLICATES
+# G FITNESS SHARING REPLICATES
 TREATMENT__6__1=21
 TREATMENT__6__2=22
 TREATMENT__6__3=23
 TREATMENT__6__4=24
+
+# P FITNESS SHARING REPLICATES
+TREATMENT__6__1=25
+TREATMENT__6__2=26
+TREATMENT__6__3=27
+TREATMENT__6__4=28
 
 ##################################
 # Other variables needed
@@ -87,145 +94,145 @@ ACCURACY_DIR=99
 
 if [ ${SLURM_ID} -eq ${TREATMENT__1__1} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/MULAMBDA/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/TRUNCATION/
   OFFSET=9000
   DIAGNOSTIC=${EXPLOITATION}
-  SELECTION=${MULAMBDA}
+  SELECTION=${TRUNCATION}
 elif [ ${SLURM_ID} -eq ${TREATMENT__1__2} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/MULAMBDA/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/TRUNCATION/
   OFFSET=11000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
-  SELECTION=${MULAMBDA}
+  SELECTION=${TRUNCATION}
 elif [ ${SLURM_ID} -eq ${TREATMENT__1__3} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/MULAMBDA/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/TRUNCATION/
   OFFSET=8000
   DIAGNOSTIC=${WEAK_ECOLOGY}
-  SELECTION=${MULAMBDA}
+  SELECTION=${TRUNCATION}
 elif [ ${SLURM_ID} -eq ${TREATMENT__1__4} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/MULAMBDA/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/TRUNCATION/
   OFFSET=10000
   DIAGNOSTIC=${EXPLORATION}
-  SELECTION=${MULAMBDA}
+  SELECTION=${TRUNCATION}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__1} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/TOURNAMENT/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/TOURNAMENT/
   OFFSET=17000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__2} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/TOURNAMENT/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/TOURNAMENT/
   OFFSET=19000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__3} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/TOURNAMENT/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/TOURNAMENT/
   OFFSET=16000
   DIAGNOSTIC=${WEAK_ECOLOGY}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__2__4} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/TOURNAMENT/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/TOURNAMENT/
   OFFSET=18000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${TOURNAMENT}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__1} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/LEXICASE/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/LEXICASE/
   OFFSET=5000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__2} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/LEXICASE/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/LEXICASE/
   OFFSET=7000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__3} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/LEXICASE/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/LEXICASE/
   OFFSET=4000
   DIAGNOSTIC=${WEAK_ECOLOGY}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__3__4} ] ; then
   SECOND_PARAM=0
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/LEXICASE/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/LEXICASE/
   OFFSET=6000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${LEXICASE}
 elif [ ${SLURM_ID} -eq ${TREATMENT__4__1} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/NOVELTY/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/NOVELTY/
   OFFSET=12000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${NOVELTY}
 elif [ ${SLURM_ID} -eq ${TREATMENT__4__2} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/NOVELTY/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/NOVELTY/
   OFFSET=14000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${NOVELTY}
 elif [ ${SLURM_ID} -eq ${TREATMENT__4__3} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/NOVELTY/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/NOVELTY/
   OFFSET=15000
   DIAGNOSTIC=${WEAK_ECOLOGY}
   SELECTION=${NOVELTY}
 elif [ ${SLURM_ID} -eq ${TREATMENT__4__4} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/NOVELTY/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/NOVELTY/
   OFFSET=13000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${NOVELTY}
 elif [ ${SLURM_ID} -eq ${TREATMENT__5__1} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/NOVELTY-ECULID/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/NOVELTY-ECULID/
   OFFSET=12000
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${NOVEL_EUCLID}
 elif [ ${SLURM_ID} -eq ${TREATMENT__5__2} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/NOVELTY-ECULID/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/NOVELTY-ECULID/
   OFFSET=14000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${NOVEL_EUCLID}
 elif [ ${SLURM_ID} -eq ${TREATMENT__5__3} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/NOVELTY-ECULID/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/NOVELTY-ECULID/
   OFFSET=15000
   DIAGNOSTIC=${WEAK_ECOLOGY}
   SELECTION=${NOVEL_EUCLID}
 elif [ ${SLURM_ID} -eq ${TREATMENT__5__4} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/NOVELTY-ECULID/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/NOVELTY-ECULID/
   OFFSET=13000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${NOVEL_EUCLID}
 elif [ ${SLURM_ID} -eq ${TREATMENT__6__1} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/FITSHARING/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/FITSHARING/
   OFFSET=0
   DIAGNOSTIC=${EXPLOITATION}
   SELECTION=${FITSHARING}
 elif [ ${SLURM_ID} -eq ${TREATMENT__6__2} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/FITSHARING/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/FITSHARING/
   OFFSET=2000
   DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
   SELECTION=${FITSHARING}
 elif [ ${SLURM_ID} -eq ${TREATMENT__6__3} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/FITSHARING/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/FITSHARING/
   OFFSET=3000
   DIAGNOSTIC=${WEAK_ECOLOGY}
   SELECTION=${FITSHARING}
 elif [ ${SLURM_ID} -eq ${TREATMENT__6__4} ] ; then
   SECOND_PARAM=8
-  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ/FITSHARING/
+  DUMP=/mnt/home/herna383/Diagnostics/DIAGNOSTICS-PROJ-01/FITSHARING/
   OFFSET=1000
   DIAGNOSTIC=${EXPLORATION}
   SELECTION=${FITSHARING}
