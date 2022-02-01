@@ -28,7 +28,9 @@ TR_LIST = ['1','2','4','8','16','32','64','128','256','512']
 TS_LIST = ['1','2','4','8','16','32','64','128','256','512']
 LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
 FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
+ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
 NS_LIST = ['0','1','2','4','8','15','30','60']
+
 # seed experiements replicates range
 SMAX = 50
 
@@ -46,12 +48,8 @@ def SetSelection(s,p):
             return 'FITSHARING_P'
         else:
             sys.exit("UNKNOWN SELECTION")
-    elif s == 3:
-        return 'NOVELTY'
     elif s == 4:
         return 'LEXICASE'
-    elif s == 5:
-        return 'NOVELTY-ECULID'
     elif s == 6:
         return 'NONDOMINATEDSORTING'
     elif s == 7:
@@ -84,12 +82,8 @@ def SetSelectionVar(s):
         return 'T'
     elif s == 2:
         return 'SIG'
-    elif s == 3:
-        return 'NOV'
     elif s == 4:
         return 'EPS'
-    elif s == 5:
-        return 'NOV'
     elif s == 6:
         return 'SIG'
     elif s == 7:
@@ -106,12 +100,8 @@ def SetSeeds(s):
         return [x for x in range(1,501)]
     elif s == 2:
         return [x for x in range(1,401)]
-    elif s == 3:
-        return [x for x in range(1,401)]
     elif s == 4:
         return [x for x in range(1,351)]
-    elif s == 5:
-        return [x for x in range(1,401)]
     elif s == 6:
         return [x for x in range(1,401)]
     elif s == 7:
@@ -128,12 +118,8 @@ def SetVarList(s):
         return TS_LIST
     elif s == 2:
         return FS_LIST
-    elif s == 3:
-        return NS_LIST
     elif s == 4:
         return LX_LIST
-    elif s == 5:
-        return NS_LIST
     elif s == 6:
         return FS_LIST
     elif s == 7:
@@ -150,12 +136,8 @@ def SetSecondParam(s, pt):
         return ''
     elif s == 2:
         return ''
-    elif s == 3:
-        return 'TOUR_' + pt + '/'
     elif s == 4:
         return ''
-    elif s == 5:
-        return 'TOUR_' + pt + '/'
     elif s == 6:
         return ''
     elif s == 7:
@@ -181,20 +163,20 @@ def CountRows(file_name):
 # responsible for looking through the data directories for success
 def CheckDir(dir, sel, dia, offs, obj, acc, gens, pt):
 
-    # check if data dir exists
-    if os.path.isdir(dir):
-        print('Data dirctory exists=', dir)
-    else:
-        print('DOES NOT EXIST=', dir)
-        sys.exit('DATA DIRECTORY DOES NOT EXIST')
+    # # check if data dir exists
+    # if os.path.isdir(dir):
+    #     print('Data dirctory exists=', dir)
+    # else:
+    #     print('DOES NOT EXIST=', dir)
+    #     sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check if selection scheme data folder exists
     SEL_DIR = dir + SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
-    if os.path.isdir(SEL_DIR):
-        print('Selection scheme data folder exists', SEL_DIR)
-    else:
-        print('SELECTION DIRECTORY DOES NOT EXIST=', SEL_DIR)
-        sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
+    # if os.path.isdir(SEL_DIR):
+    #     print('Selection scheme data folder exists', SEL_DIR)
+    # else:
+    #     print('SELECTION DIRECTORY DOES NOT EXIST=', SEL_DIR)
+    #     sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST')
 
     # create seed data directories and check if exist
     VLIST = SetVarList(sel)
@@ -251,7 +233,7 @@ def main():
     # Generate and get the arguments
     parser = argparse.ArgumentParser(description="Data aggregation script.")
     parser.add_argument("data_directory", type=str, help="Target experiment directory.")
-    parser.add_argument("selection",      type=int, help="Selection scheme we are looking for? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n3: Aggregate Novelty\n4: Espilon Lexicase\n5: Euclidean Novelty")
+    parser.add_argument("selection",      type=int, help="Selection scheme we are looking for? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n4: Espilon Lexicase\n6: Nondominated Sorting\n7: Novelty Search")
     parser.add_argument("diagnostic",     type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Strong Ecology\n3: Exploration\n4: Weak Ecology")
     parser.add_argument("seed_offset",    type=int, help="Experiment seed offset.")
     parser.add_argument("objectives",     type=str, help="Number of objectives being optimized")
