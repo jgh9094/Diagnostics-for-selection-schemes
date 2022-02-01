@@ -18,43 +18,67 @@ import sys
 import os
 
 # variables we are testing for each replicate range
-MU_LIST = [1,2,4,8,16,32,64,128,256,512]
-TR_LIST = [1,2,4,8,16,32,64,128,256,512]
-LX_LIST = [0.0,0.1,0.3,0.6,1.2,2.5,5.0,10.0]
+TR_LIST = ['1','2','4','8','16','32','64','128','256','512']
+TS_LIST = ['1','2','4','8','16','32','64','128','256','512']
+LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
 FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-NS_LIST = [0,1,2,4,8,15,30,60]
+ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
+NS_LIST = ['0','1','2','4','8','15','30','60']\
+
 # seed experiements replicates range
 REP_NUM = 50
+
 # columns we are interested in grabbing
+# pop level
 POP_FIT_AVG = 'pop_fit_avg'
 POP_FIT_MAX = 'pop_fit_max'
 POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
+POP_STR_AVG = 'pop_str_avg'
+POP_STR_MAX = 'pop_str_max'
+# common solution
 COM_SOL_CNT = 'com_sol_cnt'
+# elite solutions (max agg traits)
 ELE_AGG_PER = 'ele_agg_per'
 ELE_OPT_CNT = 'ele_opt_cnt'
+# common solution
 COM_AGG_PER = 'com_agg_per'
 COM_OPT_CNT = 'com_opt_cnt'
+# optimal solution (max opti trait count)
 OPT_AGG_PER = 'opt_agg_per'
 OPT_OBJ_CNT = 'opt_obj_cnt'
+# streak solution (longest streak of non-zero values)
+STR_AGG_PER = 'str_agg_per'
+STR_OBJ_CNT = 'str_obj_cnt'
+# trait coverage
 UNI_STR_POS = 'uni_str_pos'
+# pareto data
+PARETO_CNT = 'pareto_cnt'
+# novelty data
+ARCHIVE_CNT = 'archive_cnt'
+PMIN = 'pmin'
 
 # return appropiate string dir name (based off run.sb file naming system)
-def SetSelection(s):
+def SetSelection(s,p):
     # case by case
     if s == 0:
-        return 'MULAMBDA'
+        return 'TRUNCATION'
     elif s == 1:
         return 'TOURNAMENT'
     elif s == 2:
-        return 'FITSHARING'
-    elif s == 3:
-        return 'NOVELTY'
+        if p == '0':
+            return 'FITSHARING_G'
+        elif p == '1':
+            return 'FITSHARING_P'
+        else:
+            sys.exit("UNKNOWN SELECTION")
     elif s == 4:
         return 'LEXICASE'
-    elif s == 5:
-        return 'NOVELTY-ECULID'
+    elif s == 6:
+        return 'NONDOMINATEDSORTING'
+    elif s == 7:
+        return 'NOVELTY'
     else:
         sys.exit("UNKNOWN SELECTION")
 
@@ -78,16 +102,16 @@ def SetDiagnostic(s):
 def SetSelectionVar(s):
     # case by case
     if s == 0:
-        return 'MU'
+        return 'TR'
     elif s == 1:
         return 'T'
     elif s == 2:
         return 'SIG'
-    elif s == 3:
-        return 'NOV'
     elif s == 4:
         return 'EPS'
-    elif s == 5:
+    elif s == 6:
+        return 'SIG'
+    elif s == 7:
         return 'NOV'
     else:
         sys.exit("UNKNOWN SELECTION VAR")
@@ -109,7 +133,7 @@ def SetSeeds(s):
         seed.append([x for x in range(451,501)])
         return seed
 
-    elif s == 2 or s == 3 or s == 5:
+    elif s == 2 or s == 6 or s ==7:
         seed = []
         seed.append([x for x in range(1,51)])
         seed.append([x for x in range(51,101)])
@@ -134,20 +158,20 @@ def SetSeeds(s):
     else:
         sys.exit('SEEDS SELECTION UNKNOWN')
 
-# Will set the appropiate list of variables we are checking for
+# set the appropiate list of variables we are checking for
 def SetVarList(s):
     # case by case
     if s == 0:
-        return MU_LIST
-    elif s == 1:
         return TR_LIST
+    elif s == 1:
+        return TS_LIST
     elif s == 2:
         return FS_LIST
-    elif s == 3:
-        return NS_LIST
     elif s == 4:
         return LX_LIST
-    elif s == 5:
+    elif s == 6:
+        return FS_LIST
+    elif s == 7:
         return NS_LIST
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
@@ -160,13 +184,13 @@ def SetSecondParam(s, pt):
     elif s == 1:
         return ''
     elif s == 2:
-        return 'TOUR_' + pt + '/'
-    elif s == 3:
-        return 'TOUR_' + pt + '/'
+        return ''
     elif s == 4:
         return ''
-    elif s == 5:
-        return 'TOUR_' + pt + '/'
+    elif s == 6:
+        return ''
+    elif s == 7:
+        return ''
     else:
         sys.exit("UNKNOWN SELECTION")
 
@@ -183,7 +207,7 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
         sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check that selection data folder exists
-    SEL_DIR = data + SetSelection(sel) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
+    SEL_DIR = data + SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
     if os.path.isdir(SEL_DIR) == False:
         print('SEL_DIR=', SEL_DIR)
         sys.exit('SELECTION DIRECTORY NOT FOUND')
@@ -212,6 +236,11 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
             seed = str(s + offs)
             DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM + 'data.csv'
 
+            # check if data file even exists
+            if os.path.isfile(DATA_DIR) == False:
+                print('DNE: ' + DATA_DIR)
+                continue
+
             # create pandas data frame of entire csv and grab the row
             df = pd.read_csv(DATA_DIR)
             df = df.iloc[::res, :]
@@ -219,13 +248,26 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
             # time to export the data
             cdf = pd.DataFrame({'gen': pd.Series(GEN_LIST),
                             'trt': pd.Series(TRT),
-                            'fit_avg': pd.Series(df[POP_FIT_AVG].tolist()),
-                            'fit_max': pd.Series(df[POP_FIT_MAX].tolist()),
-                            'opt_avg': pd.Series(df[POP_OPT_AVG].tolist()),
-                            'opt_max': pd.Series(df[POP_OPT_MAX].tolist()),
-                            'uni_avg': pd.Series(df[POP_UNI_OBJ].tolist()),
-                            'com_cnt': pd.Series(df[COM_SOL_CNT].tolist()),
-                            'uni_str': pd.Series(df[UNI_STR_POS].tolist())})
+                            'pop_fit_avg': pd.Series(df[POP_FIT_AVG].tolist()),
+                            'pop_fit_max': pd.Series(df[POP_FIT_MAX].tolist()),
+                            'pop_opt_avg': pd.Series(df[POP_OPT_AVG].tolist()),
+                            'pop_opt_max': pd.Series(df[POP_OPT_MAX].tolist()),
+                            'pop_uni_obj': pd.Series(df[POP_UNI_OBJ].tolist()),
+                            'pop_str_avg': pd.Series(df[POP_STR_AVG].tolist()),
+                            'pop_str_max': pd.Series(df[POP_STR_MAX].tolist()),
+                            'com_sol_cnt': pd.Series(df[COM_SOL_CNT].tolist()),
+                            'ele_agg_per': pd.Series(df[ELE_AGG_PER].tolist()),
+                            'ele_opt_cnt': pd.Series(df[ELE_OPT_CNT].tolist()),
+                            'com_agg_per': pd.Series(df[COM_AGG_PER].tolist()),
+                            'com_opt_cnt': pd.Series(df[COM_OPT_CNT].tolist()),
+                            'opt_agg_per': pd.Series(df[OPT_AGG_PER].tolist()),
+                            'opt_obj_cnt': pd.Series(df[OPT_OBJ_CNT].tolist()),
+                            'str_agg_per': pd.Series(df[STR_AGG_PER].tolist()),
+                            'str_obj_cnt': pd.Series(df[STR_OBJ_CNT].tolist()),
+                            'uni_str_pos': pd.Series(df[UNI_STR_POS].tolist()),
+                            'pareto_cnt': pd.Series(df[PARETO_CNT].tolist()),
+                            'archive_cnt': pd.Series(df[ARCHIVE_CNT].tolist()),
+                            'pmin': pd.Series(df[PMIN].tolist())})
 
             DF_LIST.append(cdf)
 
@@ -238,7 +280,7 @@ def main():
     parser = argparse.ArgumentParser(description="Data aggregation script.")
     parser.add_argument("data_dir",    type=str, help="Target experiment directory.")
     parser.add_argument("dump_dir",    type=str, help="Data dumping directory")
-    parser.add_argument("selection",      type=int, help="Selection scheme we are looking for? \n0: (μ,λ)\n1: Tournament\n2: Fitness Sharing\n3: Aggregate Novelty\n4: Espilon Lexicase\n5: Euclidean Novelty")
+    parser.add_argument("selection",      type=int, help="Selection scheme we are looking for? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n4: Espilon Lexicase\n6: Nondominated Sorting\n7: Novelty Search")
     parser.add_argument("diagnostic",     type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Strong Ecology\n3: Exploration\n4: Weak Ecology")
     parser.add_argument("seed_offset", type=int, help="Experiment seed offset. (REPLICATION_OFFSET + PROBLEM_SEED_OFFSET")
     parser.add_argument("resolution",  type=int, help="The resolution desired for the data extraction")
@@ -254,7 +296,7 @@ def main():
     dump_dir = args.dump_dir.strip()
     print('Dump directory=', dump_dir)
     selection = args.selection
-    print('Selection scheme=', SetSelection(selection))
+    print('Selection scheme=', SetSelection(selection, args.param_two))
     diagnostic = args.diagnostic
     print('Diagnostic=',SetDiagnostic(diagnostic))
     offset = args.seed_offset
