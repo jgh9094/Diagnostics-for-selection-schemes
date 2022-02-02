@@ -111,7 +111,7 @@ fi
 
 ####################################################################
 
-RUN_DIR=${DATA_DIR}/TRT_${OBJECTIVE_CNT}__ACC_${ACCURACY_DIR}__GEN_${GENERATIONS}/${NAME}/TOUR_${T__8}/
+RUN_DIR=${DATA_DIR}/TRT_${OBJECTIVE_CNT}__ACC_${ACCURACY_DIR}__GEN_${GENERATIONS}/${NAME}/
 
 # make a run directory
 mkdir -p ${RUN_DIR}
