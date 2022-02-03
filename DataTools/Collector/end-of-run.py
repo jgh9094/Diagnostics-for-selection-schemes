@@ -17,38 +17,68 @@ import sys
 import os
 
 # variables we are testing for each replicate range
-MU_LIST = [1,2,4,8,16,32,64,128,256,512]
-TR_LIST = [1,2,4,8,16,32,64,128,256,512]
-LX_LIST = [0.0,0.1,0.3,0.6,1.2,2.5,5.0,10.0]
+TR_LIST = ['1','2','4','8','16','32','64','128','256','512']
+TS_LIST = ['1','2','4','8','16','32','64','128','256','512']
+LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
 FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-NS_LIST = [0,1,2,4,8,15,30,60]
+ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
+NS_LIST = ['0','1','2','4','8','15','30','60']
+
 # seed experiements replicates range
-SMAX = 50
-# name of column we need to extract
+REP_NUM = 50
+
 # columns we are interested in grabbing
+# pop level
 POP_FIT_AVG = 'pop_fit_avg'
 POP_FIT_MAX = 'pop_fit_max'
 POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
+POP_STR_AVG = 'pop_str_avg'
+POP_STR_MAX = 'pop_str_max'
+# common solution
+COM_SOL_CNT = 'com_sol_cnt'
+# elite solutions (max agg traits)
+ELE_AGG_PER = 'ele_agg_per'
+ELE_OPT_CNT = 'ele_opt_cnt'
+# common solution
+COM_AGG_PER = 'com_agg_per'
+COM_OPT_CNT = 'com_opt_cnt'
+# optimal solution (max opti trait count)
+OPT_AGG_PER = 'opt_agg_per'
+OPT_OBJ_CNT = 'opt_obj_cnt'
+# streak solution (longest streak of non-zero values)
+STR_AGG_PER = 'str_agg_per'
+STR_OBJ_CNT = 'str_obj_cnt'
+# trait coverage
 UNI_STR_POS = 'uni_str_pos'
+# pareto data
+PARETO_CNT = 'pareto_cnt'
+# novelty data
+ARCHIVE_CNT = 'archive_cnt'
+PMIN = 'pmin'
 GEN = 'gen'
 
 # return appropiate string dir name (based off run.sb file naming system)
-def SetSelection(s):
+def SetSelection(s,p):
     # case by case
     if s == 0:
-        return 'MULAMBDA'
+        return 'TRUNCATION'
     elif s == 1:
         return 'TOURNAMENT'
     elif s == 2:
-        return 'FITSHARING'
-    elif s == 3:
-        return 'NOVELTY'
+        if p == '0':
+            return 'FITSHARING_G'
+        elif p == '1':
+            return 'FITSHARING_P'
+        else:
+            sys.exit("UNKNOWN SELECTION")
     elif s == 4:
         return 'LEXICASE'
-    elif s == 5:
-        return 'NOVELTY-ECULID'
+    elif s == 6:
+        return 'NONDOMINATEDSORTING'
+    elif s == 7:
+        return 'NOVELTY'
     else:
         sys.exit("UNKNOWN SELECTION")
 
@@ -72,16 +102,16 @@ def SetDiagnostic(s):
 def SetSelectionVar(s):
     # case by case
     if s == 0:
-        return 'MU'
+        return 'TR'
     elif s == 1:
         return 'T'
     elif s == 2:
         return 'SIG'
-    elif s == 3:
-        return 'NOV'
     elif s == 4:
         return 'EPS'
-    elif s == 5:
+    elif s == 6:
+        return 'SIG'
+    elif s == 7:
         return 'NOV'
     else:
         sys.exit("UNKNOWN SELECTION VAR")
@@ -95,29 +125,29 @@ def SetSeeds(s):
         return [x for x in range(1,501)]
     elif s == 2:
         return [x for x in range(1,401)]
-    elif s == 3:
-        return [x for x in range(1,401)]
     elif s == 4:
         return [x for x in range(1,351)]
-    elif s == 5:
+    elif s == 6:
+        return [x for x in range(1,401)]
+    elif s == 7:
         return [x for x in range(1,401)]
     else:
         sys.exit('SEEDS SELECTION UNKNOWN')
 
-# Will set the appropiate list of variables we are checking for
+# set the appropiate list of variables we are checking for
 def SetVarList(s):
     # case by case
     if s == 0:
-        return MU_LIST
-    elif s == 1:
         return TR_LIST
+    elif s == 1:
+        return TS_LIST
     elif s == 2:
         return FS_LIST
-    elif s == 3:
-        return NS_LIST
     elif s == 4:
         return LX_LIST
-    elif s == 5:
+    elif s == 6:
+        return FS_LIST
+    elif s == 7:
         return NS_LIST
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
@@ -130,13 +160,13 @@ def SetSecondParam(s, pt):
     elif s == 1:
         return ''
     elif s == 2:
-        return 'TOUR_' + pt + '/'
-    elif s == 3:
-        return 'TOUR_' + pt + '/'
+        return ''
     elif s == 4:
         return ''
-    elif s == 5:
-        return 'TOUR_' + pt + '/'
+    elif s == 6:
+        return ''
+    elif s == 7:
+        return ''
     else:
         sys.exit("UNKNOWN SELECTION")
 
@@ -153,7 +183,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check that selection data folder exists
-    SEL_DIR = data + SetSelection(sel) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
+    SEL_DIR = data + SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
     if os.path.isdir(SEL_DIR) == False:
         print('SEL_DIR=', SEL_DIR)
         sys.exit('EXIT -1')
@@ -165,19 +195,34 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     SEEDS = SetSeeds(sel)
 
     # lists that will hold all the date
-    TRT = []
     PFA = []
     PFM = []
     POA = []
     POM = []
-    POU = []
-    STR = []
+    PUO = []
+    PSA = []
+    PSM = []
+    CSC = []
+    EAP = []
+    EOC = []
+    CAP = []
+    COC = []
+    OAP = []
+    OOC = []
+    SAP = []
+    SOC = []
+    USP = []
+    PC = []
+    AC = []
+    P = []
+    TRT = []
+
     # second parameter dir
     SECOND_PARAM = SetSecondParam(sel, pt)
 
     for s in SEEDS:
         seed = str(s + offs)
-        it = int((s-1)/SMAX)
+        it = int((s-1)/REP_NUM)
         var_val = str(VLIST[it])
         DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM
         print('Sub data directory:', DATA_DIR+'data.csv')
@@ -193,21 +238,48 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         PFM.append(dfl[POP_FIT_MAX].tolist()[0])
         POA.append(dfl[POP_OPT_AVG].tolist()[0])
         POM.append(dfl[POP_OPT_MAX].tolist()[0])
-        POU.append(dfl[POP_UNI_OBJ].tolist()[0])
-        STR.append(dfl[UNI_STR_POS].tolist()[0])
+        PUO.append(dfl[POP_UNI_OBJ].tolist()[0])
+        PSA.append(dfl[POP_STR_AVG].tolist()[0])
+        PSM.append(dfl[POP_STR_MAX].tolist()[0])
+        CSC.append(dfl[COM_SOL_CNT].tolist()[0])
+        EAP.append(dfl[ELE_AGG_PER].tolist()[0])
+        EOC.append(dfl[ELE_OPT_CNT].tolist()[0])
+        CAP.append(dfl[COM_AGG_PER].tolist()[0])
+        COC.append(dfl[COM_OPT_CNT].tolist()[0])
+        OAP.append(dfl[OPT_AGG_PER].tolist()[0])
+        OOC.append(dfl[OPT_OBJ_CNT].tolist()[0])
+        SAP.append(dfl[STR_AGG_PER].tolist()[0])
+        SOC.append(dfl[STR_OBJ_CNT].tolist()[0])
+        USP.append(dfl[UNI_STR_POS].tolist()[0])
+        PC.append(dfl[PARETO_CNT].tolist()[0])
+        AC.append(dfl[ARCHIVE_CNT].tolist()[0])
+        P.append(dfl[PMIN].tolist()[0])
 
 
     # time to export the data
     fdf = pd.DataFrame({'trt': pd.Series(TRT),
-                    'fit_avg': pd.Series(PFA),
-                    'fit_max': pd.Series(PFM),
-                    'opt_avg': pd.Series(POA),
-                    'opt_max': pd.Series(POM),
-                    'uni_avg': pd.Series(POU),
-                    'uni_str': pd.Series(STR)})
+                    POP_FIT_AVG: pd.Series(PFA),
+                    POP_FIT_MAX: pd.Series(PFM),
+                    POP_OPT_AVG: pd.Series(POA),
+                    POP_OPT_MAX: pd.Series(POM),
+                    POP_UNI_OBJ: pd.Series(PUO),
+                    POP_STR_AVG: pd.Series(PSA),
+                    POP_STR_MAX: pd.Series(PSM),
+                    COM_SOL_CNT: pd.Series(CSC),
+                    ELE_AGG_PER: pd.Series(EAP),
+                    ELE_OPT_CNT: pd.Series(EOC),
+                    COM_AGG_PER: pd.Series(CAP),
+                    COM_OPT_CNT: pd.Series(COC),
+                    OPT_AGG_PER: pd.Series(OAP),
+                    OPT_OBJ_CNT: pd.Series(OOC),
+                    STR_AGG_PER: pd.Series(SAP),
+                    STR_OBJ_CNT: pd.Series(SOC),
+                    UNI_STR_POS: pd.Series(USP),
+                    PARETO_CNT: pd.Series(PC),
+                    ARCHIVE_CNT: pd.Series(AC),
+                    PMIN: pd.Series(P)})
 
     fdf.to_csv(path_or_buf= dump + 'eor-' + SetDiagnostic(dia).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
-
 
 
 def main():
@@ -230,7 +302,7 @@ def main():
     dump_dir = args.dump_dir.strip()
     print('Dump directory=', dump_dir)
     selection = args.selection
-    print('Selection scheme=', SetSelection(selection))
+    print('Selection scheme=', SetSelection(selection, args.param_two))
     diagnostic = args.diagnostic
     print('Diagnostic=',SetDiagnostic(diagnostic))
     offset = args.seed_offset
