@@ -59,27 +59,12 @@ ACCURACY=.99
 GENERATIONS=50000
 ACCURACY_DIR=99
 
-###### PIVOT #######
-TREATMENT__1=100
-
 ####################################################################
 
-if [ ${SLURM_ARRAY_TASK_ID} -lt ${TREATMENT__1} ] ; then
-  DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
-  SEED=9062
-  NAME=DIA_${DIAGNOSTIC_2}__SIG_${SIG__1}__SEED_${SEED}
-  SIG=${SIG__1}
-
-elif [ ${SLURM_ARRAY_TASK_ID} -gt ${TREATMENT__1} ] ; then
-  DIAGNOSTIC=${EXPLOITATION}
-  PROBLEM_SEED_OFFSET=4000
-  SEED=$((SLURM_ARRAY_TASK_ID + PROBLEM_SEED_OFFSET))
-  NAME=DIA_${DIAGNOSTIC_1}__SIG_${SIG__6}__SEED_${SEED}
-  SIG=${SIG__6}
-
-else
-  echo "${SEED} from ${PROBLEM} failed to launch" >> /mnt/gs18/scratch/users/herna383/failtolaunch.txt
-fi
+DIAGNOSTIC=${STRUCTURED_EXPLOITATION}
+SEED=6051
+NAME=DIA_${DIAGNOSTIC_2}__SIG_${SIG__1}__SEED_${SEED}
+SIG=${SIG__1}
 
 ####################################################################
 
