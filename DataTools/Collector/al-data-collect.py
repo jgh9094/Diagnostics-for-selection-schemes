@@ -133,7 +133,7 @@ def SetSeeds(s):
         seed.append([x for x in range(451,501)])
         return seed
 
-    elif s == 2 or s == 6 or s ==7:
+    elif s == 2 or s == 6:
         seed = []
         seed.append([x for x in range(1,51)])
         seed.append([x for x in range(51,101)])
@@ -153,6 +153,15 @@ def SetSeeds(s):
         seed.append([x for x in range(201,251)])
         seed.append([x for x in range(251,301)])
         seed.append([x for x in range(301,351)])
+        return seed
+
+    elif s ==7:
+        seed = []
+        seed.append([x for x in range(1,51)])
+        seed.append([x for x in range(201,251)])
+        seed.append([x for x in range(251,301)])
+        seed.append([x for x in range(301,351)])
+        seed.append([x for x in range(351,401)])
         return seed
 
     else:

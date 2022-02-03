@@ -130,7 +130,10 @@ def SetSeeds(s):
     elif s == 6:
         return [x for x in range(1,401)]
     elif s == 7:
-        return [x for x in range(1,401)]
+        l = [x for x in range(1,51)]
+        for i in range(201,401):
+            l.append(i)
+        return l
     else:
         sys.exit('SEEDS SELECTION UNKNOWN')
 
