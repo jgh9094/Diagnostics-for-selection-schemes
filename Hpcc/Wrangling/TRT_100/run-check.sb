@@ -10,8 +10,7 @@
 ##################################
 # SETUP RELEVANT DIRECTORIES
 ##################################
-DATA_DIR=/mnt/scratch/herna383/DIAGNOSTICS-PROJ-01/
-
+DATA_DIR=/mnt/gs18/scratch/users/herna383/DIAGNOSTICS-PROJ-01/
 ##################################
 # Setup relevant directories
 # Previously used ones will be commented out
