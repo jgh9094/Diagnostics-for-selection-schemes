@@ -220,20 +220,20 @@ def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens):
 # loop through differnt files that exist
 def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     # check if data dir exists
-    # if os.path.isdir(data) == False:
-    #     print('DATA=', data)
-    #     sys.exit('DATA DIRECTORY DOES NOT EXIST')
+    if os.path.isdir(data) == False:
+        print('DATA=', data)
+        sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check if data dir exists
-    # if os.path.isdir(dump) == False:
-    #     print('DATA=', data)
-    #     sys.exit('DATA DIRECTORY DOES NOT EXIST')
+    if os.path.isdir(dump) == False:
+        print('DATA=', data)
+        sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check that selection data folder exists
     SEL_DIR = data + SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
-    # if os.path.isdir(SEL_DIR) == False:
-    #     print('SEL_DIR=', SEL_DIR)
-    #     sys.exit('EXIT -1')
+    if os.path.isdir(SEL_DIR) == False:
+        print('SEL_DIR=', SEL_DIR)
+        sys.exit('EXIT -1')
 
     # loop through sub data directories
     print('Full data Dir=', SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_XXX' + '__SEED_XXX' + '/')
@@ -253,13 +253,13 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM
         print('Sub data directory:', DATA_DIR+'data.csv')
 
-    #     # get data from file and check if can store it
-    #     sol = FindSolGen(DATA_DIR+'data.csv', obj)
-    #     if 0 <= sol:
-    #         SOL_LIST[it].append(sol)
+        # get data from file and check if can store it
+        sol = FindSolGen(DATA_DIR+'data.csv', obj)
+        if 0 <= sol:
+            SOL_LIST[it].append(sol)
 
-    # # Time to export the csv file
-    # ExportCSV(SOL_LIST, VLIST, sel, dia, dump, obj, acc, gens)
+    # Time to export the csv file
+    ExportCSV(SOL_LIST, VLIST, sel, dia, dump, obj, acc, gens)
 
 
 def main():
