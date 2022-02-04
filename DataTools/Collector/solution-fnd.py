@@ -181,7 +181,7 @@ def SetSolList(s):
             sol.append([])
         return sol
 
-    elif s == 2 or s == 3 or s == 4 or s == 5:
+    elif s == 2 or s == 4 or s == 6 or s == 7:
         for i in range(8):
             sol.append([])
         return sol
