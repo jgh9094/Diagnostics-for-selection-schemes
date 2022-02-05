@@ -235,13 +235,14 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
     # iterate through the sets of seeds
     for i in range(len(SEEDS)):
         seeds = SEEDS[i]
-        var_val = str(VLIST[i])
         print('i=',i)
 
         TRT = [VLIST[i]] * len(GEN_LIST)
 
         # iterate through seeds to collect data
         for s in seeds:
+            it = int((s-1)/REP_NUM)
+            var_val = str(VLIST[it])
             seed = str(s + offs)
             DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM + 'data.csv'
 
