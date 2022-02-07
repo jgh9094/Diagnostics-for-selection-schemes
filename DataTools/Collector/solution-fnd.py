@@ -102,7 +102,7 @@ def SetSeeds(s):
         return [x for x in range(1,401)]
     elif s == 7:
         l = [x for x in range(1,51)]
-        for i in range(201,401):
+        for i in range(251,401):
             l.append(i)
         return l
     else:

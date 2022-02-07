@@ -150,7 +150,7 @@ def SetSeeds(s):
         seed.append([x for x in range(51,101)])
         seed.append([x for x in range(101,151)])
         seed.append([x for x in range(151,201)])
-        seed.append([x for x in range(201,251)])
+        # seed.append([x for x in range(201,251)])
         seed.append([x for x in range(251,301)])
         seed.append([x for x in range(301,351)])
         return seed
