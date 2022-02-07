@@ -234,7 +234,9 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         dfl = df.iloc[[-1]]
 
         if dfl[GEN].tolist()[0] != int(gens):
-            sys.exit('FILE DID NOT REACH GENS')
+            print('DNF:', DATA_DIR)
+            continue
+            # sys.exit('FILE DID NOT REACH GENS')
 
         TRT.append(VLIST[it])
         PFA.append(dfl[POP_FIT_AVG].tolist()[0])
