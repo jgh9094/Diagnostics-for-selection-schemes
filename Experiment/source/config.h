@@ -17,7 +17,7 @@ EMP_BUILD_CONFIG(DiaConfig,
   VALUE(ACCURACY,            double,      0.99,      "Accuracy percentage needed to be considered an optimal trait"),
   VALUE(CREDIT,              double,      0.00,      "Maximum credit a solution can get on an objective if applicable"),
   VALUE(OBJECTIVE_CNT,       size_t,       100,      "Number of traits an organism has"),
-  VALUE(SELECTION,           size_t,         6,      "Which selection are we doing? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n"
+  VALUE(SELECTION,           size_t,         0,      "Which selection are we doing? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n"
                                                      "3: Novelty Aggregate\n4: Espilon Lexicase\n5: Novelty Euclidean\n6: Nondominated Sorting"
                                                      "\n7: Novelty Search"),
   VALUE(DIAGNOSTIC,          size_t,         0,      "Which diagnostic are we doing? \n0: Exploitation\n1: Structured Exploitation\n"
@@ -28,17 +28,20 @@ EMP_BUILD_CONFIG(DiaConfig,
   VALUE(MEAN,             double,     0.0,          "Mean of Gaussian Distribution for mutations"),
   VALUE(STD,              double,     1.0,          "Standard Deviation of Gaussian Distribution for mutations"),
 
-  GROUP(PARAMETERS, "Parameter estimations all selection schemes."),
-  VALUE(TRUNC_SIZE,       size_t,             8,       "Parameter estimate for μ."),
+  GROUP(TRUNCATION, "Parameters for truncation."), // finished in under 60 secs
+  VALUE(TRUNC_SIZE,       size_t,             8,       "Parameter estimate for truncation size t."),
+
+  GROUP(TOURNAMENT, "Parameters for tournament."), // finished in about 120 secs
   VALUE(TOUR_SIZE,        size_t,             8,       "Parameter estimate for tournament size."),
 
-  VALUE(FIT_SIGMA,        double,           0.0,       "Parameter estimate for proportion of similarity threshold sigma (based on maximum distance between solutions)."),
+  GROUP(FITSHARING, "Parameters for fitness sharing."), // 500 gens in 120 secs
+  VALUE(FIT_SIGMA,        double,           1.0,       "Parameter estimate for proportion of similarity threshold sigma (based on maximum distance between solutions)."),
   VALUE(FIT_ALPHA,        double,           1.0,       "Parameter estimate for penalty function shape alpha."),
   VALUE(FIT_APPLI,        bool,           false,       "Fitness sharing applied: 0->Genome, 1->Phenotype"),
 
-  VALUE(PNORM_EXP,        double,            2.0,       "Paramter we are using for the p-norm function."),
+  GROUP(NOVELTY, "Parameters for novelty search."), // 500 gens in 120 secs
   VALUE(NOVEL_K,          size_t,             15,       "Parameter estimate k-nearest neighbors."),
-  VALUE(NOVEL_PMIN,       double,            7.0,       "Minimum novelty score needed to enter archive."),
+  VALUE(NOVEL_PMIN,       double,            10.0,       "Minimum novelty score needed to enter archive."),
   VALUE(NOVEL_UP,         double,           0.25,       "Increase pmin by this much."),
   VALUE(NOVEL_DOWN,       double,           0.05,       "Decrease pmin by this much."),
   VALUE(NOVEL_RI,         double,        0.00001,       "Probability of random solution inserted in archive."),
@@ -46,12 +49,17 @@ EMP_BUILD_CONFIG(DiaConfig,
   VALUE(NOVEL_CAP,        size_t,            512,       "Cap on number of solutions allowed in the archive"),
   VALUE(NOVEL_CQS,          bool,          false,       "Do we cap solutions?"),
 
+  GROUP(LEXICASE, "Parameters for lexicase."), // 500 gens in 10 secs
   VALUE(LEX_EPS,          double,            0.0,       "Parameter estimate for lexicase epsilon."),
 
+  GROUP(NSGA, "Parameters for nondominated sorting algorithm."), // // 500 gens in 120 secs
   VALUE(PAT_MAX,      double,   9000000000000000.0,       "Large dummy number ."),
   VALUE(PAT_RED,      double,                 0.99,       "Default large value for different Pareto groups."),
   VALUE(PAT_ALP,      double,                  2.0,       "Alpha value for Pareto fitness sharing."),
   VALUE(PAT_SIG,      double,                  0.1,       "Sigma value for Pareto fitness sharing."),
+
+  GROUP(OTHER, "Parameters for selection class."),
+  VALUE(PNORM_EXP,        double,            2.0,       "Paramter we are using for the p-norm function."),
 
   GROUP(SYSTEMATICS, "Output rates for OpenWorld"),
   VALUE(SNAP_INTERVAL,             size_t,             10000,          "How many updates between prints?"),
