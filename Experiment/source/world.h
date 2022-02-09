@@ -178,8 +178,7 @@ class DiagWorld : public emp::World<Org>
 
     size_t FindStreak();
 
-    // void SnapshotPhylogony();
-
+    void FindEverything();
 
     ///< helper functions
 
@@ -192,6 +191,9 @@ class DiagWorld : public emp::World<Org>
     // update archive
     // return true if archive changes
     bool ArchiveUpdate(const score_t & score, const fmatrix_t & dmat);
+
+    // update archive data
+    void ArchiveDataUpdate(const size_t ord_id);
 
 
   private:
@@ -251,11 +253,21 @@ class DiagWorld : public emp::World<Org>
     // streak solution position
     size_t strk_pos;
     // common solution dictionary
-    como_t common;
+    // como_t common;
+    // unique starts
+    size_t unique_starts = 0;
+
     // Pareto group count
     size_t pareto_cnt = 0;
+
     // novelty search archive
     std::deque<score_t> archive;
+    // elite solution position
+    double arc_elite = 0.0;
+    // optimal solution position
+    size_t arc_opti = 0;
+    // streak solution position
+    size_t arc_strk = 0;
 };
 
 ///< functions called to setup the world
@@ -550,19 +562,19 @@ void DiagWorld::SetDataTracking()
   }, "pop_uni_obj", "Number of unique optimized traits per generation!");
 
   // count of common solution in the population
-  data_file.AddFun<size_t>([this]()
-  {
-    // quick checks
-    emp_assert(0 < common.size());
-    emp_assert(comm_pos != config.POP_SIZE());
+  // data_file.AddFun<size_t>([this]()
+  // {
+  //   // quick checks
+  //   emp_assert(0 < common.size());
+  //   emp_assert(comm_pos != config.POP_SIZE());
 
-    // find iterator to common org
-    const auto it = common.find(comm_pos);
-    emp_assert(it != common.end());
-    emp_assert(0 < it->second.size());
+  //   // find iterator to common org
+  //   const auto it = common.find(comm_pos);
+  //   emp_assert(it != common.end());
+  //   emp_assert(0 < it->second.size());
 
-    return it->second.size();
-  }, "com_sol_cnt", "Count of genetically common solution!");
+  //   return it->second.size();
+  // }, "com_sol_cnt", "Count of genetically common solution!");
 
   // elite solution aggregate performance
   data_file.AddFun<double>([this]()
@@ -588,29 +600,29 @@ void DiagWorld::SetDataTracking()
     return org.GetCount();
   }, "ele_opt_cnt", "Elite solution optimized objective count!");
 
-  // common solution aggregate performance
-  data_file.AddFun<double>([this]()
-  {
-    // quick checks
-    emp_assert(comm_pos != config.POP_SIZE());
-    emp_assert(pop.size() == config.POP_SIZE());
+  // // common solution aggregate performance
+  // data_file.AddFun<double>([this]()
+  // {
+  //   // quick checks
+  //   emp_assert(comm_pos != config.POP_SIZE());
+  //   emp_assert(pop.size() == config.POP_SIZE());
 
-    Org & org = *pop[comm_pos];
+  //   Org & org = *pop[comm_pos];
 
-    return org.GetAggregate();
-  }, "com_agg_per", "Common solution aggregate performance!");
+  //   return org.GetAggregate();
+  // }, "com_agg_per", "Common solution aggregate performance!");
 
-  // common solution optimized objectives count
-  data_file.AddFun<size_t>([this]()
-  {
-    // quick checks
-    emp_assert(comm_pos != config.POP_SIZE());
-    emp_assert(pop.size() == config.POP_SIZE());
+  // // common solution optimized objectives count
+  // data_file.AddFun<size_t>([this]()
+  // {
+  //   // quick checks
+  //   emp_assert(comm_pos != config.POP_SIZE());
+  //   emp_assert(pop.size() == config.POP_SIZE());
 
-    Org & org = *pop[comm_pos];
+  //   Org & org = *pop[comm_pos];
 
-    return org.GetCount();
-  }, "com_opt_cnt", "Common solution optimized objective count!");
+  //   return org.GetCount();
+  // }, "com_opt_cnt", "Common solution optimized objective count!");
 
   // optimized solution aggregate performance
   data_file.AddFun<double>([this]()
@@ -710,8 +722,9 @@ void DiagWorld::SetDataTracking()
   // unique starting positions
   data_file.AddFun<size_t>([this]()
   {
+    emp_assert(unique_starts < config.POP_SIZE());
     return FindUniqueStart();
-  }, "uni_str_pos", "Number of unique optimized positions in the population!");
+  }, "uni_str_pos", "Number of unique starting positions in the population!");
 
   // Pareto group count
   data_file.AddFun<size_t>([this]()
@@ -731,15 +744,7 @@ void DiagWorld::SetDataTracking()
   // archive group count
   data_file.AddFun<size_t>([this]()
   {
-    if(config.SELECTION() == 7)
-    {
-      return archive.size();
-    }
-    else
-    {
-      emp_assert(archive.size() == 0);
-      return archive.size();
-    }
+    return archive.size();
   }, "archive_cnt", "Number phenotypes in the archive!");
 
   // archive group count
@@ -747,6 +752,25 @@ void DiagWorld::SetDataTracking()
   {
     return pmin;
   }, "pmin", "pmin used for archive approval!");
+
+  // archive group count
+  data_file.AddFun<double>([this]()
+  {
+    return arc_elite;
+  }, "arc_elite", "archive best fitness found so far!");
+
+  // archive group count
+  data_file.AddFun<size_t>([this]()
+  {
+    return arc_opti;
+  }, "arc_opti", "archive best fitness found so far!");
+
+  // archive group count
+  data_file.AddFun<double>([this]()
+  {
+    return arc_strk;
+  }, "arc_strk", "archive best fitness found so far!");
+
 
   data_file.PrintHeaderKeys();
 
@@ -806,12 +830,13 @@ void DiagWorld::ResetData()
   comm_pos = config.POP_SIZE();
   opti_pos = config.POP_SIZE();
   strk_pos = config.POP_SIZE();
+  unique_starts = config.POP_SIZE();
   pareto_cnt = 0;
 
   // reset all vectors/maps holding current gen data
   fit_vec.clear();
   parent_vec.clear();
-  common.clear();
+  // common.clear();
 }
 
 void DiagWorld::EvaluationStep()
@@ -853,10 +878,14 @@ void DiagWorld::RecordData()
   emp_assert(pop.size() == config.POP_SIZE());
   for(size_t i = 0; i < pop.size(); ++i)
   {
-    Org & org = *pop[i];
+    const Org & org = *pop[i];
     pop_fit->Add(org.GetAggregate());
     pop_opti->Add(org.GetCount());
     pop_str->Add(org.GetStreak());
+
+    const Org & par = *pop[parent_vec[i]];
+    pnt_fit->Add(par.GetAggregate());
+    pnt_opti->Add(par.GetCount());
   }
   emp_assert(pop_fit->GetCount() == config.POP_SIZE());
   emp_assert(pop_opti->GetCount() == config.POP_SIZE());
@@ -864,33 +893,35 @@ void DiagWorld::RecordData()
 
   // get parent data
   emp_assert(parent_vec.size() == config.POP_SIZE());
-  for(size_t i = 0; i < parent_vec.size(); ++i)
-  {
-    Org & org = *pop[parent_vec[i]];
-    pnt_fit->Add(org.GetAggregate());
-    pnt_opti->Add(org.GetCount());
-  }
+  // for(size_t i = 0; i < parent_vec.size(); ++i)
+  // {
+  //   Org & org = *pop[parent_vec[i]];
+  //   pnt_fit->Add(org.GetAggregate());
+  //   pnt_opti->Add(org.GetCount());
+  // }
   emp_assert(pnt_fit->GetCount() == config.POP_SIZE());
   emp_assert(pnt_opti->GetCount() == config.POP_SIZE());
 
   /// get all position ids
 
-  elite_pos = FindElite();
-  emp_assert(elite_pos != config.POP_SIZE());
+  FindEverything();
 
-  comm_pos = FindCommon();
-  emp_assert(comm_pos != config.POP_SIZE());
+  // elite_pos = FindElite();
+  // emp_assert(elite_pos != config.POP_SIZE());
 
-  opti_pos = FindOptimized();
-  emp_assert(opti_pos != config.POP_SIZE());
+  // comm_pos = FindCommon();
+  // emp_assert(comm_pos != config.POP_SIZE());
 
-  strk_pos = FindStreak();
-  emp_assert(strk_pos != config.POP_SIZE());
+  // opti_pos = FindOptimized();
+  // emp_assert(opti_pos != config.POP_SIZE());
+
+  // strk_pos = FindStreak();
+  // emp_assert(strk_pos != config.POP_SIZE());
 
   /// fill vectors & map
   emp_assert(fit_vec.size() == config.POP_SIZE()); // should be set already
   emp_assert(parent_vec.size() == config.POP_SIZE()); // should be set already
-  emp_assert(0 < common.size());  // should already be set in FindCommon
+  // emp_assert(0 < common.size());  // should already be set in FindCommon
 
   /// update the file
   data_file.Update();
@@ -1414,6 +1445,7 @@ size_t DiagWorld::FindElite()
   return std::distance(fit_vec.begin(), elite_it);
 }
 
+/*
 size_t DiagWorld::FindCommon()
 {
   // quick checks
@@ -1464,7 +1496,7 @@ size_t DiagWorld::FindCommon()
   }
 
   return max_pos;
-}
+} */
 
 size_t DiagWorld::FindOptimized()
 {
@@ -1492,23 +1524,25 @@ size_t DiagWorld::FindUniqueStart()
 {
   // quick checks
   emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
+  emp_assert(unique_starts < config.POP_SIZE());
 
-  // collect number of unique starting positions
-  std::set<size_t> position;
+  // // collect number of unique starting positions
+  // std::set<size_t> position;
 
-  // iterate pop to check is a solution has the objective optimized
-  for(size_t p = 0; p < pop.size(); ++p)
-  {
-    Org & org = *pop[p];
+  // // iterate pop to check is a solution has the objective optimized
+  // for(size_t p = 0; p < pop.size(); ++p)
+  // {
+  //   Org & org = *pop[p];
 
-    // check that the position has be set
-    emp_assert(org.GetStart() != config.OBJECTIVE_CNT());
+  //   // check that the position has be set
+  //   emp_assert(org.GetStart() != config.OBJECTIVE_CNT());
 
-    // insert position into set
-    position.insert(org.GetStart());
-  }
+  //   // insert position into set
+  //   position.insert(org.GetStart());
+  // }
 
-  return position.size();
+  // return position.size();
+  return unique_starts;
 }
 
 size_t DiagWorld::FindStreak()
@@ -1557,6 +1591,40 @@ size_t DiagWorld::FindStreak()
 
   return best_org;
 }
+
+void DiagWorld::FindEverything()
+{
+  // quick checks
+  emp_assert(fit_vec.size() == config.POP_SIZE());
+  emp_assert(elite_pos == config.POP_SIZE());
+
+  // bools to make sure got everything
+  bool elite_b = false,  opti_b = false, strk_b = false;
+
+  // collect number of unique starting positions
+  std::set<size_t> position;
+
+  // loop and get data
+  for(size_t i = 0; i < pop.size(); ++i)
+  {
+    const Org & org = *pop[i];
+
+    position.insert(org.GetStart());
+
+    // check if we need to do anything below
+    if(elite_b && opti_b && strk_b) {continue;}
+
+    // find max fit solution
+    if(org.GetAggregate() == pop_fit->GetMax() && !elite_b) {elite_b = true; elite_pos = i;}
+    // find max optimal count solution
+    if(org.GetCount() == pop_opti->GetMax() && !opti_b) {opti_b = true; opti_pos = i;}
+    // find max fit solution
+    if(org.GetStreak() == pop_str->GetMax() && !strk_b) {strk_b = true; strk_pos = i;}
+  }
+
+  unique_starts = position.size();
+}
+
 
 
 ///< helper functions
@@ -1612,19 +1680,28 @@ bool DiagWorld::ArchiveUpdate(const score_t & score, const fmatrix_t & dmat)
   // check each solution novelty score
   for(size_t i = 0; i < score.size(); ++i)
   {
-    // insert solution into archive is threshold met or luck
-    // if(score[i] > pmin || random_ptr->P(config.NOVEL_RI()))
+    // insert solution into if luck
     if(random_ptr->P(config.NOVEL_RI()))
     {
-      // ++insert;
+      // add phenotype to archive
       archive.push_back(dmat[i]);
+
+      // update archive stats with solution data (if possible)
+      ArchiveDataUpdate(i);
 
       if(config.NOVEL_CAP() < archive.size() && config.NOVEL_CQS()) {archive.pop_front();}
     }
     else if(score[i] > pmin)
     {
+      // increment insertion counts for update
       ++insert;
+
+      // add phenotype to the archive
       archive.push_back(dmat[i]);
+
+      // update archive stats with solution data (if possible)
+      ArchiveDataUpdate(i);
+
       if(config.NOVEL_CAP() < archive.size() && config.NOVEL_CQS()) {archive.pop_front();}
     }
   }
@@ -1635,6 +1712,29 @@ bool DiagWorld::ArchiveUpdate(const score_t & score, const fmatrix_t & dmat)
   }
 
   return 0 < insert;
+}
+
+void DiagWorld::ArchiveDataUpdate(const size_t org_id)
+{
+  // quick checks
+  emp_assert(pop.size() == config.POP_SIZE());
+  emp_assert(0 <= org_id);
+  // if not novelty selection, org_id can not be pop size
+  emp_assert(org_id < pop.size() && config.SELECTION() != 7);
+  // if novelty selection, org_id can be pop size
+  emp_assert(org_id <= pop.size() && config.SELECTION() == 7);
+
+  // get org from
+  const Org & org = *pop[org_id];
+
+  // update archive data if needed
+
+  // archive current trait aggregate maximum
+  if(arc_elite < org.GetAggregate()) {arc_elite = org.GetAggregate();}
+  // archive current optimal count maximum
+  if(arc_opti < org.GetCount()) {arc_opti = org.GetCount();}
+  // archive current trait aggregate maximum
+  if(arc_strk < org.GetStreak()) {arc_strk = org.GetStreak();}
 }
 
 #endif
