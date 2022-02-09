@@ -1,8 +1,9 @@
 #####################################################################################################
 #####################################################################################################
-# Will create a csv per treatment of generation a perfect solution is found
+# Create csv's with requested data from the last generation for all replicates
 #
-# Output : csv with data found at the end of a run
+#
+# Output : csv with for data over time
 #
 # python3
 #####################################################################################################
@@ -19,9 +20,9 @@ import os
 # variables we are testing for each replicate range
 TR_LIST = ['1','2','4','8','16','32','64','128','256','512']
 TS_LIST = ['1','2','4','8','16','32','64','128','256','512']
-LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
+LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
+FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
+ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 NS_LIST = ['0','1','2','4','8','15','30','60']
 
 # seed experiements replicates range
@@ -36,14 +37,10 @@ POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
 POP_STR_AVG = 'pop_str_avg'
 POP_STR_MAX = 'pop_str_max'
-# common solution
-COM_SOL_CNT = 'com_sol_cnt'
 # elite solutions (max agg traits)
 ELE_AGG_PER = 'ele_agg_per'
 ELE_OPT_CNT = 'ele_opt_cnt'
 # common solution
-COM_AGG_PER = 'com_agg_per'
-COM_OPT_CNT = 'com_opt_cnt'
 # optimal solution (max opti trait count)
 OPT_AGG_PER = 'opt_agg_per'
 OPT_OBJ_CNT = 'opt_obj_cnt'
@@ -57,6 +54,9 @@ PARETO_CNT = 'pareto_cnt'
 # novelty data
 ARCHIVE_CNT = 'archive_cnt'
 PMIN = 'pmin'
+ARC_ELITE = 'arc_elite'
+ARC_OPTI = 'arc_opti'
+ARC_STRK = 'arc_strk'
 GEN = 'gen'
 
 # return appropiate string dir name (based off run.sb file naming system)
@@ -124,16 +124,13 @@ def SetSeeds(s):
     elif s == 1:
         return [x for x in range(1,501)]
     elif s == 2:
-        return [x for x in range(1,401)]
+        return [x for x in range(1,351)]
     elif s == 4:
         return [x for x in range(1,351)]
     elif s == 6:
-        return [x for x in range(1,401)]
+        return [x for x in range(1,351)]
     elif s == 7:
-        l = [x for x in range(1,51)]
-        for i in range(251,401):
-            l.append(i)
-        return l
+        return [x for x in range(1,401)]
     else:
         sys.exit('SEEDS SELECTION UNKNOWN')
 
@@ -205,11 +202,8 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     PUO = []
     PSA = []
     PSM = []
-    CSC = []
     EAP = []
     EOC = []
-    CAP = []
-    COC = []
     OAP = []
     OOC = []
     SAP = []
@@ -218,6 +212,9 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     PC = []
     AC = []
     P = []
+    AE = []
+    AO = []
+    AS = []
     TRT = []
 
     # second parameter dir
@@ -246,11 +243,8 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         PUO.append(dfl[POP_UNI_OBJ].tolist()[0])
         PSA.append(dfl[POP_STR_AVG].tolist()[0])
         PSM.append(dfl[POP_STR_MAX].tolist()[0])
-        CSC.append(dfl[COM_SOL_CNT].tolist()[0])
         EAP.append(dfl[ELE_AGG_PER].tolist()[0])
         EOC.append(dfl[ELE_OPT_CNT].tolist()[0])
-        CAP.append(dfl[COM_AGG_PER].tolist()[0])
-        COC.append(dfl[COM_OPT_CNT].tolist()[0])
         OAP.append(dfl[OPT_AGG_PER].tolist()[0])
         OOC.append(dfl[OPT_OBJ_CNT].tolist()[0])
         SAP.append(dfl[STR_AGG_PER].tolist()[0])
@@ -259,7 +253,9 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         PC.append(dfl[PARETO_CNT].tolist()[0])
         AC.append(dfl[ARCHIVE_CNT].tolist()[0])
         P.append(dfl[PMIN].tolist()[0])
-
+        AE.append(dfl[ARC_ELITE].tolist()[0])
+        AO.append(dfl[ARC_OPTI].tolist()[0])
+        AS.append(dfl[ARC_STRK].tolist()[0])
 
     # time to export the data
     fdf = pd.DataFrame({'trt': pd.Series(TRT),
@@ -270,19 +266,19 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
                     POP_UNI_OBJ: pd.Series(PUO),
                     POP_STR_AVG: pd.Series(PSA),
                     POP_STR_MAX: pd.Series(PSM),
-                    COM_SOL_CNT: pd.Series(CSC),
                     ELE_AGG_PER: pd.Series(EAP),
                     ELE_OPT_CNT: pd.Series(EOC),
-                    COM_AGG_PER: pd.Series(CAP),
-                    COM_OPT_CNT: pd.Series(COC),
                     OPT_AGG_PER: pd.Series(OAP),
                     OPT_OBJ_CNT: pd.Series(OOC),
                     STR_AGG_PER: pd.Series(SAP),
                     STR_OBJ_CNT: pd.Series(SOC),
                     UNI_STR_POS: pd.Series(USP),
-                    PARETO_CNT: pd.Series(PC),
+                    PARETO_CNT:  pd.Series(PC),
                     ARCHIVE_CNT: pd.Series(AC),
-                    PMIN: pd.Series(P)})
+                    PMIN:        pd.Series(P),
+                    ARC_ELITE:   pd.Series(AE),
+                    ARC_OPTI:    pd.Series(AO),
+                    ARC_STRK:    pd.Series(AS)})
 
     fdf.to_csv(path_or_buf= dump + 'eor-' + SetDiagnostic(dia).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
 

@@ -1,8 +1,9 @@
 #####################################################################################################
 #####################################################################################################
-# Will create a csv per treatment of generation a perfect solution is found
+# Create csv's with generation a solution was found if possible.
 #
-# Output : csv with generation a optimal solution is found
+#
+# Output : csv with for data over time
 #
 # python3
 #####################################################################################################
@@ -19,9 +20,9 @@ import os
 # variables we are testing for each replicate range
 TR_LIST = ['1','2','4','8','16','32','64','128','256','512']
 TS_LIST = ['1','2','4','8','16','32','64','128','256','512']
-LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
+LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
+FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
+ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 NS_LIST = ['0','1','2','4','8','15','30','60']
 
 # seed experiements replicates range
@@ -95,16 +96,13 @@ def SetSeeds(s):
     elif s == 1:
         return [x for x in range(1,501)]
     elif s == 2:
-        return [x for x in range(1,401)]
+        return [x for x in range(1,351)]
     elif s == 4:
         return [x for x in range(1,351)]
     elif s == 6:
-        return [x for x in range(1,401)]
+        return [x for x in range(1,351)]
     elif s == 7:
-        l = [x for x in range(1,51)]
-        for i in range(251,401):
-            l.append(i)
-        return l
+        return [x for x in range(1,401)]
     else:
         sys.exit('SEEDS SELECTION UNKNOWN')
 

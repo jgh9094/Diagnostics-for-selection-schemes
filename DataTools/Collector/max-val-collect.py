@@ -1,8 +1,9 @@
 #####################################################################################################
 #####################################################################################################
-# Will create a csv per treatment of generation a perfect solution is found
+# Create csv's with max vals found throughout evolutionary run from requested data for all replicates
 #
-# Output : csv with maximum value for data found at a specific generaiton
+#
+# Output : csv with for data over time
 #
 # python3
 #####################################################################################################
@@ -19,9 +20,9 @@ import os
 # variables we are testing for each replicate range
 TR_LIST = ['1','2','4','8','16','32','64','128','256','512']
 TS_LIST = ['1','2','4','8','16','32','64','128','256','512']
-LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
+LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
+FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
+ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 NS_LIST = ['0','1','2','4','8','15','30','60']
 
 # seed experiements replicates range
@@ -36,14 +37,9 @@ POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
 POP_STR_AVG = 'pop_str_avg'
 POP_STR_MAX = 'pop_str_max'
-# common solution
-COM_SOL_CNT = 'com_sol_cnt'
 # elite solutions (max agg traits)
 ELE_AGG_PER = 'ele_agg_per'
 ELE_OPT_CNT = 'ele_opt_cnt'
-# common solution
-COM_AGG_PER = 'com_agg_per'
-COM_OPT_CNT = 'com_opt_cnt'
 # optimal solution (max opti trait count)
 OPT_AGG_PER = 'opt_agg_per'
 OPT_OBJ_CNT = 'opt_obj_cnt'
@@ -57,6 +53,9 @@ PARETO_CNT = 'pareto_cnt'
 # novelty data
 ARCHIVE_CNT = 'archive_cnt'
 PMIN = 'pmin'
+ARC_ELITE = 'arc_elite'
+ARC_OPTI = 'arc_opti'
+ARC_STRK = 'arc_strk'
 GENERATION = 'gen'
 
 # return appropiate string dir name (based off run.sb file naming system)
@@ -124,16 +123,13 @@ def SetSeeds(s):
     elif s == 1:
         return [x for x in range(1,501)]
     elif s == 2:
-        return [x for x in range(1,401)]
+        return [x for x in range(1,351)]
     elif s == 4:
         return [x for x in range(1,351)]
     elif s == 6:
-        return [x for x in range(1,401)]
+        return [x for x in range(1,351)]
     elif s == 7:
-        l = [x for x in range(1,51)]
-        for i in range(251,401):
-            l.append(i)
-        return l
+        return [x for x in range(1,401)]
     else:
         sys.exit('SEEDS SELECTION UNKNOWN')
 
@@ -252,10 +248,10 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
 
     # data traversing
     data = {POP_FIT_AVG,POP_FIT_MAX,POP_OPT_AVG,POP_OPT_MAX,
-            POP_UNI_OBJ,POP_STR_AVG,POP_STR_MAX,COM_SOL_CNT,
-            ELE_AGG_PER,ELE_OPT_CNT,COM_AGG_PER,COM_OPT_CNT,
-            OPT_AGG_PER,OPT_OBJ_CNT,STR_AGG_PER,STR_OBJ_CNT,
-            UNI_STR_POS,PARETO_CNT,ARCHIVE_CNT,PMIN}
+            POP_UNI_OBJ,POP_STR_AVG,POP_STR_MAX,ELE_AGG_PER,
+            ELE_OPT_CNT,OPT_AGG_PER,OPT_OBJ_CNT,STR_AGG_PER,
+            STR_OBJ_CNT,UNI_STR_POS,PARETO_CNT,ARCHIVE_CNT,
+            PMIN,ARC_ELITE,ARC_OPTI,ARC_STRK}
 
     for s in SEEDS:
         seed = str(s + offs)

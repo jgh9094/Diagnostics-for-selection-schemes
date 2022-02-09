@@ -1,6 +1,6 @@
 #####################################################################################################
 #####################################################################################################
-# Will create a csv how r code expects data
+# Create csv's with requested data from all replicates every X generations
 #
 #
 # Output : csv with for data over time
@@ -20,9 +20,9 @@ import os
 # variables we are testing for each replicate range
 TR_LIST = ['1','2','4','8','16','32','64','128','256','512']
 TS_LIST = ['1','2','4','8','16','32','64','128','256','512']
-LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
-ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0','10.0']
+LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
+FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
+ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 NS_LIST = ['0','1','2','4','8','15','30','60']
 
 # seed experiements replicates range
@@ -37,14 +37,9 @@ POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
 POP_STR_AVG = 'pop_str_avg'
 POP_STR_MAX = 'pop_str_max'
-# common solution
-COM_SOL_CNT = 'com_sol_cnt'
 # elite solutions (max agg traits)
 ELE_AGG_PER = 'ele_agg_per'
 ELE_OPT_CNT = 'ele_opt_cnt'
-# common solution
-COM_AGG_PER = 'com_agg_per'
-COM_OPT_CNT = 'com_opt_cnt'
 # optimal solution (max opti trait count)
 OPT_AGG_PER = 'opt_agg_per'
 OPT_OBJ_CNT = 'opt_obj_cnt'
@@ -58,6 +53,9 @@ PARETO_CNT = 'pareto_cnt'
 # novelty data
 ARCHIVE_CNT = 'archive_cnt'
 PMIN = 'pmin'
+ARC_ELITE = 'arc_elite'
+ARC_OPTI = 'arc_opti'
+ARC_STRK = 'arc_strk'
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s,p):
@@ -133,7 +131,7 @@ def SetSeeds(s):
         seed.append([x for x in range(451,501)])
         return seed
 
-    elif s == 2 or s == 6:
+    elif s == 2 or s == 4 or s == 6:
         seed = []
         seed.append([x for x in range(1,51)])
         seed.append([x for x in range(51,101)])
@@ -142,22 +140,14 @@ def SetSeeds(s):
         seed.append([x for x in range(201,251)])
         seed.append([x for x in range(251,301)])
         seed.append([x for x in range(301,351)])
-        seed.append([x for x in range(351,401)])
-        return seed
-    elif s == 4:
-        seed = []
-        seed.append([x for x in range(1,51)])
-        seed.append([x for x in range(51,101)])
-        seed.append([x for x in range(101,151)])
-        seed.append([x for x in range(151,201)])
-        # seed.append([x for x in range(201,251)])
-        seed.append([x for x in range(251,301)])
-        seed.append([x for x in range(301,351)])
         return seed
 
     elif s ==7:
         seed = []
         seed.append([x for x in range(1,51)])
+        seed.append([x for x in range(51,101)])
+        seed.append([x for x in range(101,151)])
+        seed.append([x for x in range(151,201)])
         seed.append([x for x in range(201,251)])
         seed.append([x for x in range(251,301)])
         seed.append([x for x in range(301,351)])
@@ -265,19 +255,19 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
                             'pop_uni_obj': pd.Series(df[POP_UNI_OBJ].tolist()),
                             'pop_str_avg': pd.Series(df[POP_STR_AVG].tolist()),
                             'pop_str_max': pd.Series(df[POP_STR_MAX].tolist()),
-                            'com_sol_cnt': pd.Series(df[COM_SOL_CNT].tolist()),
                             'ele_agg_per': pd.Series(df[ELE_AGG_PER].tolist()),
                             'ele_opt_cnt': pd.Series(df[ELE_OPT_CNT].tolist()),
-                            'com_agg_per': pd.Series(df[COM_AGG_PER].tolist()),
-                            'com_opt_cnt': pd.Series(df[COM_OPT_CNT].tolist()),
                             'opt_agg_per': pd.Series(df[OPT_AGG_PER].tolist()),
                             'opt_obj_cnt': pd.Series(df[OPT_OBJ_CNT].tolist()),
                             'str_agg_per': pd.Series(df[STR_AGG_PER].tolist()),
                             'str_obj_cnt': pd.Series(df[STR_OBJ_CNT].tolist()),
                             'uni_str_pos': pd.Series(df[UNI_STR_POS].tolist()),
-                            'pareto_cnt': pd.Series(df[PARETO_CNT].tolist()),
+                            'pareto_cnt':  pd.Series(df[PARETO_CNT].tolist()),
                             'archive_cnt': pd.Series(df[ARCHIVE_CNT].tolist()),
-                            'pmin': pd.Series(df[PMIN].tolist())})
+                            'pmin':        pd.Series(df[PMIN].tolist()),
+                            'arc_elite':   pd.Series(df[ARC_ELITE].tolist()),
+                            'arc_opti':    pd.Series(df[ARC_OPTI].tolist()),
+                            'arc_strk':    pd.Series(df[ARC_STRK].tolist())})
 
             DF_LIST.append(cdf)
 
