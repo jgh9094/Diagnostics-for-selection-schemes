@@ -77,6 +77,7 @@ class Org
     size_t GetM() {emp_assert(0 < M); return M;}
     // get start position
     size_t GetStart() {emp_assert(start_pos != M); return start_pos;}
+    size_t GetStart() const {emp_assert(start_pos != M); return start_pos;}
     // get streak count
     size_t GetStreak() {emp_assert(streak != M); return streak;}
     // get streak count
