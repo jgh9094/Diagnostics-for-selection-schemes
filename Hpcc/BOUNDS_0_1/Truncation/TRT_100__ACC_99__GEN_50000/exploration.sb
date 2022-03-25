@@ -2,7 +2,7 @@
 ########## Define Resources Needed with SBATCH Lines ##########
 
 #SBATCH --time=17:00:00               # limit of wall clock time - how long the job will run (same as -t)
-#SBATCH --array=1-500                 # number of jobs being created, each with its array id
+#SBATCH --array=1-450                 # number of jobs being created, each with its array id
 #SBATCH --mem=20G                     # memory required per node - amount of memory (in gigs)
 #SBATCH --job-name tr-exp             # you can give your job a name for easier identification (same as -J)
 #SBATCH --account=devolab             # research group account being used
@@ -43,12 +43,12 @@ DIAGNOSTIC_4=EXPLORATION
 ##################################
 # Setup selection scheme
 ##################################
-TRUNC=0
+TRUNCATION=0
 TOURNAMENT=1
 FITSHARING=2
-LEXICASE=4
-PARETO=6
-NOVELTY=7
+LEXICASE=3
+NONDOMINATED=4
+NOVELTY=5
 
 ##################################
 # Setup diagnostic
@@ -151,6 +151,6 @@ RUN_DIR=${DATA_DIR}/TRT_${OBJECTIVE_CNT}__ACC_${ACCURACY_DIR}__GEN_${GENERATIONS
 # make a run directory
 mkdir -p ${RUN_DIR}
 
-echo "../../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLORATION} -SELECTION ${TRUNC} -OUTPUT_DIR ${RUN_DIR} -TRUNC_SIZE ${TR} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS} > run.log" > ./cmd-coh.txt
+echo "../../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLORATION} -SELECTION ${TRUNCATION} -OUTPUT_DIR ${RUN_DIR} -TRUNC_SIZE ${TR} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS} > run.log" > ./cmd-coh.txt
 
-../../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLORATION} -SELECTION ${TRUNC} -OUTPUT_DIR ${RUN_DIR} -TRUNC_SIZE ${TR} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS}
+../../../../Experiment/dia_world -SEED ${SEED} -DIAGNOSTIC ${EXPLORATION} -SELECTION ${TRUNCATION} -OUTPUT_DIR ${RUN_DIR} -TRUNC_SIZE ${TR} -OBJECTIVE_CNT ${OBJECTIVE_CNT} -ACCURACY ${ACCURACY} -MAX_GENS ${GENERATIONS}

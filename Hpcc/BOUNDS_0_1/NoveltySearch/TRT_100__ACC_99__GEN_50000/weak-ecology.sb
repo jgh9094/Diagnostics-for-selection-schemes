@@ -2,8 +2,8 @@
 ########## Define Resources Needed with SBATCH Lines ##########
 
 #SBATCH --time=168:00:00              # limit of wall clock time - how long the job will run (same as -t)
-#SBATCH --array=255,270,350           # number of jobs being created, each with its array id
-#SBATCH --mem=30G                     # memory required per node - amount of memory (in gigs)
+#SBATCH --array=1-350                 # number of jobs being created, each with its array id
+#SBATCH --mem=35G                     # memory required per node - amount of memory (in gigs)
 #SBATCH --job-name nv-weco            # you can give your job a name for easier identification (same as -J)
 #SBATCH --account=devolab             # research group account being used
 
@@ -56,12 +56,12 @@ DIAGNOSTIC_5=WEAKECOLOGY
 ##################################
 # Setup selection scheme
 ##################################
-TRUNC=0
+TRUNCATION=0
 TOURNAMENT=1
 FITSHARING=2
-LEXICASE=4
-PARETO=6
-NOVELTY=7
+LEXICASE=3
+NONDOMINATED=4
+NOVELTY=5
 
 ##################################
 # Setup diagnostic
