@@ -134,15 +134,11 @@ class DiagWorld : public emp::World<Org>
 
     ///< selection scheme implementations
 
-    void MuLambda();
+    void Truncation();
 
     void Tournament();
 
     void FitnessSharing();
-
-    void NoveltyAggregate();
-
-    void NoveltyEuclidean();
 
     void EpsilonLexicase();
 
@@ -168,15 +164,7 @@ class DiagWorld : public emp::World<Org>
 
     size_t UniqueObjective();
 
-    size_t FindElite();
-
-    size_t FindCommon();
-
-    size_t FindOptimized();
-
     size_t FindUniqueStart();
-
-    size_t FindStreak();
 
     void FindEverything();
 
@@ -193,12 +181,13 @@ class DiagWorld : public emp::World<Org>
     bool ArchiveUpdate(const score_t & score, const fmatrix_t & dmat);
 
     // update archive data
-    void ArchiveDataUpdate(const size_t ord_id);
+    void ArchiveDataUpdate(const size_t org_id);
 
 
   private:
     // experiment configurations
     DiaConfig & config;
+    enum Scheme {TRUNCATION=0,TOURNAMENT=1,FITNESS_SHARING=2,LEXICASE=3,NONDOMINATED=4,NOVELTY=5};
 
     // target vector
     target_t target;
@@ -252,8 +241,6 @@ class DiagWorld : public emp::World<Org>
     size_t opti_pos;
     // streak solution position
     size_t strk_pos;
-    // common solution dictionary
-    // como_t common;
     // unique starts
     size_t unique_starts = 0;
 
@@ -264,10 +251,10 @@ class DiagWorld : public emp::World<Org>
     std::deque<score_t> archive;
     // elite solution position
     double arc_elite = 0.0;
-    // optimal solution position
-    size_t arc_opti = 0;
-    // streak solution position
-    size_t arc_strk = 0;
+    // archive optimal trait vector
+    optimal_t arc_opti_trt;
+    // archive activation gene vector
+    optimal_t arc_acti_gene;
 };
 
 ///< functions called to setup the world
@@ -311,9 +298,6 @@ void DiagWorld::SetOnUpdate()
 
     // step 1: evaluate all solutions on diagnostic
     EvaluationStep();
-
-    // take a snapshot if nessecaryn (ask if appropiate place to take snapshot)
-    // if(GetUpdate() == config.MAX_GENS() - 1){SnapshotPhylogony();}
 
     // step 2: select parent solutions for
     SelectionStep();
@@ -389,35 +373,27 @@ void DiagWorld::SetSelection()
 
   switch (config.SELECTION())
   {
-    case 0: // mu lambda
-      MuLambda();
+    case static_cast<size_t>(Scheme::TRUNCATION):
+      Truncation();
       break;
 
-    case 1: // tournament
+    case static_cast<size_t>(Scheme::TOURNAMENT):
       Tournament();
       break;
 
-    case 2: // fitness sharing
+    case static_cast<size_t>(Scheme::FITNESS_SHARING):
       FitnessSharing();
       break;
 
-    case 3: // novelty search
-      NoveltyAggregate();
-      break;
-
-    case 4: // epsilon lexicase
+    case static_cast<size_t>(Scheme::LEXICASE):
       EpsilonLexicase();
       break;
 
-    case 5: // novelty euclidean
-      NoveltyEuclidean();
-      break;
-
-    case 6: // Non dominated sorting
+    case static_cast<size_t>(Scheme::NONDOMINATED):
       NonDominatedSorting();
       break;
 
-    case 7: // Non dominated sorting
+    case static_cast<size_t>(Scheme::NOVELTY):
       NoveltySearch();
       break;
 
@@ -561,21 +537,6 @@ void DiagWorld::SetDataTracking()
     return UniqueObjective();
   }, "pop_uni_obj", "Number of unique optimized traits per generation!");
 
-  // count of common solution in the population
-  // data_file.AddFun<size_t>([this]()
-  // {
-  //   // quick checks
-  //   emp_assert(0 < common.size());
-  //   emp_assert(comm_pos != config.POP_SIZE());
-
-  //   // find iterator to common org
-  //   const auto it = common.find(comm_pos);
-  //   emp_assert(it != common.end());
-  //   emp_assert(0 < it->second.size());
-
-  //   return it->second.size();
-  // }, "com_sol_cnt", "Count of genetically common solution!");
-
   // elite solution aggregate performance
   data_file.AddFun<double>([this]()
   {
@@ -599,30 +560,6 @@ void DiagWorld::SetDataTracking()
 
     return org.GetCount();
   }, "ele_opt_cnt", "Elite solution optimized objective count!");
-
-  // // common solution aggregate performance
-  // data_file.AddFun<double>([this]()
-  // {
-  //   // quick checks
-  //   emp_assert(comm_pos != config.POP_SIZE());
-  //   emp_assert(pop.size() == config.POP_SIZE());
-
-  //   Org & org = *pop[comm_pos];
-
-  //   return org.GetAggregate();
-  // }, "com_agg_per", "Common solution aggregate performance!");
-
-  // // common solution optimized objectives count
-  // data_file.AddFun<size_t>([this]()
-  // {
-  //   // quick checks
-  //   emp_assert(comm_pos != config.POP_SIZE());
-  //   emp_assert(pop.size() == config.POP_SIZE());
-
-  //   Org & org = *pop[comm_pos];
-
-  //   return org.GetCount();
-  // }, "com_opt_cnt", "Common solution optimized objective count!");
 
   // optimized solution aggregate performance
   data_file.AddFun<double>([this]()
@@ -729,7 +666,7 @@ void DiagWorld::SetDataTracking()
   // Pareto group count
   data_file.AddFun<size_t>([this]()
   {
-    if(config.SELECTION() == 6)
+    if(config.SELECTION() == static_cast<size_t>(Scheme::NONDOMINATED))
     {
       emp_assert(pareto_cnt != 0);
       return pareto_cnt;
@@ -759,18 +696,17 @@ void DiagWorld::SetDataTracking()
     return arc_elite;
   }, "arc_elite", "archive best fitness found so far!");
 
-  // archive group count
+  // archive unique optimal traits
   data_file.AddFun<size_t>([this]()
   {
-    return arc_opti;
-  }, "arc_opti", "archive best fitness found so far!");
+    return std::accumulate(arc_opti_trt.begin(), arc_opti_trt.end(), 0);
+  }, "arc_opti_trt", "Unique optimal traits found in the archive!");
 
-  // archive group count
-  data_file.AddFun<double>([this]()
+  // archive unique activation genes
+  data_file.AddFun<size_t>([this]()
   {
-    return arc_strk;
-  }, "arc_strk", "archive best fitness found so far!");
-
+    return std::accumulate(arc_acti_gene.begin(), arc_acti_gene.end(), 0);
+  }, "arc_acti_gene", "Unique activation genes found in the archive!");
 
   data_file.PrintHeaderKeys();
 
@@ -893,12 +829,6 @@ void DiagWorld::RecordData()
 
   // get parent data
   emp_assert(parent_vec.size() == config.POP_SIZE());
-  // for(size_t i = 0; i < parent_vec.size(); ++i)
-  // {
-  //   Org & org = *pop[parent_vec[i]];
-  //   pnt_fit->Add(org.GetAggregate());
-  //   pnt_opti->Add(org.GetCount());
-  // }
   emp_assert(pnt_fit->GetCount() == config.POP_SIZE());
   emp_assert(pnt_opti->GetCount() == config.POP_SIZE());
 
@@ -906,22 +836,9 @@ void DiagWorld::RecordData()
 
   FindEverything();
 
-  // elite_pos = FindElite();
-  // emp_assert(elite_pos != config.POP_SIZE());
-
-  // comm_pos = FindCommon();
-  // emp_assert(comm_pos != config.POP_SIZE());
-
-  // opti_pos = FindOptimized();
-  // emp_assert(opti_pos != config.POP_SIZE());
-
-  // strk_pos = FindStreak();
-  // emp_assert(strk_pos != config.POP_SIZE());
-
   /// fill vectors & map
   emp_assert(fit_vec.size() == config.POP_SIZE()); // should be set already
   emp_assert(parent_vec.size() == config.POP_SIZE()); // should be set already
-  // emp_assert(0 < common.size());  // should already be set in FindCommon
 
   /// update the file
   data_file.Update();
@@ -957,9 +874,9 @@ void DiagWorld::ReproductionStep()
 
 ///< selection scheme implementations
 
-void DiagWorld::MuLambda()
+void DiagWorld::Truncation()
 {
-  std::cout << "Setting selection scheme: MuLambda" << std::endl;
+  std::cout << "Setting selection scheme: Truncation" << std::endl;
 
   // set select lambda to mu lambda selection
   select = [this]()
@@ -974,7 +891,7 @@ void DiagWorld::MuLambda()
     return selection->MLSelect(config.TRUNC_SIZE(), config.POP_SIZE(), group);
   };
 
-  std::cout << "MuLambda selection scheme set!" << std::endl;
+  std::cout << "Truncation selection scheme set!" << std::endl;
 }
 
 void DiagWorld::Tournament()
@@ -1040,100 +957,6 @@ void DiagWorld::FitnessSharing()
   std::cout << "Fitness sharing selection scheme set!" << std::endl;
 }
 
-void DiagWorld::NoveltyAggregate()
-{
-  std::cout << "Setting selection scheme: NoveltyAggregate" << std::endl;
-  std::cout << "Tournament size for novelty: " << config.TOUR_SIZE() << std::endl;
-
-  select = [this]()
-  {
-    // quick checks
-    emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
-    emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
-
-    // If we get asked to do standard tournament selection with novelty euclidean selected
-    if(config.NOVEL_K() == 0)
-    {
-      // select parent ids
-      ids_t parent(pop.size());
-
-      for(size_t i = 0; i < parent.size(); ++i)
-      {
-        parent[i] = selection->Tournament(config.TOUR_SIZE(), fit_vec);
-      }
-
-      return parent;
-    }
-
-    // generate nearest neighbor pop structure
-    neigh_t neighborhood = selection->FitNearestN(fit_vec, config.NOVEL_K());
-
-    // transform original fitness into novelty fitness
-    score_t tscore = selection->Novelty(fit_vec, neighborhood, config.NOVEL_K());
-
-    // select parent ids
-    ids_t parent(pop.size());
-
-    for(size_t i = 0; i < parent.size(); ++i)
-    {
-      parent[i] = selection->Tournament(config.TOUR_SIZE(), tscore);
-    }
-
-    return parent;
-  };
-
-  std::cout << "Novelty search selection scheme set!" << std::endl;
-}
-
-void DiagWorld::NoveltyEuclidean()
-{
-  std::cout << "Setting selection scheme: NoveltyEuclidean" << std::endl;
-  std::cout << "Tournament size for novelty: " << config.TOUR_SIZE() << std::endl;
-
-  select = [this]()
-  {
-    // quick checks
-    emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
-    emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
-
-    // If we get asked to do standard tournament selection with novelty euclidean selected
-    if(config.NOVEL_K() == 0)
-    {
-      // select parent ids
-      ids_t parent(pop.size());
-
-      for(size_t i = 0; i < parent.size(); ++i)
-      {
-        parent[i] = selection->Tournament(config.TOUR_SIZE(), fit_vec);
-      }
-
-      return parent;
-    }
-
-    // generate distance matrix
-    fmatrix_t fit_mat = PopFitMat();
-    fmatrix_t dist_mat = selection->SimilarityMatrix(fit_mat, config.PNORM_EXP());
-    // generate neighbors for distances
-    neigh_t neighborhood = selection->EuclideanNearestN(dist_mat, config.NOVEL_K());
-    // generate 0 vector for novelty scoring
-    score_t zeros(pop.size(), 0.0);
-    // transform original fitness into novelty fitness
-    score_t tscore = selection->Novelty(zeros, neighborhood, config.NOVEL_K());
-
-    // select parent ids
-    ids_t parent(pop.size());
-
-    for(size_t i = 0; i < parent.size(); ++i)
-    {
-      parent[i] = selection->Tournament(config.TOUR_SIZE(), tscore);
-    }
-
-    return parent;
-  };
-
-  std::cout << "Novelty search selection scheme set!" << std::endl;
-}
-
 void DiagWorld::EpsilonLexicase()
 {
   std::cout << "Setting selection scheme: EpsilonLexicase" << std::endl;
@@ -1180,7 +1003,7 @@ void DiagWorld::NonDominatedSorting()
 
     // construct fitnesses
     // ParetoFitness
-    score_t fitess = selection->ParetoFitness(pgroups, matrix, config.PAT_ALP(), config.PAT_SIG(), config.PAT_RED(), config.PAT_MAX());
+    score_t fitess = selection->ParetoFitness(pgroups, matrix, config.NDS_ALP(), config.NDS_SIG(), config.NDS_RED(), config.NDS_MAX());
 
     // track data
     pareto_cnt = pgroups.size();
@@ -1197,6 +1020,11 @@ void DiagWorld::NoveltySearch()
   std::cout << "Starting PMIN: " << config.NOVEL_PMIN() << std::endl;
   // save starting pmin
   pmin = config.NOVEL_PMIN();
+
+  // initialize vectors for achive
+  arc_opti_trt = optimal_t(config.OBJECTIVE_CNT(), false);
+  arc_acti_gene = optimal_t(config.OBJECTIVE_CNT(), false);
+  std::cout << "Created vectors for tracking archive data" << std::endl;
 
   select = [this]()
   {
@@ -1218,19 +1046,27 @@ void DiagWorld::NoveltySearch()
       return parent;
     }
 
-    // generate distance matrix
+    // find nearest neighbors for each solution
+    // NOVEL_K ammount of summation of squares score (x-y)^2
     fmatrix_t fit_mat = PopFitMat();
-    fmatrix_t dist_mat = selection->NoveltySimilarityMatrix(fit_mat, archive, config.PNORM_EXP());
+    fmatrix_t neighborhood = selection->NoveltySearchNearSum(fit_mat, config.NOVEL_K(), config.POP_SIZE(), config.PNORM_EXP());
+
+    // calculate novelty scores
+    score_t tscore = selection->NoveltySOS(neighborhood, config.NOVEL_K(), config.PNORM_EXP());
+
+    // generate distance matrix
+    // fmatrix_t fit_mat = PopFitMat();
+    // fmatrix_t dist_mat = selection->NoveltySimilarityMatrix(fit_mat, archive, config.PNORM_EXP());
 
     // generate neighbors for distances
-    neigh_t neighborhood = selection->NoveltySearchNearestN(dist_mat, config.NOVEL_K(), config.POP_SIZE());
-    emp_assert(neighborhood.size() == config.POP_SIZE());
+    // neigh_t neighborhood = selection->NoveltySearchNearestN(dist_mat, config.NOVEL_K(), config.POP_SIZE());
+    // emp_assert(neighborhood.size() == config.POP_SIZE());
 
     // generate 0 vector for novelty scoring
-    score_t zeros(pop.size(), 0.0);
+    // score_t zeros(pop.size(), 0.0);
 
     // transform original fitness into novelty fitness
-    score_t tscore = selection->Novelty(zeros, neighborhood, config.NOVEL_K());
+    // score_t tscore = selection->Novelty(zeros, neighborhood, config.NOVEL_K());
 
     // check if we need to reduce pmin
     if(archive_gens == config.NOVEL_GEN())
@@ -1409,8 +1245,17 @@ size_t DiagWorld::UniqueObjective()
   // quick checks
   emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
 
-  // iterate through objectives
-  size_t cnt = 0;
+  optimal_t unique;
+
+  // novelty search unqiue objective trait count
+  if(config.SELECTION() == static_cast<size_t>(Scheme::NOVELTY))
+  {
+    emp_assert(arc_opti_trt.size() == config.OBJECTIVE_CNT());
+    unique = arc_opti_trt;
+  }
+  else{ unique = optimal_t(config.OBJECTIVE_CNT(), false); }
+
+
   for(size_t o = 0; o < config.OBJECTIVE_CNT(); ++o)
   {
     // iterate pop to check is a solution has the objective optimized
@@ -1423,101 +1268,13 @@ size_t DiagWorld::UniqueObjective()
 
       if(org.OptimizedAt(o))
       {
-        ++cnt;
+        unique[o] = true;
         break;
       }
     }
   }
 
-  return cnt;
-}
-
-size_t DiagWorld::FindElite()
-{
-  // quick checks
-  emp_assert(0 < fit_vec.size()); emp_assert(fit_vec.size() == pop.size());
-  emp_assert(fit_vec.size() == config.POP_SIZE());
-  emp_assert(elite_pos == config.POP_SIZE());
-
-  // find max value position
-  auto elite_it = std::max_element(fit_vec.begin(), fit_vec.end());
-
-  return std::distance(fit_vec.begin(), elite_it);
-}
-
-/*
-size_t DiagWorld::FindCommon()
-{
-  // quick checks
-  emp_assert(pop.size() == config.POP_SIZE());
-  emp_assert(common.size() == 0);
-  emp_assert(comm_pos == config.POP_SIZE());
-
-  // iterate through pop and place in appropiate bin
-  for(size_t i = 0; i < pop.size(); ++i)
-  {
-    bool in_comm = false;
-    const Org & org = *pop[i];
-
-    // check if current org matches any of the existing keys
-    for(const auto & p : common)
-    {
-      // get key orgs data
-      const Org & korg = *pop[p.first];
-
-      // get euclidean distance between both genomes
-      const double dif = selection->Pnorm(org.GetGenome(), korg.GetGenome(), 2.0);
-
-      // if they are a match
-      if(dif == 0.0)
-      {
-        common[p.first].push_back(i);
-        in_comm = true;
-        break;
-      }
-    }
-
-    if(!in_comm)
-    {
-      ids_t first{i};
-      common[i] = first;
-    }
-  }
-
-  // iterate through common dictionary and find common org id
-  size_t max = 0; size_t max_pos = 0;
-  for(const auto & p : common)
-  {
-    if(max < p.second.size())
-    {
-      max_pos = p.first;
-      max = p.second.size();
-    }
-  }
-
-  return max_pos;
-} */
-
-size_t DiagWorld::FindOptimized()
-{
-  // quick checks
-  emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
-  emp_assert(opti_pos == config.POP_SIZE());
-
-  // iterate through pop and find optimal solution
-  size_t max = 0; size_t max_pos = 0;
-  for(size_t i = 0; i < pop.size(); ++i)
-  {
-    const Org & org = *pop[i];
-
-    if(max < org.GetCount())
-    {
-      max = org.GetCount();
-      max_pos = i;
-    }
-  }
-
-  return max_pos;
+  return std::accumulate(unique.begin(), unique.end(), 0);
 }
 
 size_t DiagWorld::FindUniqueStart()
@@ -1525,71 +1282,7 @@ size_t DiagWorld::FindUniqueStart()
   // quick checks
   emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
   emp_assert(unique_starts < config.POP_SIZE());
-
-  // // collect number of unique starting positions
-  // std::set<size_t> position;
-
-  // // iterate pop to check is a solution has the objective optimized
-  // for(size_t p = 0; p < pop.size(); ++p)
-  // {
-  //   Org & org = *pop[p];
-
-  //   // check that the position has be set
-  //   emp_assert(org.GetStart() != config.OBJECTIVE_CNT());
-
-  //   // insert position into set
-  //   position.insert(org.GetStart());
-  // }
-
-  // return position.size();
   return unique_starts;
-}
-
-size_t DiagWorld::FindStreak()
-{
-  // quick checks
-  emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
-  emp_assert(strk_pos == config.POP_SIZE());
-
-  // get all solution streaks & find max
-  size_t maxx = 0;
-  for(size_t i = 0; i < pop.size(); ++i)
-  {
-    const Org & org = *pop[i];
-
-    if(maxx < org.GetStreak())
-    {
-      maxx = org.GetStreak();
-    }
-  }
-
-  // collect all solutions with max streak
-  ids_t candidate;
-  for(size_t i = 0; i < pop.size(); ++i)
-  {
-    const Org & org = *pop[i];
-
-    if(maxx == org.GetStreak())
-    {
-      candidate.push_back(i);
-    }
-  }
-
-  // find highest performer from existing candiates
-  double best_score = 0.0;
-  size_t best_org = 0;
-  for(size_t i = 0; i < candidate.size(); i++)
-  {
-    const Org & org = *pop[candidate[i]];
-
-    if(best_score < org.GetAggregate())
-    {
-      best_score = org.GetAggregate();
-      best_org = candidate[i];
-    }
-  }
-
-  return best_org;
 }
 
 void DiagWorld::FindEverything()
@@ -1603,6 +1296,16 @@ void DiagWorld::FindEverything()
 
   // collect number of unique starting positions
   std::set<size_t> position;
+
+  // novelty search update if applicable
+  if(config.SELECTION() == static_cast<size_t>(Scheme::NOVELTY))
+  {
+    emp_assert(arc_acti_gene.size() == config.OBJECTIVE_CNT());
+    for(size_t i = 0; i < arc_acti_gene.size(); ++i)
+    {
+      if(arc_acti_gene[i]){position.insert(i);}
+    }
+  }
 
   // loop and get data
   for(size_t i = 0; i < pop.size(); ++i)
@@ -1624,8 +1327,6 @@ void DiagWorld::FindEverything()
 
   unique_starts = position.size();
 }
-
-
 
 ///< helper functions
 
@@ -1680,7 +1381,7 @@ bool DiagWorld::ArchiveUpdate(const score_t & score, const fmatrix_t & dmat)
   // check each solution novelty score
   for(size_t i = 0; i < score.size(); ++i)
   {
-    // insert solution into if luck
+    // insert solution if lucky
     if(random_ptr->P(config.NOVEL_RI()))
     {
       // add phenotype to archive
@@ -1718,23 +1419,26 @@ void DiagWorld::ArchiveDataUpdate(const size_t org_id)
 {
   // quick checks
   emp_assert(pop.size() == config.POP_SIZE());
-  emp_assert(0 <= org_id);
-  // if not novelty selection, org_id can not be pop size
-  emp_assert(org_id < pop.size() && config.SELECTION() != 7);
-  // if novelty selection, org_id can be pop size
-  emp_assert(org_id <= pop.size() && config.SELECTION() == 7);
+  emp_assert(0 <= org_id); emp_assert(org_id < pop.size());
+  emp_assert(config.SELECTION() == static_cast<size_t>(Scheme::NOVELTY));
 
   // get org from
-  const Org & org = *pop[org_id];
+  Org & org = *pop[org_id];
 
   // update archive data if needed
 
   // archive current trait aggregate maximum
   if(arc_elite < org.GetAggregate()) {arc_elite = org.GetAggregate();}
-  // archive current optimal count maximum
-  if(arc_opti < org.GetCount()) {arc_opti = org.GetCount();}
-  // archive current trait aggregate maximum
-  if(arc_strk < org.GetStreak()) {arc_strk = org.GetStreak();}
+  // update the archive activation gene vector
+  arc_acti_gene[org.GetStart()] = true;
+  // update the archive optimal trait vector
+  for(size_t o = 0; o < config.OBJECTIVE_CNT(); ++o)
+  {
+    if(org.OptimizedAt(o))
+      {
+        arc_opti_trt[o] = true;
+      }
+  }
 }
 
 #endif

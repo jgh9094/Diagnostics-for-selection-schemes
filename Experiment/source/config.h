@@ -6,7 +6,7 @@
 EMP_BUILD_CONFIG(DiaConfig,
   GROUP(WORLD, "How should the world be setup?"),
   VALUE(POP_SIZE,     size_t,      512,    "Population size."),
-  VALUE(MAX_GENS,     size_t,    50000,    "Maximum number of generations."),
+  VALUE(MAX_GENS,     size_t,    10000,    "Maximum number of generations."),
   VALUE(SEED,            int,        1,    "Random number seed."),
   VALUE(START,          bool,     true,    "Do we start randomly (true) or from the lowest point (false)"),
 
@@ -17,9 +17,8 @@ EMP_BUILD_CONFIG(DiaConfig,
   VALUE(ACCURACY,            double,      0.99,      "Accuracy percentage needed to be considered an optimal trait"),
   VALUE(CREDIT,              double,      0.00,      "Maximum credit a solution can get on an objective if applicable"),
   VALUE(OBJECTIVE_CNT,       size_t,       100,      "Number of traits an organism has"),
-  VALUE(SELECTION,           size_t,         0,      "Which selection are we doing? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n"
-                                                     "3: Novelty Aggregate\n4: Espilon Lexicase\n5: Novelty Euclidean\n6: Nondominated Sorting"
-                                                     "\n7: Novelty Search"),
+  VALUE(SELECTION,           size_t,         5,      "Which selection are we doing? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n"
+                                                     "3: Espilon Lexicase\n4: Nondominated Sorting\n5: Novelty Search"),
   VALUE(DIAGNOSTIC,          size_t,         0,      "Which diagnostic are we doing? \n0: Exploitation\n1: Structured Exploitation\n"
                                                      "2: Strong Ecology \n3: Exploration \n4: Weak Ecology"),
 
@@ -52,18 +51,16 @@ EMP_BUILD_CONFIG(DiaConfig,
   GROUP(LEXICASE, "Parameters for lexicase."), // 500 gens in 10 secs
   VALUE(LEX_EPS,          double,            0.0,       "Parameter estimate for lexicase epsilon."),
 
-  GROUP(NSGA, "Parameters for nondominated sorting algorithm."), // // 500 gens in 120 secs
-  VALUE(PAT_MAX,      double,   9000000000000000.0,       "Large dummy number ."),
-  VALUE(PAT_RED,      double,                 0.99,       "Default large value for different Pareto groups."),
-  VALUE(PAT_ALP,      double,                  2.0,       "Alpha value for Pareto fitness sharing."),
-  VALUE(PAT_SIG,      double,                  0.1,       "Sigma value for Pareto fitness sharing."),
+  GROUP(NONDOMINATED_SORTING, "Parameters for nondominated sorting algorithm."), // // 500 gens in 120 secs
+  VALUE(NDS_MAX,      double,   9000000000000000.0,       "Large dummy number ."),
+  VALUE(NDS_RED,      double,                 0.99,       "Default large value for different Pareto groups."),
+  VALUE(NDS_ALP,      double,                  2.0,       "Alpha value for Pareto fitness sharing."),
+  VALUE(NDS_SIG,      double,                  0.1,       "Sigma value for Pareto fitness sharing."),
 
   GROUP(OTHER, "Parameters for selection class."),
   VALUE(PNORM_EXP,        double,            2.0,       "Paramter we are using for the p-norm function."),
 
   GROUP(SYSTEMATICS, "Output rates for OpenWorld"),
-  VALUE(SNAP_INTERVAL,             size_t,             10000,          "How many updates between prints?"),
-  VALUE(PRINT_INTERVAL,            size_t,              1000,          "How many updates between prints?"),
   VALUE(OUTPUT_DIR,           std::string,              "./",          "What directory are we dumping all this data")
 )
 

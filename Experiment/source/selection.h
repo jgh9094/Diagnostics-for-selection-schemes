@@ -108,6 +108,41 @@ class Selection
     // construct a similarity matrix with current phenotypes and archive
     fmatrix_t NoveltySimilarityMatrix(const fmatrix_t & phenos, const std::deque<score_t> & archive, const double exp);
 
+    // get K smallest sum([x-y])^2 for each position
+    fmatrix_t NoveltySearchNearSum(const fmatrix_t & mat, const size_t K, const size_t N, const size_t exp);
+
+    // regular summation
+    double SumOfSquares(const score_t & x, const score_t & y, const double exp)
+    {
+      // quick checks
+      emp_assert(0 < x.size()); emp_assert(x.size() == y.size());
+      emp_assert(0 < exp);
+
+      double sum = 0.0;
+      for(size_t i = 0; i < x.size(); ++i) { sum += std::pow((x[i] - y[i]), exp); }
+      return sum;
+    }
+
+    // smart sum of squares funtion
+    // max is the current upper bound for neighbor summation
+    // if x,y summation is greater we can stop
+    double SmartSOS(const score_t & x, const score_t & y, const double exp, const double max)
+    {
+      // quick checks
+      // max can be 0.0 if exact copies are the neigbors
+      emp_assert(0 < x.size()); emp_assert(x.size() == y.size());
+      emp_assert(0 < exp); emp_assert(0.0 <= max);
+
+      double sum = 0.0;
+      for(size_t i = 0; i < x.size(); ++i)
+      {
+        sum += std::pow((x[i] - y[i]), exp);
+
+        if(max < sum){return -100.0;}
+      }
+
+      return sum;
+    }
 
     ///< population structure
 
@@ -234,6 +269,22 @@ class Selection
      * @return Vector with transformed scores.
      */
     score_t Novelty(const score_t & score, const neigh_t & neigh, const size_t K);
+
+    /**
+     * Novelty Fitness Transformation:
+     *
+     * This function will transform original fitness values as novelty scores.
+     * Each score has its associated neighbors (2nd argument).
+     *
+     *
+     * @param neigh Vector containing neighbor score sets by population positions.
+     * @param K Size of each neighborhood.
+     * @param exp Exponent we are using for the p norm calculations.
+     *
+     * @return Vector with transformed scores.
+     */
+    score_t NoveltySOS(const neigh_t & neigh, const size_t K, const double exp);
+
 
     /**
      * Pareto Fitness Sharing:
@@ -691,6 +742,27 @@ Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & nei
   return nscore;
 }
 
+Selection::score_t Selection::NoveltySOS(const neigh_t & neigh, const size_t K, const double exp)
+{
+  // quick checks
+  emp_assert(0 < neigh.size()); emp_assert(0 < K); emp_assert(0.0 <= exp);
+
+  score_t fitness(neigh.size(), 0.0);
+
+  for(size_t i = 0; i < neigh.size(); ++i)
+  {
+    // quick checks
+    emp_assert(neigh[i].size() == K);
+    // add
+    for(size_t k = 0; k < K; ++k)
+    {
+      fitness[i] += std::pow(neigh[i][k], (1.0/exp)) / static_cast<double>(K);
+    }
+  }
+
+  return fitness;
+}
+
 Selection::score_t Selection::ParetoFitness(const pareto_g_t & groups, const fmatrix_t & phenos, const double alpha, const double sigma, const double low, const double high)
 {
   // quick checks
@@ -1046,6 +1118,61 @@ Selection::fmatrix_t Selection::NoveltySimilarityMatrix(const fmatrix_t & phenos
   for(size_t i = 0; i < archive.size(); ++i) {combo.push_back(archive[i]);}
 
   return SimilarityMatrix(combo,exp);
+}
+
+Selection::fmatrix_t Selection::NoveltySearchNearSum(const fmatrix_t & mat, const size_t K, const size_t N, const size_t exp)
+{
+  // quick checks
+  emp_assert(0 < K); emp_assert(0 < N); emp_assert(K < N);
+  emp_assert(mat.size() == N);
+
+  // will hold the final set of sums
+  fmatrix_t fit_mat(N);
+
+  // find nearest k sums
+  for(size_t i = 0; i < N; ++i)
+  {
+    // container to hold distances
+    std::multiset<double> neighbors;
+
+    // compare against each other position
+    for(size_t j = 0; j < N; ++j)
+    {
+      // skip same pairs
+      if(i == j){continue;}
+
+      // add scores until we have enough to test
+      if(neighbors.size() < K) { neighbors.insert(SumOfSquares(mat[i],mat[j],exp)); }
+      // check if we need to remove any socres
+      else
+      {
+        double smart = SmartSOS(mat[i],mat[j],exp,*(neighbors.rbegin()));
+
+        // negative means we stopped early
+        if(smart < 0.0){ continue; }
+        // positive means we can add a score and pop the end off
+        else
+        {
+          neighbors.insert(smart);
+          auto it = --neighbors.end();
+          neighbors.erase(it);
+        }
+      }
+    }
+
+    // make sure that neighbors has k elements in neighbors
+    emp_assert(neighbors.size() == K);
+
+    // add all neighbors to vector and save in fit_mat
+    score_t score;
+    for(auto it = neighbors.begin(); it != neighbors.end(); ++it)
+    {
+      score.push_back(*it);
+    }
+    fit_mat[i] = score;
+  }
+
+  return fit_mat;
 }
 
 #endif
