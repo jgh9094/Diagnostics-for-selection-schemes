@@ -15,7 +15,6 @@
 #####################################################################################################
 #####################################################################################################
 
-
 ######################## IMPORTS ########################
 import argparse
 import pandas as pd
@@ -48,11 +47,11 @@ def SetSelection(s,p):
             return 'FITSHARING_P'
         else:
             sys.exit("UNKNOWN SELECTION")
-    elif s == 4:
+    elif s == 3:
         return 'LEXICASE'
-    elif s == 6:
+    elif s == 4:
         return 'NONDOMINATEDSORTING'
-    elif s == 7:
+    elif s == 5:
         return 'NOVELTY'
     else:
         sys.exit("UNKNOWN SELECTION")
@@ -82,11 +81,11 @@ def SetSelectionVar(s):
         return 'T'
     elif s == 2:
         return 'SIG'
-    elif s == 4:
+    elif s == 3:
         return 'EPS'
-    elif s == 6:
+    elif s == 4:
         return 'SIG'
-    elif s == 7:
+    elif s == 5:
         return 'NOV'
     else:
         sys.exit("UNKNOWN SELECTION VAR")
@@ -95,17 +94,17 @@ def SetSelectionVar(s):
 def SetSeeds(s):
     # case by case
     if s == 0:
-        return [x for x in range(1,501)]
+        return [x for x in range(1,451)]
     elif s == 1:
-        return [x for x in range(1,501)]
+        return [x for x in range(1,451)]
     elif s == 2:
+        return [x for x in range(1,351)]
+    elif s == 3:
         return [x for x in range(1,351)]
     elif s == 4:
         return [x for x in range(1,351)]
-    elif s == 6:
+    elif s == 5:
         return [x for x in range(1,351)]
-    elif s == 7:
-        return [x for x in range(1,401)]
     else:
         sys.exit('SEEDS SELECTION UNKNOWN')
 
@@ -118,11 +117,11 @@ def SetVarList(s):
         return TS_LIST
     elif s == 2:
         return FS_LIST
-    elif s == 4:
+    elif s == 3:
         return LX_LIST
-    elif s == 6:
+    elif s == 4:
         return FS_LIST
-    elif s == 7:
+    elif s == 5:
         return NS_LIST
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
@@ -136,11 +135,11 @@ def SetSecondParam(s, pt):
         return ''
     elif s == 2:
         return ''
+    elif s == 3:
+        return ''
     elif s == 4:
         return ''
-    elif s == 6:
-        return ''
-    elif s == 7:
+    elif s == 5:
         return ''
     else:
         sys.exit("UNKNOWN SELECTION")
