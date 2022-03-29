@@ -35,8 +35,8 @@ POP_FIT_MAX = 'pop_fit_max'
 POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
-# POP_STR_AVG = 'pop_str_avg'
-# POP_STR_MAX = 'pop_str_max'
+POP_STR_AVG = 'pop_str_avg'
+POP_STR_MAX = 'pop_str_max'
 # elite solutions (max agg traits)
 ELE_AGG_PER = 'ele_agg_per'
 ELE_OPT_CNT = 'ele_opt_cnt'
@@ -56,7 +56,7 @@ UNI_STR_POS = 'uni_str_pos'
 # ARC_ELITE = 'arc_elite'
 # ARC_OPTI = 'arc_opti'
 # ARC_STRK = 'arc_strk'
-GEN = 'gen'
+GENERATION = 'gen'
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s,p):
@@ -249,9 +249,10 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     # data traversing
     data = {POP_FIT_AVG,POP_FIT_MAX,POP_OPT_AVG,POP_OPT_MAX,
             POP_UNI_OBJ,POP_STR_AVG,POP_STR_MAX,ELE_AGG_PER,
-            ELE_OPT_CNT,OPT_AGG_PER,OPT_OBJ_CNT,STR_AGG_PER,
-            STR_OBJ_CNT,UNI_STR_POS,PARETO_CNT,ARCHIVE_CNT,
-            PMIN,ARC_ELITE,ARC_OPTI,ARC_STRK}
+            ELE_OPT_CNT,UNI_STR_POS}
+            # OPT_AGG_PER,OPT_OBJ_CNT,STR_AGG_PER,
+            # STR_OBJ_CNT,PARETO_CNT,ARCHIVE_CNT,
+            # PMIN,ARC_ELITE,ARC_OPTI,ARC_STRK}
 
     for s in SEEDS:
         seed = str(s + offs)

@@ -35,8 +35,8 @@ POP_FIT_MAX = 'pop_fit_max'
 POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
-# POP_STR_AVG = 'pop_str_avg'
-# POP_STR_MAX = 'pop_str_max'
+POP_STR_AVG = 'pop_str_avg'
+POP_STR_MAX = 'pop_str_max'
 # elite solutions (max agg traits)
 ELE_AGG_PER = 'ele_agg_per'
 ELE_OPT_CNT = 'ele_opt_cnt'
@@ -244,17 +244,17 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         PSM.append(dfl[POP_STR_MAX].tolist()[0])
         EAP.append(dfl[ELE_AGG_PER].tolist()[0])
         EOC.append(dfl[ELE_OPT_CNT].tolist()[0])
-        OAP.append(dfl[OPT_AGG_PER].tolist()[0])
-        OOC.append(dfl[OPT_OBJ_CNT].tolist()[0])
-        SAP.append(dfl[STR_AGG_PER].tolist()[0])
-        SOC.append(dfl[STR_OBJ_CNT].tolist()[0])
+        # OAP.append(dfl[OPT_AGG_PER].tolist()[0])
+        # OOC.append(dfl[OPT_OBJ_CNT].tolist()[0])
+        # SAP.append(dfl[STR_AGG_PER].tolist()[0])
+        # SOC.append(dfl[STR_OBJ_CNT].tolist()[0])
         USP.append(dfl[UNI_STR_POS].tolist()[0])
-        PC.append(dfl[PARETO_CNT].tolist()[0])
-        AC.append(dfl[ARCHIVE_CNT].tolist()[0])
-        P.append(dfl[PMIN].tolist()[0])
-        AE.append(dfl[ARC_ELITE].tolist()[0])
-        AO.append(dfl[ARC_OPTI].tolist()[0])
-        AS.append(dfl[ARC_STRK].tolist()[0])
+        # PC.append(dfl[PARETO_CNT].tolist()[0])
+        # AC.append(dfl[ARCHIVE_CNT].tolist()[0])
+        # P.append(dfl[PMIN].tolist()[0])
+        # AE.append(dfl[ARC_ELITE].tolist()[0])
+        # AO.append(dfl[ARC_OPTI].tolist()[0])
+        # AS.append(dfl[ARC_STRK].tolist()[0])
 
     # time to export the data
     fdf = pd.DataFrame({'trt': pd.Series(TRT),

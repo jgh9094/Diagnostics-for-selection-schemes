@@ -35,8 +35,8 @@ POP_FIT_MAX = 'pop_fit_max'
 POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
-# POP_STR_AVG = 'pop_str_avg'
-# POP_STR_MAX = 'pop_str_max'
+POP_STR_AVG = 'pop_str_avg'
+POP_STR_MAX = 'pop_str_max'
 # elite solutions (max agg traits)
 ELE_AGG_PER = 'ele_agg_per'
 ELE_OPT_CNT = 'ele_opt_cnt'
@@ -244,17 +244,17 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
                             'pop_str_max': pd.Series(df[POP_STR_MAX].tolist()),
                             'ele_agg_per': pd.Series(df[ELE_AGG_PER].tolist()),
                             'ele_opt_cnt': pd.Series(df[ELE_OPT_CNT].tolist()),
-                            'opt_agg_per': pd.Series(df[OPT_AGG_PER].tolist()),
-                            'opt_obj_cnt': pd.Series(df[OPT_OBJ_CNT].tolist()),
-                            'str_agg_per': pd.Series(df[STR_AGG_PER].tolist()),
-                            'str_obj_cnt': pd.Series(df[STR_OBJ_CNT].tolist()),
-                            'uni_str_pos': pd.Series(df[UNI_STR_POS].tolist()),
-                            'pareto_cnt':  pd.Series(df[PARETO_CNT].tolist()),
-                            'archive_cnt': pd.Series(df[ARCHIVE_CNT].tolist()),
-                            'pmin':        pd.Series(df[PMIN].tolist()),
-                            'arc_elite':   pd.Series(df[ARC_ELITE].tolist()),
-                            'arc_opti':    pd.Series(df[ARC_OPTI].tolist()),
-                            'arc_strk':    pd.Series(df[ARC_STRK].tolist())})
+                            # 'opt_agg_per': pd.Series(df[OPT_AGG_PER].tolist()),
+                            # 'opt_obj_cnt': pd.Series(df[OPT_OBJ_CNT].tolist()),
+                            # 'str_agg_per': pd.Series(df[STR_AGG_PER].tolist()),
+                            # 'str_obj_cnt': pd.Series(df[STR_OBJ_CNT].tolist()),
+                            'uni_str_pos': pd.Series(df[UNI_STR_POS].tolist())}) #,
+                            # 'pareto_cnt':  pd.Series(df[PARETO_CNT].tolist()),
+                            # 'archive_cnt': pd.Series(df[ARCHIVE_CNT].tolist()),
+                            # 'pmin':        pd.Series(df[PMIN].tolist()),
+                            # 'arc_elite':   pd.Series(df[ARC_ELITE].tolist()),
+                            # 'arc_opti':    pd.Series(df[ARC_OPTI].tolist()),
+                            # 'arc_strk':    pd.Series(df[ARC_STRK].tolist())})
 
             DF_LIST.append(cdf)
 
