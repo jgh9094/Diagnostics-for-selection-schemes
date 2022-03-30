@@ -18,12 +18,12 @@ import sys
 import os
 
 # variables we are testing for each replicate range
-TR_LIST = ['1','2','4','8','16','32','64','128','256','512']
-TS_LIST = ['1','2','4','8','16','32','64','128','256','512']
+TR_LIST = ['1','2','4','8','16','32','64','128','256']
+TS_LIST = ['1','2','4','8','16','32','64','128','256']
 LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
-NS_LIST = ['0','1','2','4','8','15','30','60']
+NS_LIST = ['0','1','2','4','8','15','30']
 
 # seed experiements replicates range
 REP_NUM = 50
@@ -267,17 +267,17 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
                     POP_STR_MAX: pd.Series(PSM),
                     ELE_AGG_PER: pd.Series(EAP),
                     ELE_OPT_CNT: pd.Series(EOC),
-                    OPT_AGG_PER: pd.Series(OAP),
-                    OPT_OBJ_CNT: pd.Series(OOC),
-                    STR_AGG_PER: pd.Series(SAP),
-                    STR_OBJ_CNT: pd.Series(SOC),
-                    UNI_STR_POS: pd.Series(USP),
-                    PARETO_CNT:  pd.Series(PC),
-                    ARCHIVE_CNT: pd.Series(AC),
-                    PMIN:        pd.Series(P),
-                    ARC_ELITE:   pd.Series(AE),
-                    ARC_OPTI:    pd.Series(AO),
-                    ARC_STRK:    pd.Series(AS)})
+                    # OPT_AGG_PER: pd.Series(OAP),
+                    # OPT_OBJ_CNT: pd.Series(OOC),
+                    # STR_AGG_PER: pd.Series(SAP),
+                    # STR_OBJ_CNT: pd.Series(SOC),
+                    UNI_STR_POS: pd.Series(USP)})
+                    # PARETO_CNT:  pd.Series(PC),
+                    # ARCHIVE_CNT: pd.Series(AC),
+                    # PMIN:        pd.Series(P),
+                    # ARC_ELITE:   pd.Series(AE),
+                    # ARC_OPTI:    pd.Series(AO),
+                    # ARC_STRK:    pd.Series(AS)})
 
     fdf.to_csv(path_or_buf= dump + 'eor-' + SetDiagnostic(dia).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
 

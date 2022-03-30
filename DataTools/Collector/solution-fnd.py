@@ -18,12 +18,12 @@ import sys
 import os
 
 # variables we are testing for each replicate range
-TR_LIST = ['1','2','4','8','16','32','64','128','256','512']
-TS_LIST = ['1','2','4','8','16','32','64','128','256','512']
+TR_LIST = ['1','2','4','8','16','32','64','128','256']
+TS_LIST = ['1','2','4','8','16','32','64','128','256']
 LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
-NS_LIST = ['0','1','2','4','8','15','30','60']
+NS_LIST = ['0','1','2','4','8','15','30']
 
 # seed experiements replicates range
 REP_NUM = 50
@@ -118,7 +118,7 @@ def SetVarList(s):
     elif s == 3:
         return LX_LIST
     elif s == 4:
-        return FS_LIST
+        return ND_LIST
     elif s == 5:
         return NS_LIST
     else:
@@ -175,12 +175,12 @@ def FindSolGen(file, cnt):
 def SetSolList(s):
     sol = []
     if s == 0 or s == 1:
-        for i in range(10):
+        for i in range(9):
             sol.append([])
         return sol
 
-    elif s == 2 or s == 4 or s == 6 or s == 7:
-        for i in range(8):
+    elif s == 2 or s == 3 or s == 4 or s == 5:
+        for i in range(7):
             sol.append([])
         return sol
 
@@ -203,7 +203,7 @@ def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens):
 
         df.to_csv(path_or_buf= dump + 'sf-' + SetDiagnostic(d).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
 
-    elif s == 2  or s == 4 or s == 6 or s == 7:
+    elif s == 2  or s == 3 or s == 4 or s == 5:
         df = pd.DataFrame({var_list[0]: pd.Series(sol_list[0]),
                            var_list[1]: pd.Series(sol_list[1]),
                            var_list[2]: pd.Series(sol_list[2]),
