@@ -198,8 +198,8 @@ def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens):
                            var_list[5]: pd.Series(sol_list[5]),
                            var_list[6]: pd.Series(sol_list[6]),
                            var_list[7]: pd.Series(sol_list[7]),
-                           var_list[8]: pd.Series(sol_list[8]),
-                           var_list[9]: pd.Series(sol_list[9])})
+                        #    var_list[8]: pd.Series(sol_list[8]),
+                           var_list[8]: pd.Series(sol_list[8])})
 
         df.to_csv(path_or_buf= dump + 'sf-' + SetDiagnostic(d).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
 
