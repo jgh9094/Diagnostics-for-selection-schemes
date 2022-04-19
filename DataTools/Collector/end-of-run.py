@@ -51,7 +51,7 @@ UNI_STR_POS = 'uni_str_pos'
 # # pareto data
 PARETO_CNT = 'pareto_cnt'
 # # novelty data
-# ARCHIVE_CNT = 'archive_cnt'
+ARCHIVE_CNT = 'archive_cnt'
 # PMIN = 'pmin'
 # ARC_ELITE = 'arc_elite'
 # ARC_OPTI = 'arc_opti'
@@ -253,7 +253,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         USP.append(dfl[UNI_STR_POS].tolist()[0])
         PC.append(dfl[PARETO_CNT].tolist()[0])
         AAG.append(dfl[ARC_ACTI_GENE].tolist()[0])
-        # AC.append(dfl[ARCHIVE_CNT].tolist()[0])
+        AC.append(dfl[ARCHIVE_CNT].tolist()[0])
         # P.append(dfl[PMIN].tolist()[0])
         # AE.append(dfl[ARC_ELITE].tolist()[0])
         # AO.append(dfl[ARC_OPTI].tolist()[0])
@@ -276,8 +276,8 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
                     # STR_OBJ_CNT: pd.Series(SOC),
                     UNI_STR_POS: pd.Series(USP),
                     ARC_ACTI_GENE: pd.Series(AAG),
+                    ARCHIVE_CNT: pd.Series(AC),
                     PARETO_CNT:  pd.Series(PC)})
-                    # ARCHIVE_CNT: pd.Series(AC),
                     # PMIN:        pd.Series(P),
                     # ARC_ELITE:   pd.Series(AE),
                     # ARC_OPTI:    pd.Series(AO),

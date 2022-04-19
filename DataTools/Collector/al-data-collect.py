@@ -51,7 +51,7 @@ UNI_STR_POS = 'uni_str_pos'
 # # pareto data
 PARETO_CNT = 'pareto_cnt'
 # # novelty data
-# ARCHIVE_CNT = 'archive_cnt'
+ARCHIVE_CNT = 'archive_cnt'
 # PMIN = 'pmin'
 # ARC_ELITE = 'arc_elite'
 # ARC_OPTI = 'arc_opti'
@@ -250,9 +250,9 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
                             # 'opt_obj_cnt': pd.Series(df[OPT_OBJ_CNT].tolist()),
                             # 'str_agg_per': pd.Series(df[STR_AGG_PER].tolist()),
                             # 'str_obj_cnt': pd.Series(df[STR_OBJ_CNT].tolist()),
+                            'archive_cnt': pd.Series(df[ARCHIVE_CNT].tolist()),
                             'uni_str_pos':  pd.Series(df[UNI_STR_POS].tolist()), #,
                             'pareto_cnt' :  pd.Series(df[PARETO_CNT].tolist())}) #),
-                            # 'archive_cnt': pd.Series(df[ARCHIVE_CNT].tolist()),
                             # 'pmin':        pd.Series(df[PMIN].tolist()),
                             # 'arc_elite':   pd.Series(df[ARC_ELITE].tolist()),
                             # 'arc_opti':    pd.Series(df[ARC_OPTI].tolist()),
