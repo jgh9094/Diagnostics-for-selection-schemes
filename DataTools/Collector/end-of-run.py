@@ -49,7 +49,7 @@ ELE_OPT_CNT = 'ele_opt_cnt'
 # trait coverage
 UNI_STR_POS = 'uni_str_pos'
 # # pareto data
-# PARETO_CNT = 'pareto_cnt'
+PARETO_CNT = 'pareto_cnt'
 # # novelty data
 # ARCHIVE_CNT = 'archive_cnt'
 # PMIN = 'pmin'
@@ -57,6 +57,7 @@ UNI_STR_POS = 'uni_str_pos'
 # ARC_OPTI = 'arc_opti'
 # ARC_STRK = 'arc_strk'
 GEN = 'gen'
+ARC_ACTI_GENE = 'arc_acti_gene'
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s,p):
@@ -215,6 +216,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     AO = []
     AS = []
     TRT = []
+    AAG = []
 
     # second parameter dir
     SECOND_PARAM = SetSecondParam(sel, pt)
@@ -249,7 +251,8 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         # SAP.append(dfl[STR_AGG_PER].tolist()[0])
         # SOC.append(dfl[STR_OBJ_CNT].tolist()[0])
         USP.append(dfl[UNI_STR_POS].tolist()[0])
-        # PC.append(dfl[PARETO_CNT].tolist()[0])
+        PC.append(dfl[PARETO_CNT].tolist()[0])
+        AAG.append(dfl[ARC_ACTI_GENE].tolist()[0])
         # AC.append(dfl[ARCHIVE_CNT].tolist()[0])
         # P.append(dfl[PMIN].tolist()[0])
         # AE.append(dfl[ARC_ELITE].tolist()[0])
@@ -271,8 +274,9 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
                     # OPT_OBJ_CNT: pd.Series(OOC),
                     # STR_AGG_PER: pd.Series(SAP),
                     # STR_OBJ_CNT: pd.Series(SOC),
-                    UNI_STR_POS: pd.Series(USP)})
-                    # PARETO_CNT:  pd.Series(PC),
+                    UNI_STR_POS: pd.Series(USP),
+                    ARC_ACTI_GENE: pd.Series(AAG),
+                    PARETO_CNT:  pd.Series(PC)})
                     # ARCHIVE_CNT: pd.Series(AC),
                     # PMIN:        pd.Series(P),
                     # ARC_ELITE:   pd.Series(AE),

@@ -49,13 +49,14 @@ ELE_OPT_CNT = 'ele_opt_cnt'
 # trait coverage
 UNI_STR_POS = 'uni_str_pos'
 # # pareto data
-# PARETO_CNT = 'pareto_cnt'
+PARETO_CNT = 'pareto_cnt'
 # # novelty data
 # ARCHIVE_CNT = 'archive_cnt'
 # PMIN = 'pmin'
 # ARC_ELITE = 'arc_elite'
 # ARC_OPTI = 'arc_opti'
 # ARC_STRK = 'arc_strk'
+ARC_ACTI_GENE = 'arc_acti_gene'
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s,p):
@@ -244,12 +245,13 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
                             'pop_str_max': pd.Series(df[POP_STR_MAX].tolist()),
                             'ele_agg_per': pd.Series(df[ELE_AGG_PER].tolist()),
                             'ele_opt_cnt': pd.Series(df[ELE_OPT_CNT].tolist()),
+                            'arc_acti_gene': pd.Series(df[ARC_ACTI_GENE].tolist()),
                             # 'opt_agg_per': pd.Series(df[OPT_AGG_PER].tolist()),
                             # 'opt_obj_cnt': pd.Series(df[OPT_OBJ_CNT].tolist()),
                             # 'str_agg_per': pd.Series(df[STR_AGG_PER].tolist()),
                             # 'str_obj_cnt': pd.Series(df[STR_OBJ_CNT].tolist()),
-                            'uni_str_pos': pd.Series(df[UNI_STR_POS].tolist())}) #,
-                            # 'pareto_cnt':  pd.Series(df[PARETO_CNT].tolist()),
+                            'uni_str_pos':  pd.Series(df[UNI_STR_POS].tolist()), #,
+                            'pareto_cnt' :  pd.Series(df[PARETO_CNT].tolist())}) #),
                             # 'archive_cnt': pd.Series(df[ARCHIVE_CNT].tolist()),
                             # 'pmin':        pd.Series(df[PMIN].tolist()),
                             # 'arc_elite':   pd.Series(df[ARC_ELITE].tolist()),

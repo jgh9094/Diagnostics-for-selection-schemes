@@ -57,6 +57,7 @@ UNI_STR_POS = 'uni_str_pos'
 # ARC_OPTI = 'arc_opti'
 # ARC_STRK = 'arc_strk'
 GENERATION = 'gen'
+ARC_ACTI_GENE = 'arc_acti_gene'
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s,p):
@@ -249,7 +250,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     # data traversing
     data = {POP_FIT_AVG,POP_FIT_MAX,POP_OPT_AVG,POP_OPT_MAX,
             POP_UNI_OBJ,POP_STR_AVG,POP_STR_MAX,ELE_AGG_PER,
-            ELE_OPT_CNT,UNI_STR_POS}
+            ELE_OPT_CNT,UNI_STR_POS,ARC_ACTI_GENE}
             # OPT_AGG_PER,OPT_OBJ_CNT,STR_AGG_PER,
             # STR_OBJ_CNT,PARETO_CNT,ARCHIVE_CNT,
             # PMIN,ARC_ELITE,ARC_OPTI,ARC_STRK}
