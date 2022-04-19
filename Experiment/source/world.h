@@ -168,6 +168,8 @@ class DiagWorld : public emp::World<Org>
 
     void FindEverything();
 
+    size_t ActivationGeneOverlap();
+
     ///< helper functions
 
     // create a matrix of popultion score vectors
@@ -241,8 +243,8 @@ class DiagWorld : public emp::World<Org>
     size_t opti_pos;
     // streak solution position
     size_t strk_pos;
-    // unique starts
-    size_t unique_starts = 0;
+    // population activation gene vector
+    optimal_t pop_acti_gene;
 
     // Pareto group count
     size_t pareto_cnt = 0;
@@ -659,7 +661,7 @@ void DiagWorld::SetDataTracking()
   // unique starting positions
   data_file.AddFun<size_t>([this]()
   {
-    emp_assert(unique_starts < config.POP_SIZE());
+    emp_assert(pop_acti_gene.size()  == config.OBJECTIVE_CNT());
     return FindUniqueStart();
   }, "uni_str_pos", "Number of unique starting positions in the population!");
 
@@ -707,6 +709,12 @@ void DiagWorld::SetDataTracking()
   {
     return std::accumulate(arc_acti_gene.begin(), arc_acti_gene.end(), 0);
   }, "arc_acti_gene", "Unique activation genes found in the archive!");
+
+  // archive unique activation genes
+  data_file.AddFun<size_t>([this]()
+  {
+    return ActivationGeneOverlap();
+  }, "overlap", "Unique activation genes found in the archive!");
 
   data_file.PrintHeaderKeys();
 
@@ -766,13 +774,13 @@ void DiagWorld::ResetData()
   comm_pos = config.POP_SIZE();
   opti_pos = config.POP_SIZE();
   strk_pos = config.POP_SIZE();
-  unique_starts = config.POP_SIZE();
+  // unique_starts = config.POP_SIZE();
   pareto_cnt = 0;
 
   // reset all vectors/maps holding current gen data
   fit_vec.clear();
   parent_vec.clear();
-  // common.clear();
+  pop_acti_gene.clear();
 }
 
 void DiagWorld::EvaluationStep()
@@ -1054,20 +1062,6 @@ void DiagWorld::NoveltySearch()
     // calculate novelty scores
     score_t tscore = selection->NoveltySOS(neighborhood, config.NOVEL_K(), config.PNORM_EXP());
 
-    // generate distance matrix
-    // fmatrix_t fit_mat = PopFitMat();
-    // fmatrix_t dist_mat = selection->NoveltySimilarityMatrix(fit_mat, archive, config.PNORM_EXP());
-
-    // generate neighbors for distances
-    // neigh_t neighborhood = selection->NoveltySearchNearestN(dist_mat, config.NOVEL_K(), config.POP_SIZE());
-    // emp_assert(neighborhood.size() == config.POP_SIZE());
-
-    // generate 0 vector for novelty scoring
-    // score_t zeros(pop.size(), 0.0);
-
-    // transform original fitness into novelty fitness
-    // score_t tscore = selection->Novelty(zeros, neighborhood, config.NOVEL_K());
-
     // check if we need to reduce pmin
     if(archive_gens == config.NOVEL_GEN())
     {
@@ -1280,39 +1274,31 @@ size_t DiagWorld::UniqueObjective()
 size_t DiagWorld::FindUniqueStart()
 {
   // quick checks
-  emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());
-  emp_assert(unique_starts < config.POP_SIZE());
-  return unique_starts;
+  emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());\
+  emp_assert(pop_acti_gene.size() == config.OBJECTIVE_CNT());
+  return std::accumulate(pop_acti_gene.begin(), pop_acti_gene.end(), 0);
 }
 
 void DiagWorld::FindEverything()
 {
   // quick checks
   emp_assert(fit_vec.size() == config.POP_SIZE());
+  emp_assert(pop_acti_gene.size() == 0);
   emp_assert(elite_pos == config.POP_SIZE());
 
   // bools to make sure got everything
   bool elite_b = false,  opti_b = false, strk_b = false;
 
   // collect number of unique starting positions
-  std::set<size_t> position;
-
-  // novelty search update if applicable
-  if(config.SELECTION() == static_cast<size_t>(Scheme::NOVELTY))
-  {
-    emp_assert(arc_acti_gene.size() == config.OBJECTIVE_CNT());
-    for(size_t i = 0; i < arc_acti_gene.size(); ++i)
-    {
-      if(arc_acti_gene[i]){position.insert(i);}
-    }
-  }
+  pop_acti_gene = optimal_t(config.OBJECTIVE_CNT(), false);
 
   // loop and get data
   for(size_t i = 0; i < pop.size(); ++i)
   {
     const Org & org = *pop[i];
 
-    position.insert(org.GetStart());
+    // update the population unique activation genes
+    pop_acti_gene[org.GetStart()] = true;
 
     // check if we need to do anything below
     if(elite_b && opti_b && strk_b) {continue;}
@@ -1324,9 +1310,31 @@ void DiagWorld::FindEverything()
     // find max fit solution
     if(org.GetStreak() == pop_str->GetMax() && !strk_b) {strk_b = true; strk_pos = i;}
   }
-
-  unique_starts = position.size();
 }
+
+size_t DiagWorld::ActivationGeneOverlap()
+{
+  // quick checks
+  emp_assert(pop_acti_gene.size() == config.OBJECTIVE_CNT());
+  size_t count = 0;
+
+  // if novelty selection is running calculate overlap
+  if(config.SELECTION() == static_cast<size_t>(Scheme::NOVELTY))
+  {
+    emp_assert(arc_acti_gene.size() == config.OBJECTIVE_CNT());
+    for(size_t i = 0; i < config.OBJECTIVE_CNT(); ++i)
+    {
+      if(pop_acti_gene[i] && arc_acti_gene[i]) {count++;}
+    }
+    return count;
+  }
+  else
+  {
+    emp_assert(arc_acti_gene.size() == 0);
+    return count;
+  }
+}
+
 
 ///< helper functions
 
