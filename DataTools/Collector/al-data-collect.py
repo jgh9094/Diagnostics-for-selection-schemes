@@ -52,7 +52,7 @@ UNI_STR_POS = 'uni_str_pos'
 PARETO_CNT = 'pareto_cnt'
 # # novelty data
 ARCHIVE_CNT = 'archive_cnt'
-# PMIN = 'pmin'
+PMIN = 'pmin'
 # ARC_ELITE = 'arc_elite'
 # ARC_OPTI = 'arc_opti'
 # ARC_STRK = 'arc_strk'
@@ -253,9 +253,9 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
                             # 'str_obj_cnt': pd.Series(df[STR_OBJ_CNT].tolist()),
                             'overlap': pd.Series(df[OVERLAP].tolist()),
                             'archive_cnt': pd.Series(df[ARCHIVE_CNT].tolist()),
-                            'uni_str_pos':  pd.Series(df[UNI_STR_POS].tolist()), #,
+                            'uni_str_pos':  pd.Series(df[UNI_STR_POS].tolist()),
+                            'pmin':        pd.Series(df[PMIN].tolist()),
                             'pareto_cnt' :  pd.Series(df[PARETO_CNT].tolist())}) #),
-                            # 'pmin':        pd.Series(df[PMIN].tolist()),
                             # 'arc_elite':   pd.Series(df[ARC_ELITE].tolist()),
                             # 'arc_opti':    pd.Series(df[ARC_OPTI].tolist()),
                             # 'arc_strk':    pd.Series(df[ARC_STRK].tolist())})

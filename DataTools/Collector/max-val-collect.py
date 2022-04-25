@@ -52,7 +52,7 @@ UNI_STR_POS = 'uni_str_pos'
 # PARETO_CNT = 'pareto_cnt'
 # # novelty data
 ARCHIVE_CNT = 'archive_cnt'
-# PMIN = 'pmin'
+PMIN = 'pmin'
 # ARC_ELITE = 'arc_elite'
 # ARC_OPTI = 'arc_opti'
 # ARC_STRK = 'arc_strk'
@@ -252,10 +252,10 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     data = {POP_FIT_AVG,POP_FIT_MAX,POP_OPT_AVG,POP_OPT_MAX,
             POP_UNI_OBJ,POP_STR_AVG,POP_STR_MAX,ELE_AGG_PER,
             ELE_OPT_CNT,UNI_STR_POS,ARC_ACTI_GENE,ARCHIVE_CNT,
-            OVERLAP}
+            OVERLAP, PMIN}
             # OPT_AGG_PER,OPT_OBJ_CNT,STR_AGG_PER,
             # STR_OBJ_CNT,PARETO_CNT,,
-            # PMIN,ARC_ELITE,ARC_OPTI,ARC_STRK}
+            # ARC_ELITE,ARC_OPTI,ARC_STRK}
 
     for s in SEEDS:
         seed = str(s + offs)

@@ -52,7 +52,7 @@ UNI_STR_POS = 'uni_str_pos'
 PARETO_CNT = 'pareto_cnt'
 # # novelty data
 ARCHIVE_CNT = 'archive_cnt'
-# PMIN = 'pmin'
+PMIN = 'pmin'
 # ARC_ELITE = 'arc_elite'
 # ARC_OPTI = 'arc_opti'
 # ARC_STRK = 'arc_strk'
@@ -257,7 +257,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         AAG.append(dfl[ARC_ACTI_GENE].tolist()[0])
         AC.append(dfl[ARCHIVE_CNT].tolist()[0])
         OL.append(dfl[OVERLAP].tolist()[0])
-        # P.append(dfl[PMIN].tolist()[0])
+        P.append(dfl[PMIN].tolist()[0])
         # AE.append(dfl[ARC_ELITE].tolist()[0])
         # AO.append(dfl[ARC_OPTI].tolist()[0])
         # AS.append(dfl[ARC_STRK].tolist()[0])
