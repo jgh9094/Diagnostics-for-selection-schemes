@@ -57,6 +57,7 @@ ARCHIVE_CNT = 'archive_cnt'
 # ARC_OPTI = 'arc_opti'
 # ARC_STRK = 'arc_strk'
 ARC_ACTI_GENE = 'arc_acti_gene'
+OVERLAP = 'overlap'
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s,p):
@@ -250,6 +251,7 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
                             # 'opt_obj_cnt': pd.Series(df[OPT_OBJ_CNT].tolist()),
                             # 'str_agg_per': pd.Series(df[STR_AGG_PER].tolist()),
                             # 'str_obj_cnt': pd.Series(df[STR_OBJ_CNT].tolist()),
+                            'overlap': pd.Series(df[OVERLAP].tolist()),
                             'archive_cnt': pd.Series(df[ARCHIVE_CNT].tolist()),
                             'uni_str_pos':  pd.Series(df[UNI_STR_POS].tolist()), #,
                             'pareto_cnt' :  pd.Series(df[PARETO_CNT].tolist())}) #),

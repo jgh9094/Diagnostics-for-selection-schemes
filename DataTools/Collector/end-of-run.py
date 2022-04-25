@@ -58,6 +58,7 @@ ARCHIVE_CNT = 'archive_cnt'
 # ARC_STRK = 'arc_strk'
 GEN = 'gen'
 ARC_ACTI_GENE = 'arc_acti_gene'
+OVERLAP = 'overlap'
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s,p):
@@ -217,6 +218,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
     AS = []
     TRT = []
     AAG = []
+    OL = []
 
     # second parameter dir
     SECOND_PARAM = SetSecondParam(sel, pt)
@@ -254,6 +256,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         PC.append(dfl[PARETO_CNT].tolist()[0])
         AAG.append(dfl[ARC_ACTI_GENE].tolist()[0])
         AC.append(dfl[ARCHIVE_CNT].tolist()[0])
+        OL.append(dfl[OVERLAP].tolist()[0])
         # P.append(dfl[PMIN].tolist()[0])
         # AE.append(dfl[ARC_ELITE].tolist()[0])
         # AO.append(dfl[ARC_OPTI].tolist()[0])
@@ -277,6 +280,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
                     UNI_STR_POS: pd.Series(USP),
                     ARC_ACTI_GENE: pd.Series(AAG),
                     ARCHIVE_CNT: pd.Series(AC),
+                    OVERLAP: pd.Series(OL),
                     PARETO_CNT:  pd.Series(PC)})
                     # PMIN:        pd.Series(P),
                     # ARC_ELITE:   pd.Series(AE),
