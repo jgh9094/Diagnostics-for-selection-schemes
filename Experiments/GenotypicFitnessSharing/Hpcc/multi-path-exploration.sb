@@ -10,7 +10,7 @@
 ##################################
 # Setup relevant directories
 ##################################
-DATA_DIR=/mnt/gs18/scratch/users/herna383/DIAGNOSTICS-PROJ-01/FITSHARING_G
+DATA_DIR=/mnt/gs18/scratch/users/herna383/DIAGNOSTICS-MIT-EC/FITSHARING_G
 
 ##################################
 # Setup random seed info
