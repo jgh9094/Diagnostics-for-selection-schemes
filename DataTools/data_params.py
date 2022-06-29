@@ -18,6 +18,7 @@ ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 NS_LIST = ['0','1','2','4','8','15','30']
 
 # columns we are interested in grabbing
+GENERATION = 'gen'
 # pop level
 POP_FIT_AVG = 'pop_fit_avg'
 POP_FIT_MAX = 'pop_fit_max'
