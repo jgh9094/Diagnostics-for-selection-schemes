@@ -93,7 +93,7 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
 
     fin_df = pd.concat(DF_LIST)
 
-    fin_df.to_csv(path_or_buf= dump + 'over-time-' + data_params.SetDiagnostic(dia).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
+    fin_df.to_csv(path_or_buf= dump + 'over-time-' + data_params.SetDiagnostic(dia).lower() + '-' + data_params.SetSelection(sel).lower() + '.csv', index=False)
 
 def main():
     # Generate and get the arguments
