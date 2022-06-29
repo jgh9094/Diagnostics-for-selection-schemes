@@ -274,6 +274,6 @@ FINAL_SEED=$((SEED_OFFSET + SEED))
 # make a dump directory
 mkdir -p ${DUMP}
 
-echo "python3 ../DataTools/Collector/al-data-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${RESOLUTION} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
+echo "python3 ../Collector/al-data-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${RESOLUTION} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
 
-python3 ../DataTools/Collector/al-data-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${RESOLUTION} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
+python3 ../Collector/al-data-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${RESOLUTION} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
