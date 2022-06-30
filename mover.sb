@@ -7,4 +7,4 @@
 #SBATCH --job-name mver               # you can give your job a name for easier identification (same as -J)
 #SBATCH --account=devolab             # research group account being used
 
-rsync -v /mnt/gs18/scratch/users/herna383/DIAGNOSTICS-MIT-EC/ /mnt/gs21/scratch/herna383/DIAGNOSTIC-DATA-FINAL/
+rsync -av /mnt/gs18/scratch/users/herna383/DIAGNOSTICS-MIT-EC/ /mnt/gs21/scratch/herna383/DIAGNOSTIC-DATA-FINAL/
