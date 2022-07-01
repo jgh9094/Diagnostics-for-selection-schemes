@@ -8,9 +8,6 @@ echo ""
 echo "RUNNING: al-data.sb"
 sbatch al-data.sb
 
-echo "RUNNING: end-of-run.sb"
-sbatch end-of-run.sb
-
 echo "RUNNING: solution-fnd.sb"
 sbatch solution-fnd.sb
 
