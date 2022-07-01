@@ -94,9 +94,9 @@ def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens, pt):
                            var_list[7]: pd.Series(sol_list[7]),
                            var_list[8]: pd.Series(sol_list[8])})
 
-        df.to_csv(path_or_buf= dump + 'ssf-' + data_params.SetDiagnostic(d).lower() + data_params.SetSelection(s,pt).lower() + '.csv', index=False)
+        df.to_csv(path_or_buf= dump + 'ssf-' + data_params.SetDiagnostic(d).lower() + '-' + data_params.SetSelection(s,pt).lower() + '.csv', index=False)
 
-    elif s == 2  or s == 3 or s == 4 or s == 5:
+    elif s == 2  or s == 4 or s == 5:
         df = pd.DataFrame({var_list[0]: pd.Series(sol_list[0]),
                            var_list[1]: pd.Series(sol_list[1]),
                            var_list[2]: pd.Series(sol_list[2]),
@@ -105,7 +105,12 @@ def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens, pt):
                            var_list[5]: pd.Series(sol_list[5]),
                            var_list[6]: pd.Series(sol_list[6])})
 
-        df.to_csv(path_or_buf= dump + 'ssf-' + data_params.SetDiagnostic(d).lower() + data_params.SetSelection(s,pt).lower() + '.csv', index=False)
+        df.to_csv(path_or_buf= dump + 'ssf-' + data_params.SetDiagnostic(d).lower() + '-' + data_params.SetSelection(s,pt).lower() + '.csv', index=False)
+
+    elif s == 3:
+        df = pd.DataFrame({var_list[0]: pd.Series(sol_list[0])})
+
+        df.to_csv(path_or_buf= dump + 'ssf-' + data_params.SetDiagnostic(d).lower() + '-' + data_params.SetSelection(s,pt).lower() + '.csv', index=False)
 
     else:
         sol_list.exit('SOL LIST SELECTION UKNOWN')
