@@ -1,9 +1,9 @@
 #####################################################################################################
 #####################################################################################################
-# Create csv's with max vals found throughout evolutionary run from requested data for all replicates
+# Find data of interest, maximum values of time
 #
 #
-# Output : csv with for data over time
+# Output : csv with max data
 #
 # python3
 #####################################################################################################
@@ -17,204 +17,9 @@ import csv
 import sys
 import os
 
-# variables we are testing for each replicate range
-TR_LIST = ['1','2','4','8','16','32','64','128','256']
-TS_LIST = ['1','2','4','8','16','32','64','128','256']
-LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
-FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
-ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
-NS_LIST = ['0','1','2','4','8','15','30']
-
-# seed experiements replicates range
-REP_NUM = 50
-
-# columns we are interested in grabbing
-# pop level
-POP_FIT_AVG = 'pop_fit_avg'
-POP_FIT_MAX = 'pop_fit_max'
-POP_OPT_AVG = 'pop_opt_avg'
-POP_OPT_MAX = 'pop_opt_max'
-POP_UNI_OBJ = 'pop_uni_obj'
-POP_STR_AVG = 'pop_str_avg'
-POP_STR_MAX = 'pop_str_max'
-# elite solutions (max agg traits)
-ELE_AGG_PER = 'ele_agg_per'
-ELE_OPT_CNT = 'ele_opt_cnt'
-# # optimal solution (max opti trait count)
-# OPT_AGG_PER = 'opt_agg_per'
-# OPT_OBJ_CNT = 'opt_obj_cnt'
-# # streak solution (longest streak of non-zero values)
-# STR_AGG_PER = 'str_agg_per'
-# STR_OBJ_CNT = 'str_obj_cnt'
-# trait coverage
-UNI_STR_POS = 'uni_str_pos'
-# # pareto data
-# PARETO_CNT = 'pareto_cnt'
-# # novelty data
-ARCHIVE_CNT = 'archive_cnt'
-PMIN = 'pmin'
-# ARC_ELITE = 'arc_elite'
-# ARC_OPTI = 'arc_opti'
-# ARC_STRK = 'arc_strk'
-GENERATION = 'gen'
-ARC_ACTI_GENE = 'arc_acti_gene'
-OVERLAP = 'overlap'
-
-# return appropiate string dir name (based off run.sb file naming system)
-def SetSelection(s,p):
-    # case by case
-    if s == 0:
-        return 'TRUNCATION'
-    elif s == 1:
-        return 'TOURNAMENT'
-    elif s == 2:
-        if p == '0':
-            return 'FITSHARING_G'
-        elif p == '1':
-            return 'FITSHARING_P'
-        else:
-            sys.exit("UNKNOWN SELECTION")
-    elif s == 3:
-        return 'LEXICASE'
-    elif s == 4:
-        return 'NONDOMINATEDSORTING'
-    elif s == 5:
-        return 'NOVELTY'
-    else:
-        sys.exit("UNKNOWN SELECTION")
-
-# return appropiate string dir name (based off run.sb file naming system)
-def SetDiagnostic(s):
-    # case by case
-    if s == 0:
-        return 'EXPLOITATION'
-    elif s == 1:
-        return 'STRUCTEXPLOITATION'
-    elif s == 2:
-        return 'STRONGECOLOGY'
-    elif s == 3:
-        return 'EXPLORATION'
-    elif s == 4:
-        return 'WEAKECOLOGY'
-    else:
-        sys.exit('UNKNOWN DIAGNOSTIC')
-
-# return appropiate string dir name (based off run.sb file naming system)
-def SetSelectionVar(s):
-    # case by case
-    if s == 0:
-        return 'TR'
-    elif s == 1:
-        return 'T'
-    elif s == 2:
-        return 'SIG'
-    elif s == 3:
-        return 'EPS'
-    elif s == 4:
-        return 'SIG'
-    elif s == 5:
-        return 'NOV'
-    else:
-        sys.exit("UNKNOWN SELECTION VAR")
-
-# return the correct amount of seed ran by experiment treatment
-def SetSeeds(s):
-    # case by case
-    if s == 0:
-        return [x for x in range(1,451)]
-    elif s == 1:
-        return [x for x in range(1,451)]
-    elif s == 2:
-        return [x for x in range(1,351)]
-    elif s == 3:
-        return [x for x in range(1,351)]
-    elif s == 4:
-        return [x for x in range(1,351)]
-    elif s == 5:
-        return [x for x in range(1,351)]
-    else:
-        sys.exit('SEEDS SELECTION UNKNOWN')
-
-# set the appropiate list of variables we are checking for
-def SetVarList(s):
-    # case by case
-    if s == 0:
-        return TR_LIST
-    elif s == 1:
-        return TS_LIST
-    elif s == 2:
-        return FS_LIST
-    elif s == 3:
-        return LX_LIST
-    elif s == 4:
-        return FS_LIST
-    elif s == 5:
-        return NS_LIST
-    else:
-        sys.exit("UNKNOWN VARIABLE LIST")
-
-# return extra parameter directory if needed
-def SetSecondParam(s, pt):
-    # case by case
-    if s == 0:
-        return ''
-    elif s == 1:
-        return ''
-    elif s == 2:
-        return ''
-    elif s == 3:
-        return ''
-    elif s == 4:
-        return ''
-    elif s == 5:
-        return ''
-    else:
-        sys.exit("UNKNOWN SELECTION")
-
-# make sure our list is sorted
-def sorted(v):
-    for i in range(len(v)-1):
-        if v[i] > v[i+1]:
-            return False
-
-    return True
-
-# create a pandas dataframe of csv and find if optimal solutions exist
-def FindSolGen(file, cnt):
-    # check and make sure that the file exists
-    if os.path.isfile(file) == False:
-        sys.exit('DATA FILE DOES NOT EXIST')
-
-    # create pandas data frame of entire csv
-    df = pd.read_csv(file)
-
-    # create subset of data frame with only winning solutions
-    df = df[df[POP_OPT_MAX] == int(cnt)]
-    gens = df['gen'].tolist()
-
-    # check if there are any gens where optimal solution is found
-    if(len(gens) == 0):
-        return -1
-    else:
-        if sorted(gens) == False:
-            sys.exit('GENERATION LIST NOT SORTED')
-        return gens[0]
-
-# create solution list with appropiate number of lists
-def SetSolList(s):
-    sol = []
-    if s == 0 or s == 1:
-        for i in range(10):
-            sol.append([])
-        return sol
-
-    elif s == 2 or s == 3 or s == 4 or s == 5:
-        for i in range(8):
-            sol.append([])
-        return sol
-
-    else:
-        sys.exit('SOL LIST SELECTION UKNOWN')
+# file location for data-params.py file
+sys.path.insert(1, '../')
+import data_params
 
 # loop through differnt files that exist
 def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
@@ -229,39 +34,35 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check that selection data folder exists
-    SEL_DIR = data + SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
+    SEL_DIR = data + data_params.SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
     if os.path.isdir(SEL_DIR) == False:
         print('SEL_DIR=', SEL_DIR)
         sys.exit('EXIT -1')
 
     # loop through sub data directories
-    print('Full data Dir=', SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_XXX' + '__SEED_XXX' + '/')
+    print('Full data Dir=', SEL_DIR + 'DIA_' + data_params.SetDiagnostic(dia) + '__' + data_params.SetSelectionVar(sel) + '_XXX' + '__SEED_XXX' + '/')
     print('Now checking data replicates sub directories')
-    VLIST = SetVarList(sel)
-    SEEDS = SetSeeds(sel)
+    VLIST = data_params.SetVarList(sel)
+    SEEDS = data_params.SetSeeds(sel)
 
     # Will hold the vars
     TRT = []
     VAL = []
     COL = []
     GEN = []
-    # second parameter dir
-    SECOND_PARAM = SetSecondParam(sel, pt)
 
     # data traversing
-    data = {POP_FIT_AVG,POP_FIT_MAX,POP_OPT_AVG,POP_OPT_MAX,
-            POP_UNI_OBJ,POP_STR_AVG,POP_STR_MAX,ELE_AGG_PER,
-            ELE_OPT_CNT,UNI_STR_POS,ARC_ACTI_GENE,ARCHIVE_CNT,
-            OVERLAP, PMIN}
-            # OPT_AGG_PER,OPT_OBJ_CNT,STR_AGG_PER,
-            # STR_OBJ_CNT,PARETO_CNT,,
-            # ARC_ELITE,ARC_OPTI,ARC_STRK}
+    data = {data_params.POP_FIT_AVG, data_params.POP_FIT_MAX, data_params.POP_OPT_AVG,
+            data_params.POP_OPT_MAX, data_params.POP_UNI_OBJ, data_params.POP_STR_AVG,
+            data_params.POP_STR_MAX, data_params.ELE_AGG_PER, data_params.ELE_OPT_CNT,
+            data_params.ARC_ACTI_GENE, data_params.OVERLAP, data_params.ARCHIVE_CNT,
+            data_params.UNI_STR_POS, data_params.PMIN, data_params.PARETO_CNT }
 
     for s in SEEDS:
         seed = str(s + offs)
-        it = int((s-1)/REP_NUM)
+        it = int((s-1)/data_params.REPLICATES)
         var_val = str(VLIST[it])
-        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM
+        DATA_DIR =  SEL_DIR + 'DIA_' + data_params.SetDiagnostic(dia) + '__' + data_params.SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/'
         print('Sub data directory:', DATA_DIR+'data.csv')
 
         # get data from file and check if can store it
@@ -271,7 +72,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
             # Population fit average
             # Population fit max
             max_val = df[key].max()
-            max_gen = df[df[key] == max_val][GENERATION].values.tolist()[0]
+            max_gen = df[df[key] == max_val][data_params.GENERATION].values.tolist()[0]
             TRT.append(VLIST[it])
             VAL.append(max_val)
             GEN.append(max_gen)
@@ -284,7 +85,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
                     'gen': pd.Series(GEN),
                     'col': pd.Series(COL)})
 
-    fdf.to_csv(path_or_buf= dump + 'vxg-' + SetDiagnostic(dia).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
+    fdf.to_csv(path_or_buf= dump + 'best-' + data_params.SetDiagnostic(dia).lower() + '-' + data_params.SetSelection(sel,pt).lower() + '.csv', index=False)
 
 def main():
     # Generate and get the arguments
@@ -306,9 +107,9 @@ def main():
     dump_dir = args.dump_dir.strip()
     print('Dump directory=', dump_dir)
     selection = args.selection
-    print('Selection scheme=', SetSelection(selection,args.param_two))
+    print('Selection scheme=', data_params.SetSelection(selection,args.param_two))
     diagnostic = args.diagnostic
-    print('Diagnostic=',SetDiagnostic(diagnostic))
+    print('Diagnostic=', data_params.SetDiagnostic(diagnostic))
     offset = args.seed_offset
     print('Offset=', offset)
     objectives = args.objectives
