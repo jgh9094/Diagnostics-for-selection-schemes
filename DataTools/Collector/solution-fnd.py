@@ -1,6 +1,6 @@
 #####################################################################################################
 #####################################################################################################
-# Create csv's with generation a solution was found if possible.
+# Create csv's with generation a satisfactory solution was found.
 #
 #
 # Output : csv with for data over time
@@ -17,130 +17,9 @@ import csv
 import sys
 import os
 
-# variables we are testing for each replicate range
-TR_LIST = ['1','2','4','8','16','32','64','128','256']
-TS_LIST = ['1','2','4','8','16','32','64','128','256']
-LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
-FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
-ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
-NS_LIST = ['0','1','2','4','8','15','30']
-
-# seed experiements replicates range
-REP_NUM = 50
-
-# name of column we need to extract
-POP_OPT_MAX = 'pop_opt_max'
-
-# return appropiate string dir name (based off run.sb file naming system)
-def SetSelection(s,p):
-    # case by case
-    if s == 0:
-        return 'TRUNCATION'
-    elif s == 1:
-        return 'TOURNAMENT'
-    elif s == 2:
-        if p == '0':
-            return 'FITSHARING_G'
-        elif p == '1':
-            return 'FITSHARING_P'
-        else:
-            sys.exit("UNKNOWN SELECTION")
-    elif s == 3:
-        return 'LEXICASE'
-    elif s == 4:
-        return 'NONDOMINATEDSORTING'
-    elif s == 5:
-        return 'NOVELTY'
-    else:
-        sys.exit("UNKNOWN SELECTION")
-
-# return appropiate string dir name (based off run.sb file naming system)
-def SetDiagnostic(s):
-    # case by case
-    if s == 0:
-        return 'EXPLOITATION'
-    elif s == 1:
-        return 'STRUCTEXPLOITATION'
-    elif s == 2:
-        return 'STRONGECOLOGY'
-    elif s == 3:
-        return 'EXPLORATION'
-    elif s == 4:
-        return 'WEAKECOLOGY'
-    else:
-        sys.exit('UNKNOWN DIAGNOSTIC')
-
-# return appropiate string dir name (based off run.sb file naming system)
-def SetSelectionVar(s):
-    # case by case
-    if s == 0:
-        return 'TR'
-    elif s == 1:
-        return 'T'
-    elif s == 2:
-        return 'SIG'
-    elif s == 3:
-        return 'EPS'
-    elif s == 4:
-        return 'SIG'
-    elif s == 5:
-        return 'NOV'
-    else:
-        sys.exit("UNKNOWN SELECTION VAR")
-
-# return the correct amount of seed ran by experiment treatment
-def SetSeeds(s):
-    # case by case
-    if s == 0:
-        return [x for x in range(1,451)]
-    elif s == 1:
-        return [x for x in range(1,451)]
-    elif s == 2:
-        return [x for x in range(1,351)]
-    elif s == 3:
-        return [x for x in range(1,351)]
-    elif s == 4:
-        return [x for x in range(1,351)]
-    elif s == 5:
-        return [x for x in range(1,351)]
-    else:
-        sys.exit('SEEDS SELECTION UNKNOWN')
-
-# set the appropiate list of variables we are checking for
-def SetVarList(s):
-    # case by case
-    if s == 0:
-        return TR_LIST
-    elif s == 1:
-        return TS_LIST
-    elif s == 2:
-        return FS_LIST
-    elif s == 3:
-        return LX_LIST
-    elif s == 4:
-        return ND_LIST
-    elif s == 5:
-        return NS_LIST
-    else:
-        sys.exit("UNKNOWN VARIABLE LIST")
-
-# return extra parameter directory if needed
-def SetSecondParam(s, pt):
-    # case by case
-    if s == 0:
-        return ''
-    elif s == 1:
-        return ''
-    elif s == 2:
-        return ''
-    elif s == 3:
-        return ''
-    elif s == 4:
-        return ''
-    elif s == 5:
-        return ''
-    else:
-        sys.exit("UNKNOWN SELECTION")
+# file location for data-params.py file
+sys.path.insert(1, '../')
+import data_params
 
 # make sure our list is sorted
 def sorted(v):
@@ -160,7 +39,7 @@ def FindSolGen(file, cnt):
     df = pd.read_csv(file)
 
     # create subset of data frame with only winning solutions
-    df = df[df[POP_OPT_MAX] == int(cnt)]
+    df = df[df[data_params.POP_OPT_MAX] == int(cnt)]
     gens = df['gen'].tolist()
 
     # check if there are any gens where optimal solution is found
@@ -188,7 +67,7 @@ def SetSolList(s):
         sys.exit('SOL LIST SELECTION UKNOWN')
 
 # create csv time
-def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens):
+def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens, pt):
     if s == 0 or s == 1:
         df = pd.DataFrame({var_list[0]: pd.Series(sol_list[0]),
                            var_list[1]: pd.Series(sol_list[1]),
@@ -198,10 +77,9 @@ def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens):
                            var_list[5]: pd.Series(sol_list[5]),
                            var_list[6]: pd.Series(sol_list[6]),
                            var_list[7]: pd.Series(sol_list[7]),
-                        #    var_list[8]: pd.Series(sol_list[8]),
                            var_list[8]: pd.Series(sol_list[8])})
 
-        df.to_csv(path_or_buf= dump + 'sf-' + SetDiagnostic(d).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
+        df.to_csv(path_or_buf= dump + 'ssf-' + data_params.SetDiagnostic(d).lower() + + data_params.SetSelection(s,pt).lower() + '.csv', index=False)
 
     elif s == 2  or s == 3 or s == 4 or s == 5:
         df = pd.DataFrame({var_list[0]: pd.Series(sol_list[0]),
@@ -210,10 +88,9 @@ def ExportCSV(sol_list, var_list,s,d,dump, obj, acc, gens):
                            var_list[3]: pd.Series(sol_list[3]),
                            var_list[4]: pd.Series(sol_list[4]),
                            var_list[5]: pd.Series(sol_list[5]),
-                        #    var_list[6]: pd.Series(sol_list[6]),
                            var_list[6]: pd.Series(sol_list[6])})
 
-        df.to_csv(path_or_buf= dump + 'sf-' + SetDiagnostic(d).lower() + '-' + gens + '-' + obj + '-' + acc + '.csv', index=False)
+        df.to_csv(path_or_buf= dump + 'ssf-' + data_params.SetDiagnostic(d).lower() + + data_params.SetSelection(s,pt).lower() + '.csv', index=False)
 
     else:
         sol_list.exit('SOL LIST SELECTION UKNOWN')
@@ -231,27 +108,25 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
         sys.exit('DATA DIRECTORY DOES NOT EXIST')
 
     # check that selection data folder exists
-    SEL_DIR = data + SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
+    SEL_DIR = data + data_params.SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
     if os.path.isdir(SEL_DIR) == False:
         print('SEL_DIR=', SEL_DIR)
         sys.exit('EXIT -1')
 
     # loop through sub data directories
-    print('Full data Dir=', SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_XXX' + '__SEED_XXX' + '/')
+    print('Full data Dir=', SEL_DIR + 'DIA_' + data_params.SetDiagnostic(dia) + '__' + data_params.SetSelectionVar(sel) + '_XXX' + '__SEED_XXX' + '/')
     print('Now checking data replicates sub directories')
-    VLIST = SetVarList(sel)
-    SEEDS = SetSeeds(sel)
+    VLIST = data_params.SetVarList(sel)
+    SEEDS = data_params.SetSeeds(sel)
 
     # create list of list solution counts
     SOL_LIST = SetSolList(sel)
-    # second parameter dir
-    SECOND_PARAM = SetSecondParam(sel, pt)
 
     for s in SEEDS:
         seed = str(s + offs)
-        it = int((s-1)/REP_NUM)
+        it = int((s-1)/data_params.REPLICATES)
         var_val = str(VLIST[it])
-        DATA_DIR =  SEL_DIR + 'DIA_' + SetDiagnostic(dia) + '__' + SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + SECOND_PARAM
+        DATA_DIR =  SEL_DIR + 'DIA_' + data_params.SetDiagnostic(dia) + '__' + data_params.SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/'
         print('Sub data directory:', DATA_DIR+'data.csv')
 
         # get data from file and check if can store it
@@ -260,7 +135,7 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
             SOL_LIST[it].append(sol)
 
     # Time to export the csv file
-    ExportCSV(SOL_LIST, VLIST, sel, dia, dump, obj, acc, gens)
+    ExportCSV(SOL_LIST, VLIST, sel, dia, dump, obj, acc, gens, pt)
 
 
 def main():
@@ -283,9 +158,9 @@ def main():
     dump_dir = args.dump_dir.strip()
     print('Dump directory=', dump_dir)
     selection = args.selection
-    print('Selection scheme=', SetSelection(selection,args.param_two))
+    print('Selection scheme=', data_params.SetSelection(selection,args.param_two))
     diagnostic = args.diagnostic
-    print('Diagnostic=',SetDiagnostic(diagnostic))
+    print('Diagnostic=', data_params.SetDiagnostic(diagnostic))
     offset = args.seed_offset
     print('Offset=', offset)
     objectives = args.objectives
