@@ -3,6 +3,8 @@
 # Creates a csv with data over time with some for some given resolutions (e.g. number of generations)
 # per selection/diagnotic treatment
 #
+# Script will go through each replicate for a specific selection/diagnostic treatment
+#
 # Command Line Inputs:
 #
 # data_directory: directory where data is located

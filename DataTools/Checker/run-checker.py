@@ -1,6 +1,7 @@
 #####################################################################################################
 #
 # Will list all of the incomplete run id's that need to finish running, per selection/diagnotic treatment
+# Script will go through each replicate for a specific selection/diagnostic treatment
 #
 # Command Line Inputs:
 #

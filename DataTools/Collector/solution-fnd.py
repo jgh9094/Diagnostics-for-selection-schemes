@@ -4,6 +4,8 @@
 # If found, will add the earliest generation a satisfactory solution is found
 # If not found, will leave an NA
 #
+# Script will go through each replicate for a specific selection/diagnostic treatment
+#
 # Command Line Inputs:
 #
 # data_directory: directory where data is located

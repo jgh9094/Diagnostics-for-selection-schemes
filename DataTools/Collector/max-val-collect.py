@@ -3,6 +3,8 @@
 # Creates a csv with data that consists of the best data found throughout an evolutionary run per
 # replicate (e.g. the best performance througout an entire evolutionary run)
 #
+# Script will go through each replicate for a specific selection/diagnostic treatment
+#
 # Command Line Inputs:
 #
 # data_directory: directory where data is located
