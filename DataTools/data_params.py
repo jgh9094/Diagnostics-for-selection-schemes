@@ -12,7 +12,7 @@ import os
 # variables we are testing for each replicate range
 TR_LIST = ['1','2','4','8','16','32','64','128','256']
 TS_LIST = ['1','2','4','8','16','32','64','128','256']
-LX_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
+LX_LIST = ['0.0']
 FS_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 ND_LIST = ['0.0','0.1','0.3','0.6','1.2','2.5','5.0']
 NS_LIST = ['0','1','2','4','8','15','30']
@@ -138,7 +138,7 @@ def SetSeedSets(s):
         seed.append([x for x in range(401,451)])
         return seed
 
-    elif s == 2 or s == 3 or s == 4 or s == 5:
+    elif s == 2 or s == 4 or s == 5:
         seed = []
         seed.append([x for x in range(1,51)])
         seed.append([x for x in range(51,101)])
@@ -147,6 +147,11 @@ def SetSeedSets(s):
         seed.append([x for x in range(201,251)])
         seed.append([x for x in range(251,301)])
         seed.append([x for x in range(301,351)])
+        return seed
+
+    elif s == 3:
+        seed = []
+        seed.append([x for x in range(1,51)])
         return seed
 
     else:
