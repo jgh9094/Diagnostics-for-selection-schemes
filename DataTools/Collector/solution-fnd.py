@@ -1,12 +1,25 @@
 #####################################################################################################
-#####################################################################################################
-# Create csv's with generation a satisfactory solution was found.
 #
+# Creates a csv with generation a satisfactory solution is found
+# If found, will add the earliest generation a satisfactory solution is found
+# If not found, will leave an NA
 #
-# Output : csv with for data over time
+# Command Line Inputs:
+#
+# data_directory: directory where data is located
+# dump_directory: directory where data is located
+#      selection: selection scheme used
+#     diagnostic: diagnostic used
+#    seed_offset: seed offset (if any)
+#     objectives: dimensionality
+#       accuracy: satisfactory trait accuracy %
+#    generations: generations ran
+#      param_two: genotypic (0) or phenotypic (1) similarity for fitness sharing
+#
+# Output: csv with generations a satisfactory solution is found for a specific selection scheme and
+#          diagnostic
 #
 # python3
-#####################################################################################################
 #####################################################################################################
 
 

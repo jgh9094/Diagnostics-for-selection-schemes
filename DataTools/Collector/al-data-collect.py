@@ -1,12 +1,24 @@
 #####################################################################################################
-#####################################################################################################
-# Create csv's with requested data from all replicates every X generations
 #
+# Creates a csv with data over time with some for some given resolutions (e.g. number of generations)
+# per selection/diagnotic treatment
 #
-# Output : csv with for data over time
+# Command Line Inputs:
+#
+# data_directory: directory where data is located
+# dump_directory: directory where data is located
+#      selection: selection scheme used
+#     diagnostic: diagnostic used
+#    seed_offset: seed offset (if any)
+#     resolution: resolution of the over time data to gather (e.g. collect data every 100 generations)
+#     objectives: dimensionality
+#       accuracy: satisfactory trait accuracy %
+#    generations: generations ran
+#      param_two: genotypic (0) or phenotypic (1) similarity for fitness sharing
+#
+# Output: csv with over time data for a specific selection scheme and diagnostic
 #
 # python3
-#####################################################################################################
 #####################################################################################################
 
 ######################## IMPORTS ########################

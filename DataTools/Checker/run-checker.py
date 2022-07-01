@@ -1,8 +1,9 @@
 #####################################################################################################
-#####################################################################################################
-# Will list all of the incomplete id's that need to finish running, per selection/diagnotic treatment
 #
-# Command Line Inputs
+# Will list all of the incomplete run id's that need to finish running, per selection/diagnotic treatment
+#
+# Command Line Inputs:
+#
 # data_directory: directory where data is located
 #      selection: selection scheme used
 #     diagnostic: diagnostic used
@@ -12,10 +13,9 @@
 #    generations: generations ran
 #      param_two: genotypic (0) or phenotypic (1) similarity for fitness sharing
 #
-# Output : list of seeds that need to be reran in terminal display
+# Output: list of seeds that need to be reran in terminal display
 #
 # python3
-#####################################################################################################
 #####################################################################################################
 
 ######################## IMPORTS ########################

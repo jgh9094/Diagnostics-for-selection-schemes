@@ -1,12 +1,23 @@
 #####################################################################################################
-#####################################################################################################
-# Find data of interest, maximum values of time
 #
+# Creates a csv with data that consists of the best data found throughout an evolutionary run per
+# replicate (e.g. the best performance througout an entire evolutionary run)
 #
-# Output : csv with max data
+# Command Line Inputs:
+#
+# data_directory: directory where data is located
+# dump_directory: directory where data is located
+#      selection: selection scheme used
+#     diagnostic: diagnostic used
+#    seed_offset: seed offset (if any)
+#     objectives: dimensionality
+#       accuracy: satisfactory trait accuracy %
+#    generations: generations ran
+#      param_two: genotypic (0) or phenotypic (1) similarity for fitness sharing
+#
+# Output: csv with best data for a specific selection scheme and diagnostic
 #
 # python3
-#####################################################################################################
 #####################################################################################################
 
 
