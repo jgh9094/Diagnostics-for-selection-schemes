@@ -10,7 +10,7 @@
 ##################################
 # SETUP RELEVANT DIRECTORIES
 ##################################
-DATA_DIR=/mnt/gs18/scratch/users/herna383/DIAGNOSTICS-MIT-EC/
+DATA_DIR=/mnt/gs21/scratch/herna383/DIAGNOSTIC-DATA-FINAL/
 
 ##################################
 # SETUP RELEVANT DIRECTORIES
