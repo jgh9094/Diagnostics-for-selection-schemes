@@ -1,0 +1,28 @@
+name: Build and deploy supplemental material to GitHub Pages
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: docker build
+        run:
+        |
+          docker build . --file Dockerfile --tag supplemental
+          docker container create --name pages_build supplemental:latest
+          docker cp pages_build:/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/_book ./_book
+          touch .nojekyll
+      - name: deploy to github pages
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages # The branch the action should deploy to
+          FOLDER: _book # The folder the action should deploy
+          CLEAN: true # Automatically remove deleted files from the deploy branch
