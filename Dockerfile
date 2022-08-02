@@ -20,6 +20,7 @@ RUN \
   apt-get update \
     && \
   apt-get install -y -qq --no-install-recommends \
+    apt-utils \
     software-properties-common \
     curl \
     g++-10 \
