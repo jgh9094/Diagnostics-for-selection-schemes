@@ -2,7 +2,7 @@ name: Build and deploy supplemental material to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-deploy:
