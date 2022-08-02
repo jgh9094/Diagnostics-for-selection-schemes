@@ -17,7 +17,7 @@ ENV TZ=America/New_York
 #   - pandoc, pandoc-citeproc, texlive-base, texlive-latex-extra
 ##############################
 RUN \
-  apt-get -y update \
+  apt-get update \
     && \
   apt-get install -y -qq --no-install-recommends \
     software-properties-common \
