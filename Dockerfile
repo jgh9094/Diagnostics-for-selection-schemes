@@ -19,8 +19,7 @@ ENV TZ=America/New_York
 RUN DEBIAN_FRONTEND=noninteractive \
   apt-get update \
     && \
-  apt-get install -y -qq --no-install-recommends \
-    build-essential \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
     apt-utils \
     software-properties-common \
     curl \
