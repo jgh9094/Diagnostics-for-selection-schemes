@@ -25,19 +25,18 @@ final = data.frame()
 # selection scheme related stuff
 ACRON = tolower(c('TRU','TOR','GFS','PFS','LEX','NDS','NOV','RAN'))
 NAMES = c('Truncation (tru)','Tournament (tor)', 'Genotypic Fitness Sharing (gfs)','Phenotypic Fitness Sharing (pfs)','Lexicase (lex)','Nondominated Sorting (nds)','Novelty Search (nov)','Random (ran)')
-SCHEME = c('TRUNCATION','TOURNAMENT','FITSHARING_G','FITSHARING_P','LEXICASE','NONDOMINATED','NOVELTY','TOURNAMENT')
+SCHEME = c('TRUNCATION','TOURNAMENT','FITSHARING_G','FITSHARING_P','LEXICASE','NONDOMINATEDSORTING','NOVELTY','TOURNAMENT')
 
 # selection scheme parameter we are looking for
 PARAM = c('8', '8', '0.3', '0.3', '0.0', '0.3', '15', '1')
 
 # for diagnostic loops
-DIAGNOSTIC = tolower(c('exploitation', 'structexploitation', 'weakecology', 'exploration'))
-# DIAGNOSTIC = tolower(c('EXPLOITATION_RATE', 'ORDERED_EXPLOITATION', 'CONTRADICTORY_OBJECTIVES', 'MULTIPATH_EXPLORATION'))
+DIAGNOSTIC = tolower(c('EXPLOITATION_RATE', 'ORDERED_EXPLOITATION', 'CONTRADICTORY_OBJECTIVES', 'MULTIPATH_EXPLORATION'))
 
 # data related
-DATA_DIR = './DATA-4-19/'
-DUMP_DIR = './DataTools/Collector/'
-
+DATA_DIR = './DATA-FINAL/'
+DUMP_DIR = './DATA-FINAL/POLISHED/'
+dir.create(DUMP_DIR, showWarnings = TRUE)
 
 # go through each diagnostic and collect over time data for cross comparison (cc)
 for(diagnostic in DIAGNOSTIC)
@@ -45,7 +44,7 @@ for(diagnostic in DIAGNOSTIC)
   print(diagnostic)
   for(i in 1:8)
   {
-    dir = paste(DATA_DIR,SCHEME[i],'/al-',diagnostic,'-50000-100-99.csv', sep = "", collapse = NULL)
+    dir = paste(DATA_DIR,SCHEME[i],'/over-time-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
     print(paste('DIRECTORY:',dir, sep = "", collapse = NULL))
     print(paste('PARAMETER:',PARAM[i], sep = "", collapse = NULL))
 
@@ -54,12 +53,19 @@ for(diagnostic in DIAGNOSTIC)
 
     # add names/tags
     df$acron = ACRON[i]
-    df$name = NAMES[i]
+    df$`Selection\nScheme` = NAMES[i]
     df$diagnostic = diagnostic
-    df = filter(df, trt == PARAM[i])
 
     # add to final data frame
-    final = rbind(final, df)
+    if(i == 5)
+    {
+      final = rbind(final, df)
+    }
+    else
+    {
+      df = filter(df, trt == PARAM[i])
+      final = rbind(final, df)
+    }
   }
 }
 
@@ -78,7 +84,7 @@ for(diagnostic in DIAGNOSTIC)
   print(diagnostic)
   for(i in 1:8)
   {
-    dir = paste(DATA_DIR,SCHEME[i],'/vxg-',diagnostic,'-50000-100-99.csv', sep = "", collapse = NULL)
+    dir = paste(DATA_DIR,SCHEME[i],'/best-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
     print(paste('DIRECTORY:',dir, sep = "", collapse = NULL))
     print(paste('PARAMETER:',PARAM[i], sep = "", collapse = NULL))
 
@@ -87,12 +93,18 @@ for(diagnostic in DIAGNOSTIC)
 
     # add names/tags
     df$acron = ACRON[i]
-    df$name = NAMES[i]
+    df$`Selection\nScheme` = NAMES[i]
     df$diagnostic = diagnostic
-    df = filter(df, trt == PARAM[i])
-
-    # add to final data frame
-    final = rbind(final, df)
+    
+    if(SCHEME[i] == SCHEME[5])
+    {
+      final = rbind(final, df)
+    }
+    else
+    {
+      df = filter(df, trt == PARAM[i])
+      final = rbind(final, df)
+    }
   }
 }
 
@@ -110,7 +122,7 @@ for(diagnostic in DIAGNOSTIC)
   print(diagnostic)
   for(i in 1:8)
   {
-    dir = paste(DATA_DIR,SCHEME[i],'/sf-',diagnostic,'-50000-100-99.csv', sep = "", collapse = NULL)
+    dir = paste(DATA_DIR,SCHEME[i],'/ssf-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
     print(paste('DIRECTORY:',dir, sep = "", collapse = NULL))
     print(paste('PARAMETER:',PARAM[i], sep = "", collapse = NULL))
 
@@ -130,12 +142,19 @@ for(diagnostic in DIAGNOSTIC)
 
     # add names/tags
     df$acron = ACRON[i]
-    df$name = NAMES[i]
+    df$`Selection\nScheme` = NAMES[i]
     df$diagnostic = diagnostic
-    df = subset(df, trt == PARAM[i])
 
     # add to final data frame
-    final = rbind(final, df)
+    if(SCHEME[i] == SCHEME[5])
+    {
+      final = rbind(final, df)
+    }
+    else
+    {
+      df = filter(df, trt == PARAM[i])
+      final = rbind(final, df)
+    }
   }
 }
 
@@ -149,12 +168,13 @@ print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
 # go through each scheme and collect over time data
-for(scheme in SCHEME)
+for(i in 1:8)
 {
+  scheme = SCHEME[i]
   print(scheme)
   for(diagnostic in DIAGNOSTIC)
   {
-    dir = paste(DATA_DIR,scheme,'/al-',diagnostic,'-50000-100-99.csv', sep = "", collapse = NULL)
+    dir = paste(DATA_DIR,scheme,'/over-time-',diagnostic,'-', tolower(scheme), '.csv', sep = "", collapse = NULL)
     print(paste('DIRECTORY:',dir, sep = "", collapse = NULL))
     print(paste('DIAGNOSTIC:',diagnostic, sep = "", collapse = NULL))
 
@@ -163,7 +183,7 @@ for(scheme in SCHEME)
 
     # add names/tags
     df$acron = ACRON[i]
-    df$name = NAMES[i]
+    df$`Selection\nScheme` = NAMES[i]
     df$diagnostic = diagnostic
 
     # add to final data frame
@@ -180,12 +200,13 @@ print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 print('')
 
 # go through each scheme and collect best data
-for(scheme in SCHEME)
+for(i in 1:8)
 {
+  scheme = SCHEME[i]
   print(scheme)
   for(diagnostic in DIAGNOSTIC)
   {
-    dir = paste(DATA_DIR, scheme, '/vxg-',diagnostic, '-50000-100-99.csv', sep = "", collapse = NULL)
+    dir = paste(DATA_DIR, scheme, '/best-',diagnostic,'-', tolower(scheme), '.csv', sep = "", collapse = NULL)
     print(paste('DIRECTORY:',dir, sep = "", collapse = NULL))
     print(paste('DIAGNOSTIC:',diagnostic, sep = "", collapse = NULL))
 
@@ -194,7 +215,7 @@ for(scheme in SCHEME)
 
     # add names/tags
     df$acron = ACRON[i]
-    df$name = NAMES[i]
+    df$`Selection\nScheme` = NAMES[i]
     df$diagnostic = diagnostic
 
     # add to final data frame
@@ -211,17 +232,18 @@ print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 print('')
 
 # go through each scheme and collect satisfactory solution found
-for(scheme in SCHEME)
+for(i in 1:8)
 {
+  scheme = SCHEME[i]
   print(scheme)
   for(diagnostic in DIAGNOSTIC)
   {
-    dir = paste(DATA_DIR, scheme, '/sf-',diagnostic, '-50000-100-99.csv', sep = "", collapse = NULL)
+    dir = paste(DATA_DIR, scheme, '/ssf-',diagnostic,'-', tolower(scheme), '.csv', sep = "", collapse = NULL)
     print(paste('DIRECTORY:',dir, sep = "", collapse = NULL))
     print(paste('DIAGNOSTIC:',diagnostic, sep = "", collapse = NULL))
 
     # read csv
-    df = read.csv(dir, header = TRUE, stringsAsFactors = FALSE)
+    df = read.csv(dir, header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
 
     diff = REPLICATES - nrow(df)
     print(paste('DIFF:',diff, sep = "", collapse = NULL))
@@ -236,7 +258,7 @@ for(scheme in SCHEME)
 
     # add names/tags
     df$acron = ACRON[i]
-    df$name = NAMES[i]
+    df$`Selection\nScheme` = NAMES[i]
     df$diagnostic = diagnostic
 
     # add to final data frame
