@@ -1,6 +1,6 @@
 # Pull a base image
-FROM ubuntu:20.04
-
+ FROM ubuntu:20.04
+ 
 # Copy everything (minus anything specified in .dockerignore) into the image
 COPY . /opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes
 
@@ -21,7 +21,7 @@ RUN \
     && \
   apt-get install -y -qq --no-install-recommends \
     software-properties-common \
-    curl=7.68.0-1ubuntu2.4 \
+    curl \
     g++-10=10.2.0-5ubuntu1~20.04 \
     make=4.2.1-1.2 \
     cmake=3.16.3-1ubuntu1  \
