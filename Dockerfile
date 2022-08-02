@@ -57,7 +57,6 @@ RUN \
     r-base-dev \
     libssl-dev \
     libcurl4-openssl-dev \
-    libcurl4=7.68.0-1ubuntu2 \
     libfreetype6-dev \
     libmagick++-dev \
     libxml2-dev \
