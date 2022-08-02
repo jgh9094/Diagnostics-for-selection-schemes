@@ -16,7 +16,7 @@ ENV TZ=America/New_York
 # - for bookdown compilation
 #   - pandoc, pandoc-citeproc, texlive-base, texlive-latex-extra
 ##############################
-RUN \
+RUN DEBIAN_FRONTEND=noninteractive \
   apt-get update \
     && \
   apt-get install -y -qq --no-install-recommends \
