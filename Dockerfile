@@ -16,14 +16,13 @@ ENV TZ=America/New_York
 # - for bookdown compilation
 #   - pandoc, pandoc-citeproc, texlive-base, texlive-latex-extra
 ##############################
-RUN DEBIAN_FRONTEND=noninteractive \
+RUN \
   apt-get update \
     && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
-    apt-utils \
+  apt-get install -y -qq --no-install-recommends \
     software-properties-common \
-    curl \
-    g++-10 \
+    curl=7.68.0-1ubuntu2.4 \
+    g++-10=10.2.0-5ubuntu1~20.04 \
     make=4.2.1-1.2 \
     cmake=3.16.3-1ubuntu1  \
     python3=3.8.2-0ubuntu2 \
