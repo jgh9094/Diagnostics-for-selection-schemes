@@ -1,0 +1,15 @@
+bookdown::gitbook:
+  css: style.css
+  split_by: "chapter"
+  citation_package: natbib
+  config:
+    toc:
+      after: |
+        <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with ❤ and bookdown</a></li>
+    edit: https://github.com/amlalejini/auto-deploying-bookdown-example/tree/main/%s
+    download: ["pdf"]
+bookdown::pdf_book:
+  latex_engine: pdflatex
+  citation_package: natbib
+  keep_tex: yes
+  split_by: "chapter"
