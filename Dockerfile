@@ -39,6 +39,7 @@ RUN \
     lmodern \
     && \
   echo "installed base dependencies"
+  
 
 ########################################################
 # install r with whatever r packages we need/want
