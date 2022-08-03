@@ -75,7 +75,7 @@ Our work demonstrates the value of diagnostic search spaces for building a deepe
 Setting up required variables variables.
 
 ```{r}
-# source("./DataTools/Vizualizor/setup.R")
+source("./DataTools/setup.R")
 ```
 
 These analyses were conducted in the following computing environment:
