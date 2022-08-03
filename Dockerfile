@@ -8,7 +8,6 @@ COPY . /opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=America/New_York
 
-
 ##############################
 # install base dependencies
 # - for R repository
@@ -102,11 +101,11 @@ RUN \
     && \
   mkdir ${DATA_PATH} \
     && \
-  osf -p ${OSF_PROJECT} fetch 2022-07-01-data.tar.gz ${DATA_PATH}2022-07-01-data.tar.gz \
+  osf -p ${OSF_PROJECT} fetch 2022-07-01-data.tar.gz ${PROJECT_PATH}2022-07-01-data.tar.gz \
     && \
   echo "*fecth"
     && \
-  tar -xzf ${PROJECT_PATH}/2022-07-01-data.tar.gz -C ${DATA_PATH}/ \
+  tar -xzf ${PROJECT_PATH}2022-07-01-data.tar.gz -C ${DATA_PATH}/ \
     && \
   echo "*tar"
     && \
