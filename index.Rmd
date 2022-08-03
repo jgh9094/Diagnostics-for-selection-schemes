@@ -15,7 +15,7 @@ description: "This is a demo for automatically deploying your bookdown ebook to 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 # knitr::opts_knit$set(root.dir = "/mnt/c/Users/jgh9094/Desktop/Research/Projects/SelectionDiagnostics/Selection-Scheme-Diagnotics-Part-I")
-# knitr::opts_knit$set(root.dir = "/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/")
+knitr::opts_knit$set(root.dir = "/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/")
 getwd()
 ```
 
