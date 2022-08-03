@@ -40,7 +40,7 @@ RUN \
     && \
   echo "installed base dependencies"
 
-  
+
 
 ########################################################
 # install r with whatever r packages we need/want
@@ -116,6 +116,8 @@ RUN \
   cd /opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes \
     && \
   chmod +x build_book.sh \
+    && \
+  ls -l \
     && \
   ./build_book.sh \
     && \
