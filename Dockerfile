@@ -113,6 +113,8 @@ RUN \
 RUN \
   cd /opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes \
     && \
+  chmod +x build_book.sh \
+    && \
   ./build_book.sh \
     && \
   echo "compiled bookdown ebook"
