@@ -44,47 +44,47 @@ RUN \
 # install r with whatever r packages we need/want
 # - source: https://rtask.thinkr.fr/installation-of-r-4-0-on-ubuntu-20-04-lts-and-tips-for-spatial-packages/
 ########################################################
-# RUN \
-#   gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
-#     && \
-#   gpg -a --export E298A3A825C0D65DFD57CBB651716619E084DAB9 | apt-key add - \
-#     && \
-#   apt update \
-#     && \
-#   add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/' \
-#     && \
-#   apt-get install -y -q --no-install-recommends \
-#     r-base \
-#     r-base-dev \
-#     libssl-dev \
-#     libcurl4-openssl-dev \
-#     libfreetype6-dev \
-#     libmagick++-dev \
-#     libxml2-dev \
-#     libfontconfig1-dev \
-#     cargo \
-    # && \
-  # R -e "install.packages('rmarkdown', dependencies=NA, repos='http://cran.rstudio.com/')" \
-  #   && \
-  # R -e "install.packages('knitr', dependencies=NA, repos='http://cran.rstudio.com/')" \
-  #   && \
-  # R -e "install.packages('bookdown', dependencies=NA, repos='http://cran.rstudio.com/')" \
-  #   && \
-  # R -e "install.packages('tidyverse', dependencies=NA, repos='http://cran.rstudio.com/')" \
-  #   && \
-  # R -e "install.packages('cowplot', dependencies=NA, repos='http://cran.rstudio.com/')" \
-  #   && \
-  # R -e "install.packages('plyr', dependencies=NA, repos='http://cran.rstudio.com/')" \
-  #   && \
-  # R -e "install.packages('Hmisc', dependencies=NA, repos='http://cran.rstudio.com/')" \
-  #   && \
-  # R -e "install.packages('ggplot2', dependencies=NA, repos='http://cran.rstudio.com/')" \
-  #   && \
-  # R -e "install.packages('dplyr', dependencies=NA, repos='http://cran.rstudio.com/')" \
-  #   && \
-  # R -e "install.packages('PupillometryR', dependencies=NA, repos='http://cran.rstudio.com/')" \
-  #   && \
-  # echo "installed r and configured r environment"
+RUN \
+  gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
+    && \
+  gpg -a --export E298A3A825C0D65DFD57CBB651716619E084DAB9 | apt-key add - \
+    && \
+  apt update \
+    && \
+  add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/' \
+    && \
+  apt-get install -y -q --no-install-recommends \
+    r-base \
+    r-base-dev \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    libfreetype6-dev \
+    libmagick++-dev \
+    libxml2-dev \
+    libfontconfig1-dev \
+    cargo \
+    && \
+  R -e "install.packages('rmarkdown', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
+  R -e "install.packages('knitr', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
+  R -e "install.packages('bookdown', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
+  R -e "install.packages('tidyverse', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
+  R -e "install.packages('cowplot', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
+  R -e "install.packages('plyr', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
+  R -e "install.packages('Hmisc', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
+  R -e "install.packages('ggplot2', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
+  R -e "install.packages('dplyr', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
+  R -e "install.packages('PupillometryR', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
+  echo "installed r and configured r environment"
 
 
 ########################################################
@@ -103,11 +103,7 @@ RUN \
     && \
   osf -p ${OSF_PROJECT} fetch 2022-07-01-data.tar.gz ${PROJECT_PATH}2022-07-01-data.tar.gz \
     && \
-  echo "*fecth" \
-    && \
   tar -xzf ${PROJECT_PATH}2022-07-01-data.tar.gz -C ${DATA_PATH}/ \
-    && \
-  echo "*tar" \
     && \
   echo "download"
 
