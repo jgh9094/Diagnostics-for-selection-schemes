@@ -103,11 +103,11 @@ RUN \
     && \
   osf -p ${OSF_PROJECT} fetch 2022-07-01-data.tar.gz ${PROJECT_PATH}2022-07-01-data.tar.gz \
     && \
-  echo "*fecth"
+  echo "*fecth" \
     && \
   tar -xzf ${PROJECT_PATH}2022-07-01-data.tar.gz -C ${DATA_PATH}/ \
     && \
-  echo "*tar"
+  echo "*tar" \
     && \
   echo "download"
 
