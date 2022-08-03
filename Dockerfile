@@ -66,26 +66,26 @@ RUN \
     libxml2-dev \
     libfontconfig1-dev \
     cargo \
-    && \
-  R -e "install.packages('rmarkdown', dependencies=NA, repos='http://cran.rstudio.com/')" \
-    && \
-  R -e "install.packages('knitr', dependencies=NA, repos='http://cran.rstudio.com/')" \
-    && \
-  R -e "install.packages('bookdown', dependencies=NA, repos='http://cran.rstudio.com/')" \
-    && \
-  R -e "install.packages('tidyverse', dependencies=NA, repos='http://cran.rstudio.com/')" \
-    && \
-  R -e "install.packages('cowplot', dependencies=NA, repos='http://cran.rstudio.com/')" \
-    && \
-  R -e "install.packages('plyr', dependencies=NA, repos='http://cran.rstudio.com/')" \
-    && \
-  R -e "install.packages('Hmisc', dependencies=NA, repos='http://cran.rstudio.com/')" \
-    && \
-  R -e "install.packages('ggplot2', dependencies=NA, repos='http://cran.rstudio.com/')" \
-    && \
-  R -e "install.packages('dplyr', dependencies=NA, repos='http://cran.rstudio.com/')" \
-    && \
-  R -e "install.packages('PupillometryR', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    # && \
+  # R -e "install.packages('rmarkdown', dependencies=NA, repos='http://cran.rstudio.com/')" \
+  #   && \
+  # R -e "install.packages('knitr', dependencies=NA, repos='http://cran.rstudio.com/')" \
+  #   && \
+  # R -e "install.packages('bookdown', dependencies=NA, repos='http://cran.rstudio.com/')" \
+  #   && \
+  # R -e "install.packages('tidyverse', dependencies=NA, repos='http://cran.rstudio.com/')" \
+  #   && \
+  # R -e "install.packages('cowplot', dependencies=NA, repos='http://cran.rstudio.com/')" \
+  #   && \
+  # R -e "install.packages('plyr', dependencies=NA, repos='http://cran.rstudio.com/')" \
+  #   && \
+  # R -e "install.packages('Hmisc', dependencies=NA, repos='http://cran.rstudio.com/')" \
+  #   && \
+  # R -e "install.packages('ggplot2', dependencies=NA, repos='http://cran.rstudio.com/')" \
+  #   && \
+  # R -e "install.packages('dplyr', dependencies=NA, repos='http://cran.rstudio.com/')" \
+  #   && \
+  # R -e "install.packages('PupillometryR', dependencies=NA, repos='http://cran.rstudio.com/')" \
     && \
   echo "installed r and configured r environment"
 
