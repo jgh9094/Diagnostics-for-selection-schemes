@@ -99,13 +99,13 @@ RUN \
     && \
   export PROJECT_PATH=/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/ \
     && \
-  export DATA_PATH=/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/ \
-    && \
-  mkdir ${DATA_PATH} \
-    && \
+  # export DATA_PATH=/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/ \
+  #   && \
+  # mkdir ${DATA_PATH} \
+    # && \
   osf -p ${OSF_PROJECT} fetch 2022-07-01-data.tar.gz ${PROJECT_PATH}2022-07-01-data.tar.gz \
     && \
-  tar -xzf ${PROJECT_PATH}2022-07-01-data.tar.gz -C ${DATA_PATH}/ \
+  tar -xzf ${PROJECT_PATH}2022-07-01-data.tar.gz -C ${PROJECT_PATH} \
     && \
   echo "download"
 
@@ -117,9 +117,9 @@ RUN \
     && \
   chmod +x build_book.sh \
     && \
-  pwd \
+  ls -l \
     && \
-  ls -l DATA-FINAL/DATA-FINAL \
+  ls -l DATA-FINAL/ \
     && \
   ./build_book.sh \
     && \
