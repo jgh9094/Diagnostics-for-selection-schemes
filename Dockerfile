@@ -117,6 +117,8 @@ RUN \
     && \
   chmod +x build_book.sh \
     && \
+  pwd \
+    && \
   ls -l \
     && \
   ./build_book.sh \
