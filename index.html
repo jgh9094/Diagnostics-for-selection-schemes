@@ -5,19 +5,19 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Diagnostics Supplemental Material</title>
-  <meta name="description" content="This is a demo for automatically deploying your bookdown ebook to GitHub pages." />
+  <meta name="description" content="Supplemental material for the selection scheme diagnostic work." />
   <meta name="generator" content="bookdown 0.27 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Diagnostics Supplemental Material" />
   <meta property="og:type" content="book" />
   
-  <meta property="og:description" content="This is a demo for automatically deploying your bookdown ebook to GitHub pages." />
+  <meta property="og:description" content="Supplemental material for the selection scheme diagnostic work." />
   <meta name="github-repo" content="jgh9094/ECJ-2022-suite-of-diagnostics-for-selection-schemes" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Diagnostics Supplemental Material" />
   
-  <meta name="twitter:description" content="This is a demo for automatically deploying your bookdown ebook to GitHub pages." />
+  <meta name="twitter:description" content="Supplemental material for the selection scheme diagnostic work." />
   
 
 <meta name="author" content="Jose Guadalupe Hernandez" />
@@ -360,20 +360,19 @@ We compiled our data analyses and supplemental documentation into this nifty web
 </div>
 <div id="research-overview" class="section level2 hasAnchor">
 <h2><span class="header-section-number">1.3</span> Research overview<a href="index.html#research-overview" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Abstract:</p>
-<p>Evolutionary algorithms are effective general-purpose techniques for solving optimization problems.
-Typically, evolutionary algorithms consist of multiple interacting components, where each component influences an algorithm’s problem-solving abilities.
-Understanding how each component of an evolutionary algorithm influences its problem-solving success improves our ability to target particular problem domains.
+<p><strong>Abstract</strong>:</p>
+<p>Evolutionary algorithms typically consist of multiple interacting components, where each component influences an algorithm’s problem-solving abilities.
+Understanding how each component of an evolutionary algorithm influences problem-solving success can improve our ability to target particular problem domains.
 Benchmark suites provide insights into an evolutionary algorithm’s problem-solving capabilities, but benchmarking problems often have complex search space topologies, making it difficult to isolate and test an algorithm’s strengths and weaknesses.
-Our work focuses on diagnosing selection schemes, which identity individuals to contribute genetic material to the next generation, thus driving an evolutionary algorithm’s search strategy.
+Our work focuses on diagnosing selection schemes, which identify individuals to contribute genetic material to the next generation, thus driving an evolutionary algorithm’s search strategy.
 We introduce four diagnostics for empirically testing the strengths and weaknesses of selection schemes: the exploitation rate diagnostic, ordered exploitation rate diagnostic, contradictory objectives diagnostic, and the multi-path exploration diagnostic.
 Each diagnostic is a handcrafted search space designed to isolate and measure the relative exploitation and exploration characteristics of selection schemes.
 Here, we use our diagnostics to evaluate six population selection methods: truncation selection, tournament selection, fitness sharing, lexicase selection, nondominated sorting, and novelty search.
-Expectedly, tournament and truncation selection excelled at gradient exploitation but poorly explored search spaces, and novelty search excelled at exploration but failed to exploit fitness gradients.
+Expectedly, tournament and truncation selection excelled at gradient exploitation but poorly explored search spaces, while novelty search excelled at exploration but failed to exploit gradients.
 Fitness sharing performed poorly across all diagnostics, suggesting poor overall exploitation and exploration abilities.
-Nondominated sorting was best for maintaining diverse populations comprised of individuals inhabiting multiple optima, but struggled to effectively exploit fitness gradients.
-Lexicase selection balanced search space exploration with exploitation, generally performing well across diagnostics.
-Our work demonstrates the value of diagnostic search spaces for building a deeper understanding of selection schemes, which can then be used to improve or develop new selection methods.</p>
+Nondominated sorting was best for maintaining diverse populations comprised of individuals inhabiting multiple optima, but struggled to effectively exploit gradients.
+Lexicase selection balanced search space exploration without sacrificing exploitation, generally performing well across diagnostics.
+Our work demonstrates the value of diagnostics for building a deeper understanding of selection schemes, which can then be used to improve or develop new selection methods.</p>
 </div>
 <div id="experimental-setup" class="section level2 hasAnchor">
 <h2><span class="header-section-number">1.4</span> Experimental setup<a href="index.html#experimental-setup" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -389,108 +388,101 @@ Our work demonstrates the value of diagnostic search spaces for building a deepe
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># variables used throughout</span></a>
-<a class="sourceLine" id="cb5-2" title="2"></a>
-<a class="sourceLine" id="cb5-3" title="3">TRAITS =<span class="st"> </span><span class="dv">100</span></a>
-<a class="sourceLine" id="cb5-4" title="4">TSIZE =<span class="st"> </span><span class="dv">26</span></a>
-<a class="sourceLine" id="cb5-5" title="5">ORDER =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Truncation (tru)&#39;</span>,<span class="st">&#39;Tournament (tor)&#39;</span>, <span class="st">&#39;Genotypic Fitness Sharing (gfs)&#39;</span>,<span class="st">&#39;Phenotypic Fitness Sharing (pfs)&#39;</span>,<span class="st">&#39;Lexicase (lex)&#39;</span>,<span class="st">&#39;Nondominated Sorting (nds)&#39;</span>,<span class="st">&#39;Novelty Search (nov)&#39;</span>,<span class="st">&#39;Random (ran)&#39;</span>)</a>
-<a class="sourceLine" id="cb5-6" title="6">ACRON =<span class="st"> </span><span class="kw">tolower</span>(<span class="kw">c</span>(<span class="st">&#39;TRU&#39;</span>,<span class="st">&#39;TOR&#39;</span>,<span class="st">&#39;GFS&#39;</span>,<span class="st">&#39;PFS&#39;</span>,<span class="st">&#39;LEX&#39;</span>,<span class="st">&#39;NDS&#39;</span>,<span class="st">&#39;NOV&#39;</span>,<span class="st">&#39;RAN&#39;</span>))</a>
-<a class="sourceLine" id="cb5-7" title="7">SHAPE =<span class="st"> </span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">6</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">4</span>,<span class="dv">20</span>,<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb5-8" title="8">PARAM =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;8&#39;</span>, <span class="st">&#39;8&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;0.0&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;15&#39;</span>, <span class="st">&#39;1&#39;</span>)</a>
-<a class="sourceLine" id="cb5-9" title="9">cb_palette &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;#332288&#39;</span>,<span class="st">&#39;#88CCEE&#39;</span>,<span class="st">&#39;#EE3377&#39;</span>,<span class="st">&#39;#117733&#39;</span>,<span class="st">&#39;#EE7733&#39;</span>,<span class="st">&#39;#882255&#39;</span>,<span class="st">&#39;#44AA99&#39;</span>,<span class="st">&#39;#CCBB44&#39;</span>, <span class="st">&#39;#000000&#39;</span>)</a>
-<a class="sourceLine" id="cb5-10" title="10"></a>
-<a class="sourceLine" id="cb5-11" title="11"><span class="co"># selection scheme parameters</span></a>
-<a class="sourceLine" id="cb5-12" title="12"></a>
-<a class="sourceLine" id="cb5-13" title="13">TR_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>)</a>
-<a class="sourceLine" id="cb5-14" title="14">TS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>)</a>
-<a class="sourceLine" id="cb5-15" title="15">FS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">2.5</span>, <span class="fl">5.0</span>)</a>
-<a class="sourceLine" id="cb5-16" title="16">ND_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">2.5</span>, <span class="fl">5.0</span>)</a>
-<a class="sourceLine" id="cb5-17" title="17">NS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">15</span>, <span class="dv">30</span>)</a>
-<a class="sourceLine" id="cb5-18" title="18"></a>
-<a class="sourceLine" id="cb5-19" title="19"><span class="co"># theme that graphs will follow</span></a>
-<a class="sourceLine" id="cb5-20" title="20"></a>
-<a class="sourceLine" id="cb5-21" title="21">p_theme &lt;-<span class="st"> </span><span class="kw">theme</span>(</a>
-<a class="sourceLine" id="cb5-22" title="22">  <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">28</span>),</a>
-<a class="sourceLine" id="cb5-23" title="23">  <span class="dt">plot.title =</span> <span class="kw">element_text</span>( <span class="dt">face =</span> <span class="st">&quot;bold&quot;</span>, <span class="dt">size =</span> <span class="dv">22</span>, <span class="dt">hjust=</span><span class="fl">0.5</span>),</a>
-<a class="sourceLine" id="cb5-24" title="24">  <span class="dt">panel.border =</span> <span class="kw">element_blank</span>(),</a>
-<a class="sourceLine" id="cb5-25" title="25">  <span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),</a>
-<a class="sourceLine" id="cb5-26" title="26">  <span class="dt">legend.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">18</span>),</a>
-<a class="sourceLine" id="cb5-27" title="27">  <span class="dt">legend.text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">14</span>),</a>
-<a class="sourceLine" id="cb5-28" title="28">  <span class="dt">axis.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">18</span>),</a>
-<a class="sourceLine" id="cb5-29" title="29">  <span class="dt">axis.text =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>),</a>
-<a class="sourceLine" id="cb5-30" title="30">  <span class="dt">legend.position=</span><span class="st">&quot;bottom&quot;</span>,</a>
-<a class="sourceLine" id="cb5-31" title="31">  <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;#f1f2f5&quot;</span>,</a>
-<a class="sourceLine" id="cb5-32" title="32">                                  <span class="dt">colour =</span> <span class="st">&quot;white&quot;</span>,</a>
-<a class="sourceLine" id="cb5-33" title="33">                                  <span class="dt">size =</span> <span class="fl">0.5</span>, <span class="dt">linetype =</span> <span class="st">&quot;solid&quot;</span>)</a>
-<a class="sourceLine" id="cb5-34" title="34">)</a>
-<a class="sourceLine" id="cb5-35" title="35"></a>
-<a class="sourceLine" id="cb5-36" title="36"><span class="co"># cross comparison data frames</span></a>
-<a class="sourceLine" id="cb5-37" title="37"></a>
-<a class="sourceLine" id="cb5-38" title="38">cc_over_time &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-over-time.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb5-39" title="39"><span class="kw">colnames</span>(cc_over_time)[<span class="dv">19</span>] &lt;-<span class="st"> &#39;Selection</span><span class="ch">\n</span><span class="st">Scheme&#39;</span></a>
-<a class="sourceLine" id="cb5-40" title="40">cc_over_time<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_over_time<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span>, <span class="dt">levels =</span> ORDER)</a>
-<a class="sourceLine" id="cb5-41" title="41">cc_best =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-best.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb5-42" title="42">cc_best<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_best<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
-<a class="sourceLine" id="cb5-43" title="43">cc_ssf =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb5-44" title="44">cc_ssf<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_ssf<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
-<a class="sourceLine" id="cb5-45" title="45">cc_ssf[<span class="kw">is.na</span>(cc_ssf)] &lt;-<span class="st"> </span><span class="dv">59999</span></a>
-<a class="sourceLine" id="cb5-46" title="46">cc_end &lt;-<span class="st"> </span><span class="kw">filter</span>(cc_over_time, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
-<a class="sourceLine" id="cb5-47" title="47">cc_end<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_end<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
-<a class="sourceLine" id="cb5-48" title="48"></a>
+<a class="sourceLine" id="cb5-2" title="2">TRAITS =<span class="st"> </span><span class="dv">100</span></a>
+<a class="sourceLine" id="cb5-3" title="3">TSIZE =<span class="st"> </span><span class="dv">26</span></a>
+<a class="sourceLine" id="cb5-4" title="4">ORDER =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Truncation (tru)&#39;</span>,<span class="st">&#39;Tournament (tor)&#39;</span>, <span class="st">&#39;Genotypic Fitness Sharing (gfs)&#39;</span>,<span class="st">&#39;Phenotypic Fitness Sharing (pfs)&#39;</span>,<span class="st">&#39;Lexicase (lex)&#39;</span>,<span class="st">&#39;Nondominated Sorting (nds)&#39;</span>,<span class="st">&#39;Novelty Search (nov)&#39;</span>,<span class="st">&#39;Random (ran)&#39;</span>)</a>
+<a class="sourceLine" id="cb5-5" title="5">ACRON =<span class="st"> </span><span class="kw">tolower</span>(<span class="kw">c</span>(<span class="st">&#39;TRU&#39;</span>,<span class="st">&#39;TOR&#39;</span>,<span class="st">&#39;GFS&#39;</span>,<span class="st">&#39;PFS&#39;</span>,<span class="st">&#39;LEX&#39;</span>,<span class="st">&#39;NDS&#39;</span>,<span class="st">&#39;NOV&#39;</span>,<span class="st">&#39;RAN&#39;</span>))</a>
+<a class="sourceLine" id="cb5-6" title="6">SHAPE =<span class="st"> </span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">6</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">4</span>,<span class="dv">20</span>,<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb5-7" title="7">PARAM =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;8&#39;</span>, <span class="st">&#39;8&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;0.0&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;15&#39;</span>, <span class="st">&#39;1&#39;</span>)</a>
+<a class="sourceLine" id="cb5-8" title="8">cb_palette &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;#332288&#39;</span>,<span class="st">&#39;#88CCEE&#39;</span>,<span class="st">&#39;#EE3377&#39;</span>,<span class="st">&#39;#117733&#39;</span>,<span class="st">&#39;#EE7733&#39;</span>,<span class="st">&#39;#882255&#39;</span>,<span class="st">&#39;#44AA99&#39;</span>,<span class="st">&#39;#CCBB44&#39;</span>, <span class="st">&#39;#000000&#39;</span>)</a>
+<a class="sourceLine" id="cb5-9" title="9"></a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="co"># selection scheme parameters</span></a>
+<a class="sourceLine" id="cb5-11" title="11">TR_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>)</a>
+<a class="sourceLine" id="cb5-12" title="12">TS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>)</a>
+<a class="sourceLine" id="cb5-13" title="13">FS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">2.5</span>, <span class="fl">5.0</span>)</a>
+<a class="sourceLine" id="cb5-14" title="14">ND_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">2.5</span>, <span class="fl">5.0</span>)</a>
+<a class="sourceLine" id="cb5-15" title="15">NS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">15</span>, <span class="dv">30</span>)</a>
+<a class="sourceLine" id="cb5-16" title="16"></a>
+<a class="sourceLine" id="cb5-17" title="17"><span class="co"># theme that graphs will follow</span></a>
+<a class="sourceLine" id="cb5-18" title="18">p_theme &lt;-<span class="st"> </span><span class="kw">theme</span>(</a>
+<a class="sourceLine" id="cb5-19" title="19">  <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">28</span>),</a>
+<a class="sourceLine" id="cb5-20" title="20">  <span class="dt">plot.title =</span> <span class="kw">element_text</span>( <span class="dt">face =</span> <span class="st">&quot;bold&quot;</span>, <span class="dt">size =</span> <span class="dv">22</span>, <span class="dt">hjust=</span><span class="fl">0.5</span>),</a>
+<a class="sourceLine" id="cb5-21" title="21">  <span class="dt">panel.border =</span> <span class="kw">element_blank</span>(),</a>
+<a class="sourceLine" id="cb5-22" title="22">  <span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),</a>
+<a class="sourceLine" id="cb5-23" title="23">  <span class="dt">legend.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">18</span>),</a>
+<a class="sourceLine" id="cb5-24" title="24">  <span class="dt">legend.text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">14</span>),</a>
+<a class="sourceLine" id="cb5-25" title="25">  <span class="dt">axis.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">18</span>),</a>
+<a class="sourceLine" id="cb5-26" title="26">  <span class="dt">axis.text =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>),</a>
+<a class="sourceLine" id="cb5-27" title="27">  <span class="dt">legend.position=</span><span class="st">&quot;bottom&quot;</span>,</a>
+<a class="sourceLine" id="cb5-28" title="28">  <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;#f1f2f5&quot;</span>,</a>
+<a class="sourceLine" id="cb5-29" title="29">                                  <span class="dt">colour =</span> <span class="st">&quot;white&quot;</span>,</a>
+<a class="sourceLine" id="cb5-30" title="30">                                  <span class="dt">size =</span> <span class="fl">0.5</span>, <span class="dt">linetype =</span> <span class="st">&quot;solid&quot;</span>)</a>
+<a class="sourceLine" id="cb5-31" title="31">)</a>
+<a class="sourceLine" id="cb5-32" title="32"></a>
+<a class="sourceLine" id="cb5-33" title="33"><span class="co"># cross comparison data frames</span></a>
+<a class="sourceLine" id="cb5-34" title="34">cc_over_time &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-over-time.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb5-35" title="35"><span class="kw">colnames</span>(cc_over_time)[<span class="dv">19</span>] &lt;-<span class="st"> &#39;Selection</span><span class="ch">\n</span><span class="st">Scheme&#39;</span></a>
+<a class="sourceLine" id="cb5-36" title="36">cc_over_time<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_over_time<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span>, <span class="dt">levels =</span> ORDER)</a>
+<a class="sourceLine" id="cb5-37" title="37">cc_best =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-best.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb5-38" title="38">cc_best<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_best<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
+<a class="sourceLine" id="cb5-39" title="39">cc_ssf =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb5-40" title="40">cc_ssf<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_ssf<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
+<a class="sourceLine" id="cb5-41" title="41">cc_ssf[<span class="kw">is.na</span>(cc_ssf)] &lt;-<span class="st"> </span><span class="dv">59999</span></a>
+<a class="sourceLine" id="cb5-42" title="42">cc_end &lt;-<span class="st"> </span><span class="kw">filter</span>(cc_over_time, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
+<a class="sourceLine" id="cb5-43" title="43">cc_end<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_end<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
+<a class="sourceLine" id="cb5-44" title="44"></a>
+<a class="sourceLine" id="cb5-45" title="45"><span class="co"># selection scheme data frames</span></a>
+<a class="sourceLine" id="cb5-46" title="46">ss_over_time &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-over-time.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb5-47" title="47">ss_best &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-best.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb5-48" title="48">ss_ssf &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb5-49" title="49"></a>
-<a class="sourceLine" id="cb5-50" title="50"></a>
-<a class="sourceLine" id="cb5-51" title="51"><span class="co"># selection scheme data frames</span></a>
-<a class="sourceLine" id="cb5-52" title="52"></a>
-<a class="sourceLine" id="cb5-53" title="53">ss_over_time &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-over-time.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb5-54" title="54">ss_best &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-best.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb5-55" title="55">ss_ssf &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv&#39;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb5-50" title="50"><span class="co">## genotypic fitness sharing data frames</span></a>
+<a class="sourceLine" id="cb5-51" title="51">gfs_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
+<a class="sourceLine" id="cb5-52" title="52">gfs_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_ot<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb5-53" title="53">gfs_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
+<a class="sourceLine" id="cb5-54" title="54">gfs_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_best<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb5-55" title="55">gfs_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(gfs_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
 <a class="sourceLine" id="cb5-56" title="56"></a>
-<a class="sourceLine" id="cb5-57" title="57"><span class="co">## genotypic fitness sharing data frames</span></a>
-<a class="sourceLine" id="cb5-58" title="58">gfs_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
-<a class="sourceLine" id="cb5-59" title="59">gfs_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_ot<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb5-60" title="60">gfs_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
-<a class="sourceLine" id="cb5-61" title="61">gfs_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_best<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb5-62" title="62">gfs_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(gfs_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
+<a class="sourceLine" id="cb5-57" title="57"><span class="co">## phenotypic fitness sharing data frames</span></a>
+<a class="sourceLine" id="cb5-58" title="58">pfs_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
+<a class="sourceLine" id="cb5-59" title="59">pfs_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_ot<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb5-60" title="60">pfs_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
+<a class="sourceLine" id="cb5-61" title="61">pfs_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_best<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb5-62" title="62">pfs_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(pfs_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
 <a class="sourceLine" id="cb5-63" title="63"></a>
-<a class="sourceLine" id="cb5-64" title="64"><span class="co">## phenotypic fitness sharing data frames</span></a>
-<a class="sourceLine" id="cb5-65" title="65">pfs_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
-<a class="sourceLine" id="cb5-66" title="66">pfs_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_ot<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb5-67" title="67">pfs_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
-<a class="sourceLine" id="cb5-68" title="68">pfs_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_best<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb5-69" title="69">pfs_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(pfs_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
+<a class="sourceLine" id="cb5-64" title="64"><span class="co">## nodominated sorting data frames</span></a>
+<a class="sourceLine" id="cb5-65" title="65">nds_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
+<a class="sourceLine" id="cb5-66" title="66">nds_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_ot<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
+<a class="sourceLine" id="cb5-67" title="67">nds_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
+<a class="sourceLine" id="cb5-68" title="68">nds_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_best<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
+<a class="sourceLine" id="cb5-69" title="69">nds_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(nds_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
 <a class="sourceLine" id="cb5-70" title="70"></a>
-<a class="sourceLine" id="cb5-71" title="71"><span class="co">## nodominated sorting data frames</span></a>
-<a class="sourceLine" id="cb5-72" title="72">nds_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
-<a class="sourceLine" id="cb5-73" title="73">nds_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_ot<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
-<a class="sourceLine" id="cb5-74" title="74">nds_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
-<a class="sourceLine" id="cb5-75" title="75">nds_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_best<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
-<a class="sourceLine" id="cb5-76" title="76">nds_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(nds_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
+<a class="sourceLine" id="cb5-71" title="71"><span class="co">## novelty search data frames</span></a>
+<a class="sourceLine" id="cb5-72" title="72">nov_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb5-73" title="73">nov_ot<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_ot<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
+<a class="sourceLine" id="cb5-74" title="74">nov_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb5-75" title="75">nov_best<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_best<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
+<a class="sourceLine" id="cb5-76" title="76">nov_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(nov_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
 <a class="sourceLine" id="cb5-77" title="77"></a>
-<a class="sourceLine" id="cb5-78" title="78"><span class="co">## novelty search data frames</span></a>
-<a class="sourceLine" id="cb5-79" title="79">nov_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb5-80" title="80">nov_ot<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_ot<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
-<a class="sourceLine" id="cb5-81" title="81">nov_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb5-82" title="82">nov_best<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_best<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
-<a class="sourceLine" id="cb5-83" title="83">nov_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(nov_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
-<a class="sourceLine" id="cb5-84" title="84"></a>
-<a class="sourceLine" id="cb5-85" title="85"><span class="co">## tournament data frames</span></a>
-<a class="sourceLine" id="cb5-86" title="86">tor_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb5-87" title="87">tor_ot<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_ot<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
-<a class="sourceLine" id="cb5-88" title="88">tor_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb5-89" title="89">tor_best<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_best<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
-<a class="sourceLine" id="cb5-90" title="90">tor_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(tor_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
-<a class="sourceLine" id="cb5-91" title="91">tor_ssf &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_ssf, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb5-92" title="92">tor_ssf<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_ssf<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
-<a class="sourceLine" id="cb5-93" title="93">tor_ssf[<span class="kw">is.na</span>(tor_ssf)] &lt;-<span class="st"> </span><span class="dv">59999</span></a>
-<a class="sourceLine" id="cb5-94" title="94"></a>
-<a class="sourceLine" id="cb5-95" title="95"><span class="co">## truncation data frames</span></a>
-<a class="sourceLine" id="cb5-96" title="96">tru_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
-<a class="sourceLine" id="cb5-97" title="97">tru_ot<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_ot<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
-<a class="sourceLine" id="cb5-98" title="98">tru_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
-<a class="sourceLine" id="cb5-99" title="99">tru_best<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_best<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
-<a class="sourceLine" id="cb5-100" title="100">tru_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(tru_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
-<a class="sourceLine" id="cb5-101" title="101">tru_ssf &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_ssf, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
-<a class="sourceLine" id="cb5-102" title="102">tru_ssf<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_ssf<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
-<a class="sourceLine" id="cb5-103" title="103">tru_ssf[<span class="kw">is.na</span>(tru_ssf)] &lt;-<span class="st"> </span><span class="dv">59999</span></a></code></pre></div>
+<a class="sourceLine" id="cb5-78" title="78"><span class="co">## tournament data frames</span></a>
+<a class="sourceLine" id="cb5-79" title="79">tor_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb5-80" title="80">tor_ot<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_ot<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
+<a class="sourceLine" id="cb5-81" title="81">tor_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb5-82" title="82">tor_best<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_best<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
+<a class="sourceLine" id="cb5-83" title="83">tor_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(tor_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
+<a class="sourceLine" id="cb5-84" title="84">tor_ssf &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_ssf, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb5-85" title="85">tor_ssf<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_ssf<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
+<a class="sourceLine" id="cb5-86" title="86">tor_ssf[<span class="kw">is.na</span>(tor_ssf)] &lt;-<span class="st"> </span><span class="dv">59999</span></a>
+<a class="sourceLine" id="cb5-87" title="87"></a>
+<a class="sourceLine" id="cb5-88" title="88"><span class="co">## truncation data frames</span></a>
+<a class="sourceLine" id="cb5-89" title="89">tru_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
+<a class="sourceLine" id="cb5-90" title="90">tru_ot<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_ot<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
+<a class="sourceLine" id="cb5-91" title="91">tru_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
+<a class="sourceLine" id="cb5-92" title="92">tru_best<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_best<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
+<a class="sourceLine" id="cb5-93" title="93">tru_end  &lt;-<span class="st"> </span><span class="kw">filter</span>(tru_ot, gen <span class="op">==</span><span class="st"> </span><span class="dv">50000</span>)</a>
+<a class="sourceLine" id="cb5-94" title="94">tru_ssf &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_ssf, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
+<a class="sourceLine" id="cb5-95" title="95">tru_ssf<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_ssf<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
+<a class="sourceLine" id="cb5-96" title="96">tru_ssf[<span class="kw">is.na</span>(tru_ssf)] &lt;-<span class="st"> </span><span class="dv">59999</span></a></code></pre></div>
 <p>These analyses were conducted in the following computing environment:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">print</span>(version)</a></code></pre></div>
 <pre><code>##                _                           

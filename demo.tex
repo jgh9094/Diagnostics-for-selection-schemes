@@ -180,21 +180,20 @@ Additionally, our supplemental material includes the results from parameter tuni
 \hypertarget{research-overview}{%
 \section{Research overview}\label{research-overview}}
 
-Abstract:
+\textbf{Abstract}:
 
-Evolutionary algorithms are effective general-purpose techniques for solving optimization problems.
-Typically, evolutionary algorithms consist of multiple interacting components, where each component influences an algorithm's problem-solving abilities.
-Understanding how each component of an evolutionary algorithm influences its problem-solving success improves our ability to target particular problem domains.
+Evolutionary algorithms typically consist of multiple interacting components, where each component influences an algorithm's problem-solving abilities.
+Understanding how each component of an evolutionary algorithm influences problem-solving success can improve our ability to target particular problem domains.
 Benchmark suites provide insights into an evolutionary algorithm's problem-solving capabilities, but benchmarking problems often have complex search space topologies, making it difficult to isolate and test an algorithm's strengths and weaknesses.
-Our work focuses on diagnosing selection schemes, which identity individuals to contribute genetic material to the next generation, thus driving an evolutionary algorithm's search strategy.
+Our work focuses on diagnosing selection schemes, which identify individuals to contribute genetic material to the next generation, thus driving an evolutionary algorithm's search strategy.
 We introduce four diagnostics for empirically testing the strengths and weaknesses of selection schemes: the exploitation rate diagnostic, ordered exploitation rate diagnostic, contradictory objectives diagnostic, and the multi-path exploration diagnostic.
 Each diagnostic is a handcrafted search space designed to isolate and measure the relative exploitation and exploration characteristics of selection schemes.
 Here, we use our diagnostics to evaluate six population selection methods: truncation selection, tournament selection, fitness sharing, lexicase selection, nondominated sorting, and novelty search.
-Expectedly, tournament and truncation selection excelled at gradient exploitation but poorly explored search spaces, and novelty search excelled at exploration but failed to exploit fitness gradients.
+Expectedly, tournament and truncation selection excelled at gradient exploitation but poorly explored search spaces, while novelty search excelled at exploration but failed to exploit gradients.
 Fitness sharing performed poorly across all diagnostics, suggesting poor overall exploitation and exploration abilities.
-Nondominated sorting was best for maintaining diverse populations comprised of individuals inhabiting multiple optima, but struggled to effectively exploit fitness gradients.
-Lexicase selection balanced search space exploration with exploitation, generally performing well across diagnostics.
-Our work demonstrates the value of diagnostic search spaces for building a deeper understanding of selection schemes, which can then be used to improve or develop new selection methods.
+Nondominated sorting was best for maintaining diverse populations comprised of individuals inhabiting multiple optima, but struggled to effectively exploit gradients.
+Lexicase selection balanced search space exploration without sacrificing exploitation, generally performing well across diagnostics.
+Our work demonstrates the value of diagnostics for building a deeper understanding of selection schemes, which can then be used to improve or develop new selection methods.
 
 \hypertarget{experimental-setup}{%
 \section{Experimental setup}\label{experimental-setup}}
@@ -228,7 +227,6 @@ Setting up required variables variables.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# variables used throughout}
-
 \NormalTok{TRAITS =}\StringTok{ }\DecValTok{100}
 \NormalTok{TSIZE =}\StringTok{ }\DecValTok{26}
 \NormalTok{ORDER =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Truncation (tru)'}\NormalTok{,}\StringTok{'Tournament (tor)'}\NormalTok{, }\StringTok{'Genotypic Fitness Sharing (gfs)'}\NormalTok{,}\StringTok{'Phenotypic Fitness Sharing (pfs)'}\NormalTok{,}\StringTok{'Lexicase (lex)'}\NormalTok{,}\StringTok{'Nondominated Sorting (nds)'}\NormalTok{,}\StringTok{'Novelty Search (nov)'}\NormalTok{,}\StringTok{'Random (ran)'}\NormalTok{)}
@@ -238,7 +236,6 @@ Setting up required variables variables.
 \NormalTok{cb_palette <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'#332288'}\NormalTok{,}\StringTok{'#88CCEE'}\NormalTok{,}\StringTok{'#EE3377'}\NormalTok{,}\StringTok{'#117733'}\NormalTok{,}\StringTok{'#EE7733'}\NormalTok{,}\StringTok{'#882255'}\NormalTok{,}\StringTok{'#44AA99'}\NormalTok{,}\StringTok{'#CCBB44'}\NormalTok{, }\StringTok{'#000000'}\NormalTok{)}
 
 \CommentTok{# selection scheme parameters}
-
 \NormalTok{TR_LIST =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{8}\NormalTok{, }\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{)}
 \NormalTok{TS_LIST =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{8}\NormalTok{, }\DecValTok{16}\NormalTok{, }\DecValTok{32}\NormalTok{, }\DecValTok{64}\NormalTok{, }\DecValTok{128}\NormalTok{, }\DecValTok{256}\NormalTok{)}
 \NormalTok{FS_LIST =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.0}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.3}\NormalTok{, }\FloatTok{0.6}\NormalTok{, }\FloatTok{1.2}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\FloatTok{5.0}\NormalTok{)}
@@ -246,7 +243,6 @@ Setting up required variables variables.
 \NormalTok{NS_LIST =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{8}\NormalTok{, }\DecValTok{15}\NormalTok{, }\DecValTok{30}\NormalTok{)}
 
 \CommentTok{# theme that graphs will follow}
-
 \NormalTok{p_theme <-}\StringTok{ }\KeywordTok{theme}\NormalTok{(}
   \DataTypeTok{text =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{size =} \DecValTok{28}\NormalTok{),}
   \DataTypeTok{plot.title =} \KeywordTok{element_text}\NormalTok{( }\DataTypeTok{face =} \StringTok{"bold"}\NormalTok{, }\DataTypeTok{size =} \DecValTok{22}\NormalTok{, }\DataTypeTok{hjust=}\FloatTok{0.5}\NormalTok{),}
@@ -263,7 +259,6 @@ Setting up required variables variables.
 \NormalTok{)}
 
 \CommentTok{# cross comparison data frames}
-
 \NormalTok{cc_over_time <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-over-time.csv'}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
 \KeywordTok{colnames}\NormalTok{(cc_over_time)[}\DecValTok{19}\NormalTok{] <-}\StringTok{ 'Selection}\CharTok{\textbackslash{}n}\StringTok{Scheme'}
 \NormalTok{cc_over_time}\OperatorTok{$}\StringTok{`}\DataTypeTok{Selection}\CharTok{\textbackslash{}n}\DataTypeTok{Scheme}\StringTok{`}\NormalTok{ <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(cc_over_time}\OperatorTok{$}\StringTok{`}\DataTypeTok{Selection}\CharTok{\textbackslash{}n}\DataTypeTok{Scheme}\StringTok{`}\NormalTok{, }\DataTypeTok{levels =}\NormalTok{ ORDER)}
@@ -275,10 +270,7 @@ Setting up required variables variables.
 \NormalTok{cc_end <-}\StringTok{ }\KeywordTok{filter}\NormalTok{(cc_over_time, gen }\OperatorTok{==}\StringTok{ }\DecValTok{50000}\NormalTok{)}
 \NormalTok{cc_end}\OperatorTok{$}\NormalTok{acron <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(cc_end}\OperatorTok{$}\NormalTok{acron, }\DataTypeTok{levels =}\NormalTok{ ACRON)}
 
-
-
 \CommentTok{# selection scheme data frames}
-
 \NormalTok{ss_over_time <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-over-time.csv'}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
 \NormalTok{ss_best <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-best.csv'}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
 \NormalTok{ss_ssf <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv'}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
