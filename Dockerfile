@@ -119,7 +119,7 @@ RUN \
     && \
   pwd \
     && \
-  ls -l DATA-FINAL \
+  ls -l DATA-FINAL/DATA-FINAL \
     && \
   ./build_book.sh \
     && \
