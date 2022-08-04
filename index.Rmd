@@ -9,14 +9,11 @@ biblio-style: apalike
 nocite: '@*'
 link-citations: yes
 github-repo:  jgh9094/ECJ-2022-suite-of-diagnostics-for-selection-schemes
-description: "This is a demo for automatically deploying your bookdown ebook to GitHub pages."
+description: "Supplemental material for the selection scheme diagnostic work."
 ---
 
 ```{r init, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-# knitr::opts_knit$set(root.dir = "/mnt/c/Users/jgh9094/Desktop/Research/Projects/SelectionDiagnostics/Selection-Scheme-Diagnotics-Part-I")
-# knitr::opts_knit$set(root.dir = "/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/")
-# getwd()
 ```
 
 # Introduction
@@ -54,21 +51,20 @@ Additionally, our supplemental material includes the results from parameter tuni
 
 ## Research overview
 
-Abstract:
+**Abstract**:
 
-Evolutionary algorithms are effective general-purpose techniques for solving optimization problems.
-Typically, evolutionary algorithms consist of multiple interacting components, where each component influences an algorithm's problem-solving abilities.
-Understanding how each component of an evolutionary algorithm influences its problem-solving success improves our ability to target particular problem domains.
+Evolutionary algorithms typically consist of multiple interacting components, where each component influences an algorithm's problem-solving abilities.
+Understanding how each component of an evolutionary algorithm influences problem-solving success can improve our ability to target particular problem domains.
 Benchmark suites provide insights into an evolutionary algorithm's problem-solving capabilities, but benchmarking problems often have complex search space topologies, making it difficult to isolate and test an algorithm's strengths and weaknesses.
-Our work focuses on diagnosing selection schemes, which identity individuals to contribute genetic material to the next generation, thus driving an evolutionary algorithm's search strategy.
+Our work focuses on diagnosing selection schemes, which identify individuals to contribute genetic material to the next generation, thus driving an evolutionary algorithm's search strategy.
 We introduce four diagnostics for empirically testing the strengths and weaknesses of selection schemes: the exploitation rate diagnostic, ordered exploitation rate diagnostic, contradictory objectives diagnostic, and the multi-path exploration diagnostic.
 Each diagnostic is a handcrafted search space designed to isolate and measure the relative exploitation and exploration characteristics of selection schemes.
 Here, we use our diagnostics to evaluate six population selection methods: truncation selection, tournament selection, fitness sharing, lexicase selection, nondominated sorting, and novelty search.
-Expectedly, tournament and truncation selection excelled at gradient exploitation but poorly explored search spaces, and novelty search excelled at exploration but failed to exploit fitness gradients.
+Expectedly, tournament and truncation selection excelled at gradient exploitation but poorly explored search spaces, while novelty search excelled at exploration but failed to exploit gradients.
 Fitness sharing performed poorly across all diagnostics, suggesting poor overall exploitation and exploration abilities.
-Nondominated sorting was best for maintaining diverse populations comprised of individuals inhabiting multiple optima, but struggled to effectively exploit fitness gradients.
-Lexicase selection balanced search space exploration with exploitation, generally performing well across diagnostics.
-Our work demonstrates the value of diagnostic search spaces for building a deeper understanding of selection schemes, which can then be used to improve or develop new selection methods.
+Nondominated sorting was best for maintaining diverse populations comprised of individuals inhabiting multiple optima, but struggled to effectively exploit gradients.
+Lexicase selection balanced search space exploration without sacrificing exploitation, generally performing well across diagnostics.
+Our work demonstrates the value of diagnostics for building a deeper understanding of selection schemes, which can then be used to improve or develop new selection methods.
 
 ## Experimental setup
 
@@ -79,7 +75,6 @@ library(ggplot2)
 library(dplyr)
 
 # variables used throughout
-
 TRAITS = 100
 TSIZE = 26
 ORDER = c('Truncation (tru)','Tournament (tor)', 'Genotypic Fitness Sharing (gfs)','Phenotypic Fitness Sharing (pfs)','Lexicase (lex)','Nondominated Sorting (nds)','Novelty Search (nov)','Random (ran)')
@@ -89,7 +84,6 @@ PARAM = c('8', '8', '0.3', '0.3', '0.0', '0.3', '15', '1')
 cb_palette <- c('#332288','#88CCEE','#EE3377','#117733','#EE7733','#882255','#44AA99','#CCBB44', '#000000')
 
 # selection scheme parameters
-
 TR_LIST = c(1, 2, 4, 8, 16, 32, 64, 128, 256)
 TS_LIST = c(2, 4, 8, 16, 32, 64, 128, 256)
 FS_LIST = c(0.0, 0.1, 0.3, 0.6, 1.2, 2.5, 5.0)
@@ -97,7 +91,6 @@ ND_LIST = c(0.0, 0.1, 0.3, 0.6, 1.2, 2.5, 5.0)
 NS_LIST = c(1, 2, 4, 8, 15, 30)
 
 # theme that graphs will follow
-
 p_theme <- theme(
   text = element_text(size = 28),
   plot.title = element_text( face = "bold", size = 22, hjust=0.5),
@@ -114,7 +107,6 @@ p_theme <- theme(
 )
 
 # cross comparison data frames
-
 cc_over_time <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-over-time.csv', header = TRUE, stringsAsFactors = FALSE)
 colnames(cc_over_time)[19] <- 'Selection\nScheme'
 cc_over_time$`Selection\nScheme` <- factor(cc_over_time$`Selection\nScheme`, levels = ORDER)
@@ -126,10 +118,7 @@ cc_ssf[is.na(cc_ssf)] <- 59999
 cc_end <- filter(cc_over_time, gen == 50000)
 cc_end$acron <- factor(cc_end$acron, levels = ACRON)
 
-
-
 # selection scheme data frames
-
 ss_over_time <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-over-time.csv', header = TRUE, stringsAsFactors = FALSE)
 ss_best <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-best.csv', header = TRUE, stringsAsFactors = FALSE)
 ss_ssf <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv', header = TRUE, stringsAsFactors = FALSE)
