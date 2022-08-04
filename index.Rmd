@@ -115,12 +115,12 @@ p_theme <- theme(
 
 # cross comparison data frames
 
-cc_over_time <- read.csv('opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-over-time.csv', header = TRUE, stringsAsFactors = FALSE)
+cc_over_time <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-over-time.csv', header = TRUE, stringsAsFactors = FALSE)
 colnames(cc_over_time)[19] <- 'Selection\nScheme'
 cc_over_time$`Selection\nScheme` <- factor(cc_over_time$`Selection\nScheme`, levels = ORDER)
-cc_best = read.csv('opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-best.csv', header = TRUE, stringsAsFactors = FALSE)
+cc_best = read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-best.csv', header = TRUE, stringsAsFactors = FALSE)
 cc_best$acron <- factor(cc_best$acron, levels = ACRON)
-cc_ssf = read.csv('opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv', header = TRUE, stringsAsFactors = FALSE)
+cc_ssf = read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv', header = TRUE, stringsAsFactors = FALSE)
 cc_ssf$acron <- factor(cc_ssf$acron, levels = ACRON)
 cc_ssf[is.na(cc_ssf)] <- 59999
 cc_end <- filter(cc_over_time, gen == 50000)
@@ -130,9 +130,9 @@ cc_end$acron <- factor(cc_end$acron, levels = ACRON)
 
 # selection scheme data frames
 
-ss_over_time <- read.csv('opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-over-time.csv', header = TRUE, stringsAsFactors = FALSE)
-ss_best <- read.csv('opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-best.csv', header = TRUE, stringsAsFactors = FALSE)
-ss_ssf <- read.csv('opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv', header = TRUE, stringsAsFactors = FALSE)
+ss_over_time <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-over-time.csv', header = TRUE, stringsAsFactors = FALSE)
+ss_best <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-best.csv', header = TRUE, stringsAsFactors = FALSE)
+ss_ssf <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv', header = TRUE, stringsAsFactors = FALSE)
 
 ## genotypic fitness sharing data frames
 gfs_ot <- filter(ss_over_time, acron == 'gfs')
