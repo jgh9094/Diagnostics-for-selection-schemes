@@ -1107,7 +1107,7 @@ Best streak in a population over time.
 \StringTok{  }\KeywordTok{scale_shape_manual}\NormalTok{(}\DataTypeTok{values=}\NormalTok{SHAPE)}\OperatorTok{+}
 \StringTok{  }\KeywordTok{scale_colour_manual}\NormalTok{(}\DataTypeTok{values =}\NormalTok{ cb_palette) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{values =}\NormalTok{ cb_palette) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Satisfactory trait coverage over time"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Streak length over time"}\NormalTok{) }\OperatorTok{+}
 \StringTok{  }\NormalTok{p_theme}\OperatorTok{+}
 \StringTok{  }\KeywordTok{guides}\NormalTok{(}
     \DataTypeTok{shape=}\KeywordTok{guide_legend}\NormalTok{(}\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{title.position =} \StringTok{"bottom"}\NormalTok{),}
@@ -1159,7 +1159,7 @@ Best streak in the population at the end of 50,000 generations.
 
 \KeywordTok{plot_grid}\NormalTok{(}
 \NormalTok{  plot }\OperatorTok{+}
-\StringTok{    }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Best performance throughout"}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Final streak length"}\NormalTok{) }\OperatorTok{+}
 \StringTok{    }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position=}\StringTok{"none"}\NormalTok{),}
 \NormalTok{  legend,}
   \DataTypeTok{nrow=}\DecValTok{2}\NormalTok{,}
@@ -2392,7 +2392,7 @@ Best performance in the population at the end of 50,000 generations.
 
 \KeywordTok{plot_grid}\NormalTok{(}
 \NormalTok{  plot }\OperatorTok{+}
-\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Best performance over time"}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Final performance"}\NormalTok{) }\OperatorTok{+}
 \StringTok{    }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position=}\StringTok{"none"}\NormalTok{),}
 \NormalTok{  legend,}
   \DataTypeTok{nrow=}\DecValTok{2}\NormalTok{,}
