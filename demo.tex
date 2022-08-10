@@ -1055,6 +1055,191 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the 
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
+\hypertarget{streaks}{%
+\section{Streaks}\label{streaks}}
+
+\hypertarget{over-time}{%
+\subsection{Over time}\label{over-time}}
+
+Best streak in a population over time.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{streaks_df =}\StringTok{ }\KeywordTok{filter}\NormalTok{(ordered_exploitation, acron }\OperatorTok{==}\StringTok{ 'pfs'} \OperatorTok{|}\StringTok{ }\NormalTok{acron }\OperatorTok{==}\StringTok{ 'nds'} \OperatorTok{|}\StringTok{ }\NormalTok{acron }\OperatorTok{==}\StringTok{ 'gfs'} \OperatorTok{|}\StringTok{ }\NormalTok{acron }\OperatorTok{==}\StringTok{ 'nov'}\NormalTok{)}
+\NormalTok{streaks_df}\OperatorTok{$}\StringTok{`}\DataTypeTok{Selection}\CharTok{\textbackslash{}n}\DataTypeTok{Scheme}\StringTok{`}\NormalTok{ <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(streaks_df}\OperatorTok{$}\StringTok{`}\DataTypeTok{Selection}\CharTok{\textbackslash{}n}\DataTypeTok{Scheme}\StringTok{`}\NormalTok{, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'Nondominated Sorting (nds)'}\NormalTok{,}\StringTok{'Genotypic Fitness Sharing (gfs)'}\NormalTok{,}\StringTok{'Phenotypic Fitness Sharing (pfs)'}\NormalTok{,}\StringTok{'Novelty Search (nov)'}\NormalTok{))}
+
+\NormalTok{lines =}\StringTok{ }\NormalTok{streaks_df }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(}\StringTok{`}\DataTypeTok{Selection}\CharTok{\textbackslash{}n}\DataTypeTok{Scheme}\StringTok{`}\NormalTok{, gen) }\OperatorTok{%>%}
+\StringTok{  }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarise}\NormalTok{(}
+    \DataTypeTok{min =} \KeywordTok{min}\NormalTok{(pop_str_max),}
+    \DataTypeTok{mean =} \KeywordTok{mean}\NormalTok{(pop_str_max),}
+    \DataTypeTok{max =} \KeywordTok{max}\NormalTok{(pop_str_max)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'Selection Scheme'. You can override using
+## the `.groups` argument.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{points =}\StringTok{ }\KeywordTok{filter}\NormalTok{(lines, gen }\OperatorTok{%%}\StringTok{ }\DecValTok{2000} \OperatorTok{==}\StringTok{ }\DecValTok{0} \OperatorTok{&}\StringTok{ }\NormalTok{gen }\OperatorTok{!=}\StringTok{ }\DecValTok{0}\NormalTok{)}
+
+\NormalTok{ot =}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(lines, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{gen, }\DataTypeTok{y=}\NormalTok{mean, }\DataTypeTok{group =} \StringTok{`}\DataTypeTok{Selection}\CharTok{\textbackslash{}n}\DataTypeTok{Scheme}\StringTok{`}\NormalTok{, }\DataTypeTok{fill =}\StringTok{`}\DataTypeTok{Selection}\CharTok{\textbackslash{}n}\DataTypeTok{Scheme}\StringTok{`}\NormalTok{, }\DataTypeTok{color =} \StringTok{`}\DataTypeTok{Selection}\CharTok{\textbackslash{}n}\DataTypeTok{Scheme}\StringTok{`}\NormalTok{, }\DataTypeTok{shape =} \StringTok{`}\DataTypeTok{Selection}\CharTok{\textbackslash{}n}\DataTypeTok{Scheme}\StringTok{`}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_ribbon}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{ymin =}\NormalTok{ min, }\DataTypeTok{ymax =}\NormalTok{ max), }\DataTypeTok{alpha =} \FloatTok{0.1}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ points, }\DataTypeTok{size =} \FloatTok{1.5}\NormalTok{, }\DataTypeTok{stroke =} \FloatTok{2.0}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{1.0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}
+    \DataTypeTok{name=}\StringTok{"Length"}\NormalTok{,}
+    \DataTypeTok{limits=}\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DecValTok{51}\NormalTok{),}
+    \DataTypeTok{breaks=}\KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{50}\NormalTok{, }\DecValTok{10}\NormalTok{),}
+    \DataTypeTok{labels=}\KeywordTok{c}\NormalTok{(}\StringTok{"0"}\NormalTok{, }\StringTok{"10"}\NormalTok{, }\StringTok{"20"}\NormalTok{, }\StringTok{"30"}\NormalTok{, }\StringTok{"40"}\NormalTok{, }\StringTok{"50"}\NormalTok{)}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_continuous}\NormalTok{(}
+    \DataTypeTok{name=}\StringTok{"Generations"}\NormalTok{,}
+    \DataTypeTok{limits=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{50000}\NormalTok{),}
+    \DataTypeTok{breaks=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{10000}\NormalTok{, }\DecValTok{20000}\NormalTok{, }\DecValTok{30000}\NormalTok{, }\DecValTok{40000}\NormalTok{, }\DecValTok{50000}\NormalTok{),}
+    \DataTypeTok{labels=}\KeywordTok{c}\NormalTok{(}\StringTok{"0e+6"}\NormalTok{, }\StringTok{"1e+6"}\NormalTok{, }\StringTok{"2e+6"}\NormalTok{, }\StringTok{"3e+6"}\NormalTok{, }\StringTok{"4e+6"}\NormalTok{, }\StringTok{"5e+6"}\NormalTok{)}
+
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_shape_manual}\NormalTok{(}\DataTypeTok{values=}\NormalTok{SHAPE)}\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_manual}\NormalTok{(}\DataTypeTok{values =}\NormalTok{ cb_palette) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{values =}\NormalTok{ cb_palette) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Satisfactory trait coverage over time"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\NormalTok{p_theme}\OperatorTok{+}
+\StringTok{  }\KeywordTok{guides}\NormalTok{(}
+    \DataTypeTok{shape=}\KeywordTok{guide_legend}\NormalTok{(}\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{title.position =} \StringTok{"bottom"}\NormalTok{),}
+    \DataTypeTok{color=}\KeywordTok{guide_legend}\NormalTok{(}\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{title.position =} \StringTok{"bottom"}\NormalTok{),}
+    \DataTypeTok{fill=}\KeywordTok{guide_legend}\NormalTok{(}\DataTypeTok{ncol=}\DecValTok{2}\NormalTok{, }\DataTypeTok{title.position =} \StringTok{"bottom"}\NormalTok{)}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}
+    \DataTypeTok{legend.position =} \StringTok{"bottom"}\NormalTok{,}
+    \DataTypeTok{legend.box=}\StringTok{"verticle"}\NormalTok{,}
+    \DataTypeTok{legend.justification=}\StringTok{"center"}\NormalTok{,}
+    \DataTypeTok{legend.title=}\KeywordTok{element_blank}\NormalTok{()}
+\NormalTok{  )}
+
+\NormalTok{ot}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{demo_files/figure-latex/unnamed-chunk-25-1.pdf}
+
+\hypertarget{end-of-50000-generations}{%
+\subsection{End of 50,000 generations}\label{end-of-50000-generations}}
+
+Best streak in the population at the end of 50,000 generations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{end <-}\StringTok{ }\KeywordTok{filter}\NormalTok{(streaks_df, gen }\OperatorTok{==}\StringTok{ }\DecValTok{50000}\NormalTok{)}
+\NormalTok{end =}\StringTok{ }\KeywordTok{filter}\NormalTok{(end, acron }\OperatorTok{==}\StringTok{ 'pfs'} \OperatorTok{|}\StringTok{ }\NormalTok{acron }\OperatorTok{==}\StringTok{ 'nds'} \OperatorTok{|}\StringTok{ }\NormalTok{acron }\OperatorTok{==}\StringTok{ 'gfs'} \OperatorTok{|}\StringTok{ }\NormalTok{acron }\OperatorTok{==}\StringTok{ 'nov'}\NormalTok{)}
+\NormalTok{end}\OperatorTok{$}\NormalTok{acron <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(end}\OperatorTok{$}\NormalTok{acron, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'nds'}\NormalTok{,}\StringTok{'gfs'}\NormalTok{,}\StringTok{'pfs'}\NormalTok{,}\StringTok{'nov'}\NormalTok{))}
+
+\NormalTok{plot =}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(end, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ acron, }\DataTypeTok{y =}\NormalTok{ pop_str_max, }\DataTypeTok{color =}\NormalTok{ acron, }\DataTypeTok{fill =}\NormalTok{ acron, }\DataTypeTok{shape =}\NormalTok{ acron)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_flat_violin}\NormalTok{(}\DataTypeTok{position =} \KeywordTok{position_nudge}\NormalTok{(}\DataTypeTok{x =} \FloatTok{.2}\NormalTok{, }\DataTypeTok{y =} \DecValTok{0}\NormalTok{), }\DataTypeTok{scale =} \StringTok{'width'}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.2}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{position =} \KeywordTok{position_jitter}\NormalTok{(}\DataTypeTok{width =} \FloatTok{.1}\NormalTok{), }\DataTypeTok{size =} \FloatTok{1.5}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{1.0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{color =} \StringTok{'black'}\NormalTok{, }\DataTypeTok{width =} \FloatTok{.2}\NormalTok{, }\DataTypeTok{outlier.shape =} \OtherTok{NA}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}
+    \DataTypeTok{name=}\StringTok{"Length"}\NormalTok{,}
+    \DataTypeTok{limits=}\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DecValTok{51}\NormalTok{),}
+    \DataTypeTok{breaks=}\KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{50}\NormalTok{, }\DecValTok{10}\NormalTok{),}
+    \DataTypeTok{labels=}\KeywordTok{c}\NormalTok{(}\StringTok{"0"}\NormalTok{, }\StringTok{"10"}\NormalTok{, }\StringTok{"20"}\NormalTok{, }\StringTok{"30"}\NormalTok{, }\StringTok{"40"}\NormalTok{, }\StringTok{"50"}\NormalTok{)}
+\NormalTok{  ) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_discrete}\NormalTok{(}
+    \DataTypeTok{name=}\StringTok{"Scheme"}
+\NormalTok{  )}\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_shape_manual}\NormalTok{(}\DataTypeTok{values=}\NormalTok{SHAPE)}\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_colour_manual}\NormalTok{(}\DataTypeTok{values =}\NormalTok{ cb_palette) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{values =}\NormalTok{ cb_palette) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{coord_flip}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\NormalTok{p_theme}
+
+\KeywordTok{plot_grid}\NormalTok{(}
+\NormalTok{  plot }\OperatorTok{+}
+\StringTok{    }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Best performance throughout"}\NormalTok{) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position=}\StringTok{"none"}\NormalTok{),}
+\NormalTok{  legend,}
+  \DataTypeTok{nrow=}\DecValTok{2}\NormalTok{,}
+  \DataTypeTok{rel_heights =} \KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,.}\DecValTok{55}\NormalTok{),}
+  \DataTypeTok{label_size =}\NormalTok{ TSIZE}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{demo_files/figure-latex/unnamed-chunk-27-1.pdf}
+
+\hypertarget{stats-4}{%
+\subsubsection{Stats}\label{stats-4}}
+
+Summary statistics for best streak in the population at the end of 50,000 generations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{group_by}\NormalTok{(end, acron) }\OperatorTok{%>%}
+\StringTok{  }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarise}\NormalTok{(}
+    \DataTypeTok{count =} \KeywordTok{n}\NormalTok{(),}
+    \DataTypeTok{na_cnt =} \KeywordTok{sum}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(pop_str_max)),}
+    \DataTypeTok{min =} \KeywordTok{min}\NormalTok{(pop_str_max, }\DataTypeTok{na.rm =} \OtherTok{TRUE}\NormalTok{),}
+    \DataTypeTok{median =} \KeywordTok{median}\NormalTok{(pop_str_max, }\DataTypeTok{na.rm =} \OtherTok{TRUE}\NormalTok{),}
+    \DataTypeTok{mean =} \KeywordTok{mean}\NormalTok{(pop_str_max, }\DataTypeTok{na.rm =} \OtherTok{TRUE}\NormalTok{),}
+    \DataTypeTok{max =} \KeywordTok{max}\NormalTok{(pop_str_max, }\DataTypeTok{na.rm =} \OtherTok{TRUE}\NormalTok{),}
+    \DataTypeTok{IQR =} \KeywordTok{IQR}\NormalTok{(pop_str_max, }\DataTypeTok{na.rm =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4 x 8
+##   acron count na_cnt   min median  mean   max   IQR
+##   <fct> <int>  <int> <int>  <dbl> <dbl> <int> <dbl>
+## 1 nds      50      0    30     37  36.8    43   3  
+## 2 gfs      50      0    26     33  32.7    38   3.5
+## 3 pfs      50      0    19     25  25.1    32   3  
+## 4 nov      50      0    11     14  14.4    19   1
+\end{verbatim}
+
+Kruskal--Wallis test provides evidence of difference among best performance in the population at the end of 50,000 generations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{kruskal.test}\NormalTok{(pop_str_max }\OperatorTok{~}\StringTok{ }\NormalTok{acron,}\DataTypeTok{data =}\NormalTok{ end)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  pop_str_max by acron
+## Kruskal-Wallis chi-squared = 174.19, df = 3, p-value < 2.2e-16
+\end{verbatim}
+
+Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best performance in the population at the end of 50,000 generations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise.wilcox.test}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ end}\OperatorTok{$}\NormalTok{pop_str_max, }\DataTypeTok{g =}\NormalTok{ end}\OperatorTok{$}\NormalTok{acron, }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+                     \DataTypeTok{paired =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{conf.int =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{'l'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+## 
+## data:  end$pop_str_max and end$acron 
+## 
+##     nds     gfs     pfs    
+## gfs 4.9e-09 -       -      
+## pfs < 2e-16 1.9e-15 -      
+## nov < 2e-16 < 2e-16 < 2e-16
+## 
+## P value adjustment method: bonferroni
+\end{verbatim}
+
 \hypertarget{contradictory-objectives-results}{%
 \chapter{Contradictory objectives results}\label{contradictory-objectives-results}}
 
@@ -1174,7 +1359,7 @@ Satisfactory trait coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-27-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-33-1.pdf}
 
 \hypertarget{best-coverage-throughout}{%
 \subsection{Best coverage throughout}\label{best-coverage-throughout}}
@@ -1214,10 +1399,10 @@ Best satisfactory trait coverage throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-29-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-35-1.pdf}
 
-\hypertarget{stats-4}{%
-\subsubsection{Stats}\label{stats-4}}
+\hypertarget{stats-5}{%
+\subsubsection{Stats}\label{stats-5}}
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
@@ -1294,8 +1479,8 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on sati
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations}{%
-\subsection{End of 50,000 generations}\label{end-of-50000-generations}}
+\hypertarget{end-of-50000-generations-1}{%
+\subsection{End of 50,000 generations}\label{end-of-50000-generations-1}}
 
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -1332,10 +1517,10 @@ Satisfactory trait coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-33-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-39-1.pdf}
 
-\hypertarget{stats-5}{%
-\subsubsection{Stats}\label{stats-5}}
+\hypertarget{stats-6}{%
+\subsubsection{Stats}\label{stats-6}}
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -1483,10 +1668,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-37-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-43-1.pdf}
 
-\hypertarget{end-of-50000-generations-1}{%
-\subsection{End of 50,000 generations}\label{end-of-50000-generations-1}}
+\hypertarget{end-of-50000-generations-2}{%
+\subsection{End of 50,000 generations}\label{end-of-50000-generations-2}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -1524,10 +1709,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-38-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-44-1.pdf}
 
-\hypertarget{stats-6}{%
-\subsubsection{Stats}\label{stats-6}}
+\hypertarget{stats-7}{%
+\subsubsection{Stats}\label{stats-7}}
 
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
@@ -1688,7 +1873,7 @@ Satisfactory trait coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-42-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-48-1.pdf}
 
 \hypertarget{best-coverage-throughout-1}{%
 \subsection{Best coverage throughout}\label{best-coverage-throughout-1}}
@@ -1747,10 +1932,10 @@ Best satisfactory trait coverage throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-44-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-50-1.pdf}
 
-\hypertarget{stats-7}{%
-\subsubsection{Stats}\label{stats-7}}
+\hypertarget{stats-8}{%
+\subsubsection{Stats}\label{stats-8}}
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
@@ -1816,8 +2001,8 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-2}{%
-\subsection{End of 50,000 generations}\label{end-of-50000-generations-2}}
+\hypertarget{end-of-50000-generations-3}{%
+\subsection{End of 50,000 generations}\label{end-of-50000-generations-3}}
 
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -1871,10 +2056,10 @@ Satisfactory trait coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-48-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-54-1.pdf}
 
-\hypertarget{stats-8}{%
-\subsubsection{Stats}\label{stats-8}}
+\hypertarget{stats-9}{%
+\subsubsection{Stats}\label{stats-9}}
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -1994,8 +2179,8 @@ These analyses were conducted in the following computing environment:
 
 Performance analysis.
 
-\hypertarget{over-time}{%
-\subsection{Over time}\label{over-time}}
+\hypertarget{over-time-1}{%
+\subsection{Over time}\label{over-time-1}}
 
 Best performance in a population over time.
 
@@ -2059,7 +2244,7 @@ Best performance in a population over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-54-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-60-1.pdf}
 
 \hypertarget{best-performance-throughout-2}{%
 \subsection{Best performance throughout}\label{best-performance-throughout-2}}
@@ -2099,10 +2284,10 @@ Best performance throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-56-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-62-1.pdf}
 
-\hypertarget{stats-9}{%
-\subsubsection{Stats}\label{stats-9}}
+\hypertarget{stats-10}{%
+\subsubsection{Stats}\label{stats-10}}
 
 Summary statistics for the best performance throughout 50,000 generations.
 
@@ -2179,8 +2364,8 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-3}{%
-\subsection{End of 50,000 generations}\label{end-of-50000-generations-3}}
+\hypertarget{end-of-50000-generations-4}{%
+\subsection{End of 50,000 generations}\label{end-of-50000-generations-4}}
 
 Best performance in the population at the end of 50,000 generations.
 
@@ -2217,10 +2402,10 @@ Best performance in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-60-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-66-1.pdf}
 
-\hypertarget{stats-10}{%
-\subsubsection{Stats}\label{stats-10}}
+\hypertarget{stats-11}{%
+\subsubsection{Stats}\label{stats-11}}
 
 Summary statistics for best performance in the population at the end of 50,000 generations.
 
@@ -2369,10 +2554,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-64-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-70-1.pdf}
 
-\hypertarget{end-of-50000-generations-4}{%
-\subsection{End of 50,000 generations}\label{end-of-50000-generations-4}}
+\hypertarget{end-of-50000-generations-5}{%
+\subsection{End of 50,000 generations}\label{end-of-50000-generations-5}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -2410,10 +2595,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-65-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-71-1.pdf}
 
-\hypertarget{stats-11}{%
-\subsubsection{Stats}\label{stats-11}}
+\hypertarget{stats-12}{%
+\subsubsection{Stats}\label{stats-12}}
 
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
@@ -2603,7 +2788,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-71-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-77-1.pdf}
 
 \hypertarget{generation-satisfactory-solution-found-2}{%
 \subsection{Generation satisfactory solution found}\label{generation-satisfactory-solution-found-2}}
@@ -2644,10 +2829,10 @@ The first generation a satisfactory solution is found throughout the 50,000 gene
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-73-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-79-1.pdf}
 
-\hypertarget{stats-12}{%
-\subsubsection{Stats}\label{stats-12}}
+\hypertarget{stats-13}{%
+\subsubsection{Stats}\label{stats-13}}
 
 Summary statistics for the first generation a satisfactory solution is found throughout the 50,000 generations.
 
@@ -2797,7 +2982,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-77-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-83-1.pdf}
 
 \hypertarget{generation-satisfactory-solution-found-3}{%
 \subsection{Generation satisfactory solution found}\label{generation-satisfactory-solution-found-3}}
@@ -2838,10 +3023,10 @@ The first generation a satisfactory solution is found throughout the 50,000 gene
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-79-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-85-1.pdf}
 
-\hypertarget{stats-13}{%
-\subsubsection{Stats}\label{stats-13}}
+\hypertarget{stats-14}{%
+\subsubsection{Stats}\label{stats-14}}
 
 Summary statistics for the first generation a satisfactory solution is found throughout the 50,000 generations.
 
@@ -2994,7 +3179,7 @@ Satisfactruy trait coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-83-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-89-1.pdf}
 
 \hypertarget{best-coverage-throughout-2}{%
 \subsubsection{Best coverage throughout}\label{best-coverage-throughout-2}}
@@ -3033,10 +3218,10 @@ Best satisfactory trait coverage throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-85-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-91-1.pdf}
 
-\hypertarget{stats-14}{%
-\paragraph{Stats}\label{stats-14}}
+\hypertarget{stats-15}{%
+\paragraph{Stats}\label{stats-15}}
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
@@ -3070,8 +3255,8 @@ Summary statistics for the best satisfactory trait coverage throughout 50,000 ge
 ## 9 256      50      0     1      1     1     1     0
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-5}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-5}}
+\hypertarget{end-of-50000-generations-6}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-6}}
 
 Satisfactruy trait coverage in the population at the end of 50,000 generations.
 
@@ -3106,10 +3291,10 @@ Satisfactruy trait coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-87-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-93-1.pdf}
 
-\hypertarget{stats-15}{%
-\paragraph{Stats}\label{stats-15}}
+\hypertarget{stats-16}{%
+\paragraph{Stats}\label{stats-16}}
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -3213,10 +3398,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-89-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-95-1.pdf}
 
-\hypertarget{end-of-50000-generations-6}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-6}}
+\hypertarget{end-of-50000-generations-7}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-7}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -3251,10 +3436,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-90-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-96-1.pdf}
 
-\hypertarget{stats-16}{%
-\paragraph{Stats}\label{stats-16}}
+\hypertarget{stats-17}{%
+\paragraph{Stats}\label{stats-17}}
 
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
@@ -3365,7 +3550,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-92-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-98-1.pdf}
 
 \hypertarget{best-performance-throughout-3}{%
 \subsubsection{Best performance throughout}\label{best-performance-throughout-3}}
@@ -3406,10 +3591,10 @@ Here we plot the performance of the best performing solution found throughout 50
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-94-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-100-1.pdf}
 
-\hypertarget{stats-17}{%
-\paragraph{Stats}\label{stats-17}}
+\hypertarget{stats-18}{%
+\paragraph{Stats}\label{stats-18}}
 
 Summary statistics for the performance of the best performing solution found throughout 50,000 generations.
 
@@ -3459,8 +3644,8 @@ Kruskal--Wallis test provides evidence of no statistical differences among the b
 ## Kruskal-Wallis chi-squared = 5.0721, df = 8, p-value = 0.7498
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-7}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-7}}
+\hypertarget{end-of-50000-generations-8}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-8}}
 
 Best performance in the population at the end of 50,000 generations.
 
@@ -3497,10 +3682,10 @@ Best performance in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-97-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-103-1.pdf}
 
-\hypertarget{stats-18}{%
-\paragraph{Stats}\label{stats-18}}
+\hypertarget{stats-19}{%
+\paragraph{Stats}\label{stats-19}}
 
 Summary statistics for the best performance in the population at the end of 50,000 generations.
 
@@ -3648,10 +3833,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-101-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-107-1.pdf}
 
-\hypertarget{end-of-50000-generations-8}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-8}}
+\hypertarget{end-of-50000-generations-9}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-9}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -3688,10 +3873,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-102-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-108-1.pdf}
 
-\hypertarget{stats-19}{%
-\paragraph{Stats}\label{stats-19}}
+\hypertarget{stats-20}{%
+\paragraph{Stats}\label{stats-20}}
 
 Summary statistics for the activation gene coverage in the population at the end of 50,000 generations.
 
@@ -3880,7 +4065,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-108-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-114-1.pdf}
 
 \hypertarget{generation-satisfactory-solution-found-4}{%
 \subsection{Generation satisfactory solution found}\label{generation-satisfactory-solution-found-4}}
@@ -3921,10 +4106,10 @@ The first generation a satisfactory solution is found throughout the 50,000 gene
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-110-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-116-1.pdf}
 
-\hypertarget{stats-20}{%
-\subsubsection{Stats}\label{stats-20}}
+\hypertarget{stats-21}{%
+\subsubsection{Stats}\label{stats-21}}
 
 Summary statistics for the best performance found throughout 50,000 generations.
 
@@ -4072,7 +4257,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-114-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-120-1.pdf}
 
 \hypertarget{generation-satisfactory-solution-found-5}{%
 \subsection{Generation satisfactory solution found}\label{generation-satisfactory-solution-found-5}}
@@ -4113,10 +4298,10 @@ The first generation a satisfactory solution is found throughout the 50,000 gene
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-116-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-122-1.pdf}
 
-\hypertarget{stats-21}{%
-\subsubsection{Stats}\label{stats-21}}
+\hypertarget{stats-22}{%
+\subsubsection{Stats}\label{stats-22}}
 
 Summary statistics for the first generation a satisfactory solution is found throughout the 50,000 generations.
 
@@ -4267,7 +4452,7 @@ Satisfactory trait coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-120-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-126-1.pdf}
 
 \hypertarget{best-coverage-throughout-3}{%
 \subsubsection{Best coverage throughout}\label{best-coverage-throughout-3}}
@@ -4306,10 +4491,10 @@ Best satisfactory trait coverage throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-122-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-128-1.pdf}
 
-\hypertarget{stats-22}{%
-\paragraph{Stats}\label{stats-22}}
+\hypertarget{stats-23}{%
+\paragraph{Stats}\label{stats-23}}
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
@@ -4342,8 +4527,8 @@ Summary statistics for the best satisfactory trait coverage throughout 50,000 ge
 ## 8 256      50      0     1      1     1     1     0
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-9}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-9}}
+\hypertarget{end-of-50000-generations-10}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-10}}
 
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -4378,10 +4563,10 @@ Satisfactory trait coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-124-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-130-1.pdf}
 
-\hypertarget{stats-23}{%
-\paragraph{Stats}\label{stats-23}}
+\hypertarget{stats-24}{%
+\paragraph{Stats}\label{stats-24}}
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -4484,10 +4669,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-126-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-132-1.pdf}
 
-\hypertarget{end-of-50000-generations-10}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-10}}
+\hypertarget{end-of-50000-generations-11}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-11}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -4522,10 +4707,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-127-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-133-1.pdf}
 
-\hypertarget{stats-24}{%
-\paragraph{Stats}\label{stats-24}}
+\hypertarget{stats-25}{%
+\paragraph{Stats}\label{stats-25}}
 
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
@@ -4635,7 +4820,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-129-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-135-1.pdf}
 
 \hypertarget{best-performance-throughout-4}{%
 \subsubsection{Best performance throughout}\label{best-performance-throughout-4}}
@@ -4676,10 +4861,10 @@ Here we plot the performance of the best performing solution found throughout 50
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-131-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-137-1.pdf}
 
-\hypertarget{stats-25}{%
-\paragraph{Stats}\label{stats-25}}
+\hypertarget{stats-26}{%
+\paragraph{Stats}\label{stats-26}}
 
 Summary statistics for the performance of the best performing solution found throughout 50,000 generations.
 
@@ -4728,8 +4913,8 @@ Kruskal--Wallis test provides evidence of no statistical differences among the b
 ## Kruskal-Wallis chi-squared = 9.9954, df = 7, p-value = 0.1888
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-11}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-11}}
+\hypertarget{end-of-50000-generations-12}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-12}}
 
 Best performance in the population at the end of 50,000 generations.
 
@@ -4766,10 +4951,10 @@ Best performance in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-134-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-140-1.pdf}
 
-\hypertarget{stats-26}{%
-\paragraph{Stats}\label{stats-26}}
+\hypertarget{stats-27}{%
+\paragraph{Stats}\label{stats-27}}
 
 Summary statistics for the best performance in the population at the end of 50,000 generations.
 
@@ -4915,10 +5100,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-138-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-144-1.pdf}
 
-\hypertarget{end-of-50000-generations-12}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-12}}
+\hypertarget{end-of-50000-generations-13}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-13}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -4955,10 +5140,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-139-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-145-1.pdf}
 
-\hypertarget{stats-27}{%
-\paragraph{Stats}\label{stats-27}}
+\hypertarget{stats-28}{%
+\paragraph{Stats}\label{stats-28}}
 
 Summary statistics for the activation gene coverage in the population at the end of 50,000 generations.
 
@@ -5148,7 +5333,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-145-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-151-1.pdf}
 
 \hypertarget{best-performance-throughout-5}{%
 \subsection{Best performance throughout}\label{best-performance-throughout-5}}
@@ -5189,10 +5374,10 @@ The best performance found throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-147-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-153-1.pdf}
 
-\hypertarget{stats-28}{%
-\subsubsection{Stats}\label{stats-28}}
+\hypertarget{stats-29}{%
+\subsubsection{Stats}\label{stats-29}}
 
 Summary statistics for the best performance found throughout 50,000 generations.
 
@@ -5338,7 +5523,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-151-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-157-1.pdf}
 
 \hypertarget{best-performance-throughout-6}{%
 \subsection{Best performance throughout}\label{best-performance-throughout-6}}
@@ -5379,10 +5564,10 @@ The best performance found throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-153-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-159-1.pdf}
 
-\hypertarget{stats-29}{%
-\subsubsection{Stats}\label{stats-29}}
+\hypertarget{stats-30}{%
+\subsubsection{Stats}\label{stats-30}}
 
 Summary statistics about the best performance found.
 
@@ -5531,7 +5716,7 @@ Satisfactory trait coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-157-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-163-1.pdf}
 
 \hypertarget{best-coverage-throughout-4}{%
 \subsubsection{Best coverage throughout}\label{best-coverage-throughout-4}}
@@ -5570,10 +5755,10 @@ Best satisfactory trait coverage throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-159-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-165-1.pdf}
 
-\hypertarget{stats-30}{%
-\paragraph{Stats}\label{stats-30}}
+\hypertarget{stats-31}{%
+\paragraph{Stats}\label{stats-31}}
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
@@ -5621,8 +5806,8 @@ Kruskal--Wallis test provides evidence of no statistical difference among satisf
 ## Kruskal-Wallis chi-squared = 6, df = 6, p-value = 0.4232
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-13}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-13}}
+\hypertarget{end-of-50000-generations-14}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-14}}
 
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -5657,10 +5842,10 @@ Satisfactory trait coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-162-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-168-1.pdf}
 
-\hypertarget{stats-31}{%
-\paragraph{Stats}\label{stats-31}}
+\hypertarget{stats-32}{%
+\paragraph{Stats}\label{stats-32}}
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -5778,10 +5963,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-165-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-171-1.pdf}
 
-\hypertarget{end-of-50000-generations-14}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-14}}
+\hypertarget{end-of-50000-generations-15}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-15}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -5816,10 +6001,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-166-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-172-1.pdf}
 
-\hypertarget{stats-32}{%
-\paragraph{Stats}\label{stats-32}}
+\hypertarget{stats-33}{%
+\paragraph{Stats}\label{stats-33}}
 
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
@@ -5942,7 +6127,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-169-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-175-1.pdf}
 
 \hypertarget{best-performance-throughout-7}{%
 \subsubsection{Best performance throughout}\label{best-performance-throughout-7}}
@@ -5981,10 +6166,10 @@ Here we plot the performance of the best performing solution found throughout 50
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-171-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-177-1.pdf}
 
-\hypertarget{stats-33}{%
-\paragraph{Stats}\label{stats-33}}
+\hypertarget{stats-34}{%
+\paragraph{Stats}\label{stats-34}}
 
 Summary statistics for the performance of the best performing solution found throughout 50,000 generations.
 
@@ -6058,8 +6243,8 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the 
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-15}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-15}}
+\hypertarget{end-of-50000-generations-16}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-16}}
 
 Best performance in the population at the end of 50,000 generations.
 
@@ -6094,10 +6279,10 @@ Best performance in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-175-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-181-1.pdf}
 
-\hypertarget{stats-34}{%
-\paragraph{Stats}\label{stats-34}}
+\hypertarget{stats-35}{%
+\paragraph{Stats}\label{stats-35}}
 
 Summary statistics for the best performance in the population at the end of 50,000 generations.
 
@@ -6241,10 +6426,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-179-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-185-1.pdf}
 
-\hypertarget{end-of-50000-generations-16}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-16}}
+\hypertarget{end-of-50000-generations-17}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-17}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -6281,10 +6466,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-180-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-186-1.pdf}
 
-\hypertarget{stats-35}{%
-\paragraph{Stats}\label{stats-35}}
+\hypertarget{stats-36}{%
+\paragraph{Stats}\label{stats-36}}
 
 Summary statistics for the activation gene coverage in the population at the end of 50,000 generations.
 
@@ -6472,7 +6657,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-186-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-192-1.pdf}
 
 \hypertarget{best-performance-throughout-8}{%
 \subsection{Best performance throughout}\label{best-performance-throughout-8}}
@@ -6513,10 +6698,10 @@ The best performance found throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-188-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-194-1.pdf}
 
-\hypertarget{stats-36}{%
-\subsubsection{Stats}\label{stats-36}}
+\hypertarget{stats-37}{%
+\subsubsection{Stats}\label{stats-37}}
 
 Summary statistics for the best performance found throughout 50,000 generations.
 
@@ -6662,7 +6847,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-192-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-198-1.pdf}
 
 \hypertarget{best-performance-throughout-9}{%
 \subsection{Best performance throughout}\label{best-performance-throughout-9}}
@@ -6703,10 +6888,10 @@ The best performance found throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-194-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-200-1.pdf}
 
-\hypertarget{stats-37}{%
-\subsubsection{Stats}\label{stats-37}}
+\hypertarget{stats-38}{%
+\subsubsection{Stats}\label{stats-38}}
 
 Summary statistics about the best performance found.
 
@@ -6855,7 +7040,7 @@ Satisfactory trait coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-198-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-204-1.pdf}
 
 \hypertarget{best-coverage-throughout-5}{%
 \subsubsection{Best coverage throughout}\label{best-coverage-throughout-5}}
@@ -6894,10 +7079,10 @@ Best satisfactory trait coverage throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-200-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-206-1.pdf}
 
-\hypertarget{stats-38}{%
-\paragraph{Stats}\label{stats-38}}
+\hypertarget{stats-39}{%
+\paragraph{Stats}\label{stats-39}}
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
@@ -6971,8 +7156,8 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the 
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-17}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-17}}
+\hypertarget{end-of-50000-generations-18}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-18}}
 
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -7007,10 +7192,10 @@ Satisfactory trait coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-204-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-210-1.pdf}
 
-\hypertarget{stats-39}{%
-\paragraph{Stats}\label{stats-39}}
+\hypertarget{stats-40}{%
+\paragraph{Stats}\label{stats-40}}
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -7154,10 +7339,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-208-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-214-1.pdf}
 
-\hypertarget{end-of-50000-generations-18}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-18}}
+\hypertarget{end-of-50000-generations-19}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-19}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -7196,10 +7381,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 ## Warning: Removed 1 rows containing missing values (geom_point).
 \end{verbatim}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-209-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-215-1.pdf}
 
-\hypertarget{stats-40}{%
-\paragraph{Stats}\label{stats-40}}
+\hypertarget{stats-41}{%
+\paragraph{Stats}\label{stats-41}}
 
 Summary statistics for the best activation gene coverage in the population at the end of 50,000 generations.
 
@@ -7322,7 +7507,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-212-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-218-1.pdf}
 
 \hypertarget{best-performance-throughout-10}{%
 \subsubsection{Best performance throughout}\label{best-performance-throughout-10}}
@@ -7361,10 +7546,10 @@ Here we plot the performance of the best performing solution found throughout 50
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-214-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-220-1.pdf}
 
-\hypertarget{stats-41}{%
-\paragraph{Stats}\label{stats-41}}
+\hypertarget{stats-42}{%
+\paragraph{Stats}\label{stats-42}}
 
 Summary statistics for the performance of the best performing solution found throughout 50,000 generations.
 
@@ -7438,8 +7623,8 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the 
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-19}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-19}}
+\hypertarget{end-of-50000-generations-20}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-20}}
 
 Best performance in the population at the end of 50,000 generations.
 
@@ -7474,10 +7659,10 @@ Best performance in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-218-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-224-1.pdf}
 
-\hypertarget{stats-42}{%
-\paragraph{Stats}\label{stats-42}}
+\hypertarget{stats-43}{%
+\paragraph{Stats}\label{stats-43}}
 
 Summary statistics for the best performance in the population at the end of 50,000 generations.
 
@@ -7621,10 +7806,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-222-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-228-1.pdf}
 
-\hypertarget{end-of-50000-generations-20}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-20}}
+\hypertarget{end-of-50000-generations-21}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-21}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -7661,10 +7846,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-223-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-229-1.pdf}
 
-\hypertarget{stats-43}{%
-\paragraph{Stats}\label{stats-43}}
+\hypertarget{stats-44}{%
+\paragraph{Stats}\label{stats-44}}
 
 Summary statistics for the activation gene coverage in the population at the end of 50,000 generations.
 
@@ -7852,7 +8037,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-229-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-235-1.pdf}
 
 \hypertarget{best-performance-throughout-11}{%
 \subsection{Best performance throughout}\label{best-performance-throughout-11}}
@@ -7893,10 +8078,10 @@ The best performance found throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-231-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-237-1.pdf}
 
-\hypertarget{stats-44}{%
-\subsubsection{Stats}\label{stats-44}}
+\hypertarget{stats-45}{%
+\subsubsection{Stats}\label{stats-45}}
 
 Summary statistics for the best performance found throughout 50,000 generations.
 
@@ -8042,7 +8227,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-235-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-241-1.pdf}
 
 \hypertarget{best-performance-throughout-12}{%
 \subsection{Best performance throughout}\label{best-performance-throughout-12}}
@@ -8083,10 +8268,10 @@ The best performance found throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-237-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-243-1.pdf}
 
-\hypertarget{stats-45}{%
-\subsubsection{Stats}\label{stats-45}}
+\hypertarget{stats-46}{%
+\subsubsection{Stats}\label{stats-46}}
 
 Summary statistics about the best performance found.
 
@@ -8237,7 +8422,7 @@ Satisfactory trait coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-241-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-247-1.pdf}
 
 \hypertarget{best-coverage-throughout-6}{%
 \subsubsection{Best coverage throughout}\label{best-coverage-throughout-6}}
@@ -8278,10 +8463,10 @@ Best satisfactory trait coverage throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-243-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-249-1.pdf}
 
-\hypertarget{stats-46}{%
-\paragraph{Stats}\label{stats-46}}
+\hypertarget{stats-47}{%
+\paragraph{Stats}\label{stats-47}}
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
@@ -8355,8 +8540,8 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction for the
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-21}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-21}}
+\hypertarget{end-of-50000-generations-22}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-22}}
 
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -8393,10 +8578,10 @@ Satisfactory trait coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-247-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-253-1.pdf}
 
-\hypertarget{stats-47}{%
-\paragraph{Stats}\label{stats-47}}
+\hypertarget{stats-48}{%
+\paragraph{Stats}\label{stats-48}}
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -8540,10 +8725,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-251-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-257-1.pdf}
 
-\hypertarget{end-of-50000-generations-22}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-22}}
+\hypertarget{end-of-50000-generations-23}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-23}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -8580,10 +8765,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-252-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-258-1.pdf}
 
-\hypertarget{stats-48}{%
-\paragraph{Stats}\label{stats-48}}
+\hypertarget{stats-49}{%
+\paragraph{Stats}\label{stats-49}}
 
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
@@ -8732,7 +8917,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-256-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-262-1.pdf}
 
 \hypertarget{best-performance-throughout-13}{%
 \subsubsection{Best performance throughout}\label{best-performance-throughout-13}}
@@ -8771,10 +8956,10 @@ Here we plot the performance of the best performing solution found throughout 50
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-258-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-264-1.pdf}
 
-\hypertarget{stats-49}{%
-\paragraph{Stats}\label{stats-49}}
+\hypertarget{stats-50}{%
+\paragraph{Stats}\label{stats-50}}
 
 Summary statistics for the performance of the best performing solution found throughout 50,000 generations.
 
@@ -8848,8 +9033,8 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the 
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-23}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-23}}
+\hypertarget{end-of-50000-generations-24}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-24}}
 
 Best performance in the population at the end of 50,000 generations.
 
@@ -8884,10 +9069,10 @@ Best performance in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-262-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-268-1.pdf}
 
-\hypertarget{stats-50}{%
-\paragraph{Stats}\label{stats-50}}
+\hypertarget{stats-51}{%
+\paragraph{Stats}\label{stats-51}}
 
 Summary statistics for the best performance in the population at the end of 50,000 generations.
 
@@ -9031,10 +9216,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-266-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-272-1.pdf}
 
-\hypertarget{end-of-50000-generations-24}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-24}}
+\hypertarget{end-of-50000-generations-25}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-25}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -9071,10 +9256,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-267-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-273-1.pdf}
 
-\hypertarget{stats-51}{%
-\paragraph{Stats}\label{stats-51}}
+\hypertarget{stats-52}{%
+\paragraph{Stats}\label{stats-52}}
 
 Summary statistics for the activation gene coverage in the population at the end of 50,000 generations.
 
@@ -9261,7 +9446,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-273-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-279-1.pdf}
 
 \hypertarget{best-performance-throughout-14}{%
 \subsection{Best performance throughout}\label{best-performance-throughout-14}}
@@ -9302,10 +9487,10 @@ The best performance found throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-275-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-281-1.pdf}
 
-\hypertarget{stats-52}{%
-\subsubsection{Stats}\label{stats-52}}
+\hypertarget{stats-53}{%
+\subsubsection{Stats}\label{stats-53}}
 
 Summary statistics for the best performance found throughout 50,000 generations.
 
@@ -9449,7 +9634,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-279-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-285-1.pdf}
 
 \hypertarget{best-performance-throughout-15}{%
 \subsection{Best performance throughout}\label{best-performance-throughout-15}}
@@ -9490,10 +9675,10 @@ The best performance found throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-281-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-287-1.pdf}
 
-\hypertarget{stats-53}{%
-\subsubsection{Stats}\label{stats-53}}
+\hypertarget{stats-54}{%
+\subsubsection{Stats}\label{stats-54}}
 
 Summary statistics about the best performance found.
 
@@ -9640,7 +9825,7 @@ Satisfactory trait coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-285-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-291-1.pdf}
 
 \hypertarget{best-coverage-throughout-7}{%
 \subsubsection{Best coverage throughout}\label{best-coverage-throughout-7}}
@@ -9679,10 +9864,10 @@ Best satisfactory trait coverage throughout 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-287-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-293-1.pdf}
 
-\hypertarget{stats-54}{%
-\paragraph{Stats}\label{stats-54}}
+\hypertarget{stats-55}{%
+\paragraph{Stats}\label{stats-55}}
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
@@ -9713,8 +9898,8 @@ Summary statistics for the best satisfactory trait coverage throughout 50,000 ge
 ## 6 30       50      0     0      0     0     0     0
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-25}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-25}}
+\hypertarget{end-of-50000-generations-26}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-26}}
 
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -9749,10 +9934,10 @@ Satisfactory trait coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-289-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-295-1.pdf}
 
-\hypertarget{stats-55}{%
-\paragraph{Stats}\label{stats-55}}
+\hypertarget{stats-56}{%
+\paragraph{Stats}\label{stats-56}}
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
@@ -9853,10 +10038,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-291-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-297-1.pdf}
 
-\hypertarget{end-of-50000-generations-26}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-26}}
+\hypertarget{end-of-50000-generations-27}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-27}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -9893,10 +10078,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-292-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-298-1.pdf}
 
-\hypertarget{stats-56}{%
-\paragraph{Stats}\label{stats-56}}
+\hypertarget{stats-57}{%
+\paragraph{Stats}\label{stats-57}}
 
 Summary statistics for the activation gene coverage in the population at the end of 50,000 generations.
 
@@ -10045,7 +10230,7 @@ Performance over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-296-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-302-1.pdf}
 
 \hypertarget{best-performance-throughout-16}{%
 \subsubsection{Best performance throughout}\label{best-performance-throughout-16}}
@@ -10086,10 +10271,10 @@ Here we plot the performance of the best performing solution found throughout 50
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-298-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-304-1.pdf}
 
-\hypertarget{stats-57}{%
-\paragraph{Stats}\label{stats-57}}
+\hypertarget{stats-58}{%
+\paragraph{Stats}\label{stats-58}}
 
 Summary statistics for the performance of the best performing solution found throughout 50,000 generations.
 
@@ -10161,8 +10346,8 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the 
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\hypertarget{end-of-50000-generations-27}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-27}}
+\hypertarget{end-of-50000-generations-28}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-28}}
 
 Best performance in the population at the end of 50,000 generations.
 
@@ -10199,10 +10384,10 @@ Best performance in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-302-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-308-1.pdf}
 
-\hypertarget{stats-58}{%
-\paragraph{Stats}\label{stats-58}}
+\hypertarget{stats-59}{%
+\paragraph{Stats}\label{stats-59}}
 
 Summary statistics for the best performance in the population at the end of 50,000 generations.
 
@@ -10344,10 +10529,10 @@ Activation gene coverage over time.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-306-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-312-1.pdf}
 
-\hypertarget{end-of-50000-generations-28}{%
-\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-28}}
+\hypertarget{end-of-50000-generations-29}{%
+\subsubsection{End of 50,000 generations}\label{end-of-50000-generations-29}}
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
@@ -10384,10 +10569,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{demo_files/figure-latex/unnamed-chunk-307-1.pdf}
+\includegraphics{demo_files/figure-latex/unnamed-chunk-313-1.pdf}
 
-\hypertarget{stats-59}{%
-\paragraph{Stats}\label{stats-59}}
+\hypertarget{stats-60}{%
+\paragraph{Stats}\label{stats-60}}
 
 Summary statistics for the activation gene coverage in the population at the end of 50,000 generations.
 
