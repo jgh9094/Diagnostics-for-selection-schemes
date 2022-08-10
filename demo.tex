@@ -2604,7 +2604,7 @@ Summary statistics for activation gene coverage in the population at the end of 
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{end}\OperatorTok{$}\NormalTok{acron <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(end}\OperatorTok{$}\NormalTok{acron, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'nov'}\NormalTok{,}\StringTok{'lex'}\NormalTok{,}\StringTok{'nds'}\NormalTok{,}\StringTok{'gfs'}\NormalTok{,}\StringTok{'pfs'}\NormalTok{,}\StringTok{'ran'}\NormalTok{,}\StringTok{'tor'}\NormalTok{,}\StringTok{'tru'}\NormalTok{))}
+\NormalTok{end}\OperatorTok{$}\NormalTok{acron <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(end}\OperatorTok{$}\NormalTok{acron, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'nov'}\NormalTok{,}\StringTok{'lex'}\NormalTok{,}\StringTok{'nds'}\NormalTok{,}\StringTok{'gfs'}\NormalTok{,}\StringTok{'pfs'}\NormalTok{,}\StringTok{'tor'}\NormalTok{,}\StringTok{'tru'}\NormalTok{,}\StringTok{'ran'}\NormalTok{))}
 \KeywordTok{group_by}\NormalTok{(end, acron) }\OperatorTok{%>%}
 \StringTok{  }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarise}\NormalTok{(}
     \DataTypeTok{count =} \KeywordTok{n}\NormalTok{(),}
@@ -2627,9 +2627,9 @@ Summary statistics for activation gene coverage in the population at the end of 
 ## 3 nds      50      0     6   10   10.4     21  3   
 ## 4 gfs      50      0     2    3    3.34     5  1   
 ## 5 pfs      50      0     2    3    2.56     4  1   
-## 6 ran      50      0     1    2    2        5  2   
-## 7 tor      50      0     1    2    2.02     3  0   
-## 8 tru      50      0     1    2    2        3  0
+## 6 tor      50      0     1    2    2.02     3  0   
+## 7 tru      50      0     1    2    2        3  0   
+## 8 ran      50      0     1    2    2        5  2
 \end{verbatim}
 
 Kruskal--Wallis test provides evidence of difference among activation gene coverage in the population at the end of 50,000 generations.
@@ -2663,14 +2663,14 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on acti
 ## 
 ## data:  end$uni_str_pos and end$acron 
 ## 
-##     nov     lex     nds     gfs     pfs     ran    tor   
+##     nov     lex     nds     gfs     pfs     tor    tru   
 ## lex < 2e-16 -       -       -       -       -      -     
 ## nds < 2e-16 < 2e-16 -       -       -       -      -     
 ## gfs < 2e-16 < 2e-16 < 2e-16 -       -       -      -     
 ## pfs < 2e-16 < 2e-16 < 2e-16 3.3e-06 -       -      -     
-## ran < 2e-16 < 2e-16 < 2e-16 1.2e-08 0.0036  -      -     
-## tor < 2e-16 < 2e-16 < 2e-16 1.7e-15 1.2e-06 1.0000 -     
-## tru < 2e-16 < 2e-16 < 2e-16 5.0e-16 2.6e-07 1.0000 1.0000
+## tor < 2e-16 < 2e-16 < 2e-16 1.7e-15 1.2e-06 -      -     
+## tru < 2e-16 < 2e-16 < 2e-16 5.0e-16 2.6e-07 1.0000 -     
+## ran < 2e-16 < 2e-16 < 2e-16 1.2e-08 0.0036  1.0000 1.0000
 ## 
 ## P value adjustment method: bonferroni
 \end{verbatim}
