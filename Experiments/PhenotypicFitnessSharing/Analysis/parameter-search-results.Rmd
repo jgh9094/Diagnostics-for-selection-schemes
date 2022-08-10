@@ -500,7 +500,7 @@ kruskal.test(pop_uni_obj ~ Sigma, data = end)
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best satisfactory trait coverage in the population at the end of 50,000 generations.
 
 ```{r}
-pairwise.wilcox.test(x = best$val, g = best$Sigma , p.adjust.method = "bonferroni",
+pairwise.wilcox.test(x = end$pop_uni_obj, g = end$Sigma , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'g')
 ```
 

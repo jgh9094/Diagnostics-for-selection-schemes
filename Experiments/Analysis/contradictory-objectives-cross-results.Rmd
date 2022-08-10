@@ -325,7 +325,7 @@ plot_grid(
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r}
-end$acron = factor(end$acron, levels = c('nds', 'lex', 'pfs', 'gfs', 'tor', 'tru', 'nov', 'ran'))
+end$acron = factor(end$acron, levels = c('nov', 'nds', 'lex', 'pfs', 'gfs', 'ran', 'tor', 'tru'))
 group_by(end, acron) %>%
   dplyr::summarise(
     count = n(),
