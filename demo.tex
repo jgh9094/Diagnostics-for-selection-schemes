@@ -110,7 +110,7 @@
 
 \title{Diagnostics Supplemental Material}
 \author{Jose Guadalupe Hernandez}
-\date{2022-08-09}
+\date{2022-08-10}
 
 \begin{document}
 \maketitle
@@ -1718,7 +1718,7 @@ Summary statistics for activation gene coverage in the population at the end of 
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{end}\OperatorTok{$}\NormalTok{acron =}\StringTok{ }\KeywordTok{factor}\NormalTok{(end}\OperatorTok{$}\NormalTok{acron, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'nds'}\NormalTok{, }\StringTok{'lex'}\NormalTok{, }\StringTok{'pfs'}\NormalTok{, }\StringTok{'gfs'}\NormalTok{, }\StringTok{'tor'}\NormalTok{, }\StringTok{'tru'}\NormalTok{, }\StringTok{'nov'}\NormalTok{, }\StringTok{'ran'}\NormalTok{))}
+\NormalTok{end}\OperatorTok{$}\NormalTok{acron =}\StringTok{ }\KeywordTok{factor}\NormalTok{(end}\OperatorTok{$}\NormalTok{acron, }\DataTypeTok{levels =} \KeywordTok{c}\NormalTok{(}\StringTok{'nov'}\NormalTok{, }\StringTok{'nds'}\NormalTok{, }\StringTok{'lex'}\NormalTok{, }\StringTok{'pfs'}\NormalTok{, }\StringTok{'gfs'}\NormalTok{, }\StringTok{'ran'}\NormalTok{, }\StringTok{'tor'}\NormalTok{, }\StringTok{'tru'}\NormalTok{))}
 \KeywordTok{group_by}\NormalTok{(end, acron) }\OperatorTok{%>%}
 \StringTok{  }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{summarise}\NormalTok{(}
     \DataTypeTok{count =} \KeywordTok{n}\NormalTok{(),}
@@ -1736,14 +1736,14 @@ Summary statistics for activation gene coverage in the population at the end of 
 ## # A tibble: 8 x 8
 ##   acron count na_cnt   min median  mean   max   IQR
 ##   <fct> <int>  <int> <int>  <dbl> <dbl> <int> <dbl>
-## 1 nds      50      0    83     87 86.8     90  1.75
-## 2 lex      50      0    36     39 39.0     41  2   
-## 3 pfs      50      0     2      4  4.26     8  1   
-## 4 gfs      50      0     1      1  1        1  0   
-## 5 tor      50      0     1      1  1        1  0   
-## 6 tru      50      0     1      1  1        1  0   
-## 7 nov      50      0    98    100 99.4    100  1   
-## 8 ran      50      0     1      2  2        5  1.75
+## 1 nov      50      0    98    100 99.4    100  1   
+## 2 nds      50      0    83     87 86.8     90  1.75
+## 3 lex      50      0    36     39 39.0     41  2   
+## 4 pfs      50      0     2      4  4.26     8  1   
+## 5 gfs      50      0     1      1  1        1  0   
+## 6 ran      50      0     1      2  2        5  1.75
+## 7 tor      50      0     1      1  1        1  0   
+## 8 tru      50      0     1      1  1        1  0
 \end{verbatim}
 
 Kruskal--Wallis test provides evidence of difference among activation gene coverage in the population at the end of 50,000 generations.
@@ -1777,14 +1777,14 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on acti
 ## 
 ## data:  end$uni_str_pos and end$acron 
 ## 
-##     nds     lex     pfs     gfs tor tru nov    
-## lex < 2e-16 -       -       -   -   -   -      
-## pfs < 2e-16 < 2e-16 -       -   -   -   -      
-## gfs < 2e-16 < 2e-16 < 2e-16 -   -   -   -      
-## tor < 2e-16 < 2e-16 < 2e-16 1   -   -   -      
-## tru < 2e-16 < 2e-16 < 2e-16 1   1   -   -      
-## nov 1       1       1       1   1   1   -      
-## ran < 2e-16 < 2e-16 2.1e-12 1   1   1   < 2e-16
+##     nov     nds     lex     pfs     gfs ran     tor
+## nds < 2e-16 -       -       -       -   -       -  
+## lex < 2e-16 < 2e-16 -       -       -   -       -  
+## pfs < 2e-16 < 2e-16 < 2e-16 -       -   -       -  
+## gfs < 2e-16 < 2e-16 < 2e-16 < 2e-16 -   -       -  
+## ran < 2e-16 < 2e-16 < 2e-16 2.1e-12 1   -       -  
+## tor < 2e-16 < 2e-16 < 2e-16 < 2e-16 1   2.2e-09 -  
+## tru < 2e-16 < 2e-16 < 2e-16 < 2e-16 1   2.2e-09 1  
 ## 
 ## P value adjustment method: bonferroni
 \end{verbatim}
@@ -7247,7 +7247,7 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the 
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{pairwise.wilcox.test}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ best}\OperatorTok{$}\NormalTok{val, }\DataTypeTok{g =}\NormalTok{ best}\OperatorTok{$}\NormalTok{Sigma , }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
+\KeywordTok{pairwise.wilcox.test}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ end}\OperatorTok{$}\NormalTok{pop_uni_obj, }\DataTypeTok{g =}\NormalTok{ end}\OperatorTok{$}\NormalTok{Sigma , }\DataTypeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{,}
                      \DataTypeTok{paired =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{conf.int =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{alternative =} \StringTok{'g'}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -7256,13 +7256,13 @@ Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the 
 ## 
 ##  Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
 ## 
-## data:  best$val and best$Sigma 
+## data:  end$pop_uni_obj and end$Sigma 
 ## 
 ##     0       0.1     0.3     0.6     1.2     2.5    
 ## 0.1 2.4e-12 -       -       -       -       -      
-## 0.3 < 2e-16 3.1e-15 -       -       -       -      
-## 0.6 < 2e-16 < 2e-16 8.0e-09 -       -       -      
-## 1.2 < 2e-16 < 2e-16 < 2e-16 1.1e-14 -       -      
+## 0.3 < 2e-16 2.8e-15 -       -       -       -      
+## 0.6 < 2e-16 < 2e-16 5.2e-10 -       -       -      
+## 1.2 < 2e-16 < 2e-16 < 2e-16 5.0e-14 -       -      
 ## 2.5 < 2e-16 < 2e-16 < 2e-16 < 2e-16 < 2e-16 -      
 ## 5   < 2e-16 < 2e-16 < 2e-16 < 2e-16 < 2e-16 < 2e-16
 ## 
@@ -7376,10 +7376,6 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-## Warning: Removed 1 rows containing missing values (geom_point).
-\end{verbatim}
 
 \includegraphics{demo_files/figure-latex/unnamed-chunk-215-1.pdf}
 
