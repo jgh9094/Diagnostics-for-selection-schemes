@@ -187,7 +187,7 @@ plot = ggplot(end, aes(x = acron, y = pop_fit_max / TRAITS, color = acron, fill 
 
 plot_grid(
   plot +
-  ggtitle("Best performance over time") +
+    ggtitle("Final performance") +
     theme(legend.position="none"),
   legend,
   nrow=2,
