@@ -98,39 +98,39 @@ ACCURACY_DIR=99
 ####################################################################
 
 if [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__T_1__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__T_1__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_2}__T_${T__1}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__T_${T__1}__SEED_${SEED}
   T=${T__1}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__T_2__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__T_2__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_2}__T_${T__2}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__T_${T__2}__SEED_${SEED}
   T=${T__2}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__T_4__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__T_4__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_2}__T_${T__4}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__T_${T__4}__SEED_${SEED}
   T=${T__4}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__T_8__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__T_8__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_2}__T_${T__8}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__T_${T__8}__SEED_${SEED}
   T=${T__8}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__T_16__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__T_16__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_2}__T_${T__16}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__T_${T__16}__SEED_${SEED}
   T=${T__16}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__T_32__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__T_32__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_2}__T_${T__32}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__T_${T__32}__SEED_${SEED}
   T=${T__32}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__T_64__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__T_64__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_2}__T_${T__64}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__T_${T__64}__SEED_${SEED}
   T=${T__64}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__T_128__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__T_128__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_2}__T_${T__128}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__T_${T__128}__SEED_${SEED}
   T=${T__128}
 
 elif [ ${SLURM_ARRAY_TASK_ID} -ge ${TREATMENT__T_256__MIN} ] && [ ${SLURM_ARRAY_TASK_ID} -le ${TREATMENT__T_256__MAX} ] ; then
-  NAME=DIA_${DIAGNOSTIC_2}__T_${T__256}__SEED_${SEED}
+  NAME=DIA_${DIAGNOSTIC_4}__T_${T__256}__SEED_${SEED}
   T=${T__256}
 
 else
