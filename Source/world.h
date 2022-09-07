@@ -147,7 +147,7 @@ class DiagWorld : public emp::World<Org>
     void NoveltySearch();
 
 
-    ///< evaluation function implementations
+    ///< diagnostic function implementations
 
     void ExploitationRate();
 
@@ -156,6 +156,8 @@ class DiagWorld : public emp::World<Org>
     void MultiPathExploration();
 
     void ContradictoryObjectives();
+
+    void MultiValleyCrossing();
 
 
     ///< data tracking
@@ -167,6 +169,10 @@ class DiagWorld : public emp::World<Org>
     void FindEverything();
 
     size_t ActivationGeneOverlap();
+
+    double MaxPopTrait();
+
+    double MaxPopGene();
 
     ///< helper functions
 
@@ -199,6 +205,8 @@ class DiagWorld : public emp::World<Org>
     double pmin = 0.0;
     // generations since solution added to archive
     size_t archive_gens = 0;
+    // hash vector with penalties for multi-valley crossing
+    ids_t valley_widths;
 
 
     // evaluation lambda we set
@@ -470,6 +478,10 @@ void DiagWorld::SetEvaluation()
       MultiPathExploration();
       break;
 
+    case 4: // valley crossing
+      MultiValleyCrossing();
+      break;
+
     default: // error, unknown diganotic
       std::cout << "ERROR: UNKNOWN DIAGNOSTIC" << std::endl;
       emp_assert(false);
@@ -709,6 +721,18 @@ void DiagWorld::SetDataTracking()
   {
     return ActivationGeneOverlap();
   }, "overlap", "Unique activation genes found in the archive!");
+
+  // max trait in the population
+  data_file.AddFun<double>([this]()
+  {
+    return MaxPopTrait();
+  }, "pop_max_trt", "Maximum trait value found in the population!");
+
+  // max gene in the population
+  data_file.AddFun<double>([this]()
+  {
+    return MaxPopGene();
+  }, "pop_max_gene", "Maximum gene value found in the population!");
 
   data_file.PrintHeaderKeys();
 
@@ -1198,6 +1222,50 @@ void DiagWorld::ContradictoryObjectives()
   std::cout << "Weak ecology diagnotic set!" << std::endl;
 }
 
+void DiagWorld::MultiValleyCrossing()
+{
+  // fill in the penalty vector
+  valley_widths.reserve(config.OBJECTIVE_CNT());
+  size_t start = 0;
+
+  for(size_t i = 1; i <= 13; ++i)
+  {
+      for(size_t j = start; j < start + i; ++j)
+      {
+        valley_widths.push_back(start);
+      }
+
+      start += i;
+  }
+
+  for(size_t i = start; i < config.OBJECTIVE_CNT(); ++i)
+  {
+    valley_widths.push_back(start);
+  }
+
+  evaluate = [this](Org & org)
+  {
+    // set score & aggregate
+    score_t score = diagnostic->MultiValleyCrossing(org.GetGenome(), valley_widths);
+    org.SetScore(score);
+    org.AggregateScore();
+
+    // set the starting position
+    org.StartPosition();
+
+    // set optimal vector and count
+    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
+    org.SetOptimal(opti);
+    org.CountOptimized();
+
+    // set streak
+    org.CalcStreak();
+
+    return org.GetAggregate();
+  };
+}
+
+
 ///< data tracking
 
 size_t DiagWorld::UniqueObjective()
@@ -1301,6 +1369,39 @@ size_t DiagWorld::ActivationGeneOverlap()
   }
 }
 
+double DiagWorld::MaxPopTrait()
+{
+  // iterate pop to check is a solution has the objective optimized
+  double max = -1000000.0;
+  for(size_t p = 0; p < pop.size(); ++p)
+  {
+    Org & org = *pop[p];
+
+    if(max < org.GetMaxTrait())
+    {
+      max = org.GetMaxTrait();
+    }
+  }
+
+  return max;
+}
+
+double DiagWorld::MaxPopGene()
+{
+  // iterate pop to check is a solution has the objective optimized
+  double max = 0.0;
+  for(size_t p = 0; p < pop.size(); ++p)
+  {
+    Org & org = *pop[p];
+
+    for(auto & g : org.GetGenome())
+    {
+      if(max < g) {max = g;}
+    }
+  }
+
+  return max;
+}
 
 ///< helper functions
 

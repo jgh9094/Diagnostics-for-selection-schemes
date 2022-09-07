@@ -93,6 +93,15 @@ class Org
     bool GetCounted() {return counted;}
     // get streak bool
     bool GetStreaked() {return streaked;}
+    // get max trait
+    double GetMaxTrait()
+    {
+      // quick checks
+      emp_assert(start); emp_assert(0 < M);
+      emp_assert(score.size() == M);
+
+      return score[start_pos];
+    }
 
     ///< setters
 
@@ -304,7 +313,7 @@ size_t Org::StartPosition()
 
   // find max value position
   auto opti_it = std::max_element(score.begin(), score.end());
-  start_pos = std::distance(score.begin(), opti_it);
+  SetStart(std::distance(score.begin(), opti_it));
 
   return start_pos;
 }

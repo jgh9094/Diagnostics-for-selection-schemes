@@ -15,6 +15,7 @@ class Diagnostic
     using target_t = emp::vector<double>;
     using score_t = emp::vector<double>;
     using genome_t = emp::vector<double>;
+    using ids_t = emp::vector<size_t>;
     using opti_t = emp::vector<bool>;
 
   public:
@@ -40,6 +41,23 @@ class Diagnostic
     ///< Functions that deal with diagnostic problem scoring
 
     /**
+     * Multi-valley Crossing function:
+     *
+     * Solutions are pressured to cross valleys of different widths at each trait.
+     * We use the penalty vector supplied to calculate the penalty at each valley.
+     * We use the difference between the gene value and penalty value to determine
+     * the reduction when calculating the trait value.
+     *
+     * trait[i] = gene[i] - penalty
+     *
+     * @param g Genome from organism being evaluated.
+     * @param max_credit This value is the maximum credit assigned when structure broken
+     *
+     * @return score vector that is calculated from 'g'.
+     */
+    score_t MultiValleyCrossing(const genome_t & g, const ids_t & peak);
+
+    /**
      * Multi-path Exploration function:
      *
      * Solutions are pressured to optimize genomes in descending order.
@@ -51,8 +69,6 @@ class Diagnostic
      * Note solutions are responsible for optimizing from the start of genome.
      *
      * @param g Genome from organism being evaluated.
-     * @param max_credit This value is the maximum credit assigned when structure broken
-     *
      * @return score vector that is calculated from 'g'.
      */
     score_t MultiPathExploration(const genome_t & g);
@@ -213,6 +229,25 @@ Diagnostic::score_t Diagnostic::OrderedExploitation(const genome_t & g)
 
     // everything after unsorted
     for(size_t i = cutoff; i < score.size(); ++i) {score[i] = max_cred;}
+  }
+
+  return score;
+}
+
+Diagnostic::score_t Diagnostic::MultiValleyCrossing(const genome_t & g, const ids_t & peak)
+{
+  // quick checks
+  emp_assert(g.size() > 0); emp_assert(cred_set);
+  emp_assert(peak.size() > 0);
+
+  // intialize vector with size g
+  score_t score(g.size());
+
+  for(size_t i = 0; i < g.size(); ++i)
+  {
+    size_t hash = static_cast<size_t>(g[i]);
+    double p = static_cast<double>(peak[hash]);
+    score[i] = (2 * p) - g[i];
   }
 
   return score;
