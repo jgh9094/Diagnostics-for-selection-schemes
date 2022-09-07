@@ -206,7 +206,7 @@ class DiagWorld : public emp::World<Org>
     // generations since solution added to archive
     size_t archive_gens = 0;
     // hash vector with penalties for multi-valley crossing
-    ids_t valley_widths;
+    score_t peaks;
 
 
     // evaluation lambda we set
@@ -1225,28 +1225,41 @@ void DiagWorld::ContradictoryObjectives()
 void DiagWorld::MultiValleyCrossing()
 {
   // fill in the penalty vector
-  valley_widths.reserve(config.OBJECTIVE_CNT());
-  size_t start = 0;
 
-  for(size_t i = 1; i <= 13; ++i)
-  {
-      for(size_t j = start; j < start + i; ++j)
-      {
-        valley_widths.push_back(start);
-      }
+  peaks = { -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,  8.0,  9.0,
+     9.0, 11.0, 11.0, 11.0, 14.0, 14.0, 14.0, 14.0, 18.0, 18.0,
+    18.0, 18.0, 18.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 29.0,
+    29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 36.0, 36.0, 36.0, 36.0,
+    36.0, 36.0, 36.0, 36.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0,
+    44.0, 44.0, 44.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0,
+    53.0, 53.0, 53.0, 63.0, 63.0, 63.0, 63.0, 63.0, 63.0, 63.0,
+    63.0, 63.0, 63.0, 63.0, 74.0, 74.0, 74.0, 74.0, 74.0, 74.0,
+    74.0, 74.0, 74.0, 74.0, 74.0, 74.0, 86.0, 86.0, 86.0, 86.0,
+    86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 99.0
+  };
 
-      start += i;
-  }
+  // peaks.reserve(config.OBJECTIVE_CNT());
+  // size_t start = 0;
 
-  for(size_t i = start; i < config.OBJECTIVE_CNT(); ++i)
-  {
-    valley_widths.push_back(start);
-  }
+  // for(size_t i = 1; i <= 13; ++i)
+  // {
+  //     for(size_t j = start; j < start + i; ++j)
+  //     {
+  //       peaks.push_back(start);
+  //     }
+
+  //     start += i;
+  // }
+
+  // for(size_t i = start; i < config.OBJECTIVE_CNT(); ++i)
+  // {
+  //   peaks.push_back(start);
+  // }
 
   evaluate = [this](Org & org)
   {
     // set score & aggregate
-    score_t score = diagnostic->MultiValleyCrossing(org.GetGenome(), valley_widths);
+    score_t score = diagnostic->MultiValleyCrossing(org.GetGenome(), peaks);
     org.SetScore(score);
     org.AggregateScore();
 

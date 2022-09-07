@@ -15,7 +15,6 @@ class Diagnostic
     using target_t = emp::vector<double>;
     using score_t = emp::vector<double>;
     using genome_t = emp::vector<double>;
-    using ids_t = emp::vector<size_t>;
     using opti_t = emp::vector<bool>;
 
   public:
@@ -55,7 +54,7 @@ class Diagnostic
      *
      * @return score vector that is calculated from 'g'.
      */
-    score_t MultiValleyCrossing(const genome_t & g, const ids_t & peak);
+    score_t MultiValleyCrossing(const genome_t & g, const score_t & peak);
 
     /**
      * Multi-path Exploration function:
@@ -234,7 +233,7 @@ Diagnostic::score_t Diagnostic::OrderedExploitation(const genome_t & g)
   return score;
 }
 
-Diagnostic::score_t Diagnostic::MultiValleyCrossing(const genome_t & g, const ids_t & peak)
+Diagnostic::score_t Diagnostic::MultiValleyCrossing(const genome_t & g, const score_t & peak)
 {
   // quick checks
   emp_assert(g.size() > 0); emp_assert(cred_set);
@@ -242,12 +241,18 @@ Diagnostic::score_t Diagnostic::MultiValleyCrossing(const genome_t & g, const id
 
   // intialize vector with size g
   score_t score(g.size());
+  constexpr double start_val = 8.0; // Where do the dips start?
 
   for(size_t i = 0; i < g.size(); ++i)
   {
-    size_t hash = static_cast<size_t>(g[i]);
-    double p = static_cast<double>(peak[hash]);
-    score[i] = (2 * p) - g[i];
+    if (g[i] <= start_val || g[i] >= 99.0)
+    {
+      score[i] = g[i];
+    }
+    else
+    {
+      score[i] = 2 * peak[(size_t) g[i]] - g[i];
+    }
   }
 
   return score;
