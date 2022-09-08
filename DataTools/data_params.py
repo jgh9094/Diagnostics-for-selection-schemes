@@ -39,6 +39,8 @@ ARCHIVE_CNT = 'archive_cnt'
 PMIN = 'pmin'
 ARC_ACTI_GENE = 'arc_acti_gene'
 OVERLAP = 'overlap'
+POP_MAX_TRT = 'pop_max_trt'
+POP_MAX_GENE = 'pop_max_gene'
 
 # seed experiements replicates range
 REPLICATES = 50
@@ -77,6 +79,8 @@ def SetDiagnostic(s):
         return 'CONTRADICTORY_OBJECTIVES'
     elif s == 3:
         return 'MULTIPATH_EXPLORATION'
+    elif s == 4:
+        return 'MULTIVALLEY_CROSSING'
     else:
         sys.exit('UNKNOWN DIAGNOSTIC')
 
