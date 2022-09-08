@@ -116,7 +116,7 @@ def main():
     # Generate and get the arguments
     parser = argparse.ArgumentParser(description="Data aggregation script.")
     parser.add_argument("data_directory", type=str, help="Target experiment directory.")
-    parser.add_argument("selection",      type=int, help="Selection scheme we are looking for? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n4: Espilon Lexicase\n6: Nondominated Sorting\n7: Novelty Search")
+    parser.add_argument("selection",      type=int, help="Selection scheme we are looking for? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n3: Espilon Lexicase\n4: Nondominated Sorting\n5: Novelty Search")
     parser.add_argument("diagnostic",     type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Ordered Exploitation\n2: Contradictory Objectives\n3: Multi-path Exploration\n4: Multi-valley Crossing")
     parser.add_argument("seed_offset",    type=int, help="Experiment seed offset.")
     parser.add_argument("objectives",     type=str, help="Number of objectives being optimized")
