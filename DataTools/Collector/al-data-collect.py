@@ -87,21 +87,23 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
             cdf = pd.DataFrame(
                 {   'gen': pd.Series(GEN_LIST),
                     'trt': pd.Series(TRT),
-                    data_params.POP_FIT_AVG: pd.Series(df[data_params.POP_FIT_AVG].tolist()),
-                    data_params.POP_FIT_MAX: pd.Series(df[data_params.POP_FIT_MAX].tolist()),
-                    data_params.POP_OPT_AVG: pd.Series(df[data_params.POP_OPT_AVG].tolist()),
-                    data_params.POP_OPT_MAX: pd.Series(df[data_params.POP_OPT_MAX].tolist()),
-                    data_params.POP_UNI_OBJ: pd.Series(df[data_params.POP_UNI_OBJ].tolist()),
-                    data_params.POP_STR_AVG: pd.Series(df[data_params.POP_STR_AVG].tolist()),
-                    data_params.POP_STR_MAX: pd.Series(df[data_params.POP_STR_MAX].tolist()),
-                    data_params.ELE_AGG_PER: pd.Series(df[data_params.ELE_AGG_PER].tolist()),
-                    data_params.ELE_OPT_CNT: pd.Series(df[data_params.ELE_OPT_CNT].tolist()),
+                    data_params.POP_FIT_AVG:   pd.Series(df[data_params.POP_FIT_AVG].tolist()),
+                    data_params.POP_FIT_MAX:   pd.Series(df[data_params.POP_FIT_MAX].tolist()),
+                    data_params.POP_OPT_AVG:   pd.Series(df[data_params.POP_OPT_AVG].tolist()),
+                    data_params.POP_OPT_MAX:   pd.Series(df[data_params.POP_OPT_MAX].tolist()),
+                    data_params.POP_UNI_OBJ:   pd.Series(df[data_params.POP_UNI_OBJ].tolist()),
+                    data_params.POP_STR_AVG:   pd.Series(df[data_params.POP_STR_AVG].tolist()),
+                    data_params.POP_STR_MAX:   pd.Series(df[data_params.POP_STR_MAX].tolist()),
+                    data_params.ELE_AGG_PER:   pd.Series(df[data_params.ELE_AGG_PER].tolist()),
+                    data_params.ELE_OPT_CNT:   pd.Series(df[data_params.ELE_OPT_CNT].tolist()),
                     data_params.ARC_ACTI_GENE: pd.Series(df[data_params.ARC_ACTI_GENE].tolist()),
-                    data_params.OVERLAP: pd.Series(df[data_params.OVERLAP].tolist()),
-                    data_params.ARCHIVE_CNT: pd.Series(df[data_params.ARCHIVE_CNT].tolist()),
-                    data_params.UNI_STR_POS:  pd.Series(df[data_params.UNI_STR_POS].tolist()),
-                    data_params.PMIN:        pd.Series(df[data_params.PMIN].tolist()),
-                    data_params.PARETO_CNT :  pd.Series(df[data_params.PARETO_CNT].tolist())
+                    data_params.OVERLAP:       pd.Series(df[data_params.OVERLAP].tolist()),
+                    data_params.ARCHIVE_CNT:   pd.Series(df[data_params.ARCHIVE_CNT].tolist()),
+                    data_params.UNI_STR_POS:   pd.Series(df[data_params.UNI_STR_POS].tolist()),
+                    data_params.PMIN:          pd.Series(df[data_params.PMIN].tolist()),
+                    data_params.POP_MAX_TRT:   pd.Series(df[data_params.POP_MAX_TRT].tolist()),
+                    data_params.POP_MAX_GENE:  pd.Series(df[data_params.POP_MAX_GENE].tolist()),
+                    data_params.PARETO_CNT :   pd.Series(df[data_params.PARETO_CNT].tolist())
                 })
             DF_LIST.append(cdf)
 

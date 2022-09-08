@@ -69,7 +69,8 @@ def DirExplore(data, dump, sel, dia, offs, obj, acc, gens, pt):
             data_params.POP_OPT_MAX, data_params.POP_UNI_OBJ, data_params.POP_STR_AVG,
             data_params.POP_STR_MAX, data_params.ELE_AGG_PER, data_params.ELE_OPT_CNT,
             data_params.ARC_ACTI_GENE, data_params.OVERLAP, data_params.ARCHIVE_CNT,
-            data_params.UNI_STR_POS, data_params.PMIN, data_params.PARETO_CNT }
+            data_params.UNI_STR_POS, data_params.PMIN, data_params.POP_MAX_TRT,
+            data_params.POP_MAX_GENE, data_params.PARETO_CNT }
 
     for s in SEEDS:
         seed = str(s + offs)
