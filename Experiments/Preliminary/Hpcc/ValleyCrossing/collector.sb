@@ -94,7 +94,7 @@ fi
 ####################################################################
 
 # make a dump directory
-mkdir -p ${DUMP}
+mkdir -p ${DUMP_DIR}
 
 echo "python3 ../../../../DataTools/Collector/al-data-collect.py ${DATA_DIR} ${DUMP_DIR} ${SELECTION} ${DIAGNOSTIC} ${SEED} ${RESOLUTION} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
 
