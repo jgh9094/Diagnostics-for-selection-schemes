@@ -1,0 +1,101 @@
+#!/bin/bash
+########## Define Resources Needed with SBATCH Lines ##########
+
+#SBATCH --time=00:20:00               # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --array=1-7                   # number of jobs being created, each with its array id
+#SBATCH --mem=10G                     # memory required per node - amount of memory (in gigs)
+#SBATCH --job-name al-dat             # you can give your job a name for easier identification (same as -J)
+#SBATCH --account=devolab             # research group account being used
+
+##################################
+# SETUP RELEVANT DIRECTORIES
+##################################
+DATA_DIR=/mnt/gs21/scratch/herna383/VALLEY-CROSSING/
+DUMP_DIR=/mnt/home/herna383/Diagnostics/VALLEY-CROSSING-PRELIM/
+
+##################################
+# SETUP RELEVANT DIRECTORIES
+# PREVIOUSLY USED ONES WILL BE COMMENTED OUT
+##################################
+SLURM_ID=$((SLURM_ARRAY_TASK_ID))
+
+##################################
+# Setup selection scheme
+##################################
+TRUNCATION=1
+TOURNAMENT=2
+FITSHARING=3
+LEXICASE=4
+NONDOMINATED=5
+NOVELTY=6
+FITSHARING_P=7
+
+##################################
+# Setup diagnostic
+##################################
+MULTIVALLEY_CROSSING=4
+
+##################################
+# Other variables needed
+##################################
+RESOLUTION=100
+OBJECTIVE_CNT=100
+GENERATIONS=50000
+ACCURACY_DIR=99
+
+####################################################################
+
+if [ ${SLURM_ID} -eq ${TRUNCATION} ] ; then
+  SECOND_PARAM=0
+  SEED=31000
+  DIAGNOSTIC=${MULTIVALLEY_CROSSING}
+  SELECTION=0
+
+elif [ ${SLURM_ID} -eq ${TOURNAMENT} ] ; then
+  SECOND_PARAM=0
+  SEED=30000
+  DIAGNOSTIC=${MULTIVALLEY_CROSSING}
+  SELECTION=1
+
+elif [ ${SLURM_ID} -eq ${FITSHARING} ] ; then
+  SECOND_PARAM=0
+  SEED=32000
+  DIAGNOSTIC=${MULTIVALLEY_CROSSING}
+  SELECTION=2
+
+elif [ ${SLURM_ID} -eq ${FITSHARING_P} ] ; then
+  SECOND_PARAM=1
+  SEED=33000
+  DIAGNOSTIC=${MULTIVALLEY_CROSSING}
+  SELECTION=2
+
+elif [ ${SLURM_ID} -eq ${LEXICASE} ] ; then
+  SECOND_PARAM=0
+  SEED=35000
+  DIAGNOSTIC=${MULTIVALLEY_CROSSING}
+  SELECTION=3
+
+elif [ ${SLURM_ID} -eq ${NONDOMINATED} ] ; then
+  SECOND_PARAM=0
+  SEED=36000
+  DIAGNOSTIC=${MULTIVALLEY_CROSSING}
+  SELECTION=4
+
+elif [ ${SLURM_ID} -eq ${NOVELTY} ] ; then
+  SECOND_PARAM=0
+  SEED=34000
+  DIAGNOSTIC=${MULTIVALLEY_CROSSING}
+  SELECTION=5
+
+else
+  echo "${SEED} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
+fi
+
+####################################################################
+
+# make a dump directory
+mkdir -p ${DUMP_DIR}
+
+echo "python3 ../../../../DataTools/Collector/max-val-collect.py ${DATA_DIR} ${DUMP_DIR} ${SELECTION} ${DIAGNOSTIC} ${SEED} ${RESOLUTION} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
+
+python3 ../../../../DataTools/Collector/max-val-collect.py ${DATA_DIR} ${DUMP_DIR} ${SELECTION} ${DIAGNOSTIC} ${SEED} ${RESOLUTION} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
