@@ -32,6 +32,7 @@ class Org
       M = _m;
       start_pos = _m;
       streak = _m;
+      parent = _m;
       genome.resize(_m, START_DB);
     }
 
@@ -44,6 +45,8 @@ class Org
       start_pos = _g.size();
       streak = _g.size();
       genome.resize(M);
+      parent = _g.size();
+      // parented = true;
       std::copy(_g.begin(), _g.end(), genome.begin());
     }
 
@@ -79,7 +82,6 @@ class Org
     size_t GetStart() const {emp_assert(start_pos != M); return start_pos;}
     // get streak count
     size_t GetStreak() {emp_assert(streak != M); return streak;}
-    // get streak count
     size_t GetStreak() const {emp_assert(streak != M); return streak;}
     // Are we optimized at this objective?
     bool OptimizedAt(const size_t obj);
@@ -102,6 +104,8 @@ class Org
 
       return score[start_pos];
     }
+    // get parent id
+    double GetParent() {return parent;}
 
     ///< setters
 
@@ -155,6 +159,13 @@ class Org
       emp_assert(!streaked); emp_assert(0 < M);
       streaked = true;
       streak = s_;
+    }
+
+    void SetParent(size_t s_)
+    {
+      // emp_assert(!parented); emp_assert(0 < M);
+      // parented = true;
+      parent = s_;
     }
 
     ///< functions to calculate scores and related data
@@ -267,6 +278,10 @@ class Org
 
     // Are we a clone?
     bool clone = false;
+
+    // parent id
+    size_t parent = 0;
+    bool parented = false;
 };
 
 ///< getters with extra
