@@ -251,7 +251,7 @@ Diagnostic::score_t Diagnostic::MultiValleyCrossing(const genome_t & g, const sc
     }
     else
     {
-      score[i] = 2 * peak[(size_t) g[i]] - g[i];
+      score[i] = 2.0 * peak[(size_t) g[i]] - g[i];
     }
   }
 
