@@ -73,6 +73,11 @@ class DiagWorld : public emp::World<Org>
       // set random pointer seed
       random_ptr = emp::NewPtr<emp::Random>(config.SEED());
 
+      mutations_txt_0.open("./mutations-0.txt");
+      // mutations_txt_1.open("./mutations-1.txt");
+      // mutations_txt_2.open("./mutations-2.txt");
+      // mutations_txt_3.open("./mutations-3.txt");
+
       // initialize the world
       Initialize();
     }
@@ -189,6 +194,10 @@ class DiagWorld : public emp::World<Org>
     // update archive data
     void ArchiveDataUpdate(const size_t org_id);
 
+    // record the population & parent id
+    void RecordPopulation();
+
+    size_t FindCommon();
 
   private:
     // experiment configurations
@@ -237,7 +246,15 @@ class DiagWorld : public emp::World<Org>
     // node to track streak counts
     nodeo_t pop_str;
     // csv file to track best performing solutions
-    std::ofstream elite_csv;
+    std::ofstream elite_pheno_csv;
+    std::ofstream elite_geno_csv;
+
+    // mutation data
+    std::ofstream mutations_txt_0;
+    std::ofstream mutations_txt_1;
+    std::ofstream mutations_txt_2;
+    std::ofstream mutations_txt_3;
+
 
     ///< data we are tracking during an evolutionary run
 
@@ -251,6 +268,8 @@ class DiagWorld : public emp::World<Org>
     size_t strk_pos;
     // population activation gene vector
     optimal_t pop_acti_gene;
+    // common solution dictionary
+    como_t common;
 
     // Pareto group count
     size_t pareto_cnt = 0;
@@ -301,6 +320,7 @@ void DiagWorld::SetOnUpdate()
   // set up the evolutionary algorithm
   OnUpdate([this](size_t gen)
   {
+
     // step 0: reset all data collection variables
     ResetData();
 
@@ -315,6 +335,8 @@ void DiagWorld::SetOnUpdate()
 
     // step 4: reproduce and create new solutions
     ReproductionStep();
+
+    mutations_txt_0 << "\n";
   });
 
   std::cout << "Finished setting the OnUpdate function! \n" << std::endl;
@@ -352,14 +374,26 @@ void DiagWorld::SetMutation()
         // mutation puts objective in the negatives
         else if(genome[i] + mut < config.LOWER_BND())
         {
-          // genome[i] = std::abs(genome[i] + mut) + config.LOWER_BND();
-          genome[i] = config.LOWER_BND();
+          genome[i] = std::abs(genome[i] + mut) + config.LOWER_BND();
+          // genome[i] = config.LOWER_BND();
         }
         else
         {
           // else we can simply add mutation
+
+          if(GetUpdate() == 37951)
+          {
+            std::cout << "i: " << i << std::endl;
+            std::cout << genome[i] + mut << " = " << genome[i] << " + " << mut << std::endl;
+          }
+
           genome[i] = genome[i] + mut;
         }
+        mutations_txt_0 << mut << ",";
+        // if(GetUpdate() <= 10000) {mutations_txt_0 << mut << ",";}
+        // else if(GetUpdate() <= 20000) {mutations_txt_1 << mut << ",";}
+        // else if(GetUpdate() <= 30000) {mutations_txt_2 << mut << ",";}
+        // else if(GetUpdate() <= 40000) {mutations_txt_3 << mut << ",";}
 
         ++mcnt;
       }
@@ -442,7 +476,12 @@ void DiagWorld::SetOnOffspringReady()
       org.MeClone();
       org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate(), parent.GetStart(), parent.GetStreak());
     }
-    else{org.Reset();}
+    else
+    {
+      org.Reset();
+    }
+
+    org.SetParent(parent_pos);
   });
 
   std::cout << "Finished setting OnOffspringReady function!\n" << std::endl;
@@ -617,6 +656,21 @@ void DiagWorld::SetDataTracking()
     return org.GetCount();
   }, "str_obj_cnt", "Otpimal solution aggregate performance");
 
+  // count of common solution in the population
+  // data_file.AddFun<size_t>([this]()
+  // {
+  //   // quick checks
+  //   emp_assert(0 < common.size());
+  //   emp_assert(comm_pos != config.POP_SIZE());
+
+  //   // find iterator to common org
+  //   const auto it = common.find(comm_pos);
+  //   emp_assert(it != common.end());
+  //   emp_assert(0 < it->second.size());
+
+  //   return it->second.size();
+  // }, "com_sol_cnt", "Count of genetically common solution!");
+
   // loss of diversity
   data_file.AddFun<double>([this]()
   {
@@ -737,16 +791,22 @@ void DiagWorld::SetDataTracking()
   data_file.PrintHeaderKeys();
 
   // create elite csv plus headers
-  elite_csv.open(config.OUTPUT_DIR() + "elite.csv");
+  elite_pheno_csv.open(config.OUTPUT_DIR() + "elite-pheno.csv");
+  elite_geno_csv.open(config.OUTPUT_DIR() + "elite-geno.csv");
 
-  std::string header = "Gen";
+  std::string header_pheno = "Gen";
+  std::string header_geno = "Gen";
   for(size_t i = 0; i < config.OBJECTIVE_CNT(); ++i)
   {
-    header += ",t";
-    header += std::to_string(i);
-  }
-  elite_csv << header << "\n";
+    header_pheno += ",t";
+    header_geno += ",g";
 
+    header_pheno += std::to_string(i);
+    header_geno += std::to_string(i);
+  }
+
+  elite_pheno_csv << header_pheno << "\n";
+  elite_geno_csv << header_geno << "\n";
 
   std::cout << "Finished setting data tracking!\n" << std::endl;
 }
@@ -799,6 +859,7 @@ void DiagWorld::ResetData()
   fit_vec.clear();
   parent_vec.clear();
   pop_acti_gene.clear();
+  common.clear();
 }
 
 void DiagWorld::EvaluationStep()
@@ -870,15 +931,25 @@ void DiagWorld::RecordData()
   data_file.Update();
 
   // record elite solution traits
-  std::string traits = std::to_string(update);
   Org & ele = *pop[elite_pos];
-  const auto & g = ele.GetScore();
-  for(size_t i = 0; i < g.size(); ++i)
+
+  std::string traits = std::to_string(update);
+  const auto & p = ele.GetScore();
+  for(size_t i = 0; i < p.size(); ++i)
   {
     traits += ",";
-    traits += std::to_string(g[i]);
+    traits += std::to_string(p[i]);
   }
-  elite_csv << traits << "\n";
+  elite_pheno_csv << traits << "\n";
+
+  std::string genes = std::to_string(update);
+  const auto & g = ele.GetGenome();
+  for(size_t i = 0; i < g.size(); ++i)
+  {
+    genes += ",";
+    genes += std::to_string(g[i]);
+  }
+  elite_geno_csv << genes << "\n";
 
 
   // output this so we know where we are in terms of generations and fitness
@@ -894,7 +965,11 @@ void DiagWorld::ReproductionStep()
   emp_assert(pop.size() == config.POP_SIZE());
 
   // go through parent ids and do births
-  for(auto & id : parent_vec){DoBirth(GetGenomeAt(id), id);}
+  for(auto & id : parent_vec)
+  {
+    // if(GetUpdate() == 583) {std::cout << "parent_vec: " << id << std::endl;}
+    DoBirth(GetGenomeAt(id), id);
+  }
 }
 
 
@@ -1238,24 +1313,6 @@ void DiagWorld::MultiValleyCrossing()
     86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 99.0
   };
 
-  // peaks.reserve(config.OBJECTIVE_CNT());
-  // size_t start = 0;
-
-  // for(size_t i = 1; i <= 13; ++i)
-  // {
-  //     for(size_t j = start; j < start + i; ++j)
-  //     {
-  //       peaks.push_back(start);
-  //     }
-
-  //     start += i;
-  // }
-
-  // for(size_t i = start; i < config.OBJECTIVE_CNT(); ++i)
-  // {
-  //   peaks.push_back(start);
-  // }
-
   evaluate = [this](Org & org)
   {
     // set score & aggregate
@@ -1332,12 +1389,15 @@ void DiagWorld::FindEverything()
   emp_assert(fit_vec.size() == config.POP_SIZE());
   emp_assert(pop_acti_gene.size() == 0);
   emp_assert(elite_pos == config.POP_SIZE());
+  emp_assert(comm_pos == config.POP_SIZE());
 
   // bools to make sure got everything
   bool elite_b = false,  opti_b = false, strk_b = false;
 
   // collect number of unique starting positions
   pop_acti_gene = optimal_t(config.OBJECTIVE_CNT(), false);
+
+  // comm_pos = FindCommon();
 
   // loop and get data
   for(size_t i = 0; i < pop.size(); ++i)
@@ -1526,6 +1586,86 @@ void DiagWorld::ArchiveDataUpdate(const size_t org_id)
       {
         arc_opti_trt[o] = true;
       }
+  }
+}
+
+size_t DiagWorld::FindCommon()
+{
+  // quick checks
+  emp_assert(pop.size() == config.POP_SIZE());
+  emp_assert(common.size() == 0);
+  emp_assert(comm_pos == config.POP_SIZE());
+
+  // iterate through pop and place in appropiate bin
+  for(size_t i = 0; i < pop.size(); ++i)
+  {
+    bool in_comm = false;
+    const Org & org = *pop[i];
+
+    // check if current org matches any of the existing keys
+    for(const auto & p : common)
+    {
+      // get key orgs data
+      const Org & korg = *pop[p.first];
+
+      // get euclidean distance between both genomes
+      const double dif = selection->Pnorm(org.GetGenome(), korg.GetGenome(), 2.0);
+
+      // if they are a match
+      if(dif == 0.0)
+      {
+        common[p.first].push_back(i);
+        in_comm = true;
+        break;
+      }
+    }
+
+    if(!in_comm)
+    {
+      ids_t first{i};
+      common[i] = first;
+    }
+  }
+
+  // iterate through common dictionary and find common org id
+  size_t max = 0; size_t max_pos = 0;
+  for(const auto & p : common)
+  {
+    if(max < p.second.size())
+    {
+      max_pos = p.first;
+      max = p.second.size();
+    }
+  }
+
+  return max_pos;
+}
+
+void DiagWorld::RecordPopulation()
+{
+  std::string file_name = "population-" + std::to_string(GetUpdate()) + ".csv";
+  std::ofstream pop_csv;
+  pop_csv.open(config.OUTPUT_DIR() + "DATA-VALLEY/FREE-FOR-ALL/" + file_name);
+
+  std::string header_geno = "parent,id";
+  for(size_t i = 0; i < config.OBJECTIVE_CNT(); ++i)
+  {
+    header_geno += ",g";
+    header_geno += std::to_string(i);
+  }
+
+  pop_csv << header_geno << "\n";
+
+  for(size_t p = 0; p < pop.size(); ++p)
+  {
+    Org & org = *pop[p];
+    std::string row = std::to_string((size_t)org.GetParent()) + "," + std::to_string((size_t) p);
+    for(const double & g : org.GetGenome())
+    {
+      row += "," + std::to_string(g);
+    }
+
+    pop_csv << row << "\n";
   }
 }
 
