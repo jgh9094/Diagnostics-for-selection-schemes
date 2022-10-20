@@ -1,16 +1,16 @@
-// This is the main function for the NATIVE version of this project.
+// runs the world
 
+// c++ headers
 #include <iostream>
 
-#include "base/vector.h"
-#include "config/command_line.h"
-#include "config/ArgManager.h"
+// empirical headers
+#include "emp/config/command_line.hpp"
+#include "emp/config/ArgManager.hpp"
 
+// our headers
 #include "../config.h"
 #include "../world.h"
 #include "../org.h"
-
-// Hello world
 
 int main(int argc, char* argv[])
 {
@@ -26,7 +26,6 @@ int main(int argc, char* argv[])
   config.Write(std::cout);
   std::cout << "==============================\n"
             << std::endl;
-
 
   DiagWorld world(config);
 
