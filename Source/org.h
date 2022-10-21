@@ -17,7 +17,7 @@ class Org
 {
   public:
     // genotype vector type
-    using genotype_t = emp::vector<double>;
+    using genome_t = emp::vector<double>;
     // phenotype vector type
     using phenotype_t = emp::vector<double>;
     // optimal gene vector type
@@ -28,7 +28,7 @@ class Org
     Org(size_t _m)
     {
       // quick checks
-      emp_assert(genotype.size() == 0); emp_assert(M == 0);
+      emp_assert(genotype.size() == 0); emp_assert(M == 0); emp_assert(!evaluated);
 
       // set all requried variables
       M = _m;
@@ -38,10 +38,12 @@ class Org
     }
 
     // every org after starting generation
-    Org(genotype_t _g)
+    Org(genome_t _g)
     {
       // quick checks
-      emp_assert(genotype.size() == 0); emp_assert(M == 0);
+      emp_assert(genotype.size() == 0); emp_assert(M == 0); emp_assert(!evaluated);
+
+      std::cout << "Creating new org from genome" << std::endl;
 
       // set all requried variables
       M = _g.size();
@@ -51,8 +53,8 @@ class Org
     }
 
     // ask Charles
-    Org(const Org &) = default;
-    Org(Org &&) = default;
+    Org(const Org &) = delete;
+    Org(Org &&) = delete;
     ~Org() { ; }
     Org &operator=(const Org &) = default;
     Org &operator=(Org &&) = default;
@@ -60,11 +62,11 @@ class Org
     ///< getters
 
     // const + reference to
-    const genotype_t & GetGenotype() const {emp_assert(0 < genotype.size()); return genotype;}
+    const genome_t & GetGenome() const {emp_assert(0 < genotype.size()); return genotype;}
     const phenotype_t & GetPhenotype() const {emp_assert(evaluated); return phenotype;}
     const optimal_t & GetOptimal() const {emp_assert(opti); return optimal;}
     // reference to
-    genotype_t & GetGenotype() {emp_assert(0 < genotype.size()); return genotype;}
+    genome_t & GetGenome() {emp_assert(0 < genotype.size()); return genotype;}
     phenotype_t & GetPhenotype() {emp_assert(evaluated); return phenotype;}
     optimal_t & GetOptimal() {emp_assert(opti); return optimal;}
     // get const aggregate fitness
@@ -109,12 +111,12 @@ class Org
     ///< setters
 
     // set phenotype vector (recieved from problem.h in world.h or inherited from parent)
-    void SetScore(const phenotype_t & s_)
+    void SetPhenotype(const phenotype_t & p_)
     {
       // make sure that phenotype vector hasn't been set before.
-      emp_assert(!evaluated); emp_assert(s_.size() == M); emp_assert(phenotype.size() == 0); emp_assert(0 < M);
+      emp_assert(!evaluated); emp_assert(p_.size() == M); emp_assert(phenotype.size() == 0); emp_assert(0 < M);
       evaluated = true;
-      phenotype = s_;
+      phenotype = p_;
     }
 
     // set the optimal gene vector (recieved from problem.h in world.h or inherited from parent)
@@ -232,7 +234,7 @@ class Org
 
   private:
     // organism genotype vector
-    genotype_t genotype;
+    genome_t genotype;
 
     // organism phenotype vector
     phenotype_t phenotype;
@@ -387,7 +389,7 @@ void Org::Inherit(const phenotype_t & s, const optimal_t & o, const size_t c, co
   emp_assert(0 < M); emp_assert(0 < genotype.size()); emp_assert(clone);
 
   // copy everything into offspring solution
-  SetScore(s);
+  SetPhenotype(s);
   SetOptimal(o);
   SetCount(c);
   SetAggregate(a);
