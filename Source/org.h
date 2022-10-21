@@ -43,8 +43,6 @@ class Org
       // quick checks
       emp_assert(genome.size() == 0); emp_assert(M == 0); emp_assert(!evaluated);
 
-      std::cout << "Creating new org from genome" << std::endl;
-
       // set all requried variables
       M = _g.size();
       start_pos = _g.size();
