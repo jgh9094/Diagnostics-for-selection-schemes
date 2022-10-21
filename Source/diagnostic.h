@@ -34,81 +34,77 @@ class Diagnostic
     ///< Functions that deal with diagnostic problem scoring
 
     /**
-     * Multi-valley Crossing function:
-     *
-     * Solutions are pressured to cross valleys of different widths at each trait.
-     * We use the penalty vector supplied to calculate the penalty at each valley.
-     * We use the difference between the gene value and penalty value to determine
-     * the reduction when calculating the trait value.
-     *
-     * phenotype[i] = genotype[i] - penalty
-     *
-     * @param g Genotype from organism being evaluated.
-     * @param max_credit This value is the maximum credit assigned when structure broken
-     *
-     * @return phenotype vector that is calculated from 'g'.
-     */
-    phenotype_t MultiValleyCrossing(const genotype_t & g, const phenotype_t & peaks, double & dips_start, double & dips_end);
-
-    /**
-     * Multi-path Exploration function:
-     *
-     * Solutions are pressured to optimize genomes in descending order.
-     * With the caveat that solutions are resposible for optimizizing from start to end.
-     * To calculate phenotype vector, first we find the maximum gene value i*.
-     * Once i* is found, every position after (include i* position) for phenotype vector is set to genome value associated with that position.
-     * This only continues until descending order is broken.
-     * Once order is broken, remaining values are set to max error (include other phenotype vector values prior to i* if applicable).
-     * Note solutions are responsible for optimizing from the start of genome.
-     *
-     * @param g Genotype from organism being evaluated.
-     * @return phenotype vector that is calculated from 'g'.
-     */
-    phenotype_t MultiPathExploration(const genotype_t & g);
-
-    /**
      * Exploitation function:
      *
      * All genes in genome evaluated treated as independent optimization tasks.
      * In other words, there is no interactions between genes.
      * The phenotype vector is just the genome, with the caveat that genes cannot go over associated target value.
      *
-     * @param g Genotype from organism being evaluated.
+     * @param g genotype from organism being evaluated.
      *
      * @return phenotype vector that is calculated from 'g'.
      */
     phenotype_t ExploitationRate(const genotype_t & g);
 
     /**
-     * Weak Phenotypic Diversity Ecology function:
+     * Ordered Exploitation function:
      *
-     * All genes are associated with a single type of resource.
-     * Solutions are pressured to optimize one maximaly, while other genes drift if they are not the maximum one.
-     * To calculate phenotype vector, first we find the maximum gene value i*.
-     * Once i* is found, phenotype vector value at every other position every other is 0.
-     * Score vector value where i* is found is i*.
+     * All genes in genome expected to follow descending order for evaluation.
+     * While in decending order, phenotype[i] = genotype[i].
+     * If descending order is broken, max_credit is assigned to each following trait .
+     * Note that this problem explicitly forces optimization from start to end.
      *
-     * @param g Genotype from organism being evaluated.
+     * @param g genotype from organism being evaluated.
+     *
+     * @return phenotype vector that is calculated from 'g'.
+     */
+    phenotype_t OrderedExploitation(const genotype_t & g);
+
+    /**
+     * Contradictory Objectives function:
+     *
+     * Solutions are pressured to optimize one gene, while all other genes are ignored and set to max_credit.
+     * To calculate phenotype vector, first we find the maximum gene value at position i.
+     * After, phenotype[i] = genotype[i], and every every other trait is set to max_credit.
+     *
+     * @param g genotype from organism being evaluated.
      *
      * @return phenotype vector that is calculated from 'g'.
      */
     phenotype_t ContradictoryObjectives(const genotype_t & g);
 
     /**
-     * Ordered Exploitation function:
+     * Multi-path Exploration function:
      *
-     * All genes in genome expected to follow descending order for evaluation.
-     * While in decending order, phenotype vector value at positon 'i' is gene value at position 'i'.
-     * If descending order is broken, max error assigned at position descending order is broken in phenotype vector, and after.
-     * Assuming that genes in genome cannot go over the target vector per position in genome.
-     * Note that this problem explicitly forces optimization from start to end.
+     * Solutions are must be able to simultaneously explore multiple pathways, with the goal of pursuing the one that leads to the optimum.
+     * To calculate phenotype vector, first we find the maximum gene value at position i.
+     * From that gene forward, while genes follow decending order, phenotype[i] = genotype[i].
+     * This process stops until the decending order is broken, or the end of the genotype is reached.
+     * Note, the optimum is reached when i = 0, the start of the genotype.
      *
-     * @param g Genotype from organism being evaluated.
+     * @param g genotype from organism being evaluated.
+     * @return phenotype vector that is calculated from 'g'.
+     */
+    phenotype_t MultiPathExploration(const genotype_t & g);
+
+    /**
+     * Multi-valley Crossing function:
+     *
+     * Solutions are pressured to cross valleys of different widths at each gene.
+     * We use a peaks vector that supplied to calculate the penalty at each valley.
+     * We use the difference between the gene value and penalty value to determine
+     * the reduction when calculating the trait value.
+     *
+     * phenotype[i] = peaks[ floor(genotype[i]) ] -  (genotype[i] - peaks[ floor(genotype[i]) ])
+     *
+     * @param g genotype from organism being evaluated.
+     * @param peaks vector of peaks for each floored gene value
+     * @param dips_start gene value where peaks begin
+     * @param dips_end gene value where dips end
      *
      * @return phenotype vector that is calculated from 'g'.
      */
-    phenotype_t OrderedExploitation(const genotype_t & g);
-
+    phenotype_t MultiValleyCrossing(const genotype_t & g, const phenotype_t & peaks, const double & dips_start, const double & dips_end);
 
     ///< Functions that deal with interpretation of phenotype vectors
 
@@ -226,7 +222,7 @@ Diagnostic::phenotype_t Diagnostic::MultiPathExploration(const genotype_t & g)
   return phenotype;
 }
 
-Diagnostic::phenotype_t Diagnostic::MultiValleyCrossing(const genotype_t & g, const phenotype_t & peaks, double & dips_start, double & dips_end)
+Diagnostic::phenotype_t Diagnostic::MultiValleyCrossing(const genotype_t & g, const phenotype_t & peaks, const double & dips_start, const double & dips_end)
 {
   // quick checks
   emp_assert(g.size() > 0); emp_assert(cred_set);
