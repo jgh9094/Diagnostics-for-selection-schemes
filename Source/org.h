@@ -1,4 +1,4 @@
-/// digital organisms (real number vectors) for the diagnostic experiments
+/// organims class that holds its genotype and phenotype, both numerical vectors of a predetermined dimensionality
 
 #ifndef ORG_H
 #define ORG_H
@@ -7,7 +7,7 @@
 #include <algorithm>
 
 ///< empirical headers
-#include "base/vector.h"
+#include "emp/base/vector.hpp"
 
 ///< coordiante we start from
 constexpr double START_DB = 0.0;
@@ -16,10 +16,10 @@ constexpr size_t START_ST = 0;
 class Org
 {
   public:
-    // genome vector type
-    using genome_t = emp::vector<double>;
-    // score vector type
-    using score_t = emp::vector<double>;
+    // genotype vector type
+    using genotype_t = emp::vector<double>;
+    // phenotype vector type
+    using phenotype_t = emp::vector<double>;
     // optimal gene vector type
     using optimal_t = emp::vector<bool>;
 
@@ -27,27 +27,27 @@ class Org
     // for initial population
     Org(size_t _m)
     {
-      // make sure nun weird is happening
-      emp_assert(genome.size() == 0); emp_assert(M == 0);
+      // quick checks
+      emp_assert(genotype.size() == 0); emp_assert(M == 0);
+
+      // set all requried variables
       M = _m;
       start_pos = _m;
       streak = _m;
-      parent = _m;
-      genome.resize(_m, START_DB);
+      genotype.resize(_m, START_DB);
     }
 
     // every org after starting generation
-    Org(genome_t _g)
+    Org(genotype_t _g)
     {
-      // make sure we aren't seeing anything weird
-      emp_assert(genome.size() == 0); emp_assert(M == 0);
+      // quick checks
+      emp_assert(genotype.size() == 0); emp_assert(M == 0);
+
+      // set all requried variables
       M = _g.size();
       start_pos = _g.size();
       streak = _g.size();
-      genome.resize(M);
-      parent = _g.size();
-      // parented = true;
-      std::copy(_g.begin(), _g.end(), genome.begin());
+      genotype = _g;
     }
 
     // ask Charles
@@ -60,19 +60,19 @@ class Org
     ///< getters
 
     // const + reference to
-    const genome_t & GetGenome() const {emp_assert(0 < genome.size()); return genome;}
-    const score_t & GetScore() const {emp_assert(scored); return score;}
+    const genotype_t & GetGenotype() const {emp_assert(0 < genotype.size()); return genotype;}
+    const phenotype_t & GetPhenotype() const {emp_assert(evaluated); return phenotype;}
     const optimal_t & GetOptimal() const {emp_assert(opti); return optimal;}
     // reference to
-    genome_t & GetGenome() {emp_assert(0 < genome.size()); return genome;}
-    score_t & GetScore() {emp_assert(scored); return score;}
+    genotype_t & GetGenotype() {emp_assert(0 < genotype.size()); return genotype;}
+    phenotype_t & GetPhenotype() {emp_assert(evaluated); return phenotype;}
     optimal_t & GetOptimal() {emp_assert(opti); return optimal;}
     // get const aggregate fitness
-    double GetAggregate() {emp_assert(aggregated); return agg_score;}
+    double GetAggregate() {emp_assert(aggregated); return aggregate;}
     // get const aggregate fitness
-    double GetAggregate()const {emp_assert(aggregated); return agg_score;}
+    double GetAggregate()const {emp_assert(aggregated); return aggregate;}
     // get clone bool
-    bool GetClone() const {emp_assert(0 < genome.size()); return clone;}
+    bool GetClone() const {emp_assert(0 < genotype.size()); return clone;}
     // get optimal
     size_t GetCount() const {emp_assert(counted); return count;}
     // get gene count
@@ -85,8 +85,8 @@ class Org
     size_t GetStreak() const {emp_assert(streak != M); return streak;}
     // Are we optimized at this objective?
     bool OptimizedAt(const size_t obj);
-    // get scored bool
-    bool GetScored() {return scored;}
+    // get evaluated bool
+    bool GetEvaluated() {return evaluated;}
     // get optimal bool
     bool GetOpti() {return opti;}
     // get aggregated bool
@@ -100,23 +100,21 @@ class Org
     {
       // quick checks
       emp_assert(start); emp_assert(0 < M);
-      emp_assert(score.size() == M);
+      emp_assert(phenotype.size() == M);
 
-      return score[start_pos];
+      return phenotype[start_pos];
     }
-    // get parent id
-    double GetParent() {return parent;}
+
 
     ///< setters
 
-    // set score vector (recieved from problem.h in world.h or inherited from parent)
-    void SetScore(const score_t & s_)
+    // set phenotype vector (recieved from problem.h in world.h or inherited from parent)
+    void SetScore(const phenotype_t & s_)
     {
-      // make sure that score vector hasn't been set before.
-      emp_assert(!scored); emp_assert(s_.size() == M); emp_assert(score.size() == 0); emp_assert(0 < M);
-      scored = true;
-      score.resize(s_.size());
-      std::copy(s_.begin(), s_.end(), score.begin());
+      // make sure that phenotype vector hasn't been set before.
+      emp_assert(!evaluated); emp_assert(s_.size() == M); emp_assert(phenotype.size() == 0); emp_assert(0 < M);
+      evaluated = true;
+      phenotype = s_;
     }
 
     // set the optimal gene vector (recieved from problem.h in world.h or inherited from parent)
@@ -125,8 +123,7 @@ class Org
       // make sure that optimal gene vector hasn't been set before.
       emp_assert(!opti); emp_assert(o_.size() == M); emp_assert(optimal.size() == 0); emp_assert(0 < M);
       opti = true;
-      optimal.resize(o_.size());
-      std::copy(o_.begin(), o_.end(), optimal.begin());
+      optimal = o_;
     }
 
     // set the optimal gene count (called from world.h or inherited from parent)
@@ -137,12 +134,12 @@ class Org
       count = c_;
     }
 
-    // set the aggregated score (called from world.h or inherited from parent)
+    // set the aggregated phenotype (called from world.h or inherited from parent)
     void SetAggregate(double a_)
     {
       emp_assert(!aggregated); emp_assert(0 < M);
       aggregated = true;
-      agg_score = a_;
+      aggregate = a_;
     }
 
     // set the starting position
@@ -161,23 +158,17 @@ class Org
       streak = s_;
     }
 
-    void SetParent(size_t s_)
-    {
-      // emp_assert(!parented); emp_assert(0 < M);
-      // parented = true;
-      parent = s_;
-    }
 
     ///< functions to calculate scores and related data
 
     /**
      * Aggregate Score function:
      *
-     * First we check to see if the score has been calculated.
+     * First we check to see if the phenotype has been calculated.
      * If yes, aggregated=True and throw expection.
-     * Else, aggregated=False and we calculate it and return agg_score.
+     * Else, aggregated=False and we calculate it and return aggregate.
      *
-     * @return agg_score
+     * @return aggregate
     */
     double AggregateScore();
 
@@ -224,13 +215,13 @@ class Org
      * Will pass all info from parent to offspring solution.
      * Function executes if offpsring is an clone
      *
-     * @param s score vector recived
+     * @param s phenotype vector recived
      * @param o optimal gene vector recieved
      * @param c optimal gene count recieved
-     * @param a aggregate score recieved
+     * @param a aggregate phenotype recieved
      *
     */
-    void Inherit(const score_t & s, const optimal_t & o, const size_t c, const double a, const size_t st, const size_t sr);
+    void Inherit(const phenotype_t & s, const optimal_t & o, const size_t c, const double a, const size_t st, const size_t sr);
 
     /**
      * Me Clone function:
@@ -240,13 +231,13 @@ class Org
     void MeClone() {emp_assert(0 < M); emp_assert(!clone); clone = true;}
 
   private:
-    // organism genome vector
-    genome_t genome;
+    // organism genotype vector
+    genotype_t genotype;
 
-    // organism score vector
-    score_t score;
-    // score vector set?
-    bool scored = false;
+    // organism phenotype vector
+    phenotype_t phenotype;
+    // phenotype vector set?
+    bool evaluated = false;
 
     // organims gene optimal vector
     optimal_t optimal;
@@ -258,8 +249,8 @@ class Org
     // gene optimal vector counted?
     bool counted = false;
 
-    // aggregate score
-    double agg_score = 0.0;
+    // aggregate phenotype
+    double aggregate = 0.0;
     // aggregate calculate?
     bool aggregated = false;
 
@@ -268,7 +259,7 @@ class Org
     // streak calculated?
     bool streaked = false;
 
-    // Number of genes in genome
+    // Number of genes in genotype
     size_t M = 0;
 
     // starting position
@@ -278,10 +269,6 @@ class Org
 
     // Are we a clone?
     bool clone = false;
-
-    // parent id
-    size_t parent = 0;
-    bool parented = false;
 };
 
 ///< getters with extra
@@ -300,12 +287,12 @@ double Org::AggregateScore()
 {
   //quick checks
   emp_assert(!aggregated); emp_assert(0 < M);
-  emp_assert(score.size() == M, score.size());
+  emp_assert(phenotype.size() == M, phenotype.size());
 
-  // calculate the aggregate score and set it
-  SetAggregate(std::accumulate(score.begin(), score.end(), START_DB));
+  // calculate the aggregate phenotype and set it
+  SetAggregate(std::accumulate(phenotype.begin(), phenotype.end(), START_DB));
 
-  return agg_score;
+  return aggregate;
 }
 
 size_t Org::CountOptimized()
@@ -324,11 +311,11 @@ size_t Org::StartPosition()
 {
   // quick checks
   emp_assert(!start); emp_assert(0 < M);
-  emp_assert(score.size() == M);
+  emp_assert(phenotype.size() == M);
 
   // find max value position
-  auto opti_it = std::max_element(score.begin(), score.end());
-  SetStart(std::distance(score.begin(), opti_it));
+  auto opti_it = std::max_element(phenotype.begin(), phenotype.end());
+  SetStart(std::distance(phenotype.begin(), opti_it));
 
   return start_pos;
 }
@@ -337,12 +324,12 @@ size_t Org::CalcStreak()
 {
   // quick checks
   emp_assert(!streaked); emp_assert(0 < M);
-  emp_assert(score.size() == M);
+  emp_assert(phenotype.size() == M);
 
   // get longest streak
   size_t count = 0;
   size_t max_cnt = 0;
-  for(auto & s : score)
+  for(auto & s : phenotype)
   {
     if(s > 0.0)
     {
@@ -368,11 +355,11 @@ size_t Org::CalcStreak()
 void Org::Reset()
 {
   // quick checks
-  emp_assert(0 < M); emp_assert(0 < genome.size());
+  emp_assert(0 < M); emp_assert(0 < genotype.size());
 
-  // reset score vector stuff
-  score.clear();
-  scored = false;
+  // reset phenotype vector stuff
+  phenotype.clear();
+  evaluated = false;
 
   // reset optimal gene vector stuff
   optimal.clear();
@@ -382,22 +369,22 @@ void Org::Reset()
   count = 0;
   counted = false;
 
-  // reset aggregate score stuff
-  agg_score = 0.0;
+  // reset aggregate phenotype stuff
+  aggregate = 0.0;
   aggregated = false;
 
   // reset starting position info
-  start_pos = genome.size();
+  start_pos = genotype.size();
   start = false;
 
   // reset clone var
   clone = false;
 }
 
-void Org::Inherit(const score_t & s, const optimal_t & o, const size_t c, const double a, const size_t st, const size_t sr)
+void Org::Inherit(const phenotype_t & s, const optimal_t & o, const size_t c, const double a, const size_t st, const size_t sr)
 {
   // quick checks
-  emp_assert(0 < M); emp_assert(0 < genome.size()); emp_assert(clone);
+  emp_assert(0 < M); emp_assert(0 < genotype.size()); emp_assert(clone);
 
   // copy everything into offspring solution
   SetScore(s);
