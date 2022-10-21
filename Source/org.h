@@ -1,4 +1,4 @@
-/// organims class that holds its genotype and phenotype, both numerical vectors of a predetermined dimensionality
+/// organims class that holds its genome and phenotype, both numerical vectors of a predetermined dimensionality
 
 #ifndef ORG_H
 #define ORG_H
@@ -16,7 +16,7 @@ constexpr size_t START_ST = 0;
 class Org
 {
   public:
-    // genotype vector type
+    // genome vector type
     using genome_t = emp::vector<double>;
     // phenotype vector type
     using phenotype_t = emp::vector<double>;
@@ -28,20 +28,20 @@ class Org
     Org(size_t _m)
     {
       // quick checks
-      emp_assert(genotype.size() == 0); emp_assert(M == 0); emp_assert(!evaluated);
+      emp_assert(genome.size() == 0); emp_assert(M == 0); emp_assert(!evaluated);
 
       // set all requried variables
       M = _m;
       start_pos = _m;
       streak = _m;
-      genotype.resize(_m, START_DB);
+      genome.resize(_m, START_DB);
     }
 
     // every org after starting generation
     Org(genome_t _g)
     {
       // quick checks
-      emp_assert(genotype.size() == 0); emp_assert(M == 0); emp_assert(!evaluated);
+      emp_assert(genome.size() == 0); emp_assert(M == 0); emp_assert(!evaluated);
 
       std::cout << "Creating new org from genome" << std::endl;
 
@@ -49,7 +49,7 @@ class Org
       M = _g.size();
       start_pos = _g.size();
       streak = _g.size();
-      genotype = _g;
+      genome = _g;
     }
 
     // ask Charles
@@ -62,11 +62,11 @@ class Org
     ///< getters
 
     // const + reference to
-    const genome_t & GetGenome() const {emp_assert(0 < genotype.size()); return genotype;}
+    const genome_t & GetGenome() const {emp_assert(0 < genome.size()); return genome;}
     const phenotype_t & GetPhenotype() const {emp_assert(evaluated); return phenotype;}
     const optimal_t & GetOptimal() const {emp_assert(opti); return optimal;}
     // reference to
-    genome_t & GetGenome() {emp_assert(0 < genotype.size()); return genotype;}
+    genome_t & GetGenome() {emp_assert(0 < genome.size()); return genome;}
     phenotype_t & GetPhenotype() {emp_assert(evaluated); return phenotype;}
     optimal_t & GetOptimal() {emp_assert(opti); return optimal;}
     // get const aggregate fitness
@@ -74,7 +74,7 @@ class Org
     // get const aggregate fitness
     double GetAggregate()const {emp_assert(aggregated); return aggregate;}
     // get clone bool
-    bool GetClone() const {emp_assert(0 < genotype.size()); return clone;}
+    bool GetClone() const {emp_assert(0 < genome.size()); return clone;}
     // get optimal
     size_t GetCount() const {emp_assert(counted); return count;}
     // get gene count
@@ -233,8 +233,8 @@ class Org
     void MeClone() {emp_assert(0 < M); emp_assert(!clone); clone = true;}
 
   private:
-    // organism genotype vector
-    genome_t genotype;
+    // organism genome vector
+    genome_t genome;
 
     // organism phenotype vector
     phenotype_t phenotype;
@@ -261,7 +261,7 @@ class Org
     // streak calculated?
     bool streaked = false;
 
-    // Number of genes in genotype
+    // Number of genes in genome
     size_t M = 0;
 
     // starting position
@@ -357,7 +357,7 @@ size_t Org::CalcStreak()
 void Org::Reset()
 {
   // quick checks
-  emp_assert(0 < M); emp_assert(0 < genotype.size());
+  emp_assert(0 < M); emp_assert(0 < genome.size());
 
   // reset phenotype vector stuff
   phenotype.clear();
@@ -376,7 +376,7 @@ void Org::Reset()
   aggregated = false;
 
   // reset starting position info
-  start_pos = genotype.size();
+  start_pos = genome.size();
   start = false;
 
   // reset clone var
@@ -386,7 +386,7 @@ void Org::Reset()
 void Org::Inherit(const phenotype_t & s, const optimal_t & o, const size_t c, const double a, const size_t st, const size_t sr)
 {
   // quick checks
-  emp_assert(0 < M); emp_assert(0 < genotype.size()); emp_assert(clone);
+  emp_assert(0 < M); emp_assert(0 < genome.size()); emp_assert(clone);
 
   // copy everything into offspring solution
   SetPhenotype(s);
