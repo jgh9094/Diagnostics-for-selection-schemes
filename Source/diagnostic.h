@@ -13,7 +13,7 @@ class Diagnostic
   public:
     //typename for target vector
     using phenotype_t = emp::vector<double>;
-    using genotype_t = emp::vector<double>;
+    using genome_t = emp::vector<double>;
     using opti_t = emp::vector<bool>;
 
   public:
@@ -40,52 +40,52 @@ class Diagnostic
      * In other words, there is no interactions between genes.
      * The phenotype vector is just the genome, with the caveat that genes cannot go over associated target value.
      *
-     * @param g genotype from organism being evaluated.
+     * @param g genome from organism being evaluated.
      *
      * @return phenotype vector that is calculated from 'g'.
      */
-    phenotype_t ExploitationRate(const genotype_t & g);
+    phenotype_t ExploitationRate(const genome_t & g);
 
     /**
      * Ordered Exploitation function:
      *
      * All genes in genome expected to follow descending order for evaluation.
-     * While in decending order, phenotype[i] = genotype[i].
+     * While in decending order, phenotype[i] = genome[i].
      * If descending order is broken, max_credit is assigned to each following trait .
      * Note that this problem explicitly forces optimization from start to end.
      *
-     * @param g genotype from organism being evaluated.
+     * @param g genome from organism being evaluated.
      *
      * @return phenotype vector that is calculated from 'g'.
      */
-    phenotype_t OrderedExploitation(const genotype_t & g);
+    phenotype_t OrderedExploitation(const genome_t & g);
 
     /**
      * Contradictory Objectives function:
      *
      * Solutions are pressured to optimize one gene, while all other genes are ignored and set to max_credit.
      * To calculate phenotype vector, first we find the maximum gene value at position i.
-     * After, phenotype[i] = genotype[i], and every every other trait is set to max_credit.
+     * After, phenotype[i] = genome[i], and every every other trait is set to max_credit.
      *
-     * @param g genotype from organism being evaluated.
+     * @param g genome from organism being evaluated.
      *
      * @return phenotype vector that is calculated from 'g'.
      */
-    phenotype_t ContradictoryObjectives(const genotype_t & g);
+    phenotype_t ContradictoryObjectives(const genome_t & g);
 
     /**
      * Multi-path Exploration function:
      *
      * Solutions are must be able to simultaneously explore multiple pathways, with the goal of pursuing the one that leads to the optimum.
      * To calculate phenotype vector, first we find the maximum gene value at position i.
-     * From that gene forward, while genes follow decending order, phenotype[i] = genotype[i].
-     * This process stops until the decending order is broken, or the end of the genotype is reached.
-     * Note, the optimum is reached when i = 0, the start of the genotype.
+     * From that gene forward, while genes follow decending order, phenotype[i] = genome[i].
+     * This process stops until the decending order is broken, or the end of the genome is reached.
+     * Note, the optimum is reached when i = 0, the start of the genome.
      *
-     * @param g genotype from organism being evaluated.
+     * @param g genome from organism being evaluated.
      * @return phenotype vector that is calculated from 'g'.
      */
-    phenotype_t MultiPathExploration(const genotype_t & g);
+    phenotype_t MultiPathExploration(const genome_t & g);
 
     /**
      * Multi-valley Crossing function:
@@ -95,16 +95,16 @@ class Diagnostic
      * We use the difference between the gene value and penalty value to determine
      * the reduction when calculating the trait value.
      *
-     * phenotype[i] = peaks[ floor(genotype[i]) ] -  (genotype[i] - peaks[ floor(genotype[i]) ])
+     * phenotype[i] = peaks[ floor(genome[i]) ] -  (genome[i] - peaks[ floor(genome[i]) ])
      *
-     * @param g genotype from organism being evaluated.
+     * @param g genome from organism being evaluated.
      * @param peaks vector of peaks for each floored gene value
      * @param dips_start gene value where peaks begin
      * @param dips_end gene value where dips end
      *
      * @return phenotype vector that is calculated from 'g'.
      */
-    phenotype_t MultiValleyCrossing(const genotype_t & g, const phenotype_t & peaks, const double & dips_start, const double & dips_end);
+    phenotype_t MultiValleyCrossing(const genome_t & g, const phenotype_t & peaks, const double & dips_start, const double & dips_end);
 
     ///< Functions that deal with interpretation of phenotype vectors
 
@@ -114,12 +114,12 @@ class Diagnostic
      * Will return a boolean vector that lists what genes are optimized relative to the target vector.
      * A gene is optimized if it meets the target value accuracy % requirement.
      *
-     * @param g Genotype from organism being evaluated.
+     * @param g genome from organism being evaluated.
      * @param acc This value is the accuracy % needed to be considered optimized
      *
      * @return boolean vector that displays optimized traits.
     */
-    opti_t OptimizedVector(const genotype_t & g, const double acc);
+    opti_t OptimizedVector(const genome_t & g, const double acc);
 
   private:
     // holds vector of target objective values
@@ -132,7 +132,7 @@ class Diagnostic
 
 ///< diagnostic problem implementations
 
-Diagnostic::phenotype_t Diagnostic::ExploitationRate(const genotype_t & g)
+Diagnostic::phenotype_t Diagnostic::ExploitationRate(const genome_t & g)
 {
   // quick checks
   emp_assert(0 < g.size());
@@ -143,7 +143,7 @@ Diagnostic::phenotype_t Diagnostic::ExploitationRate(const genotype_t & g)
   return phenotype;
 }
 
-Diagnostic::phenotype_t Diagnostic::OrderedExploitation(const genotype_t & g)
+Diagnostic::phenotype_t Diagnostic::OrderedExploitation(const genome_t & g)
 {
   // quick checks
   emp_assert(g.size() > 0); emp_assert(cred_set);
@@ -176,7 +176,7 @@ Diagnostic::phenotype_t Diagnostic::OrderedExploitation(const genotype_t & g)
   }
 }
 
-Diagnostic::phenotype_t Diagnostic::ContradictoryObjectives(const genotype_t & g)
+Diagnostic::phenotype_t Diagnostic::ContradictoryObjectives(const genome_t & g)
 {
   // quick checks
   emp_assert(g.size() > 0);
@@ -197,7 +197,7 @@ Diagnostic::phenotype_t Diagnostic::ContradictoryObjectives(const genotype_t & g
   return phenotype;
 }
 
-Diagnostic::phenotype_t Diagnostic::MultiPathExploration(const genotype_t & g)
+Diagnostic::phenotype_t Diagnostic::MultiPathExploration(const genome_t & g)
 {
   // quick checks
   emp_assert(0 < g.size()); emp_assert(cred_set);
@@ -222,7 +222,7 @@ Diagnostic::phenotype_t Diagnostic::MultiPathExploration(const genotype_t & g)
   return phenotype;
 }
 
-Diagnostic::phenotype_t Diagnostic::MultiValleyCrossing(const genotype_t & g, const phenotype_t & peaks, const double & dips_start, const double & dips_end)
+Diagnostic::phenotype_t Diagnostic::MultiValleyCrossing(const genome_t & g, const phenotype_t & peaks, const double & dips_start, const double & dips_end)
 {
   // quick checks
   emp_assert(g.size() > 0); emp_assert(cred_set);
@@ -248,7 +248,7 @@ Diagnostic::phenotype_t Diagnostic::MultiValleyCrossing(const genotype_t & g, co
 
 ///< phenotype vector interpretation implementations
 
-Diagnostic::opti_t Diagnostic::OptimizedVector(const genotype_t & g, const double acc)
+Diagnostic::opti_t Diagnostic::OptimizedVector(const genome_t & g, const double acc)
 {
   // quick checks
   emp_assert(g.size() > 0);
