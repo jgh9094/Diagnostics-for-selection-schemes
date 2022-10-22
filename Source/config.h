@@ -18,9 +18,9 @@ EMP_BUILD_CONFIG(DiaConfig,
   VALUE(ACCURACY,            double,      0.99,      "Accuracy percentage needed to be considered an optimal trait."),
   VALUE(CREDIT,              double,      0.00,      "Maximum credit a solution can get on an trait if applicable."),
   VALUE(DIMENSIONALITY,      size_t,       100,      "Diagnositc dimensionality."),
-  VALUE(SELECTION,           size_t,         1,      "Which selection are we doing? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n"
+  VALUE(SELECTION,           size_t,         0,      "Which selection are we doing? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n"
                                                      "3: Espilon Lexicase\n4: Nondominated Sorting\n5: Novelty Search."),
-  VALUE(DIAGNOSTIC,          size_t,         4,      "Which diagnostic are we doing? \n0: Exploitation Rate\n1: Ordered Exploitation\n"
+  VALUE(DIAGNOSTIC,          size_t,         0,      "Which diagnostic are we doing? \n0: Exploitation Rate\n1: Ordered Exploitation\n"
                                                      "2: Contradictory Objectives \n3: Multi-path Exploration \n4: Multi-valley Crossing."),
 
   GROUP(MUTATIONS, "Mutation details."),
