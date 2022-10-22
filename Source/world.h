@@ -13,15 +13,15 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
-#include <deque>
 
 ///< empirical headers
-#include "Evolve/World.h"
+#include "emp/Evolve/World.hpp"
+#include "emp/math/random_utils.hpp"
 
 ///< experiment headers
 #include "config.h"
 #include "org.h"
-#include "problem.h"
+#include "diagnostic.h"
 #include "selection.h"
 
 class DiagWorld : public emp::World<Org>
@@ -32,25 +32,23 @@ class DiagWorld : public emp::World<Org>
 
     // solution genome + diagnotic problem types
     using genome_t = emp::vector<double>;
-    // score vector for a solution
-    using score_t = emp::vector<double>;
+    // phenotype vector for a solution
+    using phenotype_t = emp::vector<double>;
     // boolean optimal vector per objective
     using optimal_t = emp::vector<bool>;
-    // target vector type
-    using target_t = emp::vector<double>;
 
     ///< selection related types
 
     // vector of position ids
     using ids_t = emp::vector<size_t>;
-    // matrix of population score vectors
-    using fmatrix_t = emp::vector<score_t>;
+    // matrix of population phenotype vectors
+    using fmatrix_t = emp::vector<phenotype_t>;
     // matrix of population genomes
     using gmatrix_t = emp::vector<genome_t>;
     // map holding population id groupings by fitness (keys in decending order)
     using fitgp_t = std::map<double, ids_t, std::greater<double>>;
     // vector of double vectors for K neighborhoods
-    using neigh_t = emp::vector<score_t>;
+    using neigh_t = emp::vector<phenotype_t>;
     // vector of vector size_t for Pareto grouping
     using pareto_t = emp::vector<emp::vector<size_t>>;
 
@@ -68,15 +66,10 @@ class DiagWorld : public emp::World<Org>
 
   public:
 
-    DiagWorld(DiaConfig & _config) : config(_config), data_file(_config.OUTPUT_DIR() + "data.csv")
+    DiagWorld(DiaConfig & _config) : emp::World<Org>("",false), config(_config), data_file(_config.OUTPUT_DIR() + "data.csv")
     {
       // set random pointer seed
       random_ptr = emp::NewPtr<emp::Random>(config.SEED());
-
-      mutations_txt_0.open("./mutations-0.txt");
-      // mutations_txt_1.open("./mutations-1.txt");
-      // mutations_txt_2.open("./mutations-2.txt");
-      // mutations_txt_3.open("./mutations-3.txt");
 
       // initialize the world
       Initialize();
@@ -85,11 +78,13 @@ class DiagWorld : public emp::World<Org>
     ~DiagWorld()
     {
       selection.Delete();
+      random_ptr.Delete();
       diagnostic.Delete();
       pop_fit.Delete();
       pop_opti.Delete();
       pnt_fit.Delete();
       pnt_opti.Delete();
+      pop_str.Delete();
     }
 
     ///< functions called to setup the world
@@ -181,7 +176,7 @@ class DiagWorld : public emp::World<Org>
 
     ///< helper functions
 
-    // create a matrix of popultion score vectors
+    // create a matrix of popultion phenotype vectors
     fmatrix_t PopFitMat();
 
     // create matrix of population genomes
@@ -189,10 +184,10 @@ class DiagWorld : public emp::World<Org>
 
     // update archive
     // return true if archive changes
-    bool ArchiveUpdate(const score_t & score, const fmatrix_t & dmat);
+    bool ArchiveUpdate(const phenotype_t & nov_scores, const fmatrix_t & dmat);
 
     // update archive data
-    void ArchiveDataUpdate(const size_t org_id);
+    void ArchiveDataUpdate(const size_t & org_id);
 
     // record the population & parent id
     void RecordPopulation();
@@ -204,22 +199,17 @@ class DiagWorld : public emp::World<Org>
     DiaConfig & config;
     enum Scheme {TRUNCATION=0,TOURNAMENT=1,FITNESS_SHARING=2,LEXICASE=3,NONDOMINATED=4,NOVELTY=5};
 
-    // target vector
-    target_t target;
     // vector holding population aggregate scores (by position id)
-    score_t fit_vec;
+    phenotype_t fit_vec;
     // vector holding parent solutions selected by selection scheme
     ids_t parent_vec;
     // novelty minimum
     double pmin = 0.0;
     // generations since solution added to archive
     size_t archive_gens = 0;
-    // hash vector with penalties for multi-valley crossing
-    score_t peaks;
-
 
     // evaluation lambda we set
-    eval_t evaluate;
+    eval_t evaluation;
     // selection lambda we set
     sele_t select;
 
@@ -250,11 +240,7 @@ class DiagWorld : public emp::World<Org>
     std::ofstream elite_geno_csv;
 
     // mutation data
-    std::ofstream mutations_txt_0;
-    std::ofstream mutations_txt_1;
-    std::ofstream mutations_txt_2;
-    std::ofstream mutations_txt_3;
-
+    std::ofstream mutations_txt;
 
     ///< data we are tracking during an evolutionary run
 
@@ -275,13 +261,32 @@ class DiagWorld : public emp::World<Org>
     size_t pareto_cnt = 0;
 
     // novelty search archive
-    std::deque<score_t> archive;
+    emp::vector<phenotype_t> archive;
     // elite solution position
     double arc_elite = 0.0;
     // archive optimal trait vector
     optimal_t arc_opti_trt;
     // archive activation gene vector
     optimal_t arc_acti_gene;
+
+
+    // multi-valley crossing data
+    // valley peaks for each floored integer gene value
+    const phenotype_t peaks = { -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,  8.0,  9.0,
+                           9.0, 11.0, 11.0, 11.0, 14.0, 14.0, 14.0, 14.0, 18.0, 18.0,
+                          18.0, 18.0, 18.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 29.0,
+                          29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 36.0, 36.0, 36.0, 36.0,
+                          36.0, 36.0, 36.0, 36.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0,
+                          44.0, 44.0, 44.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0,
+                          53.0, 53.0, 53.0, 63.0, 63.0, 63.0, 63.0, 63.0, 63.0, 63.0,
+                          63.0, 63.0, 63.0, 63.0, 74.0, 74.0, 74.0, 74.0, 74.0, 74.0,
+                          74.0, 74.0, 74.0, 74.0, 74.0, 74.0, 86.0, 86.0, 86.0, 86.0,
+                          86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 99.0};
+    // where do the dips start?
+    const double dips_start = 8.0;
+    // where do dips end?
+    const double dips_end = 99.9;
+
 };
 
 ///< functions called to setup the world
@@ -324,7 +329,7 @@ void DiagWorld::SetOnUpdate()
     // step 0: reset all data collection variables
     ResetData();
 
-    // step 1: evaluate all solutions on diagnostic
+    // step 1: evaluation all solutions on diagnostic
     EvaluationStep();
 
     // step 2: select parent solutions for
@@ -336,7 +341,7 @@ void DiagWorld::SetOnUpdate()
     // step 4: reproduce and create new solutions
     ReproductionStep();
 
-    mutations_txt_0 << "\n";
+    mutations_txt << "\n";
   });
 
   std::cout << "Finished setting the OnUpdate function! \n" << std::endl;
@@ -355,8 +360,8 @@ void DiagWorld::SetMutation()
     genome_t & genome = org.GetGenome();
 
     // quick checks
-    emp_assert(genome.size() == config.OBJECTIVE_CNT());
-    emp_assert(target.size() == config.OBJECTIVE_CNT());
+    emp_assert(genome.size() == config.DIMENSIONALITY());
+    emp_assert(0.0 < config.TARGET());
 
     for(size_t i = 0; i < genome.size(); ++i)
     {
@@ -365,36 +370,23 @@ void DiagWorld::SetMutation()
       {
         const double mut = random_ptr->GetRandNormal(config.MEAN(), config.STD());
 
-        // mutation puts objective above target
+        // rebound if
         if(config.TARGET() < genome[i] + mut)
         {
-          // we wrap it back around target value
-          genome[i] = target[i] - (genome[i] + mut - target[i]);
+          genome[i] = config.TARGET() - (genome[i] + mut - config.TARGET());
         }
-        // mutation puts objective in the negatives
+        // rebound if
         else if(genome[i] + mut < config.LOWER_BND())
         {
           genome[i] = std::abs(genome[i] + mut) + config.LOWER_BND();
-          // genome[i] = config.LOWER_BND();
         }
+        // else add mutation
         else
         {
-          // else we can simply add mutation
-
-          if(GetUpdate() == 37951)
-          {
-            std::cout << "i: " << i << std::endl;
-            std::cout << genome[i] + mut << " = " << genome[i] << " + " << mut << std::endl;
-          }
-
           genome[i] = genome[i] + mut;
         }
-        mutations_txt_0 << mut << ",";
-        // if(GetUpdate() <= 10000) {mutations_txt_0 << mut << ",";}
-        // else if(GetUpdate() <= 20000) {mutations_txt_1 << mut << ",";}
-        // else if(GetUpdate() <= 30000) {mutations_txt_2 << mut << ",";}
-        // else if(GetUpdate() <= 40000) {mutations_txt_3 << mut << ",";}
 
+        mutations_txt << mut << ",";
         ++mcnt;
       }
     }
@@ -457,8 +449,8 @@ void DiagWorld::SetOnOffspringReady()
   {
     // quick checks
     emp_assert(fun_do_mutations); emp_assert(random_ptr);
-    emp_assert(org.GetGenome().size() == config.OBJECTIVE_CNT());
-    emp_assert(org.GetM() == config.OBJECTIVE_CNT());
+    emp_assert(org.GetGenome().size() == config.DIMENSIONALITY());
+    emp_assert(org.GetM() == config.DIMENSIONALITY());
 
     // do mutations on offspring
     size_t mcnt = fun_do_mutations(org, *random_ptr);
@@ -469,19 +461,17 @@ void DiagWorld::SetOnOffspringReady()
       Org & parent = *pop[parent_pos];
 
       // quick checks
-      emp_assert(parent.GetGenome().size() == config.OBJECTIVE_CNT());
-      emp_assert(parent.GetM() == config.OBJECTIVE_CNT());
+      emp_assert(parent.GetGenome().size() == config.DIMENSIONALITY());
+      emp_assert(parent.GetM() == config.DIMENSIONALITY());
 
       // give everything to offspring from parent
       org.MeClone();
-      org.Inherit(parent.GetScore(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate(), parent.GetStart(), parent.GetStreak());
+      org.Inherit(parent.GetPhenotype(), parent.GetOptimal(), parent.GetCount(), parent.GetAggregate(), parent.GetStart(), parent.GetStreak());
     }
     else
     {
       org.Reset();
     }
-
-    org.SetParent(parent_pos);
   });
 
   std::cout << "Finished setting OnOffspringReady function!\n" << std::endl;
@@ -492,11 +482,7 @@ void DiagWorld::SetEvaluation()
   std::cout << "------------------------------------------------" << std::endl;
   std::cout << "Setting Evaluation function..." << std::endl;
 
-  target_t tar(config.OBJECTIVE_CNT(), config.TARGET());
-  target.clear(); target.resize(config.OBJECTIVE_CNT());
-  std::copy(tar.begin(), tar.end(), target.begin());
-
-  diagnostic = emp::NewPtr<Diagnostic>(target, config.CREDIT());
+  diagnostic = emp::NewPtr<Diagnostic>(config.TARGET(), config.CREDIT());
   std::cout << "Created diagnostic emp::Ptr" << std::endl;
 
   switch (config.DIAGNOSTIC())
@@ -537,10 +523,14 @@ void DiagWorld::SetDataTracking()
 
   // initialize all nodes
   std::cout << "Initializing nodes..." << std::endl;
-  pop_fit.New(); pop_opti.New(); pnt_fit.New(); pnt_opti.New(); pop_str.New();
+  pop_fit.New();
+  pop_opti.New();
+  pnt_fit.New();
+  pnt_opti.New();
+  pop_str.New();
   std::cout << "Nodes initialized!" << std::endl;
 
-  // track population aggregate score stats: average, variance, min, max
+  // track population aggregate phenotype stats: average, variance, min, max
   data_file.AddMean(*pop_fit, "pop_fit_avg", "Population average aggregate performance.");
   data_file.AddVariance(*pop_fit, "pop_fit_var", "Population variance aggregate performance.");
   data_file.AddMax(*pop_fit, "pop_fit_max", "Population maximum aggregate performance.");
@@ -552,7 +542,7 @@ void DiagWorld::SetDataTracking()
   data_file.AddMax(*pop_opti, "pop_opt_max", "Population maximum objective optimization count.");
   data_file.AddMin(*pop_opti, "pop_opt_min", "Population minimum objective optimization count.");
 
-  // track parent aggregate score stats: average, variance, min, max
+  // track parent aggregate phenotype stats: average, variance, min, max
   data_file.AddMean(*pnt_fit, "pnt_fit_avg", "Parent average aggregate performance.");
   data_file.AddVariance(*pnt_fit, "pnt_fit_var", "Parent variance aggregate performance.");
   data_file.AddMax(*pnt_fit, "pnt_fit_max", "Parent maximum aggregate performance.");
@@ -656,21 +646,6 @@ void DiagWorld::SetDataTracking()
     return org.GetCount();
   }, "str_obj_cnt", "Otpimal solution aggregate performance");
 
-  // count of common solution in the population
-  // data_file.AddFun<size_t>([this]()
-  // {
-  //   // quick checks
-  //   emp_assert(0 < common.size());
-  //   emp_assert(comm_pos != config.POP_SIZE());
-
-  //   // find iterator to common org
-  //   const auto it = common.find(comm_pos);
-  //   emp_assert(it != common.end());
-  //   emp_assert(0 < it->second.size());
-
-  //   return it->second.size();
-  // }, "com_sol_cnt", "Count of genetically common solution!");
-
   // loss of diversity
   data_file.AddFun<double>([this]()
   {
@@ -721,7 +696,7 @@ void DiagWorld::SetDataTracking()
   // unique starting positions
   data_file.AddFun<size_t>([this]()
   {
-    emp_assert(pop_acti_gene.size()  == config.OBJECTIVE_CNT());
+    emp_assert(pop_acti_gene.size()  == config.DIMENSIONALITY());
     return FindUniqueStart();
   }, "uni_str_pos", "Number of unique starting positions in the population!");
 
@@ -793,10 +768,12 @@ void DiagWorld::SetDataTracking()
   // create elite csv plus headers
   elite_pheno_csv.open(config.OUTPUT_DIR() + "elite-pheno.csv");
   elite_geno_csv.open(config.OUTPUT_DIR() + "elite-geno.csv");
+  mutations_txt.open(config.OUTPUT_DIR() + "mutations.txt");
+
 
   std::string header_pheno = "Gen";
   std::string header_geno = "Gen";
-  for(size_t i = 0; i < config.OBJECTIVE_CNT(); ++i)
+  for(size_t i = 0; i < config.DIMENSIONALITY(); ++i)
   {
     header_pheno += ",t";
     header_geno += ",g";
@@ -821,14 +798,14 @@ void DiagWorld::PopulateWorld()
   {
     for(int i = 0; i < config.POP_SIZE(); ++i)
     {
-      genome_t g = emp::RandomDoubleVector(*random_ptr, config.OBJECTIVE_CNT(), config.LOWER_BND(), config.UPPER_BND());
+      genome_t g = emp::RandomDoubleVector(*random_ptr, config.DIMENSIONALITY(), config.LOWER_BND(), config.UPPER_BND());
       Inject(g,1);
     }
   }
   // same starting organisms
   else
   {
-    Org org(config.OBJECTIVE_CNT());
+    Org org(config.DIMENSIONALITY());
     Inject(org.GetGenome(), config.POP_SIZE());
   }
 
@@ -874,8 +851,8 @@ void DiagWorld::EvaluationStep()
   {
     Org & org = *pop[i];
 
-    // no evaluate needed if offspring is a clone
-    fit_vec[i] = (org.GetClone()) ? org.GetAggregate() : evaluate(org);
+    // no evaluation needed if offspring is a clone
+    fit_vec[i] = (org.GetClone()) ? org.GetAggregate() : evaluation(org);
   }
 }
 
@@ -889,8 +866,7 @@ void DiagWorld::SelectionStep()
   auto parents = select();
   emp_assert(parents.size() == config.POP_SIZE());
 
-  parent_vec.resize(config.POP_SIZE());
-  std::copy(parents.begin(), parents.end(), parent_vec.begin());
+  parent_vec = parents;
 }
 
 void DiagWorld::RecordData()
@@ -934,7 +910,7 @@ void DiagWorld::RecordData()
   Org & ele = *pop[elite_pos];
 
   std::string traits = std::to_string(update);
-  const auto & p = ele.GetScore();
+  const auto & p = ele.GetPhenotype();
   for(size_t i = 0; i < p.size(); ++i)
   {
     traits += ",";
@@ -967,7 +943,6 @@ void DiagWorld::ReproductionStep()
   // go through parent ids and do births
   for(auto & id : parent_vec)
   {
-    // if(GetUpdate() == 583) {std::cout << "parent_vec: " << id << std::endl;}
     DoBirth(GetGenomeAt(id), id);
   }
 }
@@ -987,7 +962,7 @@ void DiagWorld::Truncation()
     emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
 
     // group population by fitness
-    fitgp_t group = selection->FitnessGroup(fit_vec);
+    const fitgp_t group = selection->FitnessGroup(fit_vec);
 
     return selection->MLSelect(config.TRUNC_SIZE(), config.POP_SIZE(), group);
   };
@@ -1024,13 +999,8 @@ void DiagWorld::FitnessSharing()
 {
   std::cout << "Setting selection scheme: FitnessSharing" << std::endl;
   std::cout << "Fitness Sharing applied on: ";
-  if(!config.FIT_APPLI()){
-    std::cout << "Genome" << std::endl;
-  }
-  else
-  {
-    std::cout << "Phenotype" << std::endl;
-  }
+  if(!config.FIT_APPLI()) {std::cout << "Genotypic" << std::endl;}
+  else {std::cout << "Phenotypic" << std::endl;}
 
   select = [this]()
   {
@@ -1038,19 +1008,19 @@ void DiagWorld::FitnessSharing()
     emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
     emp_assert(0 < pop.size()); emp_assert(fit_vec.size() == config.POP_SIZE());
 
-    // If we get asked to do standard tournament selection with fitness sharing enabled
+    // If we get asked to do stochasitc remainder selection
     if(config.FIT_SIGMA() == 0.0)
     {
       // do stochastic remainder selection with unmodified fitness
-      return selection->StochasticRemainder(fit_vec);;
+      return selection->StochasticRemainder(fit_vec);
     }
 
     // are we using genomes or phenotypes for similarity comparison?
-    gmatrix_t comps = (config.FIT_APPLI()) ? PopFitMat() : PopGenomes();
+    const gmatrix_t comps = (config.FIT_APPLI()) ? PopFitMat() : PopGenomes();
 
-    // generate distance matrix + fitness transformation
-    fmatrix_t dist_mat = selection->SimilarityMatrix(comps, config.PNORM_EXP());
-    score_t tscore = selection->FitnessSharing(dist_mat, fit_vec, config.FIT_ALPHA(), config.FIT_SIGMA());
+    // find neighbors that follow d_xy < sigma^2 + fitness transformation
+    const fmatrix_t neighbors = selection->SimilarNeighbors(comps, config.FIT_SIGMA() * config.FIT_SIGMA());
+    const phenotype_t tscore = selection->FitnessSharing(neighbors, fit_vec, config.FIT_ALPHA(), config.FIT_SIGMA());
 
     return selection->StochasticRemainder(tscore);
   };
@@ -1069,14 +1039,14 @@ void DiagWorld::EpsilonLexicase()
     emp_assert(selection); emp_assert(pop.size() == config.POP_SIZE());
     emp_assert(0 < pop.size());
 
-    fmatrix_t matrix = PopFitMat();
+    const fmatrix_t matrix = PopFitMat();
 
     // select parent ids
     ids_t parent(pop.size());
 
     for(size_t i = 0; i < parent.size(); ++i)
     {
-      parent[i] = selection->EpsiLexicase(matrix, config.LEX_EPS(), config.OBJECTIVE_CNT());
+      parent[i] = selection->EpsiLexicase(matrix, config.LEX_EPS(), config.DIMENSIONALITY());
     }
 
     return parent;
@@ -1099,17 +1069,17 @@ void DiagWorld::NonDominatedSorting()
     ids_t parent(pop.size());
 
     // get Pareto groups with ids
-    fmatrix_t matrix = PopFitMat();
-    pareto_t pgroups = selection->ParetoFrontGroups(matrix);
+    const fmatrix_t matrix = PopFitMat();
+    const pareto_t pgroups = selection->ParetoFrontGroups(matrix);
 
     // construct fitnesses
     // ParetoFitness
-    score_t fitess = selection->ParetoFitness(pgroups, matrix, config.NDS_ALP(), config.NDS_SIG(), config.NDS_RED(), config.NDS_MAX());
+    const phenotype_t fitness = selection->ParetoFitness(pgroups, matrix, config.NDS_ALPHA(), config.NDS_SIGMA(), config.NDS_REDUC(), config.NDS_MAX());
 
     // track data
     pareto_cnt = pgroups.size();
 
-    return selection->StochasticRemainder(fitess);
+    return selection->StochasticRemainder(fitness);
   };
 
   std::cout << "NonDominated Sorting selection scheme set!" << std::endl;
@@ -1123,8 +1093,12 @@ void DiagWorld::NoveltySearch()
   pmin = config.NOVEL_PMIN();
 
   // initialize vectors for achive
-  arc_opti_trt = optimal_t(config.OBJECTIVE_CNT(), false);
-  arc_acti_gene = optimal_t(config.OBJECTIVE_CNT(), false);
+  arc_opti_trt = optimal_t(config.DIMENSIONALITY(), false);
+  arc_acti_gene = optimal_t(config.DIMENSIONALITY(), false);
+
+  emp_assert(arc_opti_trt.size() == config.DIMENSIONALITY());
+  emp_assert(arc_acti_gene.size() == config.DIMENSIONALITY());
+
   std::cout << "Created vectors for tracking archive data" << std::endl;
 
   select = [this]()
@@ -1148,12 +1122,12 @@ void DiagWorld::NoveltySearch()
     }
 
     // find nearest neighbors for each solution
-    // NOVEL_K ammount of summation of squares score (x-y)^2
-    fmatrix_t fit_mat = PopFitMat();
-    fmatrix_t neighborhood = selection->NoveltySearchNearSum(fit_mat, config.NOVEL_K(), config.POP_SIZE(), config.PNORM_EXP());
+    // NOVEL_K ammount of summation of squares phenotype (x-y)^2
+    const fmatrix_t fit_mat = PopFitMat();
+    const fmatrix_t neighborhood = selection->NoveltySearchNearSum(fit_mat, config.NOVEL_K(), config.POP_SIZE());
 
     // calculate novelty scores
-    score_t tscore = selection->NoveltySOS(neighborhood, config.NOVEL_K(), config.PNORM_EXP());
+    const phenotype_t tscore = selection->NoveltySOS(neighborhood, config.NOVEL_K());
 
     // check if we need to reduce pmin
     if(archive_gens == config.NOVEL_GEN())
@@ -1189,11 +1163,11 @@ void DiagWorld::ExploitationRate()
 {
   std::cout << "Setting exploitation diagnostic..." << std::endl;
 
-  evaluate = [this](Org & org)
+  evaluation = [this](Org & org)
   {
-    // set score & aggregate
-    score_t score = diagnostic->ExploitationRate(org.GetGenome());
-    org.SetScore(score);
+    // set phenotype & aggregate
+    phenotype_t phenotype = diagnostic->ExploitationRate(org.GetGenome());
+    org.SetPhenotype(phenotype);
     org.AggregateScore();
 
     // set the starting position
@@ -1217,11 +1191,11 @@ void DiagWorld::OrderedExploitation()
 {
   std::cout << "Setting structured exploitation diagnostic..." << std::endl;
 
-  evaluate = [this](Org & org)
+  evaluation = [this](Org & org)
   {
-    // set score & aggregate
-    score_t score = diagnostic->OrderedExploitation(org.GetGenome());
-    org.SetScore(score);
+    // set phenotype & aggregate
+    phenotype_t phenotype = diagnostic->OrderedExploitation(org.GetGenome());
+    org.SetPhenotype(phenotype);
     org.AggregateScore();
 
     // set the starting position
@@ -1245,11 +1219,11 @@ void DiagWorld::MultiPathExploration()
 {
   std::cout << "Setting exploration diagnostic..." << std::endl;
 
-  evaluate = [this](Org & org)
+  evaluation = [this](Org & org)
   {
-    // set score & aggregate
-    score_t score = diagnostic->MultiPathExploration(org.GetGenome());
-    org.SetScore(score);
+    // set phenotype & aggregate
+    phenotype_t phenotype = diagnostic->MultiPathExploration(org.GetGenome());
+    org.SetPhenotype(phenotype);
     org.AggregateScore();
 
     // set the starting position
@@ -1273,11 +1247,11 @@ void DiagWorld::ContradictoryObjectives()
 {
   std::cout << "Setting weak ecology diagnostic..." << std::endl;
 
-  evaluate = [this](Org & org)
+  evaluation = [this](Org & org)
   {
-    // set score & aggregate
-    score_t score = diagnostic->ContradictoryObjectives(org.GetGenome());
-    org.SetScore(score);
+    // set phenotype & aggregate
+    phenotype_t phenotype = diagnostic->ContradictoryObjectives(org.GetGenome());
+    org.SetPhenotype(phenotype);
     org.AggregateScore();
 
     // set the starting position
@@ -1299,25 +1273,11 @@ void DiagWorld::ContradictoryObjectives()
 
 void DiagWorld::MultiValleyCrossing()
 {
-  // fill in the penalty vector
-
-  peaks = { -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,  8.0,  9.0,
-     9.0, 11.0, 11.0, 11.0, 14.0, 14.0, 14.0, 14.0, 18.0, 18.0,
-    18.0, 18.0, 18.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 29.0,
-    29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 36.0, 36.0, 36.0, 36.0,
-    36.0, 36.0, 36.0, 36.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0,
-    44.0, 44.0, 44.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0,
-    53.0, 53.0, 53.0, 63.0, 63.0, 63.0, 63.0, 63.0, 63.0, 63.0,
-    63.0, 63.0, 63.0, 63.0, 74.0, 74.0, 74.0, 74.0, 74.0, 74.0,
-    74.0, 74.0, 74.0, 74.0, 74.0, 74.0, 86.0, 86.0, 86.0, 86.0,
-    86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 99.0
-  };
-
-  evaluate = [this](Org & org)
+  evaluation = [this](Org & org)
   {
-    // set score & aggregate
-    score_t score = diagnostic->MultiValleyCrossing(org.GetGenome(), peaks);
-    org.SetScore(score);
+    // set phenotype & aggregate
+    phenotype_t phenotype = diagnostic->MultiValleyCrossing(org.GetGenome(), peaks, dips_start, dips_end);
+    org.SetPhenotype(phenotype);
     org.AggregateScore();
 
     // set the starting position
@@ -1348,13 +1308,13 @@ size_t DiagWorld::UniqueObjective()
   // novelty search unqiue objective trait count
   if(config.SELECTION() == static_cast<size_t>(Scheme::NOVELTY))
   {
-    emp_assert(arc_opti_trt.size() == config.OBJECTIVE_CNT());
+    emp_assert(arc_opti_trt.size() == config.DIMENSIONALITY());
     unique = arc_opti_trt;
   }
-  else{ unique = optimal_t(config.OBJECTIVE_CNT(), false); }
+  else{ unique = optimal_t(config.DIMENSIONALITY(), false); }
 
 
-  for(size_t o = 0; o < config.OBJECTIVE_CNT(); ++o)
+  for(size_t o = 0; o < config.DIMENSIONALITY(); ++o)
   {
     // iterate pop to check is a solution has the objective optimized
     for(size_t p = 0; p < pop.size(); ++p)
@@ -1362,7 +1322,7 @@ size_t DiagWorld::UniqueObjective()
       Org & org = *pop[p];
 
       // quick checks
-      emp_assert(org.GetOptimal().size() == config.OBJECTIVE_CNT());
+      emp_assert(org.GetOptimal().size() == config.DIMENSIONALITY());
 
       if(org.OptimizedAt(o))
       {
@@ -1379,7 +1339,7 @@ size_t DiagWorld::FindUniqueStart()
 {
   // quick checks
   emp_assert(0 < pop.size()); emp_assert(pop.size() == config.POP_SIZE());\
-  emp_assert(pop_acti_gene.size() == config.OBJECTIVE_CNT());
+  emp_assert(pop_acti_gene.size() == config.DIMENSIONALITY());
   return std::accumulate(pop_acti_gene.begin(), pop_acti_gene.end(), 0);
 }
 
@@ -1395,7 +1355,7 @@ void DiagWorld::FindEverything()
   bool elite_b = false,  opti_b = false, strk_b = false;
 
   // collect number of unique starting positions
-  pop_acti_gene = optimal_t(config.OBJECTIVE_CNT(), false);
+  pop_acti_gene = optimal_t(config.DIMENSIONALITY(), false);
 
   // comm_pos = FindCommon();
 
@@ -1422,14 +1382,14 @@ void DiagWorld::FindEverything()
 size_t DiagWorld::ActivationGeneOverlap()
 {
   // quick checks
-  emp_assert(pop_acti_gene.size() == config.OBJECTIVE_CNT());
+  emp_assert(pop_acti_gene.size() == config.DIMENSIONALITY());
   size_t count = 0;
 
   // if novelty selection is running calculate overlap
   if(config.SELECTION() == static_cast<size_t>(Scheme::NOVELTY))
   {
-    emp_assert(arc_acti_gene.size() == config.OBJECTIVE_CNT());
-    for(size_t i = 0; i < config.OBJECTIVE_CNT(); ++i)
+    emp_assert(arc_acti_gene.size() == config.DIMENSIONALITY());
+    for(size_t i = 0; i < config.DIMENSIONALITY(); ++i)
     {
       if(pop_acti_gene[i] && arc_acti_gene[i]) {count++;}
     }
@@ -1483,16 +1443,16 @@ DiagWorld::fmatrix_t DiagWorld::PopFitMat()
   // quick checks
   emp_assert(pop.size() == config.POP_SIZE());
 
-  // create matrix of population score vectors
+  // create matrix of population phenotype vectors
   fmatrix_t matrix(pop.size());
 
   for(size_t i = 0; i < pop.size(); ++i)
   {
     Org & org = *pop[i];
-    emp_assert(org.GetScore().size() == config.OBJECTIVE_CNT());
+    emp_assert(org.GetPhenotype().size() == config.DIMENSIONALITY());
 
-    // charles ask if this is the actual org score vector or a deep copy made
-    matrix[i] = org.GetScore();
+    // charles ask if this is the actual org phenotype vector or a deep copy made
+    matrix[i] = org.GetPhenotype();
   }
 
   return matrix;
@@ -1508,7 +1468,7 @@ DiagWorld::gmatrix_t DiagWorld::PopGenomes()
   for(size_t i = 0; i < pop.size(); ++i)
   {
     Org & org = *pop[i];
-    emp_assert(org.GetGenome().size() == config.OBJECTIVE_CNT());
+    emp_assert(org.GetGenome().size() == config.DIMENSIONALITY());
 
     // charles ask if this is the actual org genome or a deep copy made
     matrix[i] = org.GetGenome();
@@ -1517,30 +1477,28 @@ DiagWorld::gmatrix_t DiagWorld::PopGenomes()
   return matrix;
 }
 
-bool DiagWorld::ArchiveUpdate(const score_t & score, const fmatrix_t & dmat)
+bool DiagWorld::ArchiveUpdate(const phenotype_t & nov_scores, const fmatrix_t & dmat)
 {
   //quick checks
-  emp_assert(0 < score.size()); emp_assert(0 < dmat.size());
-  emp_assert(score.size() == dmat.size());
+  emp_assert(0 < nov_scores.size()); emp_assert(0 < dmat.size());
+  emp_assert(nov_scores.size() == dmat.size());
 
   // archive insertion count
   size_t insert = 0;
 
-  // check each solution novelty score
-  for(size_t i = 0; i < score.size(); ++i)
+  // check each solution novelty nov_scores
+  for(size_t i = 0; i < nov_scores.size(); ++i)
   {
     // insert solution if lucky
     if(random_ptr->P(config.NOVEL_RI()))
     {
-      // add phenotype to archive
+      // add nov_scores to archive
       archive.push_back(dmat[i]);
 
       // update archive stats with solution data (if possible)
       ArchiveDataUpdate(i);
-
-      if(config.NOVEL_CAP() < archive.size() && config.NOVEL_CQS()) {archive.pop_front();}
     }
-    else if(score[i] > pmin)
+    else if(nov_scores[i] > pmin)
     {
       // increment insertion counts for update
       ++insert;
@@ -1550,8 +1508,6 @@ bool DiagWorld::ArchiveUpdate(const score_t & score, const fmatrix_t & dmat)
 
       // update archive stats with solution data (if possible)
       ArchiveDataUpdate(i);
-
-      if(config.NOVEL_CAP() < archive.size() && config.NOVEL_CQS()) {archive.pop_front();}
     }
   }
 
@@ -1563,7 +1519,7 @@ bool DiagWorld::ArchiveUpdate(const score_t & score, const fmatrix_t & dmat)
   return 0 < insert;
 }
 
-void DiagWorld::ArchiveDataUpdate(const size_t org_id)
+void DiagWorld::ArchiveDataUpdate(const size_t & org_id)
 {
   // quick checks
   emp_assert(pop.size() == config.POP_SIZE());
@@ -1573,99 +1529,18 @@ void DiagWorld::ArchiveDataUpdate(const size_t org_id)
   // get org from
   Org & org = *pop[org_id];
 
-  // update archive data if needed
-
   // archive current trait aggregate maximum
   if(arc_elite < org.GetAggregate()) {arc_elite = org.GetAggregate();}
   // update the archive activation gene vector
   arc_acti_gene[org.GetStart()] = true;
+
   // update the archive optimal trait vector
-  for(size_t o = 0; o < config.OBJECTIVE_CNT(); ++o)
+  for(size_t o = 0; o < config.DIMENSIONALITY(); ++o)
   {
     if(org.OptimizedAt(o))
       {
         arc_opti_trt[o] = true;
       }
-  }
-}
-
-size_t DiagWorld::FindCommon()
-{
-  // quick checks
-  emp_assert(pop.size() == config.POP_SIZE());
-  emp_assert(common.size() == 0);
-  emp_assert(comm_pos == config.POP_SIZE());
-
-  // iterate through pop and place in appropiate bin
-  for(size_t i = 0; i < pop.size(); ++i)
-  {
-    bool in_comm = false;
-    const Org & org = *pop[i];
-
-    // check if current org matches any of the existing keys
-    for(const auto & p : common)
-    {
-      // get key orgs data
-      const Org & korg = *pop[p.first];
-
-      // get euclidean distance between both genomes
-      const double dif = selection->Pnorm(org.GetGenome(), korg.GetGenome(), 2.0);
-
-      // if they are a match
-      if(dif == 0.0)
-      {
-        common[p.first].push_back(i);
-        in_comm = true;
-        break;
-      }
-    }
-
-    if(!in_comm)
-    {
-      ids_t first{i};
-      common[i] = first;
-    }
-  }
-
-  // iterate through common dictionary and find common org id
-  size_t max = 0; size_t max_pos = 0;
-  for(const auto & p : common)
-  {
-    if(max < p.second.size())
-    {
-      max_pos = p.first;
-      max = p.second.size();
-    }
-  }
-
-  return max_pos;
-}
-
-void DiagWorld::RecordPopulation()
-{
-  std::string file_name = "population-" + std::to_string(GetUpdate()) + ".csv";
-  std::ofstream pop_csv;
-  pop_csv.open(config.OUTPUT_DIR() + "DATA-VALLEY/FREE-FOR-ALL/" + file_name);
-
-  std::string header_geno = "parent,id";
-  for(size_t i = 0; i < config.OBJECTIVE_CNT(); ++i)
-  {
-    header_geno += ",g";
-    header_geno += std::to_string(i);
-  }
-
-  pop_csv << header_geno << "\n";
-
-  for(size_t p = 0; p < pop.size(); ++p)
-  {
-    Org & org = *pop[p];
-    std::string row = std::to_string((size_t)org.GetParent()) + "," + std::to_string((size_t) p);
-    for(const double & g : org.GetGenome())
-    {
-      row += "," + std::to_string(g);
-    }
-
-    pop_csv << row << "\n";
   }
 }
 
