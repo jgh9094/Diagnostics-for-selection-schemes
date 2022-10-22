@@ -10,13 +10,14 @@
 ##################################
 # Setup relevant directories
 ##################################
-DATA_DIR=/mnt/gs18/scratch/users/herna383/DIAGNOSTICS-MIT-EC/LEXICASE
+DATA_DIR=/mnt/gs21/scratch/herna383/DIAGNOSTICS-DATA-10-21/LEXICASE
+
 
 ##################################
 # Setup random seed info
 ##################################
 PROBLEM_SEED_OFFSET=11000
-SEED_OFFSET=100000
+SEED_OFFSET=200000
 SEED=$((SLURM_ARRAY_TASK_ID + PROBLEM_SEED_OFFSET + SEED_OFFSET))
 
 ##################################
