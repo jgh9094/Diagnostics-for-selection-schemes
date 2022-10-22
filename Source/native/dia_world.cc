@@ -10,7 +10,6 @@
 // our headers
 #include "../config.h"
 #include "../world.h"
-#include "../org.h"
 
 int main(int argc, char* argv[])
 {
