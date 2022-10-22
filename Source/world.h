@@ -1072,8 +1072,7 @@ void DiagWorld::NonDominatedSorting()
     const fmatrix_t matrix = PopFitMat();
     const pareto_t pgroups = selection->ParetoFrontGroups(matrix);
 
-    // construct fitnesses
-    // ParetoFitness
+    // construct pareto fitnesses
     const phenotype_t fitness = selection->ParetoFitness(pgroups, matrix, config.NDS_ALPHA(), config.NDS_SIGMA(), config.NDS_REDUC(), config.NDS_MAX());
 
     // track data
