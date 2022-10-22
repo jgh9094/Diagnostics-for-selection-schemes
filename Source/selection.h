@@ -1,5 +1,4 @@
 /// These are the selection schemes we are using for this project
-/// Will be broken up according to my thoughts on how $$ components work
 /// These selection functions are selecting on the assumption that the problem is a maximization problem
 
 #ifndef SEL_H
@@ -14,13 +13,9 @@
 #include <set>
 
 ///< empirical headers
-#include "base/vector.h"
-#include "tools/Random.h"
-#include "tools/random_utils.h"
-
-///< constant vars
-constexpr size_t DRIFT_SIZE = 1;
-constexpr double ERROR_VALD = -1.0;
+#include "emp/base/vector.hpp"
+#include "emp/math/Random.hpp"
+#include "emp/math/random_utils.hpp"
 
 class Selection
 {
@@ -29,9 +24,9 @@ class Selection
     // vector of any ids
     using ids_t = emp::vector<size_t>;
     // vector type of org score
-    using score_t = emp::vector<double>;
+    using phenotype_t = emp::vector<double>;
     // matrix type of org with multiple scores
-    using fmatrix_t = emp::vector<score_t>;
+    using fmatrix_t = emp::vector<phenotype_t>;
     // vector holding population genomes
     using gmatrix_t = emp::vector<emp::vector<double>>;
     // map holding population id groupings by fitness (keys in decending order)
@@ -39,7 +34,7 @@ class Selection
     // sorted score vector w/ position id and score
     using sorted_t = emp::vector<std::pair<size_t,double>>;
     // vector of double vectors for K neighborhoods
-    using neigh_t = emp::vector<score_t>;
+    using neigh_t = emp::vector<phenotype_t>;
     // vector of vector size_t for Pareto grouping
     using pareto_g_t = emp::vector<emp::vector<size_t>>;
     // pairing of position_id and fitness associated with id
@@ -68,7 +63,7 @@ class Selection
       return size == check.size();
     }
 
-    bool ParetoNonZero(const score_t & score)
+    bool ParetoNonZero(const phenotype_t & score)
     {
       for(const auto & s : score)
       {
@@ -85,11 +80,8 @@ class Selection
     // distance function between two values
     double Distance(double a, double b) {return std::abs(a - b);}
 
-    // p-norm function between two vector subtractions and the exponent for p
-    double Pnorm(const score_t & x, const score_t & y, const double exp);
-
-    // similarity matrix generator
-    fmatrix_t SimilarityMatrix(const gmatrix_t & genome, const double exp);
+    // find all similar neighbors given some threshold
+    fmatrix_t SimilarNeighbors(const gmatrix_t & mat, const double & threshold, const double exp = 2.0);
 
     // print vectors
     template <class T>
@@ -103,16 +95,13 @@ class Selection
     // does A dominate B?
     // Is A > B?
     // Is A partially greater than B?
-    bool PartiallyGreater(const score_t & A, const score_t & B);
-
-    // construct a similarity matrix with current phenotypes and archive
-    fmatrix_t NoveltySimilarityMatrix(const fmatrix_t & phenos, const std::deque<score_t> & archive, const double exp);
+    bool PartiallyGreater(const phenotype_t & A, const phenotype_t & B);
 
     // get K smallest sum([x-y])^2 for each position
-    fmatrix_t NoveltySearchNearSum(const fmatrix_t & mat, const size_t K, const size_t N, const size_t exp);
+    fmatrix_t NoveltySearchNearSum(const fmatrix_t & mat, const size_t K, const size_t N, const size_t exp = 2.0);
 
     // regular summation
-    double SumOfSquares(const score_t & x, const score_t & y, const double exp)
+    double SumOfSquares(const phenotype_t & x, const phenotype_t & y, const double exp)
     {
       // quick checks
       emp_assert(0 < x.size()); emp_assert(x.size() == y.size());
@@ -126,7 +115,7 @@ class Selection
     // smart sum of squares funtion
     // max is the current upper bound for neighbor summation
     // if x,y summation is greater we can stop
-    double SmartSOS(const score_t & x, const score_t & y, const double exp, const double max)
+    double SmartSOS(const phenotype_t & x, const phenotype_t & y, const double exp, const double max)
     {
       // quick checks
       // max can be 0.0 if exact copies are the neigbors
@@ -147,36 +136,6 @@ class Selection
     ///< population structure
 
     /**
-     * K-Nearest Neighbor Structure:
-     *
-     * This function will return a vector of vectors, where
-     * each individual vector corresponds to that solutions nearest neighbors
-     *
-     * In the event of ties, we take right neighbor score.
-     *
-     * @param score Vector containing all solution scores.
-     * @param K Size of neighborhood.
-     *
-     * @return Vector of vector scores.
-     */
-    neigh_t FitNearestN(const score_t & score, const size_t K);
-
-    /**
-     * K-Nearest Neighbor Structure for Pairwise Euclidean Distances
-     *
-     * This function will return a vector of vectors, where
-     * each individual vector corresponds to that solutions nearest neighbors
-     *
-     * In the event of ties, we take the right neighbor score.
-     *
-     * @param dmat Matrix containing the pairwise distances.
-     * @param K Size of nighborhood.
-     *
-     * @return Vector of vector scores.
-     */
-    neigh_t EuclideanNearestN(const fmatrix_t & dmat, const size_t K);
-
-    /**
      * Fitness Group Structure:
      *
      * This function will return a map of double,vector pairing where
@@ -186,7 +145,7 @@ class Selection
      *
      * @return Map grouping population ids by fitness (keys (fitness) in decending order)
      */
-    fitgp_t FitnessGroup(const score_t & score);
+    fitgp_t FitnessGroup(const phenotype_t & score);
 
     /**
      * Pareto Front Group Structure:
@@ -203,24 +162,6 @@ class Selection
     pareto_g_t ParetoFrontGroups(const fmatrix_t & scores);
 
 
-    /**
-     * K-Nearest Neighbor Structure for Pairwise Euclidean Distances for Novelty Search
-     *
-     * This function will return a vector of vectors, where
-     * each individual vector corresponds to that solutions nearest neighbors.
-     * We are given a matrix with both population and archive (in that order.)
-     * We must only find neighbors for the first POP_SIZE vectors in the matrix given.
-     *
-     * In the event of ties, we take the right neighbor score.
-     *
-     * @param dmat Matrix containing the pairwise distances.
-     * @param K Size of nighborhood.
-     * @param N Number of neighborhoods we need to find
-     *
-     * @return Vector of vector scores.
-     */
-    neigh_t NoveltySearchNearestN(const fmatrix_t & dmat, const size_t K, const size_t N);
-
     ///< fitness transformation
 
     /**
@@ -233,42 +174,26 @@ class Selection
      *
      * @param dmat distance matrix for genome pairs, a lower diagnoal matrix is expected.
      * @param score Vector containing all solution scores.
-     * @param alph Shape of sharing function.
-     * @param sig Similarity threshold.
+     * @param alpha Shape of sharing function.
+     * @param sigma Similarity threshold.
      *
      * @return Vector with parent id's that are selected.
      */
-    score_t FitnessSharing(const fmatrix_t & dmat, const score_t & score, const double alph, const double sig);
+    phenotype_t FitnessSharing(const fmatrix_t & neigh, const phenotype_t & score, const double alpha, const double sigma);
 
     /**
      * Fitness Sharing: Sharing Function
      *
-     * This function will return a score of 0 or 1 - (score/sig)^alph.
-     * Depending on score < sig.
+     * This function will return a score of 0 or 1 - (score/sigma)^alpha.
+     * Depending on score < sigma.
      *
      * \param dist single score we are evaluating
-     * \param sig similarity threshold we are using
-     * \param alph shape of penalty function
+     * \param sigma similarity threshold we are using
+     * \param alpha shape of penalty function
      *
      * \return a tranformed fitness score, with fitness sharing integrated within the score
      */
-    double SharingFunction(const double dist, const double sig, const double alph);
-
-    /**
-     * Novelty Fitness Transformation:
-     *
-     * This function will transform original fitness values as novelty scores.
-     * Each score has its associated neighbors (2nd argument).
-     *
-     *
-     * @param score Vector containing all solution scores.
-     * @param neigh Vector containing neighboring positions in score (per solution).
-     * @param K Size of each neighborhood.
-     * @param exp Exponent we are using for the p norm calculations.
-     *
-     * @return Vector with transformed scores.
-     */
-    score_t Novelty(const score_t & score, const neigh_t & neigh, const size_t K);
+    double SharingFunction(const double dist, const double sigma, const double alpha);
 
     /**
      * Novelty Fitness Transformation:
@@ -283,8 +208,7 @@ class Selection
      *
      * @return Vector with transformed scores.
      */
-    score_t NoveltySOS(const neigh_t & neigh, const size_t K, const double exp);
-
+    phenotype_t NoveltySOS(const neigh_t & neigh, const size_t K, const double exp = 2.0);
 
     /**
      * Pareto Fitness Sharing:
@@ -298,7 +222,7 @@ class Selection
      *
      * @return Void.
      */
-    score_t ParetoFitness(const pareto_g_t & groups, const fmatrix_t & phenos, const double alpha, const double sigma, const double low, const double high);
+    phenotype_t ParetoFitness(const pareto_g_t & groups, const fmatrix_t & phenos, const double alpha, const double sigma, const double low, const double high);
 
     ///< selector functions
 
@@ -327,7 +251,7 @@ class Selection
      *
      * @return Parent id of solution that won the tournament.
      */
-    size_t Tournament(const size_t t, const score_t & score);
+    size_t Tournament(const size_t t, const phenotype_t & score);
 
     /**
      * Drift Selector:
@@ -379,7 +303,7 @@ class Selection
      *
      * @return A vector with parent ids.
      */
-    ids_t StochasticRemainder(const score_t & scores);
+    ids_t StochasticRemainder(const phenotype_t & scores);
 
   private:
 
@@ -389,73 +313,7 @@ class Selection
 
 ///< population structure
 
-Selection::neigh_t Selection::FitNearestN(const score_t & score, const size_t K)
-{
-  // quick checks
-  emp_assert(0 < score.size()); emp_assert(K < score.size());
-
-  // create group vector returning
-  neigh_t group(score.size());
-
-  // create vector to sort scores and generate score neighborhood pairings
-  // <position id in orginal score vector, original score vector value>
-  sorted_t order;
-
-  // populate the vector with pairings + sort it based on scores
-  for(size_t i = 0; i < score.size(); ++i){order.emplace_back(i, score[i]);}
-  std::sort(order.begin(), order.end(), [](const auto &left, const auto &right) {
-    return left.second < right.second;
-  });
-
-  emp_assert(order.size() == score.size());
-
-  // walk through sorted vector and create the k neighborhood per score value
-  for(size_t i = 0; i < order.size(); ++i)
-  {
-    emp::vector<double> neigh;
-    int left = i - 1; int right = i + 1;
-
-    // generate the neighborhood
-    while(neigh.size() != K)
-    {
-      //quick checks
-      emp_assert(!(left < 0 && order.size() <= right));
-
-      // reached all left neighbors possible for i
-      if(left < 0)
-      {
-        neigh.push_back(order[right].second);
-        ++right;
-      }
-      // reached all right neighbors possible for i
-      else if (order.size() <= right)
-      {
-        neigh.push_back(order[left].second);
-        --left;
-      }
-      // we find the closes neighbor to score i, between left and right
-      else
-      {
-        // look at distances
-        const double ld = Distance(order[i].second, order[left].second);
-        const double rd = Distance(order[i].second, order[right].second);
-
-        // left is smaller distance
-        if(ld < rd) {neigh.push_back(order[left].second); --left;}
-        else {neigh.push_back(order[right].second); ++right;}
-      }
-    }
-    // quick checks
-    emp_assert(neigh.size() == K);
-
-    // we now have the add vector into right location
-    group[order[i].first] = neigh;
-  }
-
-  return group;
-}
-
-Selection::fitgp_t Selection::FitnessGroup(const score_t & score)
+Selection::fitgp_t Selection::FitnessGroup(const phenotype_t & score)
 {
   // quick checks
   emp_assert(0 < score.size());
@@ -471,55 +329,6 @@ Selection::fitgp_t Selection::FitnessGroup(const score_t & score)
       group[score[i]] = p;
     }
     else{group[score[i]].push_back(i);}
-  }
-
-  return group;
-}
-
-Selection::neigh_t Selection::EuclideanNearestN(const fmatrix_t & dmat, const size_t K)
-{
-  // quick checks
-  emp_assert(0 < dmat.size()); emp_assert(K < dmat.size()); emp_assert(0 <= K);
-
-  // create group vector returning
-  neigh_t group(dmat.size());
-
-  // iterate through the distance vector
-  for(size_t i = 0; i < dmat.size(); ++i)
-  {
-    // quick checks
-    emp_assert(dmat.size() == dmat[i].size());
-
-    // container to hold distances
-    std::multiset<double> distance;
-
-    // grab values from lower diagonal
-    for(size_t j = 0; j < dmat[i].size(); ++j)
-    {
-      // ignore i == j case
-      if(i == j) {continue;}
-
-      // only look at lower diagnoal
-      if(j < i)
-      {
-        emp_assert(dmat[i][j] != ERROR_VALD);
-        distance.insert(dmat[i][j]);
-      }
-      else
-      {
-        emp_assert(dmat[j][i] != ERROR_VALD);
-        distance.insert(dmat[j][i]);
-      }
-    }
-
-    // make sure we have all the required data
-    emp_assert(distance.size() == dmat.size() - 1);
-
-    // grab the k nearest neighbors
-    auto it = distance.begin();
-    for(size_t k = 0; k < K; ++k) {group[i].push_back(*it++);}
-
-    emp_assert(group[i].size() == K);
   }
 
   return group;
@@ -582,103 +391,35 @@ Selection::pareto_g_t Selection::ParetoFrontGroups(const fmatrix_t & scores)
   return groups;
 }
 
-Selection::neigh_t Selection::NoveltySearchNearestN(const fmatrix_t & dmat, const size_t K, const size_t N)
-{
-// quick checks
-  emp_assert(0 < dmat.size()); emp_assert(0 < N);
-  emp_assert(K < N); emp_assert(0 <= K);
-  emp_assert(N <= dmat.size());
-
-  // create group vector returning
-  neigh_t group(N);
-
-  // iterate through the distance vector
-  for(size_t i = 0; i < N; ++i)
-  {
-    // quick checks
-    emp_assert(dmat.size() == dmat[i].size());
-
-    // container to hold distances
-    std::multiset<double> distance;
-
-    // grab values from lower diagonal
-    for(size_t j = 0; j < dmat[i].size(); ++j)
-    {
-      // ignore i == j case
-      if(i == j) {continue;}
-
-      // only look at lower diagnoal
-      if(j < i)
-      {
-        emp_assert(dmat[i][j] != ERROR_VALD);
-        distance.insert(dmat[i][j]);
-      }
-      else
-      {
-        emp_assert(dmat[j][i] != ERROR_VALD);
-        distance.insert(dmat[j][i]);
-      }
-    }
-
-    // make sure we have all the required data
-    emp_assert(distance.size() == dmat.size() - 1);
-
-    // grab the k nearest neighbors
-    auto it = distance.begin();
-    for(size_t k = 0; k < K; ++k) {group[i].push_back(*it++);}
-
-    emp_assert(group[i].size() == K);
-  }
-
-  return group;
-}
-
 
 ///< fitness transformation >///
 
-Selection::score_t Selection::FitnessSharing(const fmatrix_t & dmat, const score_t & score, const double alph, const double sig)
+Selection::phenotype_t Selection::FitnessSharing(const fmatrix_t & neigh, const phenotype_t & score, const double alpha, const double sigma)
 {
   // quick checks
-  emp_assert(dmat.size() == score.size()); emp_assert(0 <= alph); emp_assert(0 <= sig);
-  emp_assert(0 < dmat.size()); emp_assert(0 < score.size());
-
-  score_t tscore(score.size());
+  emp_assert(neigh.size() == score.size()); emp_assert(0 <= alpha); emp_assert(0 <= sigma);
+  emp_assert(0 < neigh.size()); emp_assert(0 < score.size());
 
   // edge case where K == 0
-  if(sig == 0.0)
+  if(sigma == 0.0)
   {
-    std::copy(score.begin(), score.end(), tscore.begin());
-
-    // quick checks and return the score vector unaltered
-    emp_assert(score[0] == tscore[0]);
+    phenotype_t tscore = score;
     return tscore;
   }
 
-  for(size_t i = 0; i < dmat.size(); ++i)
-  {
-    // quick checks
-    emp_assert(dmat[i].size() == score.size());
+  phenotype_t tscore(score.size());
 
+  for(size_t i = 0; i < neigh.size(); ++i)
+  {
     // mi value that holds niche count (or scaling factor)
     // we can start at 1 because sh(d_ij) (where i == j), will equal 1.0
     double mi = 1.0;
 
-    for(size_t j = 0; j < dmat.size(); ++j)
+    // sum all
+    for(size_t j = 0; j < neigh[i].size(); ++j)
     {
-      // ignore similar pairs, already accounted for
-      if(i == j) {continue;}
-
-      // only look at lower triangular diagonal values
-      if(j < i)
-      {
-        emp_assert(dmat[i][j] != ERROR_VALD);
-        mi += SharingFunction(dmat[i][j], sig, alph);
-      }
-      else
-      {
-        emp_assert(dmat[j][i] != ERROR_VALD);
-        mi += SharingFunction(dmat[j][i], sig, alph);
-      }
+      const double euclid = std::pow(neigh[i][j], (1.0/2.0));
+      mi += SharingFunction(euclid, sigma, alpha);
     }
 
     tscore[i] = score[i] / mi;
@@ -687,67 +428,21 @@ Selection::score_t Selection::FitnessSharing(const fmatrix_t & dmat, const score
   return tscore;
 }
 
-double Selection::SharingFunction(const double dist, const double sig, const double alph)
+double Selection::SharingFunction(const double dist, const double sigma, const double alpha)
 {
   // quick checks
-  emp_assert(0.0 <= dist); emp_assert(0.0 <= sig); emp_assert(0.0 <= alph);
+  emp_assert(0.0 <= dist); emp_assert(0.0 <= sigma); emp_assert(0.0 <= alpha);
 
-  if(dist < sig)
-  {
-    // right side of equation
-    const double rse = std::pow((dist/sig), alph);
-    return 1.0 - rse;
-  }
-
-  return 0.0;
+  const double rse = std::pow((dist/sigma), alpha);
+  return 1.0 - rse;
 }
 
-Selection::score_t Selection::Novelty(const score_t & score, const neigh_t & neigh, const size_t K)
-{
-  // quick checks
-  emp_assert(score.size() == neigh.size()); emp_assert(0 <= K);
-  emp_assert(0 < score.size()); emp_assert(0 < neigh.size());
-
-  // novelty score transformed from orignial scores
-  score_t nscore(score.size());
-
-  // edge case where K == 0
-  if(K == 0)
-  {
-    std::copy(score.begin(), score.end(), nscore.begin());
-
-    // quick checks and return the score vector unaltered
-    emp_assert(score[0] == nscore[0]);
-    return nscore;
-  }
-
-  // iterate through both score and neighborhood vectors
-  for(size_t i = 0; i < score.size(); ++i)
-  {
-    // quick checks
-    emp_assert(neigh[i].size() == K);
-
-    // keep track of distances
-    double numer = 0.0;
-
-    // euclidean distance for two points
-    for(size_t k = 0; k < K; ++k){numer += Distance(score[i], neigh[i][k]);}
-
-    // calculate the average
-    const double denom = static_cast<double>(K);
-    // std::cout << "Novel: " << numer / denom << std::endl;
-    nscore[i] = numer / denom;
-  }
-
-  return nscore;
-}
-
-Selection::score_t Selection::NoveltySOS(const neigh_t & neigh, const size_t K, const double exp)
+Selection::phenotype_t Selection::NoveltySOS(const neigh_t & neigh, const size_t K, const double exp)
 {
   // quick checks
   emp_assert(0 < neigh.size()); emp_assert(0 < K); emp_assert(0.0 <= exp);
 
-  score_t fitness(neigh.size(), 0.0);
+  phenotype_t fitness(neigh.size(), 0.0);
 
   for(size_t i = 0; i < neigh.size(); ++i)
   {
@@ -763,7 +458,7 @@ Selection::score_t Selection::NoveltySOS(const neigh_t & neigh, const size_t K, 
   return fitness;
 }
 
-Selection::score_t Selection::ParetoFitness(const pareto_g_t & groups, const fmatrix_t & phenos, const double alpha, const double sigma, const double low, const double high)
+Selection::phenotype_t Selection::ParetoFitness(const pareto_g_t & groups, const fmatrix_t & phenos, const double alpha, const double sigma, const double low, const double high)
 {
   // quick checks
   emp_assert(0 < groups.size()); emp_assert(0 < phenos.size());
@@ -771,7 +466,7 @@ Selection::score_t Selection::ParetoFitness(const pareto_g_t & groups, const fma
   emp_assert(0 < high); emp_assert(0 < low);
 
   // initialize starting fitnessess
-  score_t fitness(phenos.size(), 0.0);
+  phenotype_t fitness(phenos.size(), 0.0);
   double group_min = high;
 
   // update fitness accordingly
@@ -791,22 +486,22 @@ Selection::score_t Selection::ParetoFitness(const pareto_g_t & groups, const fma
     }
 
     // collect what we need
-    score_t group_scores;
+    phenotype_t group_scores;
     fmatrix_t group_phenos;
 
-    // go through each id
+    // go through each id and record current min_score and phenotype
     for(const size_t & id : g)
     {
+      // current groups scores
       group_scores.push_back(group_min);
+      //current groups phenotype
       group_phenos.push_back(phenos[id]);
     }
 
-    // get similarity matrix
-    fmatrix_t sim_mat = SimilarityMatrix(group_phenos, 2.0);
-    emp_assert(sim_mat.size() == g.size());
-    // apply fitness sharing
-    score_t gscores = FitnessSharing(sim_mat, group_scores, alpha, sigma);
-    emp_assert(gscores.size() == g.size());
+    // get similar neighbors
+    const fmatrix_t neighbors = SimilarNeighbors(group_phenos, sigma * sigma);
+    // transform scores
+    const phenotype_t gscores = FitnessSharing(neighbors, group_scores, alpha, sigma);
 
     // update fitness vector
     for(size_t i = 0; i < g.size(); ++i)
@@ -819,7 +514,6 @@ Selection::score_t Selection::ParetoFitness(const pareto_g_t & groups, const fma
     group_min *= low;
   }
 
-  // std::cout << "group_min=" << group_min << std::endl;
   return fitness;
 }
 
@@ -877,7 +571,7 @@ Selection::ids_t Selection::MLSelect(const size_t mu, const size_t lambda, const
   return parent;
 }
 
-size_t Selection::Tournament(const size_t t, const score_t & score)
+size_t Selection::Tournament(const size_t t, const phenotype_t & score)
 {
   // quick checks
   emp_assert(0 < t); emp_assert(0 < score.size());
@@ -899,18 +593,6 @@ size_t Selection::Tournament(const size_t t, const score_t & score)
   emp_assert(0 < opt.size());
 
   return tour[opt[0]];
-}
-
-size_t Selection::Drift(const size_t size)
-{
-  // quick checks
-  emp_assert(size > 0);
-
-  // return a random org id
-  auto win = emp::Choose(*random, size, DRIFT_SIZE);
-  emp_assert(win.size() == DRIFT_SIZE);
-
-  return win[0];
 }
 
 size_t Selection::EpsiLexicase(const fmatrix_t & mscore, const double epsi, const size_t M)
@@ -935,7 +617,7 @@ size_t Selection::EpsiLexicase(const fmatrix_t & mscore, const double epsi, cons
     size_t testcase = test_id[tcnt];
 
     // create vector of current filter solutions
-    score_t scores(filter.size());
+    phenotype_t scores(filter.size());
     for(size_t i = 0; i < filter.size(); ++i)
     {
       // make sure each solutions vector is the right size
@@ -971,7 +653,7 @@ size_t Selection::EpsiLexicase(const fmatrix_t & mscore, const double epsi, cons
   return filter[wid];
 }
 
-Selection::ids_t Selection::StochasticRemainder(const score_t & scores)
+Selection::ids_t Selection::StochasticRemainder(const phenotype_t & scores)
 {
   // quick checks
   emp_assert(0 < scores.size());
@@ -1019,14 +701,14 @@ Selection::ids_t Selection::StochasticRemainder(const score_t & scores)
     for(const auto & o : order)
     {
       // sol_id
-      size_t id = std::get<0>(id_fit[o]);
+      const size_t id = std::get<0>(id_fit[o]);
       emp_assert(0 <= id); emp_assert(id < scores.size());
       emp_assert(0 <= o); emp_assert(o < id_fit.size());
 
       // sol_fitness
       double fi = std::get<1>(id_fit[o]), intPart, fractPart;
       fractPart = modf(fi, &intPart);
-      emp_assert(0.0 < fi);
+      emp_assert(0.0 <= fi);
 
       // add parent integer many times, if possible
       for(size_t i = 0; i < static_cast<size_t>(intPart); ++i)
@@ -1034,7 +716,7 @@ Selection::ids_t Selection::StochasticRemainder(const score_t & scores)
         parents.push_back(id);
         if(parents.size() == scores.size()) {break;}
       }
-      // fraction part is probability of being added again, if possible
+      // fraction part is probability of being added again
       if(random->P(fractPart) && parents.size() < scores.size())
       {
         parents.push_back(id);
@@ -1045,49 +727,47 @@ Selection::ids_t Selection::StochasticRemainder(const score_t & scores)
   }
   emp_assert(parents.size() == scores.size());
 
-
   return parents;
 }
 
 
 ///< helper functions
 
-double Selection::Pnorm(const score_t & x, const score_t & y, const double exp)
+Selection::fmatrix_t Selection::SimilarNeighbors(const gmatrix_t & mat, const double & threshold, const double exp)
 {
   // quick checks
-  emp_assert(0 < x.size()); emp_assert(0 < y.size());
-  emp_assert(x.size() == y.size()); emp_assert(0 <= exp);
+  emp_assert(0 < mat.size());
 
-  // subtract one vector from the other and take the exp of that
-  score_t diff(x.size());
-  for(size_t i = 0; i < x.size(); ++i){diff[i] = std::pow((x[i] - y[i]), exp);}
+  // will hold all neighbors that fall within threshold of similarity
+  fmatrix_t fit_mat(mat.size());
 
-  double tot = std::accumulate(diff.begin(), diff.end(), 0.0);
-
-  return std::pow(tot, (1.0/exp));
-}
-
-Selection::fmatrix_t Selection::SimilarityMatrix(const gmatrix_t & genome, const double exp)
-{
-  // quick checks
-  emp_assert(1 <= exp); emp_assert(1 < genome.size());
-
-  // generate the matrix, lower diagnonal matrix filled (not include i == j)
-  fmatrix_t similar(genome.size());
-  for(auto & s : similar) {s.resize(genome.size(), ERROR_VALD);}
-
-  for(size_t i = 0; i < genome.size(); ++i)
+  // go through genomes pairings and find neighbors
+  for(size_t i = 0; i < mat.size(); ++i)
   {
-    for(size_t j = 0; j < i; ++j)
+    // will hold all neighbors
+    emp::vector<double> neigh;
+
+    for(size_t j = 0; j < mat.size(); ++j)
     {
-      similar[i][j] = Pnorm(genome[i], genome[j], exp);
+      // skip same pairs
+      if(i == j) {continue;}
+
+      const double smart = SmartSOS(mat[i], mat[j], exp, threshold);
+
+      // stopped early
+      if(smart < 0.0) {continue;}
+
+      // add to the neighbor set
+      neigh.push_back(smart);
     }
+
+    fit_mat[i] = neigh;
   }
 
-  return similar;
+  return fit_mat;
 }
 
-bool Selection::PartiallyGreater(const score_t & A, const score_t & B)
+bool Selection::PartiallyGreater(const phenotype_t & A, const phenotype_t & B)
 {
   //quick checks
   emp_assert(A.size() == B.size());
@@ -1104,20 +784,6 @@ bool Selection::PartiallyGreater(const score_t & A, const score_t & B)
   }
 
   return strict;
-}
-
-Selection::fmatrix_t Selection::NoveltySimilarityMatrix(const fmatrix_t & phenos, const std::deque<score_t> & archive, const double exp)
-{
-  // quick checks
-  emp_assert(0 < phenos.size()); emp_assert(0 < exp);
-
-  // will hold combined pop phenos and archive of pheno
-  fmatrix_t combo;
-
-  for(size_t i = 0; i < phenos.size(); ++i) {combo.push_back(phenos[i]);}
-  for(size_t i = 0; i < archive.size(); ++i) {combo.push_back(archive[i]);}
-
-  return SimilarityMatrix(combo,exp);
 }
 
 Selection::fmatrix_t Selection::NoveltySearchNearSum(const fmatrix_t & mat, const size_t K, const size_t N, const size_t exp)
@@ -1146,7 +812,7 @@ Selection::fmatrix_t Selection::NoveltySearchNearSum(const fmatrix_t & mat, cons
       // check if we need to remove any socres
       else
       {
-        double smart = SmartSOS(mat[i],mat[j],exp,*(neighbors.rbegin()));
+        const double smart = SmartSOS(mat[i],mat[j],exp,*(neighbors.rbegin()));
 
         // negative means we stopped early
         if(smart < 0.0){ continue; }
@@ -1164,7 +830,7 @@ Selection::fmatrix_t Selection::NoveltySearchNearSum(const fmatrix_t & mat, cons
     emp_assert(neighbors.size() == K);
 
     // add all neighbors to vector and save in fit_mat
-    score_t score;
+    phenotype_t score;
     for(auto it = neighbors.begin(); it != neighbors.end(); ++it)
     {
       score.push_back(*it);
