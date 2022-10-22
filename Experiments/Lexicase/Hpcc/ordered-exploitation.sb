@@ -57,7 +57,7 @@ TREATMENT__EPS_0__MAX=50
 ##################################
 # Config file parameters
 ##################################
-OBJECTIVE_CNT=100
+DIMENSIONALITY=100
 ACCURACY=.99
 GENERATIONS=50000
 ACCURACY_DIR=99
@@ -75,7 +75,7 @@ fi
 
 ####################################################################
 
-RUN_DIR=${DATA_DIR}/TRT_${OBJECTIVE_CNT}__ACC_${ACCURACY_DIR}__GEN_${GENERATIONS}/${NAME}/
+RUN_DIR=${DATA_DIR}/TRT_${DIMENSIONALITY}__ACC_${ACCURACY_DIR}__GEN_${GENERATIONS}/${NAME}/
 
 # make a run directory
 mkdir -p ${RUN_DIR}
