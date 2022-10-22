@@ -14,7 +14,7 @@ class Diagnostic
     //typename for target vector
     using phenotype_t = emp::vector<double>;
     using genome_t = emp::vector<double>;
-    using opti_t = emp::vector<bool>;
+    using optimal_t = emp::vector<bool>;
 
   public:
 
@@ -119,7 +119,7 @@ class Diagnostic
      *
      * @return boolean vector that displays optimized traits.
     */
-    opti_t OptimizedVector(const genome_t & g, const double acc);
+    optimal_t OptimizedVector(const genome_t & g, const double acc);
 
   private:
     // holds vector of target objective values
@@ -248,7 +248,7 @@ Diagnostic::phenotype_t Diagnostic::MultiValleyCrossing(const genome_t & g, cons
 
 ///< phenotype vector interpretation implementations
 
-Diagnostic::opti_t Diagnostic::OptimizedVector(const genome_t & g, const double acc)
+Diagnostic::optimal_t Diagnostic::OptimizedVector(const genome_t & g, const double acc)
 {
   // quick checks
   emp_assert(g.size() > 0);
@@ -257,7 +257,7 @@ Diagnostic::opti_t Diagnostic::OptimizedVector(const genome_t & g, const double 
   emp_assert(acc <= 1.0);
 
   // initialize optimized vector with all false
-  opti_t optimize(g.size(), false);
+  optimal_t optimize(g.size(), false);
   const double threshold = acc * target;
 
   // iterate through genome and check optimality
