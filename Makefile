@@ -1,15 +1,15 @@
 # Project-specific settings
 PROJECT := dia_world
-EMP_DIR := ../Empirical/source
-CEREAL_DIR := ../Empirical/third-party/cereal/include
+EMP_DIR := ../Fork-Master-Emp/Empirical/include
+CEREAL_DIR := ../Fork-Master-Emp/Empirical/third-party/cereal/include
 
 # Flags to use regardless of compiler
-CFLAGS_all := -Wall -Wno-unused-function -std=c++17 -I$(EMP_DIR)/
+CFLAGS_all := -Wall -Wno-unused-function -std=c++20 -I$(EMP_DIR)/
 
 # Native compiler information
-CXX_nat := g++
+CXX_nat := clang++
 CFLAGS_nat := -O3 -DNDEBUG $(CFLAGS_all)
-CFLAGS_nat_debug := -g $(CFLAGS_all)
+CFLAGS_nat_debug := -g $(CFLAGS_all) -DEMP_TRACK_MEM
 
 # Emscripten compiler information
 CXX_web := emcc
@@ -34,7 +34,7 @@ debug-web:	$(PROJECT).js
 
 web-debug:	debug-web
 
-$(PROJECT): Source/org.h Source/problem.h Source/selection.h Source/world.h Source/native/$(PROJECT).cc
+$(PROJECT): Source/org.h Source/diagnostic.h Source/selection.h Source/world.h Source/native/$(PROJECT).cc
 	$(CXX_nat) $(CFLAGS_nat) Source/native/$(PROJECT).cc -o $(PROJECT)
 	@echo To build the web version use: make web
 
