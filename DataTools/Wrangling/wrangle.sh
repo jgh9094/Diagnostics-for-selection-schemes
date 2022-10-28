@@ -6,7 +6,7 @@ echo "CALLING THE SB FILES NOW..."
 echo ""
 
 echo "RUNNING: al-data.sb"
-sbatch al-data.sb
+sbatch ot-data.sb
 
 echo "RUNNING: solution-fnd.sb"
 sbatch solution-fnd.sb
