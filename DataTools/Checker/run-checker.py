@@ -143,7 +143,6 @@ def main():
     param_two = args.param_two
     print('2nd param=', param_two)
 
-
     # Get to work!
     print("\nChecking all related data directories now!")
     CheckDir(data_dir, selection, diagnostic, offset, objectives, accuracy, generations, param_two)
