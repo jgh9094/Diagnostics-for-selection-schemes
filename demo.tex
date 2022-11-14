@@ -110,7 +110,7 @@
 
 \title{Diagnostics Supplemental Material}
 \author{Jose Guadalupe Hernandez}
-\date{2022-10-31}
+\date{2022-11-14}
 
 \begin{document}
 \maketitle
@@ -257,7 +257,16 @@ Setting up required variables variables.
                                   \DataTypeTok{colour =} \StringTok{"white"}\NormalTok{,}
                                   \DataTypeTok{size =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{linetype =} \StringTok{"solid"}\NormalTok{)}
 \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
+\begin{verbatim}
+## Warning: The `size` argument of `element_rect()` is deprecated as of ggplot2 3.4.0.
+## i Please use the `linewidth` argument instead.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \CommentTok{# cross comparison data frames}
 \NormalTok{cc_over_time <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{'/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-over-time.csv'}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{stringsAsFactors =} \OtherTok{FALSE}\NormalTok{)}
 \KeywordTok{colnames}\NormalTok{(cc_over_time)[}\DecValTok{19}\NormalTok{] <-}\StringTok{ 'Selection}\CharTok{\textbackslash{}n}\StringTok{Scheme'}
@@ -334,21 +343,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{exploitation-rate-results}{%
@@ -382,21 +391,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{performance-over-time}{%
@@ -503,6 +512,11 @@ Best performance throughout 50,000 generations.
 \NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## Warning: Using the `size` aesthietic with geom_polygon was deprecated in ggplot2 3.4.0.
+## i Please use the `linewidth` aesthetic instead.
+\end{verbatim}
 
 \includegraphics{demo_files/figure-latex/unnamed-chunk-5-1.pdf}
 
@@ -734,21 +748,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{performance-over-time-1}{%
@@ -1272,21 +1286,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{satisfactory-trait-coverage}{%
@@ -2157,21 +2171,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{performance}{%
@@ -2699,21 +2713,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{exploitation-rate-results-1}{%
@@ -3978,21 +3992,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{exploitation-rate-results-2}{%
@@ -5244,21 +5258,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{exploitation-rate-results-3}{%
@@ -6568,21 +6582,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{exploitation-rate-results-4}{%
@@ -7377,6 +7391,10 @@ Activation gene coverage in the population at the end of 50,000 generations.
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+## Warning: Removed 1 rows containing missing values (`geom_point()`).
+\end{verbatim}
+
 \includegraphics{demo_files/figure-latex/unnamed-chunk-215-1.pdf}
 
 \hypertarget{stats-41}{%
@@ -7944,21 +7962,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{exploitation-rate-results-5}{%
@@ -9353,21 +9371,21 @@ These analyses were conducted in the following computing environment:
 \end{Shaded}
 
 \begin{verbatim}
-##                _                           
-## platform       x86_64-pc-linux-gnu         
-## arch           x86_64                      
-## os             linux-gnu                   
-## system         x86_64, linux-gnu           
-## status                                     
-## major          4                           
-## minor          2.1                         
-## year           2022                        
-## month          06                          
-## day            23                          
-## svn rev        82513                       
-## language       R                           
-## version.string R version 4.2.1 (2022-06-23)
-## nickname       Funny-Looking Kid
+##                _                                          
+## platform       x86_64-pc-linux-gnu                        
+## arch           x86_64                                     
+## os             linux-gnu                                  
+## system         x86_64, linux-gnu                          
+## status         Patched                                    
+## major          4                                          
+## minor          2.2                                        
+## year           2022                                       
+## month          11                                         
+## day            10                                         
+## svn rev        83330                                      
+## language       R                                          
+## version.string R version 4.2.2 Patched (2022-11-10 r83330)
+## nickname       Innocent and Trusting
 \end{verbatim}
 
 \hypertarget{exploitation-rate-results-6}{%
