@@ -33,6 +33,7 @@ Our supplemental material includes the following paper figures and statistics:
 - Ordered exploitation results (Section \@ref(ordered-exploitation-results))
 - Contradictory objectives results (Section \@ref(contradictory-objectives-results))
 - Multi-path exploration results (Section \@ref(multi-path-exploration-results))
+- Multi-valley crossing results (Section \@ref(multi-valley-crossing-results))
 
 Additionally, our supplemental material includes the results from parameter tuning selection schemes:
 
