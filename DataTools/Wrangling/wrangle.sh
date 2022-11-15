@@ -5,7 +5,7 @@ echo "STARTING THE WRANGLING PROCESS"
 echo "CALLING THE SB FILES NOW..."
 echo ""
 
-echo "RUNNING: al-data.sb"
+echo "RUNNING: ot-data.sb"
 sbatch ot-data.sb
 
 echo "RUNNING: solution-fnd.sb"
