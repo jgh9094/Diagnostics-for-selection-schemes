@@ -103,9 +103,9 @@ RUN \
   #   && \
   # mkdir ${DATA_PATH} \
     # && \
-  osf -p ${OSF_PROJECT} fetch 2022-07-01-data.tar.gz ${PROJECT_PATH}2022-07-01-data.tar.gz \
+  osf -p ${OSF_PROJECT} fetch 2022-10-21-data.tar.gz ${PROJECT_PATH}2022-10-21-data.tar.gz \
     && \
-  tar -xzf ${PROJECT_PATH}2022-07-01-data.tar.gz -C ${PROJECT_PATH} \
+  tar -xzf ${PROJECT_PATH}2022-10-21-data.tar.gz -C ${PROJECT_PATH} \
     && \
   echo "download"
 
