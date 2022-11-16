@@ -339,13 +339,13 @@ group_by(end, acron) %>%
 ```
 
 Kruskal–Wallis test provides evidence of difference among activation gene coverage in the population at the end of 50,000 generations.
-```{r mpe-act-end-sum}
+```{r mpe-act-end-kru}
 kruskal.test(uni_str_pos ~ acron,data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on activation gene coverage in the population at the end of 50,000 generations.
 
-```{r mpe-act-end-sum}
+```{r mpe-act-end-wil}
 pairwise.wilcox.test(x = end$uni_str_pos, g = end$acron, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
