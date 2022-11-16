@@ -12,7 +12,7 @@ github-repo:  jgh9094/ECJ-2022-suite-of-diagnostics-for-selection-schemes
 description: "Supplemental material for the selection scheme diagnostic work."
 ---
 
-```{r init, include=FALSE}
+```{r idx-init, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -71,7 +71,7 @@ Our work demonstrates the value of diagnostics for building a deeper understandi
 
 Setting up required variables variables.
 
-```{r setup}
+```{r idx-setup}
 library(ggplot2)
 library(dplyr)
 
@@ -175,6 +175,6 @@ tru_ssf[is.na(tru_ssf)] <- 59999
 
 These analyses were conducted in the following computing environment:
 
-```{r version}
+```{r idx-version}
 print(version)
 ```
