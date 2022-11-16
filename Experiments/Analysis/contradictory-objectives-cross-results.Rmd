@@ -216,7 +216,7 @@ group_by(end, acron) %>%
 
 Kruskal–Wallis test provides evidence of difference among satisfactory trait coverage in the population at the end of 50,000 generations.
 ```{r con-sat-end-kru}
-kruskal.test(pop_uni_obj ~ acron,data = end)
+kruskal.test(pop_uni_obj ~ acron, data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on satisfactory trait coverage in the population at the end of 50,000 generations.
@@ -237,7 +237,6 @@ Activation gene coverage over time.
 
 ```{r con-act-ot, warning=FALSE}
 contradictory_objectives = filter(cc_over_time, diagnostic == 'contradictory_objectives')
-contradictory_objectives$uni_str_pos = contradictory_objectives$uni_str_pos + contradictory_objectives$arc_acti_gene - contradictory_objectives$overlap
 lines = contradictory_objectives %>%
         group_by(`Selection\nScheme`, gen) %>%
           dplyr::summarise(
@@ -290,8 +289,7 @@ Activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r con-act-end}
 end = filter(cc_end, diagnostic == 'contradictory_objectives')
-end$uni_str_pos = end$uni_str_pos + end$arc_acti_gene - end$overlap
-best = ggplot(end, aes(x = acron, y = uni_str_pos, color = acron, fill = acron, shape = acron)) +
+plot = ggplot(end, aes(x = acron, y = uni_str_pos, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
@@ -310,7 +308,7 @@ best = ggplot(end, aes(x = acron, y = uni_str_pos, color = acron, fill = acron, 
   p_theme
 
 plot_grid(
-  best +
+  plot +
     ggtitle("Final activation gene coverage") +
     theme(legend.position="none"),
   legend,
@@ -325,7 +323,7 @@ plot_grid(
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r con-act-end-sum}
-end$acron = factor(end$acron, levels = c('nov', 'nds', 'lex', 'pfs', 'gfs', 'ran', 'tor', 'tru'))
+end$acron = factor(end$acron, levels = c('nov', 'nds', 'lex', 'pfs', 'ran', 'gfs', 'tor', 'tru'))
 group_by(end, acron) %>%
   dplyr::summarise(
     count = n(),
@@ -340,7 +338,7 @@ group_by(end, acron) %>%
 
 Kruskal–Wallis test provides evidence of difference among activation gene coverage in the population at the end of 50,000 generations.
 ```{r con-act-end-kru}
-kruskal.test(uni_str_pos ~ acron,data = end)
+kruskal.test(uni_str_pos ~ acron, data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on activation gene coverage in the population at the end of 50,000 generations.
@@ -360,28 +358,26 @@ Here analyze the satisfactory trait coverage and activation gene coverage result
 Satisfactory trait coverage over time.
 
 ```{r con-nds-sat-ot, warning=TRUE}
-nds <- filter(cc_over_time, acron == 'nds' & diagnostic == 'contradictory_objectives')
+nds <- filter(nds_ot, Sigma == 0.3 & diagnostic == 'contradictory_objectives')
 nds$'Selection\nScheme' = 'Nondominated sorting (nds)'
 
-nfr <- read.csv('./DATA-FINAL/NONDOMINATEDSORTING/over-time-contradictory_objectives-nondominatedsorting.csv', header = TRUE, stringsAsFactors = FALSE)
+nfr <- filter(nds_ot, Sigma == 0.0 & diagnostic == 'contradictory_objectives')
 nfr$acron = 'nfr'
 nfr$'Selection\nScheme' = 'Nondominated front ranking (nfr)'
-nfr$diagnostic = 'contradictory_objectives'
-nfr <- filter(nfr, trt == 0.0)
 
-pfs <- filter(cc_over_time, acron == 'pfs' & diagnostic == 'contradictory_objectives')
+pfs <- filter(pfs_ot, Sigma == 0.3 & diagnostic == 'contradictory_objectives')
 pfs$'Selection\nScheme' = 'Phenotypic fitness sharing (pfs)'
 
 contradictory_objectives <- rbind(nds,nfr,pfs)
 contradictory_objectives$`Selection\nScheme` <- factor(contradictory_objectives$`Selection\nScheme`, levels = c('Nondominated sorting (nds)','Nondominated front ranking (nfr)','Phenotypic fitness sharing (pfs)'))
 
 lines = contradictory_objectives %>%
-        group_by(`Selection\nScheme`, gen) %>%
-          dplyr::summarise(
-            min = min(pop_uni_obj),
-            mean = mean(pop_uni_obj),
-            max = max(pop_uni_obj)
-          )
+  group_by(`Selection\nScheme`, gen) %>%
+  dplyr::summarise(
+    min = min(pop_uni_obj),
+    mean = mean(pop_uni_obj),
+    max = max(pop_uni_obj)
+  )
 points = filter(lines, gen %% 2000 == 0 & gen != 0)
 
 ot = ggplot(lines, aes(x=gen, y=mean, group = `Selection\nScheme`, fill =`Selection\nScheme`, color = `Selection\nScheme`, shape = `Selection\nScheme`)) +
@@ -406,7 +402,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = `Selection\nScheme`, fill =`Select
   scale_fill_manual(values = cb_palette) +
   ggtitle("Satisfactory trait coverage over time") +
   p_theme+
-    guides(
+  guides(
     shape=guide_legend(ncol=1, title.position = "bottom"),
     color=guide_legend(ncol=1, title.position = "bottom"),
     fill=guide_legend(ncol=1, title.position = "bottom")
@@ -425,15 +421,14 @@ ot
 legend <- cowplot::get_legend(
   ot +
     guides(
-      shape=guide_legend(ncol=1, title.position = "bottom"),
-      color=guide_legend(ncol=1, title.position = "bottom"),
-      fill=guide_legend(ncol=1, title.position = "bottom")
+      shape=guide_legend(nrow=2),
+      color=guide_legend(nrow=2),
+      fill=guide_legend(nrow=2)
     ) +
     theme(
       legend.position = "top",
       legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
+      legend.justification="center"
     )
 )
 ```
@@ -443,29 +438,26 @@ legend <- cowplot::get_legend(
 Best satisfactory trait coverage throughout 50,000 generations.
 
 ```{r con-nds-sat-bst}
-nds <- filter(cc_best, diagnostic == 'contradictory_objectives' & acron == 'nds' & col == 'pop_uni_obj')
+nds <- filter(nds_best, diagnostic == 'contradictory_objectives' & col == 'pop_uni_obj' & Sigma == 0.3)
 nds$'Selection\nScheme' = 'Nondominated sorting (nds)'
-nds = subset(nds, select = -c(Selection.Scheme) )
+nds$acron = 'nds'
 
-nfr <- read.csv('./DATA-FINAL/NONDOMINATEDSORTING/best-contradictory_objectives-nondominatedsorting.csv', header = TRUE, stringsAsFactors = FALSE)
-nfr$acron = 'nfr'
+nfr <- filter(nds_best, diagnostic == 'contradictory_objectives' & col == 'pop_uni_obj' & Sigma == 0.0)
 nfr$'Selection\nScheme' = 'Nondominated front ranking (nfr)'
-nfr$diagnostic = 'contradictory_objectives'
-nfr <- filter(nfr, trt == 0.0 & col == 'pop_uni_obj')
+nfr$acron = 'nfr'
 
-pfs <- filter(cc_best, diagnostic == 'contradictory_objectives' & acron == 'pfs' & col == 'pop_uni_obj')
+pfs <- filter(pfs_best, diagnostic == 'contradictory_objectives' & col == 'pop_uni_obj' & Sigma == 0.0)
 pfs$'Selection\nScheme' = 'Phenotypic fitness sharing (pfs)'
-pfs = subset(pfs, select = -c(Selection.Scheme) )
-
+pfs$acron = 'pfs'
 
 best <- rbind(nds, nfr, pfs)
 best$`Selection\nScheme` <- factor(best$`Selection\nScheme`, levels = c('Nondominated sorting (nds)','Nondominated front ranking (nfr)','Phenotypic fitness sharing (pfs)'))
-best$acron <- factor(best$acron, levels = c('nds','nfr','pfs'))
 
 plot = ggplot(best, aes(x = acron, y = val, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
+  guides(fill = "none",color = 'none', shape = 'none') +
   scale_y_continuous(
     name="Coverage",
     limits=c(-1, 101),
@@ -476,7 +468,7 @@ plot = ggplot(best, aes(x = acron, y = val, color = acron, fill = acron, shape =
     name="Scheme"
   )+
   scale_shape_manual(values=SHAPE)+
-  scale_colour_manual(values = cb_palette) +
+  scale_colour_manual(values = cb_palette, ) +
   scale_fill_manual(values = cb_palette) +
   coord_flip()+
   p_theme
@@ -487,7 +479,7 @@ plot_grid(
     theme(legend.position="none"),
   legend,
   nrow=2,
-  rel_heights = c(2,.6),
+  rel_heights = c(1.3,.32),
   label_size = TSIZE
 )
 ```
@@ -527,24 +519,20 @@ pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
 ```{r con-nds-sat-end}
-nds <- filter(cc_end, diagnostic == 'contradictory_objectives' & acron == 'nds')
+nds <- filter(nds_end, Sigma == 0.3 & diagnostic == 'contradictory_objectives')
 nds$'Selection\nScheme' = 'Nondominated sorting (nds)'
 
-nfr <- read.csv('./DATA-FINAL/NONDOMINATEDSORTING/over-time-contradictory_objectives-nondominatedsorting.csv', header = TRUE, stringsAsFactors = FALSE)
+nfr <- filter(nds_end, Sigma == 0.0 & diagnostic == 'multipath_exploration')
 nfr$acron = 'nfr'
-nfr$Selection.Scheme = 'Nondominated front ranking (nfr)'
 nfr$'Selection\nScheme' = 'Nondominated front ranking (nfr)'
-nfr$diagnostic = 'contradictory_objectives'
-nfr <- filter(nfr, trt == 0.0 & gen == 50000)
-nfr = subset(nfr, select = -c(Selection.Scheme) )
 
-pfs <- filter(cc_end, diagnostic == 'contradictory_objectives' & acron == 'pfs')
+pfs <- filter(pfs_end, Sigma == 0.3 & diagnostic == 'multipath_exploration')
 pfs$'Selection\nScheme' = 'Phenotypic fitness sharing (pfs)'
 
 end <- rbind(nds, nfr, pfs)
 end$acron <- factor(end$acron, levels = c('nds','nfr','pfs'))
 
-best = ggplot(end, aes(x = acron, y = pop_uni_obj, color = acron, fill = acron, shape = acron)) +
+plot = ggplot(end, aes(x = acron, y = pop_uni_obj, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
@@ -564,7 +552,7 @@ best = ggplot(end, aes(x = acron, y = pop_uni_obj, color = acron, fill = acron, 
   p_theme
 
 plot_grid(
-  best +
+  plot +
     ggtitle("Final satisfactory trait coverage") +
     theme(legend.position="none"),
   legend,
@@ -594,7 +582,7 @@ group_by(end, acron) %>%
 Kruskal–Wallis test provides evidence of difference among satisfactory trait coverage in the population at the end of 50,000 generations.
 
 ```{r con-nds-sat-end-kru}
-kruskal.test(pop_uni_obj ~ acron,data = end)
+kruskal.test(pop_uni_obj ~ acron, data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on satisfactory trait coverage in the population at the end of 50,000 generations.
