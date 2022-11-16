@@ -7,7 +7,7 @@ Satisfactory trait coverage refers to the count of unique satisfied traits in a 
 
 ## Analysis dependencies
 
-```{r, message=FALSE}
+```{r con-libs, message=FALSE}
 library(ggplot2)
 library(cowplot)
 library(dplyr)
@@ -18,7 +18,7 @@ library(PupillometryR)
 
 These analyses were conducted in the following computing environment:
 
-```{r}
+```{r con-ver}
 print(version)
 ```
 
@@ -30,7 +30,7 @@ Satisfactory trait coverage analysis.
 
 Satisfactory trait coverage over time.
 
-```{r, warning=FALSE}
+```{r con-sat-ot, warning=FALSE}
 contradictory_objectives = filter(cc_over_time, diagnostic == 'contradictory_objectives')
 lines = contradictory_objectives %>%
         group_by(`Selection\nScheme`, gen) %>%
@@ -78,7 +78,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = `Selection\nScheme`, fill =`Select
 ot
 ```
 
-```{r, echo = FALSE}
+```{r con-sat-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -99,7 +99,7 @@ legend <- cowplot::get_legend(
 
 Best satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r con-sat-bst}
 best = filter(cc_best, col == 'pop_uni_obj' & diagnostic == 'contradictory_objectives')
 plot = ggplot(best, aes(x = acron, y = val, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -134,7 +134,7 @@ plot_grid(
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r con-sat-sum}
 best$acron = factor(best$acron, levels = c('nds', 'lex', 'pfs', 'gfs', 'tor', 'tru', 'nov', 'ran'))
 group_by(best, acron) %>%
   dplyr::summarise(
@@ -150,13 +150,13 @@ group_by(best, acron) %>%
 
 Kruskal–Wallis test provides evidence of difference among satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r con-sat-kru}
 kruskal.test(val ~ acron,data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r con-sat-wil}
 pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -165,7 +165,7 @@ pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni
 
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r con-sat-end}
 end = filter(cc_end, diagnostic == 'contradictory_objectives')
 plot = ggplot(end, aes(x = acron, y = pop_uni_obj, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -200,7 +200,7 @@ plot_grid(
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r con-sat-end-sum}
 end$acron = factor(end$acron, levels = c('nds', 'lex', 'pfs', 'gfs', 'tor', 'tru', 'nov', 'ran'))
 group_by(end, acron) %>%
   dplyr::summarise(
@@ -215,13 +215,13 @@ group_by(end, acron) %>%
 ```
 
 Kruskal–Wallis test provides evidence of difference among satisfactory trait coverage in the population at the end of 50,000 generations.
-```{r}
+```{r con-sat-end-kru}
 kruskal.test(pop_uni_obj ~ acron,data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on satisfactory trait coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r con-sat-end-wil}
 pairwise.wilcox.test(x = end$pop_uni_obj, g = end$acron, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -235,7 +235,7 @@ Activation gene coverage analysis.
 
 Activation gene coverage over time.
 
-```{r, warning=FALSE}
+```{r con-act-ot, warning=FALSE}
 contradictory_objectives = filter(cc_over_time, diagnostic == 'contradictory_objectives')
 contradictory_objectives$uni_str_pos = contradictory_objectives$uni_str_pos + contradictory_objectives$arc_acti_gene - contradictory_objectives$overlap
 lines = contradictory_objectives %>%
@@ -288,7 +288,7 @@ ot
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r con-sat-end}
 end = filter(cc_end, diagnostic == 'contradictory_objectives')
 end$uni_str_pos = end$uni_str_pos + end$arc_acti_gene - end$overlap
 best = ggplot(end, aes(x = acron, y = uni_str_pos, color = acron, fill = acron, shape = acron)) +
@@ -324,7 +324,7 @@ plot_grid(
 
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r con-sat-end-sum}
 end$acron = factor(end$acron, levels = c('nov', 'nds', 'lex', 'pfs', 'gfs', 'ran', 'tor', 'tru'))
 group_by(end, acron) %>%
   dplyr::summarise(
@@ -339,13 +339,13 @@ group_by(end, acron) %>%
 ```
 
 Kruskal–Wallis test provides evidence of difference among activation gene coverage in the population at the end of 50,000 generations.
-```{r}
+```{r con-sat-end-kru}
 kruskal.test(uni_str_pos ~ acron,data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r con-sat-end-sum}
 pairwise.wilcox.test(x = end$uni_str_pos, g = end$acron, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -359,7 +359,7 @@ Here analyze the satisfactory trait coverage and activation gene coverage result
 
 Satisfactory trait coverage over time.
 
-```{r, warning=TRUE}
+```{r con-nds-sat-ot, warning=TRUE}
 nds <- filter(cc_over_time, acron == 'nds' & diagnostic == 'contradictory_objectives')
 nds$'Selection\nScheme' = 'Nondominated sorting (nds)'
 
@@ -421,7 +421,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = `Selection\nScheme`, fill =`Select
 ot
 ```
 
-```{r, echo = FALSE}
+```{r con-nds-sat-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -442,7 +442,7 @@ legend <- cowplot::get_legend(
 
 Best satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r con-nds-act-bst}
 nds <- filter(cc_best, diagnostic == 'contradictory_objectives' & acron == 'nds' & col == 'pop_uni_obj')
 nds$'Selection\nScheme' = 'Nondominated sorting (nds)'
 nds = subset(nds, select = -c(Selection.Scheme) )
@@ -496,7 +496,7 @@ plot_grid(
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r con-nds-act-bst-sum}
 group_by(best, acron) %>%
   dplyr::summarise(
     count = n(),
@@ -511,13 +511,13 @@ group_by(best, acron) %>%
 
 Kruskal–Wallis test provides evidence of difference among best satisfactory trait coverage throughout 50,000 generations
 
-```{r}
+```{r con-nds-act-bst-kru}
 kruskal.test(val ~ acron,data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r  con-nds-act-bst-wil}
 pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -526,7 +526,7 @@ pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni
 
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r con-nds-act-end}
 nds <- filter(cc_end, diagnostic == 'contradictory_objectives' & acron == 'nds')
 nds$'Selection\nScheme' = 'Nondominated sorting (nds)'
 
@@ -578,7 +578,7 @@ plot_grid(
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r con-nds-act-end-sum}
 group_by(end, acron) %>%
   dplyr::summarise(
     count = n(),
@@ -593,13 +593,13 @@ group_by(end, acron) %>%
 
 Kruskal–Wallis test provides evidence of difference among satisfactory trait coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r con-nds-act-end-kru}
 kruskal.test(pop_uni_obj ~ acron,data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on satisfactory trait coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r con-nds-act-end-wil}
 pairwise.wilcox.test(x = end$pop_uni_obj, g = end$acron, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```

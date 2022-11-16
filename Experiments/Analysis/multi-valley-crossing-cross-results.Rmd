@@ -6,7 +6,7 @@ Best gene value refers to maximum gene value found in the population; this gives
 
 ## Analysis dependencies
 
-```{r, message=FALSE}
+```{r mvc-libs, message=FALSE}
 library(ggplot2)
 library(cowplot)
 library(dplyr)
@@ -17,7 +17,7 @@ library(PupillometryR)
 
 These analyses were conducted in the following computing environment:
 
-```{r}
+```{r mvc-ver}
 print(version)
 ```
 
@@ -29,7 +29,7 @@ Performance analysis.
 
 Best performance in a population over time.
 
-```{r, warning=FALSE}
+```{r mvc-per-ot, warning=FALSE}
 multivalley_crossing = filter(cc_over_time, diagnostic == 'multivalley_crossing')
 lines = multivalley_crossing %>%
         group_by(`Selection\nScheme`, gen) %>%
@@ -77,7 +77,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = `Selection\nScheme`, fill
 ot
 ```
 
-```{r, echo = FALSE}
+```{r mvc-per-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -98,7 +98,7 @@ legend <- cowplot::get_legend(
 
 Best performance throughout 50,000 generations.
 
-```{r}
+```{r mvc-per-bst}
 best = filter(cc_best, col == 'pop_fit_max' & diagnostic == 'multivalley_crossing')
 plot = ggplot(best, aes(x = acron, y = val / TRAITS, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -133,7 +133,7 @@ plot_grid(
 
 Summary statistics for the best performance throughout 50,000 generations.
 
-```{r}
+```{r mvc-per-bst-sum}
 best$acron <- factor(best$acron, levels = c('pfs','gfs','nov','tor','tru','nds','ran','lex'))
 group_by(best, acron) %>%
   dplyr::summarise(
@@ -149,13 +149,13 @@ group_by(best, acron) %>%
 
 Kruskal–Wallis test provides evidence of difference among best performances throughout 50,000 generations.
 
-```{r}
+```{r mvc-per-bst-kru}
 kruskal.test(val ~ acron,data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best performance throughout 50,000 generations.
 
-```{r}
+```{r mvc-per-bst-wil}
 pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -164,7 +164,7 @@ pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni
 
 Best performance in the population at the end of 50,000 generations.
 
-```{r}
+```{r mvc-per-end}
 end = filter(cc_end, diagnostic == 'multivalley_crossing')
 plot = ggplot(end, aes(x = acron, y = pop_fit_max / TRAITS, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -199,7 +199,7 @@ plot_grid(
 
 Summary statistics for best performance in the population at the end of 50,000 generations.
 
-```{r}
+```{r mvc-per-end-sum}
 end$acron <- factor(end$acron, levels = c('pfs','gfs','nov','tor','tru','nds','ran','lex'))
 group_by(end, acron) %>%
   dplyr::summarise(
@@ -214,13 +214,13 @@ group_by(end, acron) %>%
 ```
 
 Kruskal–Wallis test provides evidence of difference among best performance in the population at the end of 50,000 generations.
-```{r}
+```{r mvc-per-end-kru}
 kruskal.test(pop_fit_max ~ acron,data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best performance in the population at the end of 50,000 generations.
 
-```{r}
+```{r mvc-per-end-wil}
 pairwise.wilcox.test(x = end$pop_fit_max, g = end$acron, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -233,7 +233,7 @@ Best gene value analysis.
 
 Best gene value over time.
 
-```{r, warning=FALSE}
+```{r mvc-gne-ot, warning=FALSE}
 multivalley_crossing = filter(cc_over_time, diagnostic == 'multivalley_crossing')
 
 lines = multivalley_crossing %>%
@@ -286,7 +286,7 @@ ot
 
 Best gene value throughout 50,000 generations.
 
-```{r}
+```{r mvc-gne-bst}
 best = filter(cc_best, col == 'pop_max_gene' & diagnostic == 'multivalley_crossing')
 plot = ggplot(best, aes(x = acron, y = val, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -321,7 +321,7 @@ plot_grid(
 
 Summary statistics for the best performance throughout 50,000 generations.
 
-```{r}
+```{r mvc-gne-bst-sum}
 best$acron <- factor(best$acron, levels = c('pfs','gfs','nov','tor','tru','nds','ran','lex'))
 group_by(best, acron) %>%
   dplyr::summarise(
@@ -337,13 +337,13 @@ group_by(best, acron) %>%
 
 Kruskal–Wallis test provides evidence of difference among best performances throughout 50,000 generations.
 
-```{r}
+```{r mvc-gne-bst-kru}
 kruskal.test(val ~ acron,data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best performance throughout 50,000 generations.
 
-```{r}
+```{r mvc-gne-bst-wil}
 pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -353,7 +353,7 @@ pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni
 
 Best gene value in the population at the end of 50,000 generations.
 
-```{r}
+```{r mvc-gne-end}
 end = filter(cc_end, diagnostic == 'multivalley_crossing')
 end_p = ggplot(end, aes(x = acron, y = pop_max_gene, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -388,7 +388,7 @@ plot_grid(
 
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r mvc-gne-end-sum}
 end$acron <- factor(end$acron, levels = c('pfs','gfs','nds','nov','ran','lex','tor','tru'))
 group_by(end, acron) %>%
   dplyr::summarise(
@@ -403,13 +403,13 @@ group_by(end, acron) %>%
 ```
 
 Kruskal–Wallis test provides evidence of difference among activation gene coverage in the population at the end of 50,000 generations.
-```{r}
+```{r mvc-gne-end-kru}
 kruskal.test(pop_max_gene ~ acron,data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r mvc-gne-end-wil}
 pairwise.wilcox.test(x = end$pop_max_gene, g = end$acron, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
