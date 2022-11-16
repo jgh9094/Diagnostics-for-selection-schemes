@@ -80,17 +80,16 @@ ot
 
 ```{r mpe-per-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
-  ot +
+  perot +
     guides(
-      shape=guide_legend(ncol=2, title.position = "bottom"),
-      color=guide_legend(ncol=2, title.position = "bottom"),
-      fill=guide_legend(ncol=2, title.position = "bottom")
+      shape=guide_legend(nrow=3),
+      color=guide_legend(nrow=3),
+      fill=guide_legend(nrow=3)
     ) +
     theme(
       legend.position = "top",
       legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
+      legend.justification="center"
     )
 )
 ```
@@ -236,8 +235,6 @@ Activation gene coverage over time.
 
 ```{r mpe-act-ot, warning=FALSE}
 multipath_exploration = filter(cc_over_time, diagnostic == 'multipath_exploration')
-multipath_exploration$uni_str_pos = multipath_exploration$uni_str_pos + multipath_exploration$arc_acti_gene - multipath_exploration$overlap
-
 lines = multipath_exploration %>%
         group_by(`Selection\nScheme`, gen) %>%
           dplyr::summarise(
@@ -290,7 +287,6 @@ Activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r mpe-act-end}
 end = filter(cc_end, diagnostic == 'multipath_exploration')
-end$uni_str_pos = end$uni_str_pos + end$arc_acti_gene - end$overlap
 best = ggplot(end, aes(x = acron, y = uni_str_pos, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
@@ -340,7 +336,7 @@ group_by(end, acron) %>%
 
 Kruskal–Wallis test provides evidence of difference among activation gene coverage in the population at the end of 50,000 generations.
 ```{r mpe-act-end-kru}
-kruskal.test(uni_str_pos ~ acron,data = end)
+kruskal.test(uni_str_pos ~ acron, data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on activation gene coverage in the population at the end of 50,000 generations.
