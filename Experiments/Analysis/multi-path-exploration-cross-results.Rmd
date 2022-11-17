@@ -80,7 +80,7 @@ ot
 
 ```{r mpe-per-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
-  perot +
+  ot +
     guides(
       shape=guide_legend(nrow=3),
       color=guide_legend(nrow=3),
