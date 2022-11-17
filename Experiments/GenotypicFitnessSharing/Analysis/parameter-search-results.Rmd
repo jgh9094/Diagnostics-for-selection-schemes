@@ -2,7 +2,7 @@
 
 We present the results from our parameter sweeep on genotypic fitness sharing.
 50 replicates are conducted for each sigma parameter value explored.
-Note that when `sigma = 0.0`, performance with no similarity penalty and stochastic remainder selection is used to identify parent solutions.
+Note that when `sigma = 0.0`, no similarity penalty is used, and only stochastic remainder selection is used to identify parent solutions.
 
 ```{r, message=FALSE}
 library(ggplot2)
@@ -21,13 +21,13 @@ print(version)
 
 Here we present the results for **best performances** found by each genotypic fitness sharing sigma value replicate on the exploitation rate diagnostic.
 50 replicates are conducted for each sigma parameter value explored.
-Note that when `sigma = 0.0`, performance with no similarity penalty and stochastic remainder selection is used to identify parent solutions.
+Note that when `sigma = 0.0`, no similarity penalty is used, and only stochastic remainder selection is used to identify parent solutions.
 
 ### Performance over time
 
 Performance over time.
 
-```{r, warning=FALSE}
+```{r gfs-exp-per-ot, warning=FALSE}
 problem <- filter(gfs_ot, diagnostic == 'exploitation_rate')
 lines = problem %>%
         group_by(Sigma, gen) %>%
@@ -75,7 +75,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = Sigma, fill = Sigma, colo
 ot
 ```
 
-```{r, echo = FALSE}
+```{r gfs-exp-per-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -96,7 +96,7 @@ legend <- cowplot::get_legend(
 
 The best performance found throughout 50,000 generations.
 
-```{r}
+```{r gfs-exp-per-bst}
 best = filter(gfs_best, col == 'pop_fit_max' & diagnostic == 'exploitation_rate')
 
 plot = ggplot(best, aes(x = Sigma, y = val / TRAITS, color = Sigma, fill = Sigma, shape = Sigma)) +
@@ -132,7 +132,7 @@ plot_grid(
 
 Summary statistics for the best performance found throughout 50,000 generations.
 
-```{r}
+```{r gfs-exp-per-sum}
 group_by(best, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -147,13 +147,13 @@ group_by(best, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of significant differences among sigma values on the best performance found throughout 50,000 generations
 
-```{r}
+```{r gfs-exp-per-kru}
 kruskal.test(val ~ Sigma,data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found throughout 50,000 generations.
 
-```{r}
+```{r gfs-exp-per-wil}
 pairwise.wilcox.test(x = best$val, g = best$Sigma , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -168,7 +168,7 @@ Note that performance values fall between 0 and 100.
 
 Performance over time.
 
-```{r, warning=FALSE}
+```{r gfs-ord-per-ot, warning=FALSE}
 problem <- filter(gfs_ot, diagnostic == 'ordered_exploitation')
 lines = problem %>%
         group_by(Sigma, gen) %>%
@@ -216,7 +216,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = Sigma, fill = Sigma, colo
 ot
 ```
 
-```{r, echo = FALSE}
+```{r gfs-ord-per-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -237,7 +237,7 @@ legend <- cowplot::get_legend(
 
 The best performance found throughout 50,000 generations.
 
-```{r}
+```{r gfs-ord-per-bst}
 best = filter(gfs_best, col == 'pop_fit_max' & diagnostic == 'ordered_exploitation')
 
 plot = ggplot(best, aes(x = Sigma, y = val / TRAITS, color = Sigma, fill = Sigma, shape = Sigma)) +
@@ -273,7 +273,7 @@ plot_grid(
 
 Summary statistics about the best performance found.
 
-```{r}
+```{r gfs-ord-per-sum}
 group_by(best, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -288,13 +288,13 @@ group_by(best, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of statistical differences for the best performance found in the pouplation throughout 50,000 generations.
 
-```{r}
+```{r gfs-ord-per-kru}
 kruskal.test(val ~ Sigma,data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found in the pouplation throughout 50,000 generations.
 
-```{r}
+```{r gfs-ord-per-wil}
 pairwise.wilcox.test(x = best$val, g = best$Sigma , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -314,7 +314,7 @@ Satisfactory trait coverage analysis.
 
 Satisfactory trait coverage over time.
 
-```{r, warning=FALSE}
+```{r gfs-con-sat-ot, warning=FALSE}
 problem <- filter(gfs_ot, diagnostic == 'contradictory_objectives')
 lines = problem %>%
         group_by(Sigma, gen) %>%
@@ -360,7 +360,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = Sigma, fill =Sigma, color = Sigma,
 ot
 ```
 
-```{r, echo = FALSE}
+```{r gfs-con-sat-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -381,9 +381,8 @@ legend <- cowplot::get_legend(
 
 Best satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r gfs-con-sat-bst}
 best = filter(gfs_best, col == 'pop_uni_obj' & diagnostic == 'contradictory_objectives')
-
 plot = ggplot(best, aes(x = Sigma, y = val, color = Sigma, fill = Sigma, shape = Sigma)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
@@ -415,7 +414,7 @@ plot_grid(
 
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r gfs-con-sat-sum}
 group_by(best, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -430,7 +429,7 @@ group_by(best, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of no statistical difference among satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r gfs-con-sat-kru}
 kruskal.test(val ~ Sigma, data = best)
 ```
 
@@ -438,7 +437,7 @@ kruskal.test(val ~ Sigma, data = best)
 
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-con-sat-end}
 end = filter(gfs_end, diagnostic == 'contradictory_objectives')
 plot = ggplot(end, aes(x = Sigma, y = pop_uni_obj, color = Sigma, fill = Sigma, shape = Sigma)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -471,7 +470,7 @@ plot_grid(
 
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-con-sat-end-sum}
 group_by(end, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -486,7 +485,7 @@ group_by(end, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of no statistical difference among satisfactory trait coverage throughout 50,000 generations.
 
-```{r}
+```{r gfs-con-sat-end-kru}
 kruskal.test(pop_uni_obj ~ Sigma, data = end)
 ```
 
@@ -498,7 +497,7 @@ Here we analyze the activation gene coverage for each parameter replicate on the
 
 Activation gene coverage over time.
 
-```{r, warning=FALSE}
+```{r gfs-con-act-ot, warning=FALSE}
 problem <- filter(gfs_ot, diagnostic == 'contradictory_objectives')
 lines = problem %>%
         group_by(Sigma, gen) %>%
@@ -550,7 +549,7 @@ ot
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-con-act-end}
 end = filter(gfs_end, diagnostic == 'contradictory_objectives')
 plot = ggplot(end, aes(x = Sigma, y = uni_str_pos, color = Sigma, fill = Sigma, shape = Sigma)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -583,7 +582,7 @@ plot_grid(
 
 Summary statistics for activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-con-act-end-sum}
 group_by(end, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -598,7 +597,7 @@ group_by(end, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of no statistical difference for activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-con-act-end-kru}
 kruskal.test(uni_str_pos ~ Sigma,data = end)
 ```
 
@@ -616,7 +615,7 @@ Here we analyze the performances for each parameter replicate on the multi-path 
 
 Performance over time.
 
-```{r, warning=FALSE}
+```{r gfs-mpe-per-ot, warning=FALSE}
 problem <- filter(gfs_ot, diagnostic == 'multipath_exploration')
 lines = problem %>%
         group_by(Sigma, gen) %>%
@@ -662,7 +661,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = Sigma, fill = Sigma, colo
 ot
 ```
 
-```{r, echo = FALSE}
+```{r gfs-mpe-per-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -683,7 +682,7 @@ legend <- cowplot::get_legend(
 
 Here we plot the performance of the best performing solution found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mpe-per-bst}
 best = filter(gfs_best, col == 'pop_fit_max' & diagnostic == 'multipath_exploration')
 
 plot = ggplot(best, aes(x = Sigma, y = val / TRAITS, color = Sigma, fill = Sigma, shape = Sigma)) +
@@ -717,7 +716,7 @@ plot_grid(
 
 Summary statistics for the performance of the best performing solution found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mpe-per-bst-sum}
 group_by(best, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -732,13 +731,13 @@ group_by(best, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of statistical differences among the best performing solution found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mpe-per-bst-kru}
 kruskal.test(val ~ Sigma,data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performing solution found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mpe-per-bst-wil}
 pairwise.wilcox.test(x = best$val, g = best$Sigma , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -747,7 +746,7 @@ pairwise.wilcox.test(x = best$val, g = best$Sigma , p.adjust.method = "bonferron
 
 Best performance in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-mpe-per-end}
 end = filter(gfs_end, diagnostic == 'multipath_exploration')
 plot = ggplot(end, aes(x = Sigma, y = pop_fit_max / TRAITS, color = Sigma, fill = Sigma, shape = Sigma)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -780,7 +779,7 @@ plot_grid(
 
 Summary statistics for the best performance in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-mpe-per-end-sum}
 group_by(end, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -795,13 +794,13 @@ group_by(end, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of statistical differences among best performance in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-mpe-per-end-kru}
 kruskal.test(pop_fit_max ~ Sigma, data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-mpe-per-end-wil}
 pairwise.wilcox.test(x = end$pop_fit_max, g = end$Sigma , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -814,7 +813,7 @@ Here we analyze the activation gene coverage for each parameter replicate on the
 
 Activation gene coverage over time.
 
-```{r, warning=FALSE}
+```{r gfs-mpe-act-ot, warning=FALSE}
 problem <- filter(gfs_ot, diagnostic == 'multipath_exploration')
 lines = problem %>%
         group_by(Sigma, gen) %>%
@@ -866,7 +865,7 @@ ot
 
 Activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-mpe-act-end}
 end = filter(gfs_end, diagnostic == 'multipath_exploration')
 plot = ggplot(end, aes(x = Sigma, y = uni_str_pos, color = Sigma, fill = Sigma, shape = Sigma)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -901,7 +900,7 @@ plot_grid(
 
 Summary statistics for the activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-mpe-act-end-sum}
 group_by(end, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -916,24 +915,24 @@ group_by(end, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of statistical differences among activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-mpe-act-end-kru}
 kruskal.test(uni_str_pos ~ Sigma, data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the activation gene coverage in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-mpe-act-end-wil}
 pairwise.wilcox.test(x = end$uni_str_pos, g = end$Sigma , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 't')
 ```
 
 ## Multi-valley crossing results
 
-Here we present the results for the **best performances** and **best gene value** generated by each selection scheme replicate on the multi-valley crossing diagnostic.
+Here we present the results for the **best performances** and **best gene value** generated by each genotypic fitness sharing replicate on the multi-valley crossing diagnostic.
 Best performance found refers to the largest average trait score found in a given population.
-Best gene value refers to maximum gene value found in the population; this gives us a range of integers between 0 and 100.
+Best gene value refers to maximum gene value found in the population; this gives us a range of values in [0.0, 100.0].
 50 replicates are conducted for each sigma parameter value explored.
-Note that when `sigma = 0.0`, performance with no similarity penalty and stochastic remainder selection is used to identify parent solutions.
+Note that when `sigma = 0.0`, no similarity penalty is used, and only stochastic remainder selection is used to identify parent solutions.
 
 ### Performance
 
@@ -943,7 +942,7 @@ Here we analyze the performances for each parameter replicate on the multi-valle
 
 Performance over time.
 
-```{r, warning=FALSE}
+```{r gfs-mvc-per-ot, warning=FALSE}
 lines = filter(gfs_ot, diagnostic == 'multivalley_crossing') %>%
   group_by(Sigma, gen) %>%
   dplyr::summarise(
@@ -970,6 +969,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = Sigma, fill = Sigma, colo
     labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
 
   ) +
+  ggtitle("Best performance over time") +
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
@@ -978,7 +978,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = Sigma, fill = Sigma, colo
 ot
 ```
 
-```{r, echo = FALSE}
+```{r gfs-mvc-per-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -999,7 +999,7 @@ legend <- cowplot::get_legend(
 
 The best performance found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mvc-per-bst}
 best = filter(gfs_best, col == 'pop_fit_max' & diagnostic == 'multivalley_crossing')
 plot =  ggplot(best, aes(x = Sigma, y = val / TRAITS, color = Sigma, fill = Sigma, shape = Sigma)) +
           geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -1022,19 +1022,20 @@ plot =  ggplot(best, aes(x = Sigma, y = val / TRAITS, color = Sigma, fill = Sigm
 
 plot_grid(
   plot +
-    ggtitle("Best performance") +
+    ggtitle("Best performance throughout") +
     theme(legend.position="none"),
   legend,
   nrow=2,
   rel_heights = c(2,.55),
   label_size = TSIZE
+)
 ```
 
 ##### Stats
 
 Summary statistics for the best performance found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mvc-per-bst-sum}
 best$Sigma = factor(best$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
 group_by(best, Sigma) %>%
   dplyr::summarise(
@@ -1050,13 +1051,13 @@ group_by(best, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of significant differences among sigma values on the best performance found throughout 50,000 generations
 
-```{r}
+```{r gfs-mvc-per-bst-kru}
 kruskal.test(val ~ Sigma, data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mvc-per-bst-wil}
 pairwise.wilcox.test(x = best$val, g = best$Sigma, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
@@ -1065,7 +1066,7 @@ pairwise.wilcox.test(x = best$val, g = best$Sigma, p.adjust.method = "bonferroni
 
 Best performance in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-mvc-per-end}
 end = filter(gfs_end, diagnostic == 'multivalley_crossing')
 plot = ggplot(end, aes(x = Sigma, y = pop_fit_max / TRAITS, group = Sigma, fill =Sigma, color = Sigma, shape = Sigma)) +
   geom_flat_violin(position = position_nudge(x = .3), alpha = 0.2) +
@@ -1090,13 +1091,14 @@ plot_grid(
   nrow=2,
   rel_heights = c(2,.55),
   label_size = TSIZE
+)
 ```
 
 ##### Stats
 
 Summary statistics for the best performance found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mvc-per-end-sum}
 end$Sigma = factor(best$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
 group_by(end, Sigma) %>%
   dplyr::summarise(
@@ -1112,26 +1114,26 @@ group_by(end, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of significant differences among sigma values on the best performance found throughout 50,000 generations
 
-```{r}
+```{r gfs-mvc-per-end-kru}
 kruskal.test(pop_fit_max ~ Sigma, data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mvc-per-end-wil}
 pairwise.wilcox.test(x = end$pop_fit_max, g = end$Sigma, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
 
-### Max gene value
+### Best gene value
 
-Here we analyze the performances for each parameter replicate on the multi-valley crossing diagnostic.
+Here we analyze the gene values for each parameter replicate on the multi-valley crossing diagnostic.
 
 #### Gene value over time
 
-Performance over time.
+Best gene value over time.
 
-```{r, warning=FALSE}
+```{r gfs-mvc-gne-ot, warning=FALSE}
 lines = filter(gfs_ot, diagnostic == 'multivalley_crossing') %>%
   group_by(Sigma, gen) %>%
   dplyr::summarise(
@@ -1158,6 +1160,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = Sigma, fill = Sigma, color = Sigma
     labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
 
   ) +
+  ggtitle("Best gene value over time") +
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
@@ -1166,7 +1169,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = Sigma, fill = Sigma, color = Sigma
 ot
 ```
 
-```{r, echo = FALSE}
+```{r gfs-mvc-gne-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -1185,9 +1188,9 @@ legend <- cowplot::get_legend(
 
 #### Best gene value throughout
 
-The best performance found throughout 50,000 generations.
+The best gene value found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mvc-gne-bst}
 best = filter(gfs_best, col == 'pop_max_gene' & diagnostic == 'multivalley_crossing')
 plot =  ggplot(best, aes(x = Sigma, y = val, color = Sigma, fill = Sigma, shape = Sigma)) +
           geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
@@ -1210,19 +1213,20 @@ plot =  ggplot(best, aes(x = Sigma, y = val, color = Sigma, fill = Sigma, shape 
 
 plot_grid(
   plot +
-    ggtitle("Best performance") +
+    ggtitle("Best gene value") +
     theme(legend.position="none"),
   legend,
   nrow=2,
   rel_heights = c(2,.55),
   label_size = TSIZE
+)
 ```
 
 ##### Stats
 
-Summary statistics for the best performance found throughout 50,000 generations.
+Summary statistics for the best gene value found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mvc-gne-bst-sum}
 best$Sigma = factor(best$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
 group_by(best, Sigma) %>%
   dplyr::summarise(
@@ -1238,7 +1242,7 @@ group_by(best, Sigma) %>%
 
 Kruskal–Wallis test provides evidence of no significant differences among sigma values on the best gene value found throughout 50,000 generations
 
-```{r}
+```{r gfs-mvc-gne-bst-kru}
 kruskal.test(val ~ Sigma, data = best)
 ```
 
@@ -1246,7 +1250,7 @@ kruskal.test(val ~ Sigma, data = best)
 
 Best gene value in the population at the end of 50,000 generations.
 
-```{r}
+```{r gfs-mvc-gne-end}
 end = filter(gfs_end, diagnostic == 'multivalley_crossing')
 plot = ggplot(end, aes(x = Sigma, y = pop_max_gene, group = Sigma, fill =Sigma, color = Sigma, shape = Sigma)) +
   geom_flat_violin(position = position_nudge(x = .3), alpha = 0.2) +
@@ -1271,13 +1275,14 @@ plot_grid(
   nrow=2,
   rel_heights = c(2,.55),
   label_size = TSIZE
+)
 ```
 
 ##### Stats
 
-Summary statistics for the best performance found throughout 50,000 generations.
+Summary statistics for the best gene value found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mvc-gne-end-sum}
 end$Sigma = factor(best$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
 group_by(end, Sigma) %>%
   dplyr::summarise(
@@ -1291,15 +1296,15 @@ group_by(end, Sigma) %>%
   )
 ```
 
-Kruskal–Wallis test provides evidence of significant differences among sigma values on the best performance found throughout 50,000 generations
+Kruskal–Wallis test provides evidence of significant differences among sigma values on the best gene value found throughout 50,000 generations
 
-```{r}
+```{r gfs-mvc-gne-end-kru}
 kruskal.test(pop_max_gene ~ Sigma, data = end)
 ```
 
-Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found throughout 50,000 generations.
+Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best gene value found throughout 50,000 generations.
 
-```{r}
+```{r gfs-mvc-gne-end-wil}
 pairwise.wilcox.test(x = end$pop_fit_max, g = end$Sigma, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
