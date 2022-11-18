@@ -1210,8 +1210,8 @@ plot = ggplot(end, aes(x = Sigma, y = pop_max_gene, group = Sigma, fill =Sigma, 
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 10.8) +
   geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.1, col = "black") +
   scale_y_continuous(
-    name="Coverage",
-    limits=c(0, 101),
+    name="Max gene value",
+    limits=c(-1, 101),
     breaks=seq(0,100, 20),
     labels=c("0", "20", "40", "60", "80", "100")
   ) +
