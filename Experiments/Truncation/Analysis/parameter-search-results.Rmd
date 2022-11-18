@@ -925,8 +925,8 @@ Here we analyze the performances for each parameter replicate on the multi-valle
 
 Performance over time.
 
-```{r tor-mvc-per-ot, warning=FALSE}
-lines = filter(tor_ot, diagnostic == 'multivalley_crossing') %>%
+```{r tru-mvc-per-ot, warning=FALSE}
+lines = filter(tru_ot, diagnostic == 'multivalley_crossing') %>%
   group_by(T, gen) %>%
   dplyr::summarise(
     min = min(pop_fit_max),
@@ -961,7 +961,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = T, fill = T, color = T, s
 ot
 ```
 
-```{r tor-mvc-per-lgd, echo = FALSE}
+```{r tru-mvc-per-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -981,8 +981,8 @@ legend <- cowplot::get_legend(
 
 The best performance found throughout 50,000 generations.
 
-```{r tor-mvc-per-bst}
-best = filter(tor_best, col == 'pop_fit_max' & diagnostic == 'multivalley_crossing')
+```{r tru-mvc-per-bst}
+best = filter(tru_best, col == 'pop_fit_max' & diagnostic == 'multivalley_crossing')
 plot =  ggplot(best, aes(x = T, y = val / TRAITS, color = T, fill = T, shape = T)) +
           geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
           geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
@@ -1017,7 +1017,7 @@ plot_grid(
 
 Summary statistics for the best performance found throughout 50,000 generations.
 
-```{r tor-mvc-per-bst-sum}
+```{r tru-mvc-per-bst-sum}
 best$T = factor(best$T, levels = c(1,2,4,8,16,32,64,128,256))
 group_by(best, T) %>%
   dplyr::summarise(
@@ -1033,13 +1033,13 @@ group_by(best, T) %>%
 
 Kruskal–Wallis test provides evidence of significant differences among size values on the best performance found throughout 50,000 generations
 
-```{r tor-mvc-per-bst-kru}
+```{r tru-mvc-per-bst-kru}
 kruskal.test(val ~ T, data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found throughout 50,000 generations.
 
-```{r tor-mvc-per-bst-wil}
+```{r tru-mvc-per-bst-wil}
 pairwise.wilcox.test(x = best$val, g = best$T, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 't')
 ```
@@ -1048,8 +1048,8 @@ pairwise.wilcox.test(x = best$val, g = best$T, p.adjust.method = "bonferroni",
 
 Best performance in the population at the end of 50,000 generations.
 
-```{r tor-mvc-per-end}
-end = filter(tor_end, diagnostic == 'multivalley_crossing')
+```{r tru-mvc-per-end}
+end = filter(tru_end, diagnostic == 'multivalley_crossing')
 plot = ggplot(end, aes(x = T, y = pop_fit_max / TRAITS, group = T, fill =T, color = T, shape = T)) +
   geom_flat_violin(position = position_nudge(x = .3), alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 10.8) +
@@ -1080,7 +1080,7 @@ plot_grid(
 
 Summary statistics for the best performance found throughout 50,000 generations.
 
-```{r tor-mvc-per-end-sum}
+```{r tru-mvc-per-end-sum}
 end$T = factor(end$T, levels = c(1,2,4,8,16,32,64,128,256))
 group_by(end, T) %>%
   dplyr::summarise(
@@ -1096,7 +1096,7 @@ group_by(end, T) %>%
 
 Kruskal–Wallis test provides evidence of no significant differences among size values on the best performance found at the end of 50,000 generations.
 
-```{r tor-mvc-per-end-kru}
+```{r tru-mvc-per-end-kru}
 kruskal.test(pop_fit_max ~ T, data = end)
 ```
 
@@ -1108,8 +1108,8 @@ Here we analyze the gene values for each parameter replicate on the multi-valley
 
 Best gene value over time.
 
-```{r tor-mvc-gne-ot, warning=FALSE}
-lines = filter(tor_ot, diagnostic == 'multivalley_crossing') %>%
+```{r tru-mvc-gne-ot, warning=FALSE}
+lines = filter(tru_ot, diagnostic == 'multivalley_crossing') %>%
   group_by(T, gen) %>%
   dplyr::summarise(
     min = min(pop_max_gene),
@@ -1144,7 +1144,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = T, fill = T, color = T, shape = T)
 ot
 ```
 
-```{r tor-mvc-gne-lgd, echo = FALSE}
+```{r tru-mvc-gne-lgd, echo = FALSE}
 legend <- cowplot::get_legend(
   ot +
     guides(
@@ -1164,8 +1164,8 @@ legend <- cowplot::get_legend(
 
 The best gene value found throughout 50,000 generations.
 
-```{r tor-mvc-gne-bst}
-best = filter(tor_best, col == 'pop_max_gene' & diagnostic == 'multivalley_crossing')
+```{r tru-mvc-gne-bst}
+best = filter(tru_best, col == 'pop_max_gene' & diagnostic == 'multivalley_crossing')
 plot =  ggplot(best, aes(x = T, y = val, color = T, fill = T, shape = T)) +
           geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
           geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
@@ -1200,7 +1200,7 @@ plot_grid(
 
 Summary statistics for the best gene value found throughout 50,000 generations.
 
-```{r tor-mvc-gne-bst-sum}
+```{r tru-mvc-gne-bst-sum}
 best$T = factor(best$T, levels = c(1,2,4,8,16,32,64,128,256))
 group_by(best, T) %>%
   dplyr::summarise(
@@ -1216,13 +1216,13 @@ group_by(best, T) %>%
 
 Kruskal–Wallis test provides evidence of significant differences among size values on the best gene value found throughout 50,000 generations
 
-```{r tor-mvc-gne-bst-kru}
+```{r tru-mvc-gne-bst-kru}
 kruskal.test(val ~ T, data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best gene value found throughout 50,000 generations.
 
-```{r tor-mvc-gne-bst-wil}
+```{r tru-mvc-gne-bst-wil}
 pairwise.wilcox.test(x = best$val, g = best$T, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'g')
 ```
@@ -1231,8 +1231,8 @@ pairwise.wilcox.test(x = best$val, g = best$T, p.adjust.method = "bonferroni",
 
 Best gene value in the population at the end of 50,000 generations.
 
-```{r tor-mvc-gne-end}
-end = filter(tor_end, diagnostic == 'multivalley_crossing')
+```{r tru-mvc-gne-end}
+end = filter(tru_end, diagnostic == 'multivalley_crossing')
 plot = ggplot(end, aes(x = T, y = pop_max_gene, group = T, fill =T, color = T, shape = T)) +
   geom_flat_violin(position = position_nudge(x = .3), alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 10.8) +
@@ -1263,7 +1263,7 @@ plot_grid(
 
 Summary statistics for the best gene value found at the end of 50,000 generations.
 
-```{r tor-mvc-gne-end-sum}
+```{r tru-mvc-gne-end-sum}
 end$T = factor(end$T, levels = c(1,2,4,8,16,32,64,128,256))
 group_by(end, T) %>%
   dplyr::summarise(
@@ -1279,6 +1279,6 @@ group_by(end, T) %>%
 
 Kruskal–Wallis test provides evidence of no significant differences among size values on the best gene value found at the end of 50,000 generations.
 
-```{r tor-mvc-gne-end-kru}
+```{r tru-mvc-gne-end-kru}
 kruskal.test(pop_max_gene ~ T, data = end)
 ```
