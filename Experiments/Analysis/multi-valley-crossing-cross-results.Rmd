@@ -322,7 +322,7 @@ plot_grid(
 Summary statistics for the best gene value throughout 50,000 generations.
 
 ```{r mvc-gne-bst-sum}
-best$acron <- factor(best$acron, levels = c('pfs','gfs','nov','tor','tru','nds','ran','lex'))
+best$acron <- factor(best$acron, levels = c('pfs','gfs','nds','nov','ran','lex','tor','tru'))
 group_by(best, acron) %>%
   dplyr::summarise(
     count = n(),
