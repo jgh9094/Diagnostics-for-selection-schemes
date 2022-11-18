@@ -1030,7 +1030,7 @@ plot_grid(
 
 ##### Stats
 
-Summary statistics for the best performance found throughout 50,000 generations.
+Summary statistics for the best performance found at the end of 50,000 generations.
 
 ```{r gfs-mvc-per-end-sum}
 end$Sigma = factor(end$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
@@ -1046,13 +1046,13 @@ group_by(end, Sigma) %>%
   )
 ```
 
-Kruskal–Wallis test provides evidence of significant differences among sigma values on the best performance found throughout 50,000 generations
+Kruskal–Wallis test provides evidence of significant differences among sigma values on the best performance found at the end of 50,000 generations.
 
 ```{r gfs-mvc-per-end-kru}
 kruskal.test(pop_fit_max ~ Sigma, data = end)
 ```
 
-Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found throughout 50,000 generations.
+Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found at the end of 50,000 generations.
 
 ```{r gfs-mvc-per-end-wil}
 pairwise.wilcox.test(x = end$pop_fit_max, g = end$Sigma, p.adjust.method = "bonferroni",
