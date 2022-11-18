@@ -305,22 +305,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="11.4.1" data-path="nondominated-sorting.html"><a href="nondominated-sorting.html#performance-8"><i class="fa fa-check"></i><b>11.4.1</b> Performance</a></li>
 <li class="chapter" data-level="11.4.2" data-path="nondominated-sorting.html"><a href="nondominated-sorting.html#activation-gene-coverage-11"><i class="fa fa-check"></i><b>11.4.2</b> Activation gene coverage</a></li>
 </ul></li>
+<li class="chapter" data-level="11.5" data-path="nondominated-sorting.html"><a href="nondominated-sorting.html#multi-valley-crossing-results-3"><i class="fa fa-check"></i><b>11.5</b> Multi-valley crossing results</a><ul>
+<li class="chapter" data-level="11.5.1" data-path="nondominated-sorting.html"><a href="nondominated-sorting.html#performance-9"><i class="fa fa-check"></i><b>11.5.1</b> Performance</a></li>
+<li class="chapter" data-level="11.5.2" data-path="nondominated-sorting.html"><a href="nondominated-sorting.html#best-gene-value-3"><i class="fa fa-check"></i><b>11.5.2</b> Best gene value</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="novelty-search.html"><a href="novelty-search.html"><i class="fa fa-check"></i><b>12</b> Novelty Search</a><ul>
 <li class="chapter" data-level="12.1" data-path="novelty-search.html"><a href="novelty-search.html#exploitation-rate-results-6"><i class="fa fa-check"></i><b>12.1</b> Exploitation rate results</a><ul>
-<li class="chapter" data-level="12.1.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-over-time-19"><i class="fa fa-check"></i><b>12.1.1</b> Performance over time</a></li>
-<li class="chapter" data-level="12.1.2" data-path="novelty-search.html"><a href="novelty-search.html#best-performance-throughout-17"><i class="fa fa-check"></i><b>12.1.2</b> Best performance throughout</a></li>
+<li class="chapter" data-level="12.1.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-over-time-20"><i class="fa fa-check"></i><b>12.1.1</b> Performance over time</a></li>
+<li class="chapter" data-level="12.1.2" data-path="novelty-search.html"><a href="novelty-search.html#best-performance-throughout-18"><i class="fa fa-check"></i><b>12.1.2</b> Best performance throughout</a></li>
 </ul></li>
 <li class="chapter" data-level="12.2" data-path="novelty-search.html"><a href="novelty-search.html#ordered-exploitation-results-6"><i class="fa fa-check"></i><b>12.2</b> Ordered exploitation results</a><ul>
-<li class="chapter" data-level="12.2.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-over-time-20"><i class="fa fa-check"></i><b>12.2.1</b> Performance over time</a></li>
-<li class="chapter" data-level="12.2.2" data-path="novelty-search.html"><a href="novelty-search.html#best-performance-throughout-18"><i class="fa fa-check"></i><b>12.2.2</b> Best performance throughout</a></li>
+<li class="chapter" data-level="12.2.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-over-time-21"><i class="fa fa-check"></i><b>12.2.1</b> Performance over time</a></li>
+<li class="chapter" data-level="12.2.2" data-path="novelty-search.html"><a href="novelty-search.html#best-performance-throughout-19"><i class="fa fa-check"></i><b>12.2.2</b> Best performance throughout</a></li>
 </ul></li>
 <li class="chapter" data-level="12.3" data-path="novelty-search.html"><a href="novelty-search.html#contraditory-objectives-diagnostic-4"><i class="fa fa-check"></i><b>12.3</b> Contraditory objectives diagnostic</a><ul>
 <li class="chapter" data-level="12.3.1" data-path="novelty-search.html"><a href="novelty-search.html#satisfactory-trait-coverage-5"><i class="fa fa-check"></i><b>12.3.1</b> Satisfactory trait coverage</a></li>
 <li class="chapter" data-level="12.3.2" data-path="novelty-search.html"><a href="novelty-search.html#activation-gene-coverage-12"><i class="fa fa-check"></i><b>12.3.2</b> Activation gene coverage</a></li>
 </ul></li>
 <li class="chapter" data-level="12.4" data-path="novelty-search.html"><a href="novelty-search.html#multi-path-exploration-results-6"><i class="fa fa-check"></i><b>12.4</b> Multi-path exploration results</a><ul>
-<li class="chapter" data-level="12.4.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-9"><i class="fa fa-check"></i><b>12.4.1</b> Performance</a></li>
+<li class="chapter" data-level="12.4.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-10"><i class="fa fa-check"></i><b>12.4.1</b> Performance</a></li>
 <li class="chapter" data-level="12.4.2" data-path="novelty-search.html"><a href="novelty-search.html#activation-gene-coverage-13"><i class="fa fa-check"></i><b>12.4.2</b> Activation gene coverage</a></li>
 </ul></li>
 </ul></li>
@@ -692,7 +696,7 @@ Best gene value refers to maximum gene value found in the population; this gives
 <div id="stats-15" class="section level4 hasAnchor">
 <h4><span class="header-section-number">6.4.2.1</span> Stats<a href="multi-valley-crossing-results.html#stats-15" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Summary statistics for the best gene value throughout 50,000 generations.</p>
-<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb162-1" title="1">best<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(best<span class="op">$</span>acron, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;pfs&#39;</span>,<span class="st">&#39;gfs&#39;</span>,<span class="st">&#39;nov&#39;</span>,<span class="st">&#39;tor&#39;</span>,<span class="st">&#39;tru&#39;</span>,<span class="st">&#39;nds&#39;</span>,<span class="st">&#39;ran&#39;</span>,<span class="st">&#39;lex&#39;</span>))</a>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb162-1" title="1">best<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(best<span class="op">$</span>acron, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&#39;pfs&#39;</span>,<span class="st">&#39;gfs&#39;</span>,<span class="st">&#39;nds&#39;</span>,<span class="st">&#39;nov&#39;</span>,<span class="st">&#39;ran&#39;</span>,<span class="st">&#39;lex&#39;</span>,<span class="st">&#39;tor&#39;</span>,<span class="st">&#39;tru&#39;</span>))</a>
 <a class="sourceLine" id="cb162-2" title="2"><span class="kw">group_by</span>(best, acron) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb162-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(</a>
 <a class="sourceLine" id="cb162-4" title="4">    <span class="dt">count =</span> <span class="kw">n</span>(),</a>
@@ -708,12 +712,12 @@ Best gene value refers to maximum gene value found in the population; this gives
 ##   &lt;fct&gt; &lt;int&gt;  &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1 pfs      50      0  92.3  100.   99.1 100   0.195
 ## 2 gfs      50      0  86.8   99.9  97.9 100   3.20 
-## 3 nov      50      0  59.5   67.0  66.9  74.3 7.45 
-## 4 tor      50      0  23.0   27.5  27.2  28.2 0.456
-## 5 tru      50      0  22.9   27.5  27.4  28.1 0.321
-## 6 nds      50      0  78.4   83.4  84.6  97.9 4.07 
-## 7 ran      50      0  48.6   59.5  60.0  81.4 8.20 
-## 8 lex      50      0  28.8   33.2  33.0  35.2 1.20</code></pre>
+## 3 nds      50      0  78.4   83.4  84.6  97.9 4.07 
+## 4 nov      50      0  59.5   67.0  66.9  74.3 7.45 
+## 5 ran      50      0  48.6   59.5  60.0  81.4 8.20 
+## 6 lex      50      0  28.8   33.2  33.0  35.2 1.20 
+## 7 tor      50      0  23.0   27.5  27.2  28.2 0.456
+## 8 tru      50      0  22.9   27.5  27.4  28.1 0.321</code></pre>
 <p>Kruskal–Wallis test provides evidence of difference among best gene value throughout 50,000 generations.</p>
 <div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb164-1" title="1"><span class="kw">kruskal.test</span>(val <span class="op">~</span><span class="st"> </span>acron,<span class="dt">data =</span> best)</a></code></pre></div>
 <pre><code>## 
@@ -729,14 +733,14 @@ Best gene value refers to maximum gene value found in the population; this gives
 ## 
 ## data:  best$val and best$acron 
 ## 
-##     pfs     gfs     nov     tor tru nds     ran    
-## gfs 0.9     -       -       -   -   -       -      
-## nov &lt; 2e-16 &lt; 2e-16 -       -   -   -       -      
-## tor &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 -   -   -       -      
-## tru &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 1.0 -   -       -      
-## nds 3.1e-16 3.2e-15 1.0     1.0 1.0 -       -      
-## ran &lt; 2e-16 &lt; 2e-16 2.6e-07 1.0 1.0 &lt; 2e-16 -      
-## lex &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 1.0 1.0 &lt; 2e-16 &lt; 2e-16
+##     pfs     gfs     nds     nov     ran     lex     tor
+## gfs 0.9     -       -       -       -       -       -  
+## nds 3.1e-16 3.2e-15 -       -       -       -       -  
+## nov &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 -       -       -       -  
+## ran &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 2.6e-07 -       -       -  
+## lex &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 -       -  
+## tor &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 -  
+## tru &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 &lt; 2e-16 1.0
 ## 
 ## P value adjustment method: bonferroni</code></pre>
 </div>

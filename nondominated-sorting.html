@@ -305,22 +305,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="11.4.1" data-path="nondominated-sorting.html"><a href="nondominated-sorting.html#performance-8"><i class="fa fa-check"></i><b>11.4.1</b> Performance</a></li>
 <li class="chapter" data-level="11.4.2" data-path="nondominated-sorting.html"><a href="nondominated-sorting.html#activation-gene-coverage-11"><i class="fa fa-check"></i><b>11.4.2</b> Activation gene coverage</a></li>
 </ul></li>
+<li class="chapter" data-level="11.5" data-path="nondominated-sorting.html"><a href="nondominated-sorting.html#multi-valley-crossing-results-3"><i class="fa fa-check"></i><b>11.5</b> Multi-valley crossing results</a><ul>
+<li class="chapter" data-level="11.5.1" data-path="nondominated-sorting.html"><a href="nondominated-sorting.html#performance-9"><i class="fa fa-check"></i><b>11.5.1</b> Performance</a></li>
+<li class="chapter" data-level="11.5.2" data-path="nondominated-sorting.html"><a href="nondominated-sorting.html#best-gene-value-3"><i class="fa fa-check"></i><b>11.5.2</b> Best gene value</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="novelty-search.html"><a href="novelty-search.html"><i class="fa fa-check"></i><b>12</b> Novelty Search</a><ul>
 <li class="chapter" data-level="12.1" data-path="novelty-search.html"><a href="novelty-search.html#exploitation-rate-results-6"><i class="fa fa-check"></i><b>12.1</b> Exploitation rate results</a><ul>
-<li class="chapter" data-level="12.1.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-over-time-19"><i class="fa fa-check"></i><b>12.1.1</b> Performance over time</a></li>
-<li class="chapter" data-level="12.1.2" data-path="novelty-search.html"><a href="novelty-search.html#best-performance-throughout-17"><i class="fa fa-check"></i><b>12.1.2</b> Best performance throughout</a></li>
+<li class="chapter" data-level="12.1.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-over-time-20"><i class="fa fa-check"></i><b>12.1.1</b> Performance over time</a></li>
+<li class="chapter" data-level="12.1.2" data-path="novelty-search.html"><a href="novelty-search.html#best-performance-throughout-18"><i class="fa fa-check"></i><b>12.1.2</b> Best performance throughout</a></li>
 </ul></li>
 <li class="chapter" data-level="12.2" data-path="novelty-search.html"><a href="novelty-search.html#ordered-exploitation-results-6"><i class="fa fa-check"></i><b>12.2</b> Ordered exploitation results</a><ul>
-<li class="chapter" data-level="12.2.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-over-time-20"><i class="fa fa-check"></i><b>12.2.1</b> Performance over time</a></li>
-<li class="chapter" data-level="12.2.2" data-path="novelty-search.html"><a href="novelty-search.html#best-performance-throughout-18"><i class="fa fa-check"></i><b>12.2.2</b> Best performance throughout</a></li>
+<li class="chapter" data-level="12.2.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-over-time-21"><i class="fa fa-check"></i><b>12.2.1</b> Performance over time</a></li>
+<li class="chapter" data-level="12.2.2" data-path="novelty-search.html"><a href="novelty-search.html#best-performance-throughout-19"><i class="fa fa-check"></i><b>12.2.2</b> Best performance throughout</a></li>
 </ul></li>
 <li class="chapter" data-level="12.3" data-path="novelty-search.html"><a href="novelty-search.html#contraditory-objectives-diagnostic-4"><i class="fa fa-check"></i><b>12.3</b> Contraditory objectives diagnostic</a><ul>
 <li class="chapter" data-level="12.3.1" data-path="novelty-search.html"><a href="novelty-search.html#satisfactory-trait-coverage-5"><i class="fa fa-check"></i><b>12.3.1</b> Satisfactory trait coverage</a></li>
 <li class="chapter" data-level="12.3.2" data-path="novelty-search.html"><a href="novelty-search.html#activation-gene-coverage-12"><i class="fa fa-check"></i><b>12.3.2</b> Activation gene coverage</a></li>
 </ul></li>
 <li class="chapter" data-level="12.4" data-path="novelty-search.html"><a href="novelty-search.html#multi-path-exploration-results-6"><i class="fa fa-check"></i><b>12.4</b> Multi-path exploration results</a><ul>
-<li class="chapter" data-level="12.4.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-9"><i class="fa fa-check"></i><b>12.4.1</b> Performance</a></li>
+<li class="chapter" data-level="12.4.1" data-path="novelty-search.html"><a href="novelty-search.html#performance-10"><i class="fa fa-check"></i><b>12.4.1</b> Performance</a></li>
 <li class="chapter" data-level="12.4.2" data-path="novelty-search.html"><a href="novelty-search.html#activation-gene-coverage-13"><i class="fa fa-check"></i><b>12.4.2</b> Activation gene coverage</a></li>
 </ul></li>
 </ul></li>
@@ -375,7 +379,8 @@ Note that when <code>sigma = 0.0</code>, performance with no similarity penalty 
 <h2><span class="header-section-number">11.1</span> Exploitation rate results<a href="nondominated-sorting.html#exploitation-rate-results-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Here we present the results for <strong>best performances</strong> found by each genotypic fitness sharing sigma value replicate on the exploitation rate diagnostic.
 Best performance found refers to the largest average trait score found in a given population.
-Note that performance values fall between 0 and 100.</p>
+Note that performance values fall between 0.0 and 100.0.
+Note that when <code>sigma = 0.0</code>, no similarity penalty is used within nondominated front, and then stochastic remainder selection is used to identify parent solutions.</p>
 <div id="performance-over-time-16" class="section level3 hasAnchor">
 <h3><span class="header-section-number">11.1.1</span> Performance over time<a href="nondominated-sorting.html#performance-over-time-16" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Performance over time.</p>
@@ -515,7 +520,8 @@ Note that performance values fall between 0 and 100.</p>
 <h2><span class="header-section-number">11.2</span> Ordered exploitation results<a href="nondominated-sorting.html#ordered-exploitation-results-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Here we present the results for <strong>best performances</strong> found by each genotypic fitness sharing sigma value replicate on the ordered exploitation diagnostic.
 Best performance found refers to the largest average trait score found in a given population.
-Note that performance values fall between 0 and 100.</p>
+Note that performance values fall between 0.0 and 100.0.
+Note that when <code>sigma = 0.0</code>, no similarity penalty is used within nondominated front, and then stochastic remainder selection is used to identify parent solutions.</p>
 <div id="performance-over-time-17" class="section level3 hasAnchor">
 <h3><span class="header-section-number">11.2.1</span> Performance over time<a href="nondominated-sorting.html#performance-over-time-17" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Performance over time.</p>
@@ -655,7 +661,8 @@ Note that performance values fall between 0 and 100.</p>
 <h2><span class="header-section-number">11.3</span> Contraditory objectives diagnostic<a href="nondominated-sorting.html#contraditory-objectives-diagnostic-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Here we present the results for <strong>satisfactory trait coverage</strong> and <strong>activation gene coverage</strong> found by each genotypic fitness sharing sigma value replicate on the contradictory objectives diagnostic.
 Satisfactory trait coverage refers to the count of unique satisfied traits in the population, while activation gene coverage refers to the count of unique activation genes in the population.
-Note that both coverage values fall between 0 and 100.</p>
+Note that both coverage values fall between 0.0 and 100.0.
+Note that when <code>sigma = 0.0</code>, no similarity penalty is used within nondominated front, and then stochastic remainder selection is used to identify parent solutions.</p>
 <div id="satisfactory-trait-coverage-4" class="section level3 hasAnchor">
 <h3><span class="header-section-number">11.3.1</span> Satisfactory trait coverage<a href="nondominated-sorting.html#satisfactory-trait-coverage-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Here we analyze the satisfactory trait coverage for each parameter replicate on the contradictory objectives diagnostic.</p>
@@ -1017,7 +1024,8 @@ Note that both coverage values fall between 0 and 100.</p>
 <h2><span class="header-section-number">11.4</span> Multi-path exploration results<a href="nondominated-sorting.html#multi-path-exploration-results-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Here we present the results for <strong>best performances</strong> and <strong>activation gene coverage</strong> found by each nondominated sorting sigma value replicate on the multi-path exploration diagnostic.
 Best performance found refers to the largest average trait score found in a given population, while activation gene coverage refers to the count of unique activation genes in the population.
-Note that both values fall between 0 and 100.</p>
+Note that both values fall between 0.0 and 100.0.
+Note that when <code>sigma = 0.0</code>, no similarity penalty is used within nondominated front, and then stochastic remainder selection is used to identify parent solutions.</p>
 <div id="performance-8" class="section level3 hasAnchor">
 <h3><span class="header-section-number">11.4.1</span> Performance<a href="nondominated-sorting.html#performance-8" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Here we analyze the performances for each parameter replicate on the multi-path exploration diagnostic.</p>
@@ -1363,6 +1371,426 @@ Note that both values fall between 0 and 100.</p>
 ## 1.2 &lt; 2e-16 0.01207 0.01118 1.00000 -       -      
 ## 2.5 2.3e-16 6.0e-09 1.3e-08 0.00084 0.00019 -      
 ## 5   8.2e-16 1.7e-12 1.4e-12 4.4e-09 4.3e-12 8.0e-07
+## 
+## P value adjustment method: bonferroni</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="multi-valley-crossing-results-3" class="section level2 hasAnchor">
+<h2><span class="header-section-number">11.5</span> Multi-valley crossing results<a href="nondominated-sorting.html#multi-valley-crossing-results-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here we present the results for the <strong>best performances</strong> and <strong>best gene value</strong> generated by each nondominated sorting replicate on the multi-valley crossing diagnostic.
+Best performance found refers to the largest average trait score found in a given population.
+Best gene value refers to maximum gene value found in the population; this gives us a range of values in [0.0, 100.0].
+50 replicates are conducted for each sigma parameter value explored.
+Note that when <code>sigma = 0.0</code>, no similarity penalty is used within nondominated front, and then stochastic remainder selection is used to identify parent solutions.</p>
+<div id="performance-9" class="section level3 hasAnchor">
+<h3><span class="header-section-number">11.5.1</span> Performance<a href="nondominated-sorting.html#performance-9" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Here we analyze the performances for each parameter replicate on the multi-valley crossing diagnostic.</p>
+<div id="performance-over-time-19" class="section level4 hasAnchor">
+<h4><span class="header-section-number">11.5.1.1</span> Performance over time<a href="nondominated-sorting.html#performance-over-time-19" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Performance over time.</p>
+<div class="sourceCode" id="cb588"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb588-1" title="1">lines =<span class="st"> </span><span class="kw">filter</span>(nds_ot, diagnostic <span class="op">==</span><span class="st"> &#39;multivalley_crossing&#39;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb588-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(Sigma, gen) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb588-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(</a>
+<a class="sourceLine" id="cb588-4" title="4">    <span class="dt">min =</span> <span class="kw">min</span>(pop_fit_max),</a>
+<a class="sourceLine" id="cb588-5" title="5">    <span class="dt">mean =</span> <span class="kw">mean</span>(pop_fit_max),</a>
+<a class="sourceLine" id="cb588-6" title="6">    <span class="dt">max =</span> <span class="kw">max</span>(pop_fit_max)</a>
+<a class="sourceLine" id="cb588-7" title="7">  )</a></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;Sigma&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb590"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb590-1" title="1">points =<span class="st"> </span><span class="kw">filter</span>(lines, gen <span class="op">%%</span><span class="st"> </span><span class="dv">2000</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>gen <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb590-2" title="2"></a>
+<a class="sourceLine" id="cb590-3" title="3">ot =<span class="st"> </span><span class="kw">ggplot</span>(lines, <span class="kw">aes</span>(<span class="dt">x=</span>gen, <span class="dt">y=</span>mean <span class="op">/</span><span class="st"> </span>TRAITS, <span class="dt">group =</span> Sigma, <span class="dt">fill =</span> Sigma, <span class="dt">color =</span> Sigma, <span class="dt">shape =</span> Sigma)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb590-4" title="4"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> min <span class="op">/</span><span class="st"> </span>TRAITS, <span class="dt">ymax =</span> max <span class="op">/</span><span class="st"> </span>TRAITS), <span class="dt">alpha =</span> <span class="fl">0.1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb590-5" title="5"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size =</span> <span class="fl">0.5</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb590-6" title="6"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> points, <span class="dt">size =</span> <span class="fl">1.5</span>, <span class="dt">stroke =</span> <span class="fl">2.0</span>, <span class="dt">alpha =</span> <span class="fl">1.0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb590-7" title="7"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
+<a class="sourceLine" id="cb590-8" title="8">    <span class="dt">name=</span><span class="st">&quot;Average trait score&quot;</span>,</a>
+<a class="sourceLine" id="cb590-9" title="9">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">21</span>),</a>
+<a class="sourceLine" id="cb590-10" title="10">    <span class="dt">breaks=</span><span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">20</span>, <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb590-11" title="11">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0&quot;</span>, <span class="st">&quot;5&quot;</span>, <span class="st">&quot;10&quot;</span>, <span class="st">&quot;15&quot;</span>, <span class="st">&quot;20&quot;</span>)</a>
+<a class="sourceLine" id="cb590-12" title="12">  ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb590-13" title="13"><span class="st">  </span><span class="kw">scale_x_continuous</span>(</a>
+<a class="sourceLine" id="cb590-14" title="14">    <span class="dt">name=</span><span class="st">&quot;Generations&quot;</span>,</a>
+<a class="sourceLine" id="cb590-15" title="15">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">50000</span>),</a>
+<a class="sourceLine" id="cb590-16" title="16">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>),</a>
+<a class="sourceLine" id="cb590-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb590-18" title="18"></a>
+<a class="sourceLine" id="cb590-19" title="19">  ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb590-20" title="20"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Best performance over time&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb590-21" title="21"><span class="st">  </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
+<a class="sourceLine" id="cb590-22" title="22"><span class="st">  </span><span class="kw">scale_colour_manual</span>(<span class="dt">values =</span> cb_palette) <span class="op">+</span></a>
+<a class="sourceLine" id="cb590-23" title="23"><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> cb_palette) <span class="op">+</span></a>
+<a class="sourceLine" id="cb590-24" title="24"><span class="st">  </span>p_theme</a>
+<a class="sourceLine" id="cb590-25" title="25"></a>
+<a class="sourceLine" id="cb590-26" title="26">ot</a></code></pre></div>
+<p><img src="demo_files/figure-html/nds-mvc-per-ot-1.png" width="672" /></p>
+</div>
+<div id="best-performance-throughout-17" class="section level4 hasAnchor">
+<h4><span class="header-section-number">11.5.1.2</span> Best performance throughout<a href="nondominated-sorting.html#best-performance-throughout-17" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The best performance found throughout 50,000 generations.</p>
+<div class="sourceCode" id="cb591"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb591-1" title="1">best =<span class="st"> </span><span class="kw">filter</span>(nds_best, col <span class="op">==</span><span class="st"> &#39;pop_fit_max&#39;</span> <span class="op">&amp;</span><span class="st"> </span>diagnostic <span class="op">==</span><span class="st"> &#39;multivalley_crossing&#39;</span>)</a>
+<a class="sourceLine" id="cb591-2" title="2">plot =<span class="st">  </span><span class="kw">ggplot</span>(best, <span class="kw">aes</span>(<span class="dt">x =</span> Sigma, <span class="dt">y =</span> val <span class="op">/</span><span class="st"> </span>TRAITS, <span class="dt">color =</span> Sigma, <span class="dt">fill =</span> Sigma, <span class="dt">shape =</span> Sigma)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb591-3" title="3"><span class="st">          </span><span class="kw">geom_flat_violin</span>(<span class="dt">position =</span> <span class="kw">position_nudge</span>(<span class="dt">x =</span> <span class="fl">.2</span>, <span class="dt">y =</span> <span class="dv">0</span>), <span class="dt">scale =</span> <span class="st">&#39;width&#39;</span>, <span class="dt">alpha =</span> <span class="fl">0.2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb591-4" title="4"><span class="st">          </span><span class="kw">geom_point</span>(<span class="dt">position =</span> <span class="kw">position_jitter</span>(<span class="dt">width =</span> <span class="fl">.1</span>), <span class="dt">size =</span> <span class="fl">1.5</span>, <span class="dt">alpha =</span> <span class="fl">1.0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb591-5" title="5"><span class="st">          </span><span class="kw">geom_boxplot</span>(<span class="dt">color =</span> <span class="st">&#39;black&#39;</span>, <span class="dt">width =</span> <span class="fl">.2</span>, <span class="dt">outlier.shape =</span> <span class="ot">NA</span>, <span class="dt">alpha =</span> <span class="fl">0.0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb591-6" title="6"><span class="st">          </span><span class="kw">guides</span>(<span class="dt">fill =</span> <span class="st">&quot;none&quot;</span>,<span class="dt">color =</span> <span class="st">&#39;none&#39;</span>, <span class="dt">shape =</span> <span class="st">&#39;none&#39;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb591-7" title="7"><span class="st">          </span><span class="kw">scale_y_continuous</span>(</a>
+<a class="sourceLine" id="cb591-8" title="8">            <span class="dt">name=</span><span class="st">&quot;Average trait score&quot;</span>,</a>
+<a class="sourceLine" id="cb591-9" title="9">            <span class="dt">limits=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">21</span>),</a>
+<a class="sourceLine" id="cb591-10" title="10">            <span class="dt">breaks=</span><span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">20</span>, <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb591-11" title="11">            <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0&quot;</span>, <span class="st">&quot;5&quot;</span>, <span class="st">&quot;10&quot;</span>, <span class="st">&quot;15&quot;</span>, <span class="st">&quot;20&quot;</span>)</a>
+<a class="sourceLine" id="cb591-12" title="12">          ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb591-13" title="13"><span class="st">          </span><span class="kw">scale_x_discrete</span>(</a>
+<a class="sourceLine" id="cb591-14" title="14">            <span class="dt">name=</span><span class="st">&quot;Sigma&quot;</span></a>
+<a class="sourceLine" id="cb591-15" title="15">          )<span class="op">+</span></a>
+<a class="sourceLine" id="cb591-16" title="16"><span class="st">          </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
+<a class="sourceLine" id="cb591-17" title="17"><span class="st">          </span><span class="kw">scale_colour_manual</span>(<span class="dt">values =</span> cb_palette, ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb591-18" title="18"><span class="st">          </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> cb_palette) <span class="op">+</span></a>
+<a class="sourceLine" id="cb591-19" title="19"><span class="st">          </span>p_theme</a>
+<a class="sourceLine" id="cb591-20" title="20"></a>
+<a class="sourceLine" id="cb591-21" title="21"><span class="kw">plot_grid</span>(</a>
+<a class="sourceLine" id="cb591-22" title="22">  plot <span class="op">+</span></a>
+<a class="sourceLine" id="cb591-23" title="23"><span class="st">    </span><span class="kw">ggtitle</span>(<span class="st">&quot;Best performance throughout&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb591-24" title="24"><span class="st">    </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>),</a>
+<a class="sourceLine" id="cb591-25" title="25">  legend,</a>
+<a class="sourceLine" id="cb591-26" title="26">  <span class="dt">nrow=</span><span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb591-27" title="27">  <span class="dt">rel_heights =</span> <span class="kw">c</span>(<span class="dv">2</span>,.<span class="dv">55</span>),</a>
+<a class="sourceLine" id="cb591-28" title="28">  <span class="dt">label_size =</span> TSIZE</a>
+<a class="sourceLine" id="cb591-29" title="29">)</a></code></pre></div>
+<p><img src="demo_files/figure-html/nds-mvc-per-bst-1.png" width="672" /></p>
+<div id="stats-65" class="section level5 hasAnchor">
+<h5><span class="header-section-number">11.5.1.2.1</span> Stats<a href="nondominated-sorting.html#stats-65" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Summary statistics for the best performance found throughout 50,000 generations.</p>
+<div class="sourceCode" id="cb592"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb592-1" title="1">best<span class="op">$</span>Sigma =<span class="st"> </span><span class="kw">factor</span>(best<span class="op">$</span>Sigma, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="fl">0.0</span>,<span class="fl">0.1</span>,<span class="fl">0.3</span>,<span class="fl">0.6</span>,<span class="fl">1.2</span>,<span class="fl">2.5</span>,<span class="fl">5.0</span>))</a>
+<a class="sourceLine" id="cb592-2" title="2"><span class="kw">group_by</span>(best, Sigma) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb592-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(</a>
+<a class="sourceLine" id="cb592-4" title="4">    <span class="dt">count =</span> <span class="kw">n</span>(),</a>
+<a class="sourceLine" id="cb592-5" title="5">    <span class="dt">na_cnt =</span> <span class="kw">sum</span>(<span class="kw">is.na</span>(val)),</a>
+<a class="sourceLine" id="cb592-6" title="6">    <span class="dt">min =</span> <span class="kw">min</span>(val, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb592-7" title="7">    <span class="dt">median =</span> <span class="kw">median</span>(val, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb592-8" title="8">    <span class="dt">mean =</span> <span class="kw">mean</span>(val, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb592-9" title="9">    <span class="dt">max =</span> <span class="kw">max</span>(val, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb592-10" title="10">    <span class="dt">IQR =</span> <span class="kw">IQR</span>(val, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb592-11" title="11">  )</a></code></pre></div>
+<pre><code>## # A tibble: 7 x 8
+##   Sigma count na_cnt   min median  mean   max   IQR
+##   &lt;fct&gt; &lt;int&gt;  &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 0        50      0 1468.  1537. 1539. 1645.  56.6
+## 2 0.1      50      0 1465.  1525. 1531. 1626.  30.6
+## 3 0.3      50      0 1463.  1544. 1547. 1656.  54.5
+## 4 0.6      50      0 1460.  1532. 1531. 1614.  33.7
+## 5 1.2      50      0 1493.  1536. 1538. 1599.  36.6
+## 6 2.5      50      0 1461.  1541. 1540. 1620.  55.4
+## 7 5        50      0 1514.  1673. 1662. 1798.  86.5</code></pre>
+<p>Kruskal–Wallis test provides evidence of significant differences among sigma values on the best performance found throughout 50,000 generations</p>
+<div class="sourceCode" id="cb594"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb594-1" title="1"><span class="kw">kruskal.test</span>(val <span class="op">~</span><span class="st"> </span>Sigma, <span class="dt">data =</span> best)</a></code></pre></div>
+<pre><code>## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  val by Sigma
+## Kruskal-Wallis chi-squared = 97.33, df = 6, p-value &lt; 2.2e-16</code></pre>
+<p>Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found throughout 50,000 generations.</p>
+<div class="sourceCode" id="cb596"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb596-1" title="1"><span class="kw">pairwise.wilcox.test</span>(<span class="dt">x =</span> best<span class="op">$</span>val, <span class="dt">g =</span> best<span class="op">$</span>Sigma, <span class="dt">p.adjust.method =</span> <span class="st">&quot;bonferroni&quot;</span>,</a>
+<a class="sourceLine" id="cb596-2" title="2">                     <span class="dt">paired =</span> <span class="ot">FALSE</span>, <span class="dt">conf.int =</span> <span class="ot">FALSE</span>, <span class="dt">alternative =</span> <span class="st">&#39;g&#39;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+## 
+## data:  best$val and best$Sigma 
+## 
+##     0       0.1     0.3     0.6     1.2     2.5    
+## 0.1 1.0     -       -       -       -       -      
+## 0.3 1.0     0.4     -       -       -       -      
+## 0.6 1.0     1.0     1.0     -       -       -      
+## 1.2 1.0     1.0     1.0     1.0     -       -      
+## 2.5 1.0     1.0     1.0     1.0     1.0     -      
+## 5   5.1e-12 5.3e-13 4.4e-11 4.0e-13 1.6e-12 6.6e-12
+## 
+## P value adjustment method: bonferroni</code></pre>
+</div>
+</div>
+<div id="end-of-50000-generations-32" class="section level4 hasAnchor">
+<h4><span class="header-section-number">11.5.1.3</span> End of 50,000 generations<a href="nondominated-sorting.html#end-of-50000-generations-32" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Best performance in the population at the end of 50,000 generations.</p>
+<div class="sourceCode" id="cb598"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb598-1" title="1">end =<span class="st"> </span><span class="kw">filter</span>(nds_end, diagnostic <span class="op">==</span><span class="st"> &#39;multivalley_crossing&#39;</span>)</a>
+<a class="sourceLine" id="cb598-2" title="2">plot =<span class="st"> </span><span class="kw">ggplot</span>(end, <span class="kw">aes</span>(<span class="dt">x =</span> Sigma, <span class="dt">y =</span> pop_fit_max <span class="op">/</span><span class="st"> </span>TRAITS, <span class="dt">group =</span> Sigma, <span class="dt">fill =</span>Sigma, <span class="dt">color =</span> Sigma, <span class="dt">shape =</span> Sigma)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb598-3" title="3"><span class="st">  </span><span class="kw">geom_flat_violin</span>(<span class="dt">position =</span> <span class="kw">position_nudge</span>(<span class="dt">x =</span> <span class="fl">.3</span>), <span class="dt">alpha =</span> <span class="fl">0.2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb598-4" title="4"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">position =</span> <span class="kw">position_jitter</span>(<span class="dt">width =</span> <span class="fl">.1</span>), <span class="dt">size =</span> <span class="fl">1.5</span>, <span class="dt">alpha =</span> <span class="fl">10.8</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb598-5" title="5"><span class="st">  </span><span class="kw">geom_boxplot</span>(<span class="dt">width =</span> <span class="fl">.1</span>, <span class="dt">outlier.shape =</span> <span class="ot">NA</span>, <span class="dt">alpha =</span> <span class="fl">0.1</span>, <span class="dt">col =</span> <span class="st">&quot;black&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb598-6" title="6"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
+<a class="sourceLine" id="cb598-7" title="7">    <span class="dt">name=</span><span class="st">&quot;Average trait score&quot;</span>,</a>
+<a class="sourceLine" id="cb598-8" title="8">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">21</span>),</a>
+<a class="sourceLine" id="cb598-9" title="9">    <span class="dt">breaks=</span><span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">20</span>, <span class="dv">5</span>),</a>
+<a class="sourceLine" id="cb598-10" title="10">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0&quot;</span>, <span class="st">&quot;5&quot;</span>, <span class="st">&quot;10&quot;</span>, <span class="st">&quot;15&quot;</span>, <span class="st">&quot;20&quot;</span>)</a>
+<a class="sourceLine" id="cb598-11" title="11">  ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb598-12" title="12"><span class="st">  </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
+<a class="sourceLine" id="cb598-13" title="13"><span class="st">  </span><span class="kw">scale_colour_manual</span>(<span class="dt">values =</span> cb_palette) <span class="op">+</span></a>
+<a class="sourceLine" id="cb598-14" title="14"><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> cb_palette) <span class="op">+</span></a>
+<a class="sourceLine" id="cb598-15" title="15"><span class="st">  </span>p_theme</a>
+<a class="sourceLine" id="cb598-16" title="16"></a>
+<a class="sourceLine" id="cb598-17" title="17"><span class="kw">plot_grid</span>(</a>
+<a class="sourceLine" id="cb598-18" title="18">  plot <span class="op">+</span></a>
+<a class="sourceLine" id="cb598-19" title="19"><span class="st">    </span><span class="kw">ggtitle</span>(<span class="st">&quot;Final performance&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb598-20" title="20"><span class="st">    </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>),</a>
+<a class="sourceLine" id="cb598-21" title="21">  legend,</a>
+<a class="sourceLine" id="cb598-22" title="22">  <span class="dt">nrow=</span><span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb598-23" title="23">  <span class="dt">rel_heights =</span> <span class="kw">c</span>(<span class="dv">2</span>,.<span class="dv">55</span>),</a>
+<a class="sourceLine" id="cb598-24" title="24">  <span class="dt">label_size =</span> TSIZE</a>
+<a class="sourceLine" id="cb598-25" title="25">)</a></code></pre></div>
+<p><img src="demo_files/figure-html/nds-mvc-per-end-1.png" width="672" /></p>
+<div id="stats-66" class="section level5 hasAnchor">
+<h5><span class="header-section-number">11.5.1.3.1</span> Stats<a href="nondominated-sorting.html#stats-66" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Summary statistics for the best performance found throughout 50,000 generations.</p>
+<div class="sourceCode" id="cb599"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb599-1" title="1">end<span class="op">$</span>Sigma =<span class="st"> </span><span class="kw">factor</span>(end<span class="op">$</span>Sigma, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="fl">0.0</span>,<span class="fl">0.1</span>,<span class="fl">0.3</span>,<span class="fl">0.6</span>,<span class="fl">1.2</span>,<span class="fl">2.5</span>,<span class="fl">5.0</span>))</a>
+<a class="sourceLine" id="cb599-2" title="2"><span class="kw">group_by</span>(end, Sigma) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb599-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(</a>
+<a class="sourceLine" id="cb599-4" title="4">    <span class="dt">count =</span> <span class="kw">n</span>(),</a>
+<a class="sourceLine" id="cb599-5" title="5">    <span class="dt">na_cnt =</span> <span class="kw">sum</span>(<span class="kw">is.na</span>(pop_fit_max)),</a>
+<a class="sourceLine" id="cb599-6" title="6">    <span class="dt">min =</span> <span class="kw">min</span>(pop_fit_max, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb599-7" title="7">    <span class="dt">median =</span> <span class="kw">median</span>(pop_fit_max, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb599-8" title="8">    <span class="dt">mean =</span> <span class="kw">mean</span>(pop_fit_max, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb599-9" title="9">    <span class="dt">max =</span> <span class="kw">max</span>(pop_fit_max, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb599-10" title="10">    <span class="dt">IQR =</span> <span class="kw">IQR</span>(pop_fit_max, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb599-11" title="11">  )</a></code></pre></div>
+<pre><code>## # A tibble: 7 x 8
+##   Sigma count na_cnt   min median  mean   max   IQR
+##   &lt;fct&gt; &lt;int&gt;  &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 0        50      0 1438.  1493. 1500. 1617.  60.2
+## 2 0.1      50      0 1437.  1491. 1496. 1626.  44.8
+## 3 0.3      50      0 1440.  1496. 1502. 1644.  42.9
+## 4 0.6      50      0 1440.  1494. 1493. 1545.  36.3
+## 5 1.2      50      0 1434.  1493. 1494. 1572.  41.3
+## 6 2.5      50      0 1444.  1495. 1501. 1586.  56.0
+## 7 5        50      0 1452.  1623. 1616. 1768.  95.4</code></pre>
+<p>Kruskal–Wallis test provides evidence of significant differences among sigma values on the best performance found throughout 50,000 generations</p>
+<div class="sourceCode" id="cb601"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb601-1" title="1"><span class="kw">kruskal.test</span>(pop_fit_max <span class="op">~</span><span class="st"> </span>Sigma, <span class="dt">data =</span> end)</a></code></pre></div>
+<pre><code>## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  pop_fit_max by Sigma
+## Kruskal-Wallis chi-squared = 84.486, df = 6, p-value = 4.219e-16</code></pre>
+<p>Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found throughout 50,000 generations.</p>
+<div class="sourceCode" id="cb603"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb603-1" title="1"><span class="kw">pairwise.wilcox.test</span>(<span class="dt">x =</span> end<span class="op">$</span>pop_fit_max, <span class="dt">g =</span> end<span class="op">$</span>Sigma, <span class="dt">p.adjust.method =</span> <span class="st">&quot;bonferroni&quot;</span>,</a>
+<a class="sourceLine" id="cb603-2" title="2">                     <span class="dt">paired =</span> <span class="ot">FALSE</span>, <span class="dt">conf.int =</span> <span class="ot">FALSE</span>, <span class="dt">alternative =</span> <span class="st">&#39;g&#39;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+## 
+## data:  end$pop_fit_max and end$Sigma 
+## 
+##     0       0.1     0.3     0.6     1.2     2.5    
+## 0.1 1       -       -       -       -       -      
+## 0.3 1       1       -       -       -       -      
+## 0.6 1       1       1       -       -       -      
+## 1.2 1       1       1       1       -       -      
+## 2.5 1       1       1       1       1       -      
+## 5   1.3e-10 2.7e-11 1.9e-10 8.1e-12 9.9e-12 6.4e-11
+## 
+## P value adjustment method: bonferroni</code></pre>
+</div>
+</div>
+</div>
+<div id="best-gene-value-3" class="section level3 hasAnchor">
+<h3><span class="header-section-number">11.5.2</span> Best gene value<a href="nondominated-sorting.html#best-gene-value-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Here we analyze the gene values for each parameter replicate on the multi-valley crossing diagnostic.</p>
+<div id="gene-value-over-time-2" class="section level4 hasAnchor">
+<h4><span class="header-section-number">11.5.2.1</span> Gene value over time<a href="nondominated-sorting.html#gene-value-over-time-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Best gene value over time.</p>
+<div class="sourceCode" id="cb605"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb605-1" title="1">lines =<span class="st"> </span><span class="kw">filter</span>(nds_ot, diagnostic <span class="op">==</span><span class="st"> &#39;multivalley_crossing&#39;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb605-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(Sigma, gen) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb605-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(</a>
+<a class="sourceLine" id="cb605-4" title="4">    <span class="dt">min =</span> <span class="kw">min</span>(pop_max_gene),</a>
+<a class="sourceLine" id="cb605-5" title="5">    <span class="dt">mean =</span> <span class="kw">mean</span>(pop_max_gene),</a>
+<a class="sourceLine" id="cb605-6" title="6">    <span class="dt">max =</span> <span class="kw">max</span>(pop_max_gene)</a>
+<a class="sourceLine" id="cb605-7" title="7">  )</a></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;Sigma&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<div class="sourceCode" id="cb607"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb607-1" title="1">points =<span class="st"> </span><span class="kw">filter</span>(lines, gen <span class="op">%%</span><span class="st"> </span><span class="dv">2000</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>gen <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb607-2" title="2"></a>
+<a class="sourceLine" id="cb607-3" title="3">ot =<span class="st"> </span><span class="kw">ggplot</span>(lines, <span class="kw">aes</span>(<span class="dt">x=</span>gen, <span class="dt">y=</span>mean, <span class="dt">group =</span> Sigma, <span class="dt">fill =</span> Sigma, <span class="dt">color =</span> Sigma, <span class="dt">shape =</span> Sigma)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb607-4" title="4"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> min, <span class="dt">ymax =</span> max), <span class="dt">alpha =</span> <span class="fl">0.1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb607-5" title="5"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">size =</span> <span class="fl">0.5</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb607-6" title="6"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> points, <span class="dt">size =</span> <span class="fl">1.5</span>, <span class="dt">stroke =</span> <span class="fl">2.0</span>, <span class="dt">alpha =</span> <span class="fl">1.0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb607-7" title="7"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
+<a class="sourceLine" id="cb607-8" title="8">    <span class="dt">name=</span><span class="st">&quot;Max gene value&quot;</span>,</a>
+<a class="sourceLine" id="cb607-9" title="9">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">101</span>),</a>
+<a class="sourceLine" id="cb607-10" title="10">    <span class="dt">breaks=</span><span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">100</span>, <span class="dv">20</span>),</a>
+<a class="sourceLine" id="cb607-11" title="11">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0&quot;</span>, <span class="st">&quot;20&quot;</span>, <span class="st">&quot;40&quot;</span>, <span class="st">&quot;60&quot;</span>, <span class="st">&quot;80&quot;</span>, <span class="st">&quot;100&quot;</span>)</a>
+<a class="sourceLine" id="cb607-12" title="12">  ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb607-13" title="13"><span class="st">  </span><span class="kw">scale_x_continuous</span>(</a>
+<a class="sourceLine" id="cb607-14" title="14">    <span class="dt">name=</span><span class="st">&quot;Generations&quot;</span>,</a>
+<a class="sourceLine" id="cb607-15" title="15">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">50000</span>),</a>
+<a class="sourceLine" id="cb607-16" title="16">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>),</a>
+<a class="sourceLine" id="cb607-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb607-18" title="18"></a>
+<a class="sourceLine" id="cb607-19" title="19">  ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb607-20" title="20"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Best gene value over time&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb607-21" title="21"><span class="st">  </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
+<a class="sourceLine" id="cb607-22" title="22"><span class="st">  </span><span class="kw">scale_colour_manual</span>(<span class="dt">values =</span> cb_palette) <span class="op">+</span></a>
+<a class="sourceLine" id="cb607-23" title="23"><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> cb_palette) <span class="op">+</span></a>
+<a class="sourceLine" id="cb607-24" title="24"><span class="st">  </span>p_theme</a>
+<a class="sourceLine" id="cb607-25" title="25"></a>
+<a class="sourceLine" id="cb607-26" title="26">ot</a></code></pre></div>
+<p><img src="demo_files/figure-html/nds-mvc-gne-ot-1.png" width="672" /></p>
+</div>
+<div id="best-gene-value-throughout-3" class="section level4 hasAnchor">
+<h4><span class="header-section-number">11.5.2.2</span> Best gene value throughout<a href="nondominated-sorting.html#best-gene-value-throughout-3" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The best gene value found throughout 50,000 generations.</p>
+<div class="sourceCode" id="cb608"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb608-1" title="1">best =<span class="st"> </span><span class="kw">filter</span>(nds_best, col <span class="op">==</span><span class="st"> &#39;pop_max_gene&#39;</span> <span class="op">&amp;</span><span class="st"> </span>diagnostic <span class="op">==</span><span class="st"> &#39;multivalley_crossing&#39;</span>)</a>
+<a class="sourceLine" id="cb608-2" title="2">plot =<span class="st">  </span><span class="kw">ggplot</span>(best, <span class="kw">aes</span>(<span class="dt">x =</span> Sigma, <span class="dt">y =</span> val, <span class="dt">color =</span> Sigma, <span class="dt">fill =</span> Sigma, <span class="dt">shape =</span> Sigma)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb608-3" title="3"><span class="st">          </span><span class="kw">geom_flat_violin</span>(<span class="dt">position =</span> <span class="kw">position_nudge</span>(<span class="dt">x =</span> <span class="fl">.2</span>, <span class="dt">y =</span> <span class="dv">0</span>), <span class="dt">scale =</span> <span class="st">&#39;width&#39;</span>, <span class="dt">alpha =</span> <span class="fl">0.2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb608-4" title="4"><span class="st">          </span><span class="kw">geom_point</span>(<span class="dt">position =</span> <span class="kw">position_jitter</span>(<span class="dt">width =</span> <span class="fl">.1</span>), <span class="dt">size =</span> <span class="fl">1.5</span>, <span class="dt">alpha =</span> <span class="fl">1.0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb608-5" title="5"><span class="st">          </span><span class="kw">geom_boxplot</span>(<span class="dt">color =</span> <span class="st">&#39;black&#39;</span>, <span class="dt">width =</span> <span class="fl">.2</span>, <span class="dt">outlier.shape =</span> <span class="ot">NA</span>, <span class="dt">alpha =</span> <span class="fl">0.0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb608-6" title="6"><span class="st">          </span><span class="kw">guides</span>(<span class="dt">fill =</span> <span class="st">&quot;none&quot;</span>,<span class="dt">color =</span> <span class="st">&#39;none&#39;</span>, <span class="dt">shape =</span> <span class="st">&#39;none&#39;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb608-7" title="7"><span class="st">          </span><span class="kw">scale_y_continuous</span>(</a>
+<a class="sourceLine" id="cb608-8" title="8">          <span class="dt">name=</span><span class="st">&quot;Max gene value&quot;</span>,</a>
+<a class="sourceLine" id="cb608-9" title="9">          <span class="dt">limits=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">101</span>),</a>
+<a class="sourceLine" id="cb608-10" title="10">          <span class="dt">breaks=</span><span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">100</span>, <span class="dv">20</span>),</a>
+<a class="sourceLine" id="cb608-11" title="11">          <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0&quot;</span>, <span class="st">&quot;20&quot;</span>, <span class="st">&quot;40&quot;</span>, <span class="st">&quot;60&quot;</span>, <span class="st">&quot;80&quot;</span>, <span class="st">&quot;100&quot;</span>)</a>
+<a class="sourceLine" id="cb608-12" title="12">          ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb608-13" title="13"><span class="st">          </span><span class="kw">scale_x_discrete</span>(</a>
+<a class="sourceLine" id="cb608-14" title="14">            <span class="dt">name=</span><span class="st">&quot;Sigma&quot;</span></a>
+<a class="sourceLine" id="cb608-15" title="15">          )<span class="op">+</span></a>
+<a class="sourceLine" id="cb608-16" title="16"><span class="st">          </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
+<a class="sourceLine" id="cb608-17" title="17"><span class="st">          </span><span class="kw">scale_colour_manual</span>(<span class="dt">values =</span> cb_palette, ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb608-18" title="18"><span class="st">          </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> cb_palette) <span class="op">+</span></a>
+<a class="sourceLine" id="cb608-19" title="19"><span class="st">          </span>p_theme</a>
+<a class="sourceLine" id="cb608-20" title="20"></a>
+<a class="sourceLine" id="cb608-21" title="21"><span class="kw">plot_grid</span>(</a>
+<a class="sourceLine" id="cb608-22" title="22">  plot <span class="op">+</span></a>
+<a class="sourceLine" id="cb608-23" title="23"><span class="st">    </span><span class="kw">ggtitle</span>(<span class="st">&quot;Best gene value throughout&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb608-24" title="24"><span class="st">    </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>),</a>
+<a class="sourceLine" id="cb608-25" title="25">  legend,</a>
+<a class="sourceLine" id="cb608-26" title="26">  <span class="dt">nrow=</span><span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb608-27" title="27">  <span class="dt">rel_heights =</span> <span class="kw">c</span>(<span class="dv">2</span>,.<span class="dv">55</span>),</a>
+<a class="sourceLine" id="cb608-28" title="28">  <span class="dt">label_size =</span> TSIZE</a>
+<a class="sourceLine" id="cb608-29" title="29">)</a></code></pre></div>
+<p><img src="demo_files/figure-html/nds-mvc-gne-bst-1.png" width="672" /></p>
+<div id="stats-67" class="section level5 hasAnchor">
+<h5><span class="header-section-number">11.5.2.2.1</span> Stats<a href="nondominated-sorting.html#stats-67" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Summary statistics for the best gene value found throughout 50,000 generations.</p>
+<div class="sourceCode" id="cb609"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb609-1" title="1">best<span class="op">$</span>Sigma =<span class="st"> </span><span class="kw">factor</span>(best<span class="op">$</span>Sigma, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">2.5</span>, <span class="fl">5.0</span>))</a>
+<a class="sourceLine" id="cb609-2" title="2"><span class="kw">group_by</span>(best, Sigma) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb609-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(</a>
+<a class="sourceLine" id="cb609-4" title="4">    <span class="dt">count =</span> <span class="kw">n</span>(),</a>
+<a class="sourceLine" id="cb609-5" title="5">    <span class="dt">na_cnt =</span> <span class="kw">sum</span>(<span class="kw">is.na</span>(val)),</a>
+<a class="sourceLine" id="cb609-6" title="6">    <span class="dt">min =</span> <span class="kw">min</span>(val, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb609-7" title="7">    <span class="dt">median =</span> <span class="kw">median</span>(val, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb609-8" title="8">    <span class="dt">mean =</span> <span class="kw">mean</span>(val, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb609-9" title="9">    <span class="dt">max =</span> <span class="kw">max</span>(val, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb609-10" title="10">    <span class="dt">IQR =</span> <span class="kw">IQR</span>(val, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb609-11" title="11">  )</a></code></pre></div>
+<pre><code>## # A tibble: 7 x 8
+##   Sigma count na_cnt   min median  mean   max   IQR
+##   &lt;fct&gt; &lt;int&gt;  &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 0        50      0  76.0   83.8  84.7  99.9  6.47
+## 2 0.1      50      0  76.6   85.0  84.7  94.2  5.75
+## 3 0.3      50      0  78.4   83.4  84.6  97.9  4.07
+## 4 0.6      50      0  76.0   85.4  85.4  97.3  6.38
+## 5 1.2      50      0  75.6   83.5  84.1  94.8  5.41
+## 6 2.5      50      0  76.4   82.7  83.4  99.9  5.56
+## 7 5        50      0  56.0   69.0  68.8  85.2  9.74</code></pre>
+<p>Kruskal–Wallis test provides evidence of significant differences among sigma values on the best gene value found throughout 50,000 generations</p>
+<div class="sourceCode" id="cb611"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb611-1" title="1"><span class="kw">kruskal.test</span>(val <span class="op">~</span><span class="st"> </span>Sigma, <span class="dt">data =</span> best)</a></code></pre></div>
+<pre><code>## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  val by Sigma
+## Kruskal-Wallis chi-squared = 116.45, df = 6, p-value &lt; 2.2e-16</code></pre>
+<p>Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best gene value found throughout 50,000 generations.</p>
+<div class="sourceCode" id="cb613"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb613-1" title="1"><span class="kw">pairwise.wilcox.test</span>(<span class="dt">x =</span> best<span class="op">$</span>val, <span class="dt">g =</span> best<span class="op">$</span>Sigma, <span class="dt">p.adjust.method =</span> <span class="st">&quot;bonferroni&quot;</span>,</a>
+<a class="sourceLine" id="cb613-2" title="2">                     <span class="dt">paired =</span> <span class="ot">FALSE</span>, <span class="dt">conf.int =</span> <span class="ot">FALSE</span>, <span class="dt">alternative =</span> <span class="st">&#39;l&#39;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+## 
+## data:  best$val and best$Sigma 
+## 
+##     0       0.1     0.3     0.6     1.2     2.5    
+## 0.1 1.00    -       -       -       -       -      
+## 0.3 1.00    1.00    -       -       -       -      
+## 0.6 1.00    1.00    1.00    -       -       -      
+## 1.2 1.00    1.00    1.00    1.00    -       -      
+## 2.5 1.00    0.36    1.00    0.16    1.00    -      
+## 5   1.5e-14 6.6e-15 1.8e-14 3.8e-15 2.4e-14 4.0e-14
+## 
+## P value adjustment method: bonferroni</code></pre>
+</div>
+</div>
+<div id="end-of-50000-generations-33" class="section level4 hasAnchor">
+<h4><span class="header-section-number">11.5.2.3</span> End of 50,000 generations<a href="nondominated-sorting.html#end-of-50000-generations-33" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Best gene value in the population at the end of 50,000 generations.</p>
+<div class="sourceCode" id="cb615"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb615-1" title="1">end =<span class="st"> </span><span class="kw">filter</span>(nds_end, diagnostic <span class="op">==</span><span class="st"> &#39;multivalley_crossing&#39;</span>)</a>
+<a class="sourceLine" id="cb615-2" title="2">plot =<span class="st"> </span><span class="kw">ggplot</span>(end, <span class="kw">aes</span>(<span class="dt">x =</span> Sigma, <span class="dt">y =</span> pop_max_gene, <span class="dt">group =</span> Sigma, <span class="dt">fill =</span>Sigma, <span class="dt">color =</span> Sigma, <span class="dt">shape =</span> Sigma)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb615-3" title="3"><span class="st">  </span><span class="kw">geom_flat_violin</span>(<span class="dt">position =</span> <span class="kw">position_nudge</span>(<span class="dt">x =</span> <span class="fl">.3</span>), <span class="dt">alpha =</span> <span class="fl">0.2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb615-4" title="4"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">position =</span> <span class="kw">position_jitter</span>(<span class="dt">width =</span> <span class="fl">.1</span>), <span class="dt">size =</span> <span class="fl">1.5</span>, <span class="dt">alpha =</span> <span class="fl">10.8</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb615-5" title="5"><span class="st">  </span><span class="kw">geom_boxplot</span>(<span class="dt">width =</span> <span class="fl">.1</span>, <span class="dt">outlier.shape =</span> <span class="ot">NA</span>, <span class="dt">alpha =</span> <span class="fl">0.1</span>, <span class="dt">col =</span> <span class="st">&quot;black&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb615-6" title="6"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
+<a class="sourceLine" id="cb615-7" title="7">    <span class="dt">name=</span><span class="st">&quot;Coverage&quot;</span>,</a>
+<a class="sourceLine" id="cb615-8" title="8">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">101</span>),</a>
+<a class="sourceLine" id="cb615-9" title="9">    <span class="dt">breaks=</span><span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">100</span>, <span class="dv">20</span>),</a>
+<a class="sourceLine" id="cb615-10" title="10">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0&quot;</span>, <span class="st">&quot;20&quot;</span>, <span class="st">&quot;40&quot;</span>, <span class="st">&quot;60&quot;</span>, <span class="st">&quot;80&quot;</span>, <span class="st">&quot;100&quot;</span>)</a>
+<a class="sourceLine" id="cb615-11" title="11">  ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb615-12" title="12"><span class="st">  </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
+<a class="sourceLine" id="cb615-13" title="13"><span class="st">  </span><span class="kw">scale_colour_manual</span>(<span class="dt">values =</span> cb_palette) <span class="op">+</span></a>
+<a class="sourceLine" id="cb615-14" title="14"><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values =</span> cb_palette) <span class="op">+</span></a>
+<a class="sourceLine" id="cb615-15" title="15"><span class="st">  </span>p_theme</a>
+<a class="sourceLine" id="cb615-16" title="16"></a>
+<a class="sourceLine" id="cb615-17" title="17"><span class="kw">plot_grid</span>(</a>
+<a class="sourceLine" id="cb615-18" title="18">  plot <span class="op">+</span></a>
+<a class="sourceLine" id="cb615-19" title="19"><span class="st">    </span><span class="kw">ggtitle</span>(<span class="st">&quot;Final gene value&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb615-20" title="20"><span class="st">    </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;none&quot;</span>),</a>
+<a class="sourceLine" id="cb615-21" title="21">  legend,</a>
+<a class="sourceLine" id="cb615-22" title="22">  <span class="dt">nrow=</span><span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb615-23" title="23">  <span class="dt">rel_heights =</span> <span class="kw">c</span>(<span class="dv">2</span>,.<span class="dv">55</span>),</a>
+<a class="sourceLine" id="cb615-24" title="24">  <span class="dt">label_size =</span> TSIZE</a>
+<a class="sourceLine" id="cb615-25" title="25">)</a></code></pre></div>
+<p><img src="demo_files/figure-html/nds-mvc-gne-end-1.png" width="672" /></p>
+<div id="stats-68" class="section level5 hasAnchor">
+<h5><span class="header-section-number">11.5.2.3.1</span> Stats<a href="nondominated-sorting.html#stats-68" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>Summary statistics for the best gene value found at the end of 50,000 generations.</p>
+<div class="sourceCode" id="cb616"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb616-1" title="1">end<span class="op">$</span>Sigma =<span class="st"> </span><span class="kw">factor</span>(end<span class="op">$</span>Sigma, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">2.5</span>, <span class="fl">5.0</span>))</a>
+<a class="sourceLine" id="cb616-2" title="2"><span class="kw">group_by</span>(end, Sigma) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb616-3" title="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(</a>
+<a class="sourceLine" id="cb616-4" title="4">    <span class="dt">count =</span> <span class="kw">n</span>(),</a>
+<a class="sourceLine" id="cb616-5" title="5">    <span class="dt">na_cnt =</span> <span class="kw">sum</span>(<span class="kw">is.na</span>(pop_max_gene)),</a>
+<a class="sourceLine" id="cb616-6" title="6">    <span class="dt">min =</span> <span class="kw">min</span>(pop_max_gene, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb616-7" title="7">    <span class="dt">median =</span> <span class="kw">median</span>(pop_max_gene, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb616-8" title="8">    <span class="dt">mean =</span> <span class="kw">mean</span>(pop_max_gene, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb616-9" title="9">    <span class="dt">max =</span> <span class="kw">max</span>(pop_max_gene, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb616-10" title="10">    <span class="dt">IQR =</span> <span class="kw">IQR</span>(pop_max_gene, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb616-11" title="11">  )</a></code></pre></div>
+<pre><code>## # A tibble: 7 x 8
+##   Sigma count na_cnt   min median  mean   max   IQR
+##   &lt;fct&gt; &lt;int&gt;  &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 0        50      0  74.4   81.5  82.5  98.0  7.67
+## 2 0.1      50      0  73.9   81.9  82.2  94.2  5.14
+## 3 0.3      50      0  74.4   81.5  82.8  96.2  5.30
+## 4 0.6      50      0  74.6   83.1  83.3  97.2  7.26
+## 5 1.2      50      0  74.2   81.9  82.4  94.8  6.21
+## 6 2.5      50      0  74.7   80.6  81.5  98.2  6.45
+## 7 5        50      0  50.4   62.8  63.8  85.2 10.4</code></pre>
+<p>Kruskal–Wallis test provides evidence of significant differences among sigma values on the best gene value found at the end of 50,000 generations.</p>
+<div class="sourceCode" id="cb618"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb618-1" title="1"><span class="kw">kruskal.test</span>(pop_max_gene <span class="op">~</span><span class="st"> </span>Sigma, <span class="dt">data =</span> end)</a></code></pre></div>
+<pre><code>## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  pop_max_gene by Sigma
+## Kruskal-Wallis chi-squared = 117.76, df = 6, p-value &lt; 2.2e-16</code></pre>
+<p>Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best gene value found at the end of 50,000 generations.</p>
+<div class="sourceCode" id="cb620"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb620-1" title="1"><span class="kw">pairwise.wilcox.test</span>(<span class="dt">x =</span> end<span class="op">$</span>pop_max_gene, <span class="dt">g =</span> end<span class="op">$</span>Sigma, <span class="dt">p.adjust.method =</span> <span class="st">&quot;bonferroni&quot;</span>,</a>
+<a class="sourceLine" id="cb620-2" title="2">                     <span class="dt">paired =</span> <span class="ot">FALSE</span>, <span class="dt">conf.int =</span> <span class="ot">FALSE</span>, <span class="dt">alternative =</span> <span class="st">&#39;l&#39;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+## 
+## data:  end$pop_max_gene and end$Sigma 
+## 
+##     0       0.1     0.3     0.6     1.2     2.5    
+## 0.1 1.00    -       -       -       -       -      
+## 0.3 1.00    1.00    -       -       -       -      
+## 0.6 1.00    1.00    1.00    -       -       -      
+## 1.2 1.00    1.00    1.00    1.00    -       -      
+## 2.5 1.00    1.00    1.00    0.52    1.00    -      
+## 5   4.5e-15 5.3e-15 4.0e-15 2.7e-15 3.8e-15 6.3e-15
 ## 
 ## P value adjustment method: bonferroni</code></pre>
 
