@@ -1122,7 +1122,7 @@ kruskal.test(pop_fit_max ~ K, data = end)
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found at the end of 50,000 generations.
 
-```{r nds-mvc-per-end-wil}
+```{r nov-mvc-per-end-wil}
 pairwise.wilcox.test(x = end$pop_fit_max, g = end$Sigma, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'g')
 ```
