@@ -1312,7 +1312,7 @@ kruskal.test(pop_max_gene ~ K, data = end)
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best gene value found at the end of 50,000 generations.
 
-```{r nds-mvc-gne-end-wil}
+```{r nov-mvc-gne-end-wil}
 pairwise.wilcox.test(x = end$pop_max_gene, g = end$Sigma, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
