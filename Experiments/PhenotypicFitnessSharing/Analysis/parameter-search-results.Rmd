@@ -1194,7 +1194,7 @@ kruskal.test(val ~ Sigma, data = best)
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best gene value found throughout 50,000 generations.
 
-```{r pfs-mvc-per-bst-wil}
+```{r pfs-mvc-gne-bst-wil}
 pairwise.wilcox.test(x = best$val, g = best$Sigma, p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
