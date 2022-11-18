@@ -60,18 +60,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = Sigma, fill = Sigma, colo
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Best performance over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
+  p_theme
 
 ot
 ```
@@ -80,15 +69,14 @@ ot
 legend <- cowplot::get_legend(
   ot +
     guides(
-      shape=guide_legend(nrow=1, title.position = "bottom"),
-      color=guide_legend(nrow=1, title.position = "bottom"),
-      fill=guide_legend(nrow=1, title.position = "bottom")
+      shape=guide_legend(nrow=2, title.position = "bottom"),
+      color=guide_legend(nrow=2, title.position = "bottom"),
+      fill=guide_legend(nrow=2, title.position = "bottom")
     ) +
     theme(
       legend.position = "top",
       legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
+      legend.justification="center"
     )
 )
 ```
@@ -203,18 +191,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = Sigma, fill = Sigma, colo
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Best performance over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
+  p_theme
 
 ot
 ```
@@ -223,15 +200,14 @@ ot
 legend <- cowplot::get_legend(
   ot +
     guides(
-      shape=guide_legend(nrow=1, title.position = "bottom"),
-      color=guide_legend(nrow=1, title.position = "bottom"),
-      fill=guide_legend(nrow=1, title.position = "bottom")
+      shape=guide_legend(nrow=2, title.position = "bottom"),
+      color=guide_legend(nrow=2, title.position = "bottom"),
+      fill=guide_legend(nrow=2, title.position = "bottom")
     ) +
     theme(
       legend.position = "top",
       legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
+      legend.justification="center"
     )
 )
 ```
@@ -347,18 +323,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = Sigma, fill =Sigma, color = Sigma,
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Satisfactory trait coverage over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
+  p_theme
 
 ot
 ```
@@ -367,15 +332,14 @@ ot
 legend <- cowplot::get_legend(
   ot +
     guides(
-      shape=guide_legend(nrow=1, title.position = "bottom"),
-      color=guide_legend(nrow=1, title.position = "bottom"),
-      fill=guide_legend(nrow=1, title.position = "bottom")
+      shape=guide_legend(nrow=2, title.position = "bottom"),
+      color=guide_legend(nrow=2, title.position = "bottom"),
+      fill=guide_legend(nrow=2, title.position = "bottom")
     ) +
     theme(
       legend.position = "top",
       legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
+      legend.justification="center"
     )
 )
 ```
@@ -547,18 +511,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = Sigma, fill =Sigma, color = Sigma,
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Activation gene coverage over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
+  p_theme
 
 ot
 ```
@@ -663,18 +616,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = Sigma, fill = Sigma, colo
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Best performance over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
+  p_theme
 
 ot
 ```
@@ -683,15 +625,14 @@ ot
 legend <- cowplot::get_legend(
   ot +
     guides(
-      shape=guide_legend(nrow=1, title.position = "bottom"),
-      color=guide_legend(nrow=1, title.position = "bottom"),
-      fill=guide_legend(nrow=1, title.position = "bottom")
+      shape=guide_legend(nrow=2, title.position = "bottom"),
+      color=guide_legend(nrow=2, title.position = "bottom"),
+      fill=guide_legend(nrow=2, title.position = "bottom")
     ) +
     theme(
       legend.position = "top",
       legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
+      legend.justification="center"
     )
 )
 ```
@@ -863,18 +804,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = Sigma, fill =Sigma, color = Sigma,
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Activation gene coverage over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
+  p_theme
 
 ot
 ```
@@ -1000,15 +930,14 @@ ot
 legend <- cowplot::get_legend(
   ot +
     guides(
-      shape=guide_legend(nrow=1, title.position = "bottom"),
-      color=guide_legend(nrow=1, title.position = "bottom"),
-      fill=guide_legend(nrow=1, title.position = "bottom")
+      shape=guide_legend(nrow=2, title.position = "bottom"),
+      color=guide_legend(nrow=2, title.position = "bottom"),
+      fill=guide_legend(nrow=2, title.position = "bottom")
     ) +
     theme(
       legend.position = "top",
       legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
+      legend.justification="center"
     )
 )
 ```
@@ -1031,7 +960,7 @@ plot =  ggplot(best, aes(x = Sigma, y = val / TRAITS, color = Sigma, fill = Sigm
             labels=c("0", "10", "20", "30", "40", "50")
           ) +
           scale_x_discrete(
-            name="Scheme"
+            name="Sigma"
           )+
           scale_shape_manual(values=SHAPE)+
           scale_colour_manual(values = cb_palette, ) +
@@ -1054,7 +983,7 @@ plot_grid(
 Summary statistics for the best performance found throughout 50,000 generations.
 
 ```{r pfs-mvc-per-bst-sum}
-best$Sigma = factor(best$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
+best$Sigma = factor(best$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 2.5, 5.0))
 group_by(best, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -1091,10 +1020,10 @@ plot = ggplot(end, aes(x = Sigma, y = pop_fit_max / TRAITS, group = Sigma, fill 
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 10.8) +
   geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.1, col = "black") +
   scale_y_continuous(
-    name="Coverage",
-    limits=c(0, 101),
-    breaks=seq(0,100, 20),
-    labels=c("0", "20", "40", "60", "80", "100")
+    name="Average trait score",
+    limits=c(-1, 51),
+    breaks=seq(0,50, 10),
+    labels=c("0", "10", "20", "30", "40", "50")
   ) +
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
@@ -1117,7 +1046,7 @@ plot_grid(
 Summary statistics for the best performance found throughout 50,000 generations.
 
 ```{r pfs-mvc-per-end-sum}
-end$Sigma = factor(best$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
+end$Sigma = factor(end$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
 group_by(end, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -1191,15 +1120,14 @@ ot
 legend <- cowplot::get_legend(
   ot +
     guides(
-      shape=guide_legend(nrow=1, title.position = "bottom"),
-      color=guide_legend(nrow=1, title.position = "bottom"),
-      fill=guide_legend(nrow=1, title.position = "bottom")
+      shape=guide_legend(nrow=2, title.position = "bottom"),
+      color=guide_legend(nrow=2, title.position = "bottom"),
+      fill=guide_legend(nrow=2, title.position = "bottom")
     ) +
     theme(
       legend.position = "top",
       legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
+      legend.justification="center"
     )
 )
 ```
@@ -1222,7 +1150,7 @@ plot =  ggplot(best, aes(x = Sigma, y = val, color = Sigma, fill = Sigma, shape 
           labels=c("0", "20", "40", "60", "80", "100")
           ) +
           scale_x_discrete(
-            name="Scheme"
+            name="Sigma"
           )+
           scale_shape_manual(values=SHAPE)+
           scale_colour_manual(values = cb_palette, ) +
@@ -1245,7 +1173,7 @@ plot_grid(
 Summary statistics for the best gene value found throughout 50,000 generations.
 
 ```{r pfs-mvc-gne-bst-sum}
-best$Sigma = factor(best$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
+best$Sigma = factor(best$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 2.5, 5.0))
 group_by(best, Sigma) %>%
   dplyr::summarise(
     count = n(),
@@ -1258,10 +1186,17 @@ group_by(best, Sigma) %>%
   )
 ```
 
-Kruskal–Wallis test provides evidence of no significant differences among sigma values on the best gene value found throughout 50,000 generations
+Kruskal–Wallis test provides evidence of significant differences among sigma values on the best gene value found throughout 50,000 generations
 
 ```{r pfs-mvc-gne-bst-kru}
 kruskal.test(val ~ Sigma, data = best)
+```
+
+Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best gene value found throughout 50,000 generations.
+
+```{r pfs-mvc-per-bst-wil}
+pairwise.wilcox.test(x = best$val, g = best$Sigma, p.adjust.method = "bonferroni",
+                     paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
 
 #### End of 50,000 generations
@@ -1301,7 +1236,7 @@ plot_grid(
 Summary statistics for the best gene value found at the end of 50,000 generations.
 
 ```{r pfs-mvc-gne-end-sum}
-end$Sigma = factor(best$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
+end$Sigma = factor(end$Sigma, levels = c(0.0, 0.1, 0.3, 0.6, 1.2, 5.0, 2.5))
 group_by(end, Sigma) %>%
   dplyr::summarise(
     count = n(),
