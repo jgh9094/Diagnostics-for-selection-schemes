@@ -1,5 +1,5 @@
 # Pull a base image
- FROM ubuntu:20.04
+ FROM ubuntu:22.04
 
 # Copy everything (minus anything specified in .dockerignore) into the image
 COPY . /opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes
