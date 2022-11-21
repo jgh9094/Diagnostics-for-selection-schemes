@@ -41,7 +41,6 @@ RUN \
   echo "installed base dependencies"
 
 
-
 ########################################################
 # install r with whatever r packages we need/want
 # - source: https://rtask.thinkr.fr/installation-of-r-4-0-on-ubuntu-20-04-lts-and-tips-for-spatial-packages/
