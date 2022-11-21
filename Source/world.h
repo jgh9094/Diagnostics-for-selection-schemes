@@ -1164,7 +1164,7 @@ void DiagWorld::ExploitationRate()
     phenotype_t phenotype = diagnostic->ExploitationRate(org.GetGenome());
 
     //check if we are adding multi-valley crossing
-    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype);}
+    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype, peaks, dips_start, dips_end);}
 
     // set org evals
     org.SetPhenotype(phenotype);
@@ -1197,7 +1197,7 @@ void DiagWorld::OrderedExploitation()
     phenotype_t phenotype = diagnostic->OrderedExploitation(org.GetGenome());
 
     //check if we are adding multi-valley crossing
-    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype);}
+    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype, peaks, dips_start, dips_end);}
 
     // set org evals
     org.SetPhenotype(phenotype);
@@ -1230,7 +1230,7 @@ void DiagWorld::MultiPathExploration()
     phenotype_t phenotype = diagnostic->MultiPathExploration(org.GetGenome());
 
     //check if we are adding multi-valley crossing
-    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype);}
+    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype, peaks, dips_start, dips_end);}
 
     // set org evals
     org.SetPhenotype(phenotype);
@@ -1263,7 +1263,7 @@ void DiagWorld::ContradictoryObjectives()
     phenotype_t phenotype = diagnostic->ContradictoryObjectives(org.GetGenome());
 
     //check if we are adding multi-valley crossing
-    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype);}
+    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype, peaks, dips_start, dips_end);}
 
     // set org evals
     org.SetPhenotype(phenotype);
