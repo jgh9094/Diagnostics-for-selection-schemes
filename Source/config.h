@@ -21,7 +21,8 @@ EMP_BUILD_CONFIG(DiaConfig,
   VALUE(SELECTION,           size_t,         0,      "Which selection are we doing? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n"
                                                      "3: Espilon Lexicase\n4: Nondominated Sorting\n5: Novelty Search."),
   VALUE(DIAGNOSTIC,          size_t,         0,      "Which diagnostic are we doing? \n0: Exploitation Rate\n1: Ordered Exploitation\n"
-                                                     "2: Contradictory Objectives \n3: Multi-path Exploration \n4: Multi-valley Crossing."),
+                                                     "2: Contradictory Objectives \n3: Multi-path Exploration"),
+  VALUE(VALLEY_CROSSING,       bool,     false,      "Do we add multi-valley crossing layer to the diagnostics?"),
 
   GROUP(MUTATIONS, "Mutation details."),
   VALUE(MUTATE_PER,       double,     0.007,        "Probability of genes recieving a mutation."),
