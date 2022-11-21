@@ -222,24 +222,24 @@ Diagnostic::phenotype_t Diagnostic::MultiPathExploration(const genome_t & g)
   return phenotype;
 }
 
-Diagnostic::phenotype_t Diagnostic::MultiValleyCrossing(const genome_t & g, const phenotype_t & peaks, const double & dips_start, const double & dips_end)
+Diagnostic::phenotype_t Diagnostic::MultiValleyCrossing(const phenotype_t & p, const phenotype_t & peaks, const double & dips_start, const double & dips_end)
 {
   // quick checks
-  emp_assert(g.size() > 0); emp_assert(cred_set);
+  emp_assert(p.size() > 0); emp_assert(cred_set);
   emp_assert(peaks.size() > 0);
 
-  // intialize vector with size g
-  phenotype_t phenotype(g.size());
+  // intialize vector with size p
+  phenotype_t phenotype(p.size());
 
-  for(size_t i = 0; i < g.size(); ++i)
+  for(size_t i = 0; i < p.size(); ++i)
   {
-    if (g[i] <= dips_start || g[i] >= dips_end)
+    if (p[i] <= dips_start || p[i] >= dips_end)
     {
-      phenotype[i] = g[i];
+      phenotype[i] = p[i];
     }
     else
     {
-      phenotype[i] = 2.0 * peaks[static_cast<size_t>(g[i])] - g[i];
+      phenotype[i] = 2.0 * peaks[static_cast<size_t>(p[i])] - p[i];
     }
   }
 
