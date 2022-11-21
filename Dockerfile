@@ -18,7 +18,7 @@ ENV TZ=America/New_York
 ##############################
 
 RUN \
-  apt-get update \
+  apt-get -y update \
     && \
   apt-get install -y -qq --no-install-recommends \
     software-properties-common \
