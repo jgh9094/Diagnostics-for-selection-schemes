@@ -272,16 +272,16 @@ class DiagWorld : public emp::World<Org>
 
     // multi-valley crossing data
     // valley peaks for each floored integer gene value
-    const phenotype_t peaks = { -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,  8.0,  9.0,
-                           9.0, 11.0, 11.0, 11.0, 14.0, 14.0, 14.0, 14.0, 18.0, 18.0,
-                          18.0, 18.0, 18.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 29.0,
-                          29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 36.0, 36.0, 36.0, 36.0,
-                          36.0, 36.0, 36.0, 36.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0,
-                          44.0, 44.0, 44.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0,
-                          53.0, 53.0, 53.0, 63.0, 63.0, 63.0, 63.0, 63.0, 63.0, 63.0,
-                          63.0, 63.0, 63.0, 63.0, 74.0, 74.0, 74.0, 74.0, 74.0, 74.0,
-                          74.0, 74.0, 74.0, 74.0, 74.0, 74.0, 86.0, 86.0, 86.0, 86.0,
-                          86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 99.0};
+    const phenotype_t peaks = {-1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,  8.0,  9.0,
+                                9.0, 11.0, 11.0, 11.0, 14.0, 14.0, 14.0, 14.0, 18.0, 18.0,
+                                18.0, 18.0, 18.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 29.0,
+                                29.0, 29.0, 29.0, 29.0, 29.0, 29.0, 36.0, 36.0, 36.0, 36.0,
+                                36.0, 36.0, 36.0, 36.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0,
+                                44.0, 44.0, 44.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0,
+                                53.0, 53.0, 53.0, 63.0, 63.0, 63.0, 63.0, 63.0, 63.0, 63.0,
+                                63.0, 63.0, 63.0, 63.0, 74.0, 74.0, 74.0, 74.0, 74.0, 74.0,
+                                74.0, 74.0, 74.0, 74.0, 74.0, 74.0, 86.0, 86.0, 86.0, 86.0,
+                                86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 86.0, 99.0};
     // where do the dips start?
     const double dips_start = 8.0;
     // where do dips end?
@@ -501,10 +501,6 @@ void DiagWorld::SetEvaluation()
 
     case 3: // exploration
       MultiPathExploration();
-      break;
-
-    case 4: // valley crossing
-      MultiValleyCrossing();
       break;
 
     default: // error, unknown diganotic
@@ -1166,6 +1162,11 @@ void DiagWorld::ExploitationRate()
   {
     // set phenotype & aggregate
     phenotype_t phenotype = diagnostic->ExploitationRate(org.GetGenome());
+
+    //check if we are adding multi-valley crossing
+    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype);}
+
+    // set org evals
     org.SetPhenotype(phenotype);
     org.AggregateScore();
 
@@ -1194,6 +1195,11 @@ void DiagWorld::OrderedExploitation()
   {
     // set phenotype & aggregate
     phenotype_t phenotype = diagnostic->OrderedExploitation(org.GetGenome());
+
+    //check if we are adding multi-valley crossing
+    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype);}
+
+    // set org evals
     org.SetPhenotype(phenotype);
     org.AggregateScore();
 
@@ -1222,6 +1228,11 @@ void DiagWorld::MultiPathExploration()
   {
     // set phenotype & aggregate
     phenotype_t phenotype = diagnostic->MultiPathExploration(org.GetGenome());
+
+    //check if we are adding multi-valley crossing
+    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype);}
+
+    // set org evals
     org.SetPhenotype(phenotype);
     org.AggregateScore();
 
@@ -1250,6 +1261,11 @@ void DiagWorld::ContradictoryObjectives()
   {
     // set phenotype & aggregate
     phenotype_t phenotype = diagnostic->ContradictoryObjectives(org.GetGenome());
+
+    //check if we are adding multi-valley crossing
+    if(config.VALLEY_CROSSING()) {phenotype = diagnostic->MultiValleyCrossing(phenotype);}
+
+    // set org evals
     org.SetPhenotype(phenotype);
     org.AggregateScore();
 
@@ -1268,30 +1284,6 @@ void DiagWorld::ContradictoryObjectives()
   };
 
   std::cout << "Weak ecology diagnotic set!" << std::endl;
-}
-
-void DiagWorld::MultiValleyCrossing()
-{
-  evaluation = [this](Org & org)
-  {
-    // set phenotype & aggregate
-    phenotype_t phenotype = diagnostic->MultiValleyCrossing(org.GetGenome(), peaks, dips_start, dips_end);
-    org.SetPhenotype(phenotype);
-    org.AggregateScore();
-
-    // set the starting position
-    org.StartPosition();
-
-    // set optimal vector and count
-    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
-    org.SetOptimal(opti);
-    org.CountOptimized();
-
-    // set streak
-    org.CalcStreak();
-
-    return org.GetAggregate();
-  };
 }
 
 
