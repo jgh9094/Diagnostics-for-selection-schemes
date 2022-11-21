@@ -24,9 +24,9 @@ RUN \
     software-properties-common \
     curl \
     g++-10 \
-    make=4.2.1-1.2 \
-    cmake=3.16.3-1ubuntu1  \
-    python3=3.8.2-0ubuntu2 \
+    make\
+    cmake\
+    python3\
     python3-pip \
     python3-virtualenv \
     git=1:2.25.1-1ubuntu3 \
