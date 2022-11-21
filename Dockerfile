@@ -1,5 +1,5 @@
 # Pull a base image
- FROM ubuntu:22.04
+ FROM ubuntu:20.04
 
 # Copy everything (minus anything specified in .dockerignore) into the image
 COPY . /opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes
@@ -98,10 +98,6 @@ RUN \
     && \
   export PROJECT_PATH=/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/ \
     && \
-  # export DATA_PATH=/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/ \
-  #   && \
-  # mkdir ${DATA_PATH} \
-    # && \
   osf -p ${OSF_PROJECT} fetch 2022-10-21-data.tar.gz ${PROJECT_PATH}2022-10-21-data.tar.gz \
     && \
   tar -xzf ${PROJECT_PATH}2022-10-21-data.tar.gz -C ${PROJECT_PATH} \
