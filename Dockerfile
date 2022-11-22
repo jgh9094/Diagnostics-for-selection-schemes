@@ -25,7 +25,7 @@ RUN \
     curl \
     g++-10 \
     make\
-    cmake\
+    cmake=3.16.3-1ubuntu1  \
     python3=3.8.2-0ubuntu2 \
     python3-pip \
     python3-virtualenv \
