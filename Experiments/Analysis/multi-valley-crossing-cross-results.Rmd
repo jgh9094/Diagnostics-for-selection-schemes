@@ -101,33 +101,33 @@ Best performance throughout 50,000 generations.
 ```{r mvc-per-bst}
 best = dplyr::filter(cc_best, col == 'pop_fit_max' & diagnostic == 'multivalley_crossing')
 
-# plot = ggplot(best, aes(x = acron, y = val / TRAITS, color = acron, fill = acron, shape = acron)) +
-#   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
-#   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
-#   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
-#   scale_y_continuous(
-#     name="Average trait score",
-#     limits=c(-1, 51),
-#     breaks=seq(0,50, 10),
-#     labels=c("0", "10", "20", "30", "40", "50")
-#   ) +
-#   scale_x_discrete(
-#     name="Scheme"
-#   )+
-#   scale_shape_manual(values=SHAPE)+
-#   scale_colour_manual(values = cb_palette) +
-#   scale_fill_manual(values = cb_palette) +
-#   p_theme
+plot = ggplot(best, aes(x = acron, y = val / TRAITS, color = acron, fill = acron, shape = acron)) +
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
+  geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
+  geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
+  scale_y_continuous(
+    name="Average trait score",
+    limits=c(-1, 51),
+    breaks=seq(0,50, 10),
+    labels=c("0", "10", "20", "30", "40", "50")
+  ) +
+  scale_x_discrete(
+    name="Scheme"
+  )+
+  scale_shape_manual(values=SHAPE)+
+  scale_colour_manual(values = cb_palette) +
+  scale_fill_manual(values = cb_palette) +
+  p_theme
 
-# plot_grid(
-#   plot +
-#     ggtitle("Best performance throughout") +
-#     theme(legend.position="none"),
-#   legend,
-#   nrow=2,
-#   rel_heights = c(2,.55),
-#   label_size = TSIZE
-# )
+plot_grid(
+  plot +
+    ggtitle("Best performance throughout") +
+    theme(legend.position="none"),
+  legend,
+  nrow=2,
+  rel_heights = c(2,.55),
+  label_size = TSIZE
+)
 ```
 
 #### Stats
@@ -151,14 +151,14 @@ group_by(best, acron) %>%
 Kruskal–Wallis test provides evidence of difference among best performances throughout 50,000 generations.
 
 ```{r mvc-per-bst-kru}
-# kruskal.test(val ~ acron,data = best)
+kruskal.test(val ~ acron,data = best)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best performance throughout 50,000 generations.
 
 ```{r mvc-per-bst-wil}
-# pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni",
-#                      paired = FALSE, conf.int = FALSE, alternative = 'l')
+pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni",
+                     paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
 
 ### End of 50,000 generations
@@ -167,33 +167,33 @@ Best performance in the population at the end of 50,000 generations.
 
 ```{r mvc-per-end}
 end = dplyr::filter(cc_end, diagnostic == 'multivalley_crossing')
-# plot = ggplot(end, aes(x = acron, y = pop_fit_max / TRAITS, color = acron, fill = acron, shape = acron)) +
-#   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
-#   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
-#   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
-#   scale_y_continuous(
-#     name="Average trait score",
-#     limits=c(-1, 51),
-#     breaks=seq(0,50, 10),
-#     labels=c("0", "10", "20", "30", "40", "50")
-#   ) +
-#   scale_x_discrete(
-#     name="Scheme"
-#   )+
-#   scale_shape_manual(values=SHAPE)+
-#   scale_colour_manual(values = cb_palette) +
-#   scale_fill_manual(values = cb_palette) +
-#   p_theme
+plot = ggplot(end, aes(x = acron, y = pop_fit_max / TRAITS, color = acron, fill = acron, shape = acron)) +
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
+  geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
+  geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
+  scale_y_continuous(
+    name="Average trait score",
+    limits=c(-1, 51),
+    breaks=seq(0,50, 10),
+    labels=c("0", "10", "20", "30", "40", "50")
+  ) +
+  scale_x_discrete(
+    name="Scheme"
+  )+
+  scale_shape_manual(values=SHAPE)+
+  scale_colour_manual(values = cb_palette) +
+  scale_fill_manual(values = cb_palette) +
+  p_theme
 
-# plot_grid(
-#   plot +
-#     ggtitle("Final performance") +
-#     theme(legend.position="none"),
-#   legend,
-#   nrow=2,
-#   rel_heights = c(2,.55),
-#   label_size = TSIZE
-# )
+plot_grid(
+  plot +
+    ggtitle("Final performance") +
+    theme(legend.position="none"),
+  legend,
+  nrow=2,
+  rel_heights = c(2,.55),
+  label_size = TSIZE
+)
 ```
 
 #### Stats
@@ -216,13 +216,201 @@ group_by(end, acron) %>%
 
 Kruskal–Wallis test provides evidence of difference among best performances in the population at the end of 50,000 generations.
 ```{r mvc-per-end-kru}
-# kruskal.test(pop_fit_max ~ acron,data = end)
+kruskal.test(pop_fit_max ~ acron,data = end)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best performances in the population at the end of 50,000 generations.
 
 ```{r mvc-per-end-wil}
-# pairwise.wilcox.test(x = end$pop_fit_max, g = end$acron, p.adjust.method = "bonferroni",
-#                      paired = FALSE, conf.int = FALSE, alternative = 'l')
+pairwise.wilcox.test(x = end$pop_fit_max, g = end$acron, p.adjust.method = "bonferroni",
+                     paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
 
+## Best gene value
+
+Best gene value analysis.
+
+### Over time gene value
+
+Best gene value over time.
+
+```{r mvc-gne-ot, warning=FALSE}
+multivalley_crossing = filter(cc_over_time, diagnostic == 'multivalley_crossing')
+
+lines = multivalley_crossing %>%
+        group_by(`Selection\nScheme`, gen) %>%
+          dplyr::summarise(
+            min = min(pop_max_gene),
+            mean = mean(pop_max_gene),
+            max = max(pop_max_gene)
+          )
+points = filter(lines, gen %% 2000 == 0 & gen != 0)
+
+ot = ggplot(lines, aes(x=gen, y=mean, group = `Selection\nScheme`, fill =`Selection\nScheme`, color = `Selection\nScheme`, shape = `Selection\nScheme`)) +
+  geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.1) +
+  geom_line(size = 0.5) +
+  geom_point(data = points, size = 1.5, stroke = 2.0, alpha = 1.0) +
+  scale_y_continuous(
+    name="Max gene value",
+    limits=c(-1, 101),
+    breaks=seq(0,100, 20),
+    labels=c("0", "20", "40", "60", "80", "100")
+  ) +
+  scale_x_continuous(
+    name="Generations",
+    limits=c(0, 50000),
+    breaks=c(0, 10000, 20000, 30000, 40000, 50000),
+    labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
+
+  ) +
+  scale_shape_manual(values=SHAPE)+
+  scale_colour_manual(values = cb_palette) +
+  scale_fill_manual(values = cb_palette) +
+  ggtitle("Best gene value over time") +
+  p_theme+
+    guides(
+    shape=guide_legend(ncol=2, title.position = "bottom"),
+    color=guide_legend(ncol=2, title.position = "bottom"),
+    fill=guide_legend(ncol=2, title.position = "bottom")
+  ) +
+  theme(
+    legend.position = "bottom",
+    legend.box="verticle",
+    legend.justification="center",
+    legend.title=element_blank()
+  )
+
+ot
+```
+
+### Best gene value throughout
+
+Best gene value throughout 50,000 generations.
+
+```{r mvc-gne-bst}
+best = filter(cc_best, col == 'pop_max_gene' & diagnostic == 'multivalley_crossing')
+plot = ggplot(best, aes(x = acron, y = val, color = acron, fill = acron, shape = acron)) +
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
+  geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
+  geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
+  scale_y_continuous(
+    name="Max gene value",
+    limits=c(-1, 101),
+    breaks=seq(0,100, 20),
+    labels=c("0", "20", "40", "60", "80", "100")
+  ) +
+  scale_x_discrete(
+    name="Scheme"
+  )+
+  scale_shape_manual(values=SHAPE)+
+  scale_colour_manual(values = cb_palette) +
+  scale_fill_manual(values = cb_palette) +
+  p_theme
+
+plot_grid(
+  plot +
+    ggtitle("Best gene value throughout") +
+    theme(legend.position="none"),
+  legend,
+  nrow=2,
+  rel_heights = c(2,.55),
+  label_size = TSIZE
+)
+```
+
+#### Stats
+
+Summary statistics for the best gene value throughout 50,000 generations.
+
+```{r mvc-gne-bst-sum}
+best$acron <- factor(best$acron, levels = c('pfs','gfs','nds','nov','ran','lex','tor','tru'))
+group_by(best, acron) %>%
+  dplyr::summarise(
+    count = n(),
+    na_cnt = sum(is.na(val)),
+    min = min(val, na.rm = TRUE),
+    median = median(val, na.rm = TRUE),
+    mean = mean(val, na.rm = TRUE),
+    max = max(val, na.rm = TRUE),
+    IQR = IQR(val, na.rm = TRUE)
+  )
+```
+
+Kruskal–Wallis test provides evidence of difference among best gene value throughout 50,000 generations.
+
+```{r mvc-gne-bst-kru}
+kruskal.test(val ~ acron,data = best)
+```
+
+Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best gene value throughout 50,000 generations.
+
+```{r mvc-gne-bst-wil}
+pairwise.wilcox.test(x = best$val, g = best$acron, p.adjust.method = "bonferroni",
+                     paired = FALSE, conf.int = FALSE, alternative = 'l')
+```
+
+
+### End of 50,000 generations
+
+Best gene value in the population at the end of 50,000 generations.
+
+```{r mvc-gne-end}
+end = filter(cc_end, diagnostic == 'multivalley_crossing')
+end_p = ggplot(end, aes(x = acron, y = pop_max_gene, color = acron, fill = acron, shape = acron)) +
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
+  geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
+  geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
+  scale_y_continuous(
+    name="Max gene value",
+    limits=c(-1, 101),
+    breaks=seq(0,100, 20),
+    labels=c("0", "20", "40", "60", "80", "100")
+  ) +
+  scale_x_discrete(
+    name="Scheme"
+  )+
+  scale_shape_manual(values=SHAPE)+
+  scale_colour_manual(values = cb_palette) +
+  scale_fill_manual(values = cb_palette) +
+  p_theme
+
+plot_grid(
+  end_p +
+    ggtitle("Final gene value") +
+    theme(legend.position="none"),
+  legend,
+  nrow=2,
+  rel_heights = c(2,.55),
+  label_size = TSIZE
+)
+```
+
+#### Stats
+
+Summary statistics for best gene values in the population at the end of 50,000 generations.
+
+```{r mvc-gne-end-sum}
+end$acron <- factor(end$acron, levels = c('pfs','gfs','nds','nov','ran','lex','tor','tru'))
+group_by(end, acron) %>%
+  dplyr::summarise(
+    count = n(),
+    na_cnt = sum(is.na(pop_max_gene)),
+    min = min(pop_max_gene, na.rm = TRUE),
+    median = median(pop_max_gene, na.rm = TRUE),
+    mean = mean(pop_max_gene, na.rm = TRUE),
+    max = max(pop_max_gene, na.rm = TRUE),
+    IQR = IQR(pop_max_gene, na.rm = TRUE)
+  )
+```
+
+Kruskal–Wallis test provides evidence of difference among best gene values in the population at the end of 50,000 generations.
+```{r mvc-gne-end-kru}
+kruskal.test(pop_max_gene ~ acron,data = end)
+```
+
+Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on best gene values in the population at the end of 50,000 generations.
+
+```{r mvc-gne-end-wil}
+pairwise.wilcox.test(x = end$pop_max_gene, g = end$acron, p.adjust.method = "bonferroni",
+                     paired = FALSE, conf.int = FALSE, alternative = 'l')
+```
