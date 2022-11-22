@@ -26,7 +26,7 @@ RUN \
     g++-10 \
     make\
     cmake\
-    python3\
+    python3=3.8.2-0ubuntu2 \
     python3-pip \
     python3-virtualenv \
     git=1:2.25.1-1ubuntu3 \
