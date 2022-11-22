@@ -99,7 +99,7 @@ legend <- cowplot::get_legend(
 Best performance throughout 50,000 generations.
 
 ```{r mvc-per-bst}
-best = filter(cc_best, col == 'pop_fit_max' & diagnostic == 'multivalley_crossing')
+best = dplyr::filter(cc_best, col == 'pop_fit_max' & diagnostic == 'multivalley_crossing')
 
 plot = ggplot(best, aes(x = acron, y = val / TRAITS, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
