@@ -101,33 +101,33 @@ Best performance throughout 50,000 generations.
 ```{r mvc-per-bst}
 best = dplyr::filter(cc_best, col == 'pop_fit_max' & diagnostic == 'multivalley_crossing')
 
-plot = ggplot(best, aes(x = acron, y = val / TRAITS, color = acron, fill = acron, shape = acron)) +
-  geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
-  geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
-  geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
-  scale_y_continuous(
-    name="Average trait score",
-    limits=c(-1, 51),
-    breaks=seq(0,50, 10),
-    labels=c("0", "10", "20", "30", "40", "50")
-  ) +
-  scale_x_discrete(
-    name="Scheme"
-  )+
-  scale_shape_manual(values=SHAPE)+
-  scale_colour_manual(values = cb_palette) +
-  scale_fill_manual(values = cb_palette) +
-  p_theme
+# plot = ggplot(best, aes(x = acron, y = val / TRAITS, color = acron, fill = acron, shape = acron)) +
+#   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
+#   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
+#   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
+#   scale_y_continuous(
+#     name="Average trait score",
+#     limits=c(-1, 51),
+#     breaks=seq(0,50, 10),
+#     labels=c("0", "10", "20", "30", "40", "50")
+#   ) +
+#   scale_x_discrete(
+#     name="Scheme"
+#   )+
+#   scale_shape_manual(values=SHAPE)+
+#   scale_colour_manual(values = cb_palette) +
+#   scale_fill_manual(values = cb_palette) +
+#   p_theme
 
-plot_grid(
-  plot +
-    ggtitle("Best performance throughout") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.55),
-  label_size = TSIZE
-)
+# plot_grid(
+#   plot +
+#     ggtitle("Best performance throughout") +
+#     theme(legend.position="none"),
+#   legend,
+#   nrow=2,
+#   rel_heights = c(2,.55),
+#   label_size = TSIZE
+# )
 ```
 
 #### Stats
