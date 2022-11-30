@@ -16,7 +16,7 @@ DATA_DIR=/mnt/gs21/scratch/herna383/DIAGNOSTICS-MVC-DATA-/LEXICASE
 # Setup random seed info
 ##################################
 PROBLEM_SEED_OFFSET=34000
-SEED_OFFSET=200000
+SEED_OFFSET=0
 SEED=$((SLURM_ARRAY_TASK_ID + PROBLEM_SEED_OFFSET + SEED_OFFSET))
 
 ##################################
