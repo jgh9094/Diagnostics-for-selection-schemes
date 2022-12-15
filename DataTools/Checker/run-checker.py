@@ -46,7 +46,7 @@ def CountRows(file_name):
     return gens[-1]
 
 # responsible for looking through the data directories for success
-def CheckDir(dir, sel, dia, offs, obj, acc, gens, pt):
+def CheckDir(dir, sel, dia, offs, obj, acc, gens, pt, val):
 
     # check if data dir exists
     if os.path.isdir(dir):
@@ -77,7 +77,13 @@ def CheckDir(dir, sel, dia, offs, obj, acc, gens, pt):
     for s in SEEDS:
         seed = str(s + offs)
         var_val = str(VLIST[int((s-1)/data_params.REPLICATES)])
-        DATA_DIR =  SEL_DIR + 'DIA_' + data_params.SetDiagnostic(dia) + '__' + data_params.SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/'
+        DATA_DIR =  SEL_DIR + 'DIA_' + data_params.SetDiagnostic(dia) + '__' + data_params.SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed
+
+        if val:
+            DATA_DIR += '__MVC/'
+        else:
+            DATA_DIR += '/'
+
         print('Sub directory:', DATA_DIR)
 
         # add full directory to missing list if not there
@@ -115,14 +121,15 @@ def CheckDir(dir, sel, dia, offs, obj, acc, gens, pt):
 def main():
     # Generate and get the arguments
     parser = argparse.ArgumentParser(description="Data aggregation script.")
-    parser.add_argument("data_directory", type=str, help="Target experiment directory.")
-    parser.add_argument("selection",      type=int, help="Selection scheme we are looking for? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n3: Espilon Lexicase\n4: Nondominated Sorting\n5: Novelty Search")
-    parser.add_argument("diagnostic",     type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Ordered Exploitation\n2: Contradictory Objectives\n3: Multi-path Exploration\n4: Multi-valley Crossing")
-    parser.add_argument("seed_offset",    type=int, help="Experiment seed offset.")
-    parser.add_argument("objectives",     type=str, help="Number of objectives being optimized")
-    parser.add_argument("accuracy",       type=str, help="Accuracy for experiment")
-    parser.add_argument("generations",    type=str, help="Number of generations experiments ran for")
-    parser.add_argument("param_two",      type=str, help="Second paramater for any selection scheme")
+    parser.add_argument("data_directory", type=str,  help="Target experiment directory.")
+    parser.add_argument("selection",      type=int,  help="Selection scheme we are looking for? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n3: Espilon Lexicase\n4: Nondominated Sorting\n5: Novelty Search")
+    parser.add_argument("diagnostic",     type=int,  help="Diagnostic we are looking for?\n0: Exploitation\n1: Ordered Exploitation\n2: Contradictory Objectives\n3: Multi-path Exploration\n4: Multi-valley Crossing")
+    parser.add_argument("seed_offset",    type=int,  help="Experiment seed offset.")
+    parser.add_argument("objectives",     type=str,  help="Number of objectives being optimized")
+    parser.add_argument("accuracy",       type=str,  help="Accuracy for experiment")
+    parser.add_argument("generations",    type=str,  help="Number of generations experiments ran for")
+    parser.add_argument("param_two",      type=str,  help="Second paramater for any selection scheme")
+    parser.add_argument("--valleys",      type=int, help="True (1) or False (0) on whether or not valleys are applied", action='store', required=False)
 
     # Parse all the arguments
     args = parser.parse_args()
@@ -142,10 +149,12 @@ def main():
     print('Generations=', generations)
     param_two = args.param_two
     print('2nd param=', param_two)
+    valleys = bool(args.valleys)
+    print('valleys=', valleys)
 
     # Get to work!
     print("\nChecking all related data directories now!")
-    CheckDir(data_dir, selection, diagnostic, offset, objectives, accuracy, generations, param_two)
+    CheckDir(data_dir, selection, diagnostic, offset, objectives, accuracy, generations, param_two, valleys)
 
 if __name__ == "__main__":
     main()
