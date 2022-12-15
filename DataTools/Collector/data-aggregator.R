@@ -30,12 +30,12 @@ SCHEME = c('TRUNCATION','TOURNAMENT','FITSHARING_G','FITSHARING_P','LEXICASE','N
 # selection scheme parameter we are looking for
 PARAM = c('8', '8', '0.3', '0.3', '0.0', '0.3', '15', '1')
 
-# for diagnostic loops
+# for diagnostic loops  
 DIAGNOSTIC = tolower(c('EXPLOITATION_RATE', 'ORDERED_EXPLOITATION', 'CONTRADICTORY_OBJECTIVES', 'MULTIPATH_EXPLORATION', 'MULTIVALLEY_CROSSING'))
 
 # data related
-DATA_DIR = './DATA-10-21/'
-DUMP_DIR = './DATA-10-21/POLISHED/'
+DATA_DIR = './DATA-FINAL/'
+DUMP_DIR = './DATA-FINAL/POLISHED/'
 dir.create(DUMP_DIR, showWarnings = TRUE)
 
 # go through each diagnostic and collect over time data for cross comparison (cc)
@@ -55,6 +55,7 @@ for(diagnostic in DIAGNOSTIC)
     df$acron = ACRON[i]
     df$`Selection\nScheme` = NAMES[i]
     df$diagnostic = diagnostic
+    df$valley = 0
 
     # add to final data frame
     if(i == 5)
@@ -95,6 +96,7 @@ for(diagnostic in DIAGNOSTIC)
     df$acron = ACRON[i]
     df$`Selection\nScheme` = NAMES[i]
     df$diagnostic = diagnostic
+    df$valley = 0
     
     if(SCHEME[i] == SCHEME[5])
     {
@@ -185,7 +187,8 @@ for(i in 1:8)
     df$acron = ACRON[i]
     df$`Selection\nScheme` = NAMES[i]
     df$diagnostic = diagnostic
-
+    df$valley = 0
+    
     # add to final data frame
     final = rbind(final, df)
   }
@@ -217,7 +220,8 @@ for(i in 1:8)
     df$acron = ACRON[i]
     df$`Selection\nScheme` = NAMES[i]
     df$diagnostic = diagnostic
-
+    df$valley = 0
+    
     # add to final data frame
     final = rbind(final, df)
   }
