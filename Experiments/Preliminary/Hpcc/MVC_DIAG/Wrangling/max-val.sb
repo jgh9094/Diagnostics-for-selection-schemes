@@ -1,0 +1,255 @@
+#!/bin/bash
+########## Define Resources Needed with SBATCH Lines ##########
+
+#SBATCH --time=00:20:00              # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --array=1-28                 # number of jobs being created, each with its array id
+#SBATCH --mem=1G                     # memory required per node - amount of memory (in gigs)
+#SBATCH --job-name max-dat            # you can give your job a name for easier identification (same as -J)
+#SBATCH --account=devolab             # research group account being used
+
+##################################
+# SETUP RELEVANT DIRECTORIES
+##################################
+DATA_DIR=/mnt/gs21/scratch/herna383/DIAGNOSTICS-MVC-DATA-/
+
+##################################
+# SETUP RELEVANT DIRECTORIES
+##################################
+SEED_OFFSET=0
+SLURM_ID=$((SLURM_ARRAY_TASK_ID))
+
+##################################
+# Setup selection scheme
+##################################
+TRUNCATION=0
+TOURNAMENT=1
+FITSHARING=2
+LEXICASE=3
+NONDOMINATED=4
+NOVELTY=5
+
+##################################
+# Setup diagnostic
+##################################
+EXPLOITATION_RATE=0
+ORDERED_EXPLOITATION=1
+CONTRADICTORY_OBJECTIVES=2
+MULTIPATH_EXPLORATION=3
+
+##################################
+# TREATMENTS
+##################################
+
+# TRUNCATION REPLICATES
+TREATMENT__1__1=1
+TREATMENT__1__2=2
+TREATMENT__1__3=3
+TREATMENT__1__4=4
+
+# TOURNAMENTS REPLICATES
+TREATMENT__2__1=5
+TREATMENT__2__2=6
+TREATMENT__2__3=7
+TREATMENT__2__4=8
+
+# LEXICASE REPLICATES
+TREATMENT__3__1=9
+TREATMENT__3__2=10
+TREATMENT__3__3=11
+TREATMENT__3__4=12
+
+# NOVELTY REPLICATES
+TREATMENT__4__1=13
+TREATMENT__4__2=14
+TREATMENT__4__3=15
+TREATMENT__4__4=16
+
+# NONDOMINATED SORTING REPLICATES
+TREATMENT__5__1=17
+TREATMENT__5__2=18
+TREATMENT__5__3=19
+TREATMENT__5__4=20
+
+# G FITNESS SHARING REPLICATES
+TREATMENT__6__1=21
+TREATMENT__6__2=22
+TREATMENT__6__3=23
+TREATMENT__6__4=24
+
+# P FITNESS SHARING REPLICATES
+TREATMENT__7__1=25
+TREATMENT__7__2=26
+TREATMENT__7__3=27
+TREATMENT__7__4=28
+
+##################################
+# Other variables needed
+##################################
+OBJECTIVE_CNT=100
+GENERATIONS=50000
+ACCURACY_DIR=99
+
+####################################################################
+
+if [ ${SLURM_ID} -eq ${TREATMENT__1__1} ] ; then
+  SECOND_PARAM=0
+  SEED=53000
+  DIAGNOSTIC=${EXPLOITATION_RATE}
+  SELECTION=${TRUNCATION}
+elif [ ${SLURM_ID} -eq ${TREATMENT__1__2} ] ; then
+  SECOND_PARAM=0
+  SEED=54000
+  DIAGNOSTIC=${MULTIPATH_EXPLORATION}
+  SELECTION=${TRUNCATION}
+elif [ ${SLURM_ID} -eq ${TREATMENT__1__3} ] ; then
+  SECOND_PARAM=0
+  SEED=26000
+  DIAGNOSTIC=${ORDERED_EXPLOITATION}
+  SELECTION=${TRUNCATION}
+elif [ ${SLURM_ID} -eq ${TREATMENT__1__4} ] ; then
+  SECOND_PARAM=0
+  SEED=52000
+  DIAGNOSTIC=${CONTRADICTORY_OBJECTIVES}
+  SELECTION=${TRUNCATION}
+
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__1} ] ; then
+  SECOND_PARAM=0
+  SEED=49000
+  DIAGNOSTIC=${EXPLOITATION_RATE}
+  SELECTION=${TOURNAMENT}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__2} ] ; then
+  SECOND_PARAM=0
+  SEED=50000
+  DIAGNOSTIC=${MULTIPATH_EXPLORATION}
+  SELECTION=${TOURNAMENT}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__3} ] ; then
+  SECOND_PARAM=0
+  SEED=51000
+  DIAGNOSTIC=${ORDERED_EXPLOITATION}
+  SELECTION=${TOURNAMENT}
+elif [ ${SLURM_ID} -eq ${TREATMENT__2__4} ] ; then
+  SECOND_PARAM=0
+  SEED=48000
+  DIAGNOSTIC=${CONTRADICTORY_OBJECTIVES}
+  SELECTION=${TOURNAMENT}
+
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__1} ] ; then
+  SECOND_PARAM=0
+  SEED=33000
+  DIAGNOSTIC=${EXPLOITATION_RATE}
+  SELECTION=${LEXICASE}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__2} ] ; then
+  SECOND_PARAM=0
+  SEED=34000
+  DIAGNOSTIC=${MULTIPATH_EXPLORATION}
+  SELECTION=${LEXICASE}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__3} ] ; then
+  SECOND_PARAM=0
+  SEED=35000
+  DIAGNOSTIC=${ORDERED_EXPLOITATION}
+  SELECTION=${LEXICASE}
+elif [ ${SLURM_ID} -eq ${TREATMENT__3__4} ] ; then
+  SECOND_PARAM=0
+  SEED=32000
+  DIAGNOSTIC=${CONTRADICTORY_OBJECTIVES}
+  SELECTION=${LEXICASE}
+
+elif [ ${SLURM_ID} -eq ${TREATMENT__4__1} ] ; then
+  SECOND_PARAM=0
+  SEED=41000
+  DIAGNOSTIC=${EXPLOITATION_RATE}
+  SELECTION=${NOVELTY}
+elif [ ${SLURM_ID} -eq ${TREATMENT__4__2} ] ; then
+  SECOND_PARAM=0
+  SEED=42000
+  DIAGNOSTIC=${MULTIPATH_EXPLORATION}
+  SELECTION=${NOVELTY}
+elif [ ${SLURM_ID} -eq ${TREATMENT__4__3} ] ; then
+  SECOND_PARAM=0
+  SEED=43000
+  DIAGNOSTIC=${ORDERED_EXPLOITATION}
+  SELECTION=${NOVELTY}
+elif [ ${SLURM_ID} -eq ${TREATMENT__4__4} ] ; then
+  SECOND_PARAM=0
+  SEED=40000
+  DIAGNOSTIC=${CONTRADICTORY_OBJECTIVES}
+  SELECTION=${NOVELTY}
+
+elif [ ${SLURM_ID} -eq ${TREATMENT__5__1} ] ; then
+  SECOND_PARAM=0
+  SEED=37000
+  DIAGNOSTIC=${EXPLOITATION_RATE}
+  SELECTION=${NONDOMINATED}
+elif [ ${SLURM_ID} -eq ${TREATMENT__5__2} ] ; then
+  SECOND_PARAM=0
+  SEED=38000
+  DIAGNOSTIC=${MULTIPATH_EXPLORATION}
+  SELECTION=${NONDOMINATED}
+elif [ ${SLURM_ID} -eq ${TREATMENT__5__3} ] ; then
+  SECOND_PARAM=0
+  SEED=39000
+  DIAGNOSTIC=${ORDERED_EXPLOITATION}
+  SELECTION=${NONDOMINATED}
+elif [ ${SLURM_ID} -eq ${TREATMENT__5__4} ] ; then
+  SECOND_PARAM=0
+  SEED=36000
+  DIAGNOSTIC=${CONTRADICTORY_OBJECTIVES}
+  SELECTION=${NONDOMINATED}
+
+elif [ ${SLURM_ID} -eq ${TREATMENT__6__1} ] ; then
+  SECOND_PARAM=0
+  SEED=29000
+  DIAGNOSTIC=${EXPLOITATION_RATE}
+  SELECTION=${FITSHARING}
+elif [ ${SLURM_ID} -eq ${TREATMENT__6__2} ] ; then
+  SECOND_PARAM=0
+  SEED=30000
+  DIAGNOSTIC=${MULTIPATH_EXPLORATION}
+  SELECTION=${FITSHARING}
+elif [ ${SLURM_ID} -eq ${TREATMENT__6__3} ] ; then
+  SECOND_PARAM=0
+  SEED=31000
+  DIAGNOSTIC=${ORDERED_EXPLOITATION}
+  SELECTION=${FITSHARING}
+elif [ ${SLURM_ID} -eq ${TREATMENT__6__4} ] ; then
+  SECOND_PARAM=0
+  SEED=28000
+  DIAGNOSTIC=${CONTRADICTORY_OBJECTIVES}
+  SELECTION=${FITSHARING}
+
+elif [ ${SLURM_ID} -eq ${TREATMENT__7__1} ] ; then
+  SECOND_PARAM=1
+  SEED=45000
+  DIAGNOSTIC=${EXPLOITATION_RATE}
+  SELECTION=${FITSHARING}
+elif [ ${SLURM_ID} -eq ${TREATMENT__7__2} ] ; then
+  SECOND_PARAM=1
+  SEED=46000
+  DIAGNOSTIC=${MULTIPATH_EXPLORATION}
+  SELECTION=${FITSHARING}
+elif [ ${SLURM_ID} -eq ${TREATMENT__7__3} ] ; then
+  SECOND_PARAM=1
+  SEED=47000
+  DIAGNOSTIC=${ORDERED_EXPLOITATION}
+  SELECTION=${FITSHARING}
+elif [ ${SLURM_ID} -eq ${TREATMENT__7__4} ] ; then
+  SECOND_PARAM=1
+  SEED=44000
+  DIAGNOSTIC=${CONTRADICTORY_OBJECTIVES}
+  SELECTION=${FITSHARING}
+
+else
+  echo "${SEED} failed to launch" >> /mnt/ls15/scratch/users/herna383/ps-coh-failtolaunch.txt
+fi
+
+####################################################################
+
+# final seed calculation
+FINAL_SEED=$((SEED_OFFSET + SEED))
+
+# make a dump directory
+mkdir -p ${DUMP}
+
+echo "python3 ../../../../../DataTools/Collector/max-val-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM} --valleys 1  > run.log" > ./cmd-coh.txt
+
+python3 ../../../../../DataTools/Collector/max-val-collect.py ${DATA_DIR} ${DUMP} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM} --valleys 1
