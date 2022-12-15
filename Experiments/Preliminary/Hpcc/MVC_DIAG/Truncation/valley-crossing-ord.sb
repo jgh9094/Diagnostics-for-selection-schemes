@@ -15,7 +15,7 @@ DATA_DIR=/mnt/gs21/scratch/herna383/DIAGNOSTICS-MVC-DATA-/TRUNCATION
 ##################################
 # Setup random seed info
 ##################################
-PROBLEM_SEED_OFFSET=26000
+PROBLEM_SEED_OFFSET=55000
 SEED_OFFSET=0
 SEED=$((SLURM_ARRAY_TASK_ID + PROBLEM_SEED_OFFSET + SEED_OFFSET))
 
