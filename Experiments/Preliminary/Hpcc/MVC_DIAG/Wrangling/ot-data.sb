@@ -85,6 +85,7 @@ TREATMENT__7__4=28
 ##################################
 # Other variables needed
 ##################################
+RESOLUTION=100
 OBJECTIVE_CNT=100
 GENERATIONS=50000
 ACCURACY_DIR=99
