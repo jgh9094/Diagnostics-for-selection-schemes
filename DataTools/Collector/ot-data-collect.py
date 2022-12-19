@@ -34,7 +34,7 @@ sys.path.insert(1, '../')
 import data_params
 
 # loop through differnt files that exist
-def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
+def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt, val):
     # check if data dir exists
     if os.path.isdir(data) == False:
         print('DATA=', data)
@@ -72,7 +72,12 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt):
             it = int((s-1)/data_params.REPLICATES)
             var_val = str(VLIST[it])
             seed = str(s + offs)
-            DATA_DIR =  SEL_DIR + 'DIA_' + data_params.SetDiagnostic(dia) + '__' + data_params.SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed + '/' + 'data.csv'
+            DATA_DIR =  SEL_DIR + 'DIA_' + data_params.SetDiagnostic(dia) + '__' + data_params.SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed
+
+            if val:
+                DATA_DIR += '__MVC/'
+            else:
+                DATA_DIR += '/'
 
             # check if data file even exists
             if os.path.isfile(DATA_DIR) == False:
@@ -152,7 +157,7 @@ def main():
     print('valleys=', valleys)
     # Get to work!
     print("\nChecking all related data directories now!")
-    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, resolution, objectives, accuracy, generations, param_two)
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, resolution, objectives, accuracy, generations, param_two, valleys)
 
 if __name__ == "__main__":
     main()
