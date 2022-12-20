@@ -75,9 +75,9 @@ def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt, val):
             DATA_DIR =  SEL_DIR + 'DIA_' + data_params.SetDiagnostic(dia) + '__' + data_params.SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed
 
             if val:
-                DATA_DIR += '__MVC/'
+                DATA_DIR += '__MVC/data.csv'
             else:
-                DATA_DIR += '/'
+                DATA_DIR += '/data.csv'
 
             # check if data file even exists
             if os.path.isfile(DATA_DIR) == False:
