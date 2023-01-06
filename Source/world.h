@@ -1255,7 +1255,7 @@ void DiagWorld::MultiPathExploration()
 
 void DiagWorld::ContradictoryObjectives()
 {
-  std::cout << "Setting weak ecology diagnostic..." << std::endl;
+  std::cout << "Setting contradictory objectives diagnostic..." << std::endl;
 
   evaluation = [this](Org & org)
   {
