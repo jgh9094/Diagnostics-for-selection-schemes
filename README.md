@@ -16,7 +16,7 @@ This repository is associated with our **TBD** submission: A suite of diagnostic
 
 - [Jose Guadalupe Hernandez](https://jgh9094.github.io/)
 - [Charles Ofria](http://ofria.com) (PhD advisor extraordinaire)
-- [Alexander Lalejini](https://lalejini.com/publications/) (PhD advisor extraordinaire)
+- [Alexander Lalejini](https://lalejini.com) (PhD advisor extraordinaire)
 
 ## Abstract
 
