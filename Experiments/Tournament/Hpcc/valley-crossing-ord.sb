@@ -8,6 +8,11 @@
 #SBATCH --account=devolab             # research group account being used
 
 ##################################
+# Setup required dependencies
+##################################
+module load GCC/10.2.0; module load CUDA/11.1.1; module load Clang/11.0.1;
+
+##################################
 # Setup relevant directories
 ##################################
 DATA_DIR=/mnt/gs21/scratch/herna383/DIAGNOSTICS-MVC-1-6/TOURNAMENT
