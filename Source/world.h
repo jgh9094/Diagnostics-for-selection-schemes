@@ -1174,7 +1174,7 @@ void DiagWorld::ExploitationRate()
     org.StartPosition();
 
     // set optimal vector and count
-    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
+    optimal_t opti = diagnostic->OptimizedVector(org.GetPhenotype(), config.ACCURACY());
     org.SetOptimal(opti);
     org.CountOptimized();
 
@@ -1207,7 +1207,7 @@ void DiagWorld::OrderedExploitation()
     org.StartPosition();
 
     // set optimal vector and count
-    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
+    optimal_t opti = diagnostic->OptimizedVector(org.GetPhenotype(), config.ACCURACY());
     org.SetOptimal(opti);
     org.CountOptimized();
 
@@ -1240,7 +1240,7 @@ void DiagWorld::MultiPathExploration()
     org.StartPosition();
 
     // set optimal vector and count
-    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
+    optimal_t opti = diagnostic->OptimizedVector(org.GetPhenotype(), config.ACCURACY());
     org.SetOptimal(opti);
     org.CountOptimized();
 
@@ -1273,7 +1273,7 @@ void DiagWorld::ContradictoryObjectives()
     org.StartPosition();
 
     // set optimal vector and count
-    optimal_t opti = diagnostic->OptimizedVector(org.GetGenome(), config.ACCURACY());
+    optimal_t opti = diagnostic->OptimizedVector(org.GetPhenotype(), config.ACCURACY());
     org.SetOptimal(opti);
     org.CountOptimized();
 
