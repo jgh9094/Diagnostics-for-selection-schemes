@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 8 Tournament selection | Diagnostics Supplemental Material</title>
   <meta name="description" content="Supplemental material for the selection scheme diagnostic work." />
-  <meta name="generator" content="bookdown 0.31 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.32 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 8 Tournament selection | Diagnostics Supplemental Material" />
   <meta property="og:type" content="book" />
@@ -23,7 +23,7 @@
 <meta name="author" content="Jose Guadalupe Hernandez" />
 
 
-<meta name="date" content="2023-01-17" />
+<meta name="date" content="2023-01-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -418,7 +418,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb273-14" title="14">    <span class="dt">name=</span><span class="st">&quot;Generations&quot;</span>,</a>
 <a class="sourceLine" id="cb273-15" title="15">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">50000</span>),</a>
 <a class="sourceLine" id="cb273-16" title="16">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>),</a>
-<a class="sourceLine" id="cb273-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb273-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+4&quot;</span>, <span class="st">&quot;1e+4&quot;</span>, <span class="st">&quot;2e+4&quot;</span>, <span class="st">&quot;3e+4&quot;</span>, <span class="st">&quot;4e+4&quot;</span>, <span class="st">&quot;5e+4&quot;</span>)</a>
 <a class="sourceLine" id="cb273-18" title="18"></a>
 <a class="sourceLine" id="cb273-19" title="19">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb273-20" title="20"><span class="st">  </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
@@ -455,7 +455,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb274-9" title="9">    <span class="dt">name=</span><span class="st">&quot;Generation&quot;</span>,</a>
 <a class="sourceLine" id="cb274-10" title="10">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">12000</span>),</a>
 <a class="sourceLine" id="cb274-11" title="11">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">2000</span>, <span class="dv">4000</span>, <span class="dv">6000</span>, <span class="dv">8000</span>, <span class="dv">10000</span>, <span class="dv">12000</span>),</a>
-<a class="sourceLine" id="cb274-12" title="12">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;6e+6&quot;</span>, <span class="st">&quot;8e+6&quot;</span>, <span class="st">&quot;10e+6&quot;</span>, <span class="st">&quot;12e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb274-12" title="12">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+4&quot;</span>, <span class="st">&quot;2e+4&quot;</span>, <span class="st">&quot;4e+4&quot;</span>, <span class="st">&quot;6e+4&quot;</span>, <span class="st">&quot;8e+4&quot;</span>, <span class="st">&quot;10e+4&quot;</span>, <span class="st">&quot;12e+4&quot;</span>)</a>
 <a class="sourceLine" id="cb274-13" title="13">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb274-14" title="14"><span class="st">  </span><span class="kw">scale_x_discrete</span>(</a>
 <a class="sourceLine" id="cb274-15" title="15">    <span class="dt">name=</span><span class="st">&quot;T&quot;</span></a>
@@ -560,7 +560,7 @@ Note that performance values fall between 0 and 100.</p>
 <a class="sourceLine" id="cb283-14" title="14">    <span class="dt">name=</span><span class="st">&quot;Generations&quot;</span>,</a>
 <a class="sourceLine" id="cb283-15" title="15">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">50000</span>),</a>
 <a class="sourceLine" id="cb283-16" title="16">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>),</a>
-<a class="sourceLine" id="cb283-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb283-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+4&quot;</span>, <span class="st">&quot;1e+4&quot;</span>, <span class="st">&quot;2e+4&quot;</span>, <span class="st">&quot;3e+4&quot;</span>, <span class="st">&quot;4e+4&quot;</span>, <span class="st">&quot;5e+4&quot;</span>)</a>
 <a class="sourceLine" id="cb283-18" title="18"></a>
 <a class="sourceLine" id="cb283-19" title="19">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb283-20" title="20"><span class="st">  </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
@@ -597,7 +597,7 @@ Note that performance values fall between 0 and 100.</p>
 <a class="sourceLine" id="cb284-9" title="9">    <span class="dt">name=</span><span class="st">&quot;Generation&quot;</span>,</a>
 <a class="sourceLine" id="cb284-10" title="10">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">60000</span>),</a>
 <a class="sourceLine" id="cb284-11" title="11">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>, <span class="dv">60000</span>),</a>
-<a class="sourceLine" id="cb284-12" title="12">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>, <span class="st">&quot;Fail&quot;</span>)</a>
+<a class="sourceLine" id="cb284-12" title="12">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+4&quot;</span>, <span class="st">&quot;1e+4&quot;</span>, <span class="st">&quot;2e+4&quot;</span>, <span class="st">&quot;3e+4&quot;</span>, <span class="st">&quot;4e+4&quot;</span>, <span class="st">&quot;5e+4&quot;</span>, <span class="st">&quot;Fail&quot;</span>)</a>
 <a class="sourceLine" id="cb284-13" title="13">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb284-14" title="14"><span class="st">  </span><span class="kw">scale_x_discrete</span>(</a>
 <a class="sourceLine" id="cb284-15" title="15">    <span class="dt">name=</span><span class="st">&quot;T&quot;</span></a>
@@ -703,7 +703,7 @@ Note that both coverage values fall between 0 and 100.</p>
 <a class="sourceLine" id="cb293-12" title="12">    <span class="dt">name=</span><span class="st">&quot;Generations&quot;</span>,</a>
 <a class="sourceLine" id="cb293-13" title="13">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">50000</span>),</a>
 <a class="sourceLine" id="cb293-14" title="14">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>),</a>
-<a class="sourceLine" id="cb293-15" title="15">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb293-15" title="15">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+4&quot;</span>, <span class="st">&quot;1e+4&quot;</span>, <span class="st">&quot;2e+4&quot;</span>, <span class="st">&quot;3e+4&quot;</span>, <span class="st">&quot;4e+4&quot;</span>, <span class="st">&quot;5e+4&quot;</span>)</a>
 <a class="sourceLine" id="cb293-16" title="16"></a>
 <a class="sourceLine" id="cb293-17" title="17">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb293-18" title="18"><span class="st">  </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
@@ -872,7 +872,7 @@ Note that both coverage values fall between 0 and 100.</p>
 <a class="sourceLine" id="cb302-14" title="14">    <span class="dt">name=</span><span class="st">&quot;Generations&quot;</span>,</a>
 <a class="sourceLine" id="cb302-15" title="15">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">50000</span>),</a>
 <a class="sourceLine" id="cb302-16" title="16">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>),</a>
-<a class="sourceLine" id="cb302-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb302-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+4&quot;</span>, <span class="st">&quot;1e+4&quot;</span>, <span class="st">&quot;2e+4&quot;</span>, <span class="st">&quot;3e+4&quot;</span>, <span class="st">&quot;4e+4&quot;</span>, <span class="st">&quot;5e+4&quot;</span>)</a>
 <a class="sourceLine" id="cb302-18" title="18"></a>
 <a class="sourceLine" id="cb302-19" title="19">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb302-20" title="20"><span class="st">  </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
@@ -990,7 +990,7 @@ Note that both values fall between 0 and 100.</p>
 <a class="sourceLine" id="cb308-14" title="14">    <span class="dt">name=</span><span class="st">&quot;Generations&quot;</span>,</a>
 <a class="sourceLine" id="cb308-15" title="15">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">50000</span>),</a>
 <a class="sourceLine" id="cb308-16" title="16">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>),</a>
-<a class="sourceLine" id="cb308-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb308-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+4&quot;</span>, <span class="st">&quot;1e+4&quot;</span>, <span class="st">&quot;2e+4&quot;</span>, <span class="st">&quot;3e+4&quot;</span>, <span class="st">&quot;4e+4&quot;</span>, <span class="st">&quot;5e+4&quot;</span>)</a>
 <a class="sourceLine" id="cb308-18" title="18"></a>
 <a class="sourceLine" id="cb308-19" title="19">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb308-20" title="20"><span class="st">  </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
@@ -1195,7 +1195,7 @@ Note that both values fall between 0 and 100.</p>
 <a class="sourceLine" id="cb323-14" title="14">    <span class="dt">name=</span><span class="st">&quot;Generations&quot;</span>,</a>
 <a class="sourceLine" id="cb323-15" title="15">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">50000</span>),</a>
 <a class="sourceLine" id="cb323-16" title="16">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>),</a>
-<a class="sourceLine" id="cb323-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb323-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+4&quot;</span>, <span class="st">&quot;1e+4&quot;</span>, <span class="st">&quot;2e+4&quot;</span>, <span class="st">&quot;3e+4&quot;</span>, <span class="st">&quot;4e+4&quot;</span>, <span class="st">&quot;5e+4&quot;</span>)</a>
 <a class="sourceLine" id="cb323-18" title="18"></a>
 <a class="sourceLine" id="cb323-19" title="19">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb323-20" title="20"><span class="st">  </span><span class="kw">scale_shape_manual</span>(<span class="dt">values=</span>SHAPE)<span class="op">+</span></a>
@@ -1340,7 +1340,7 @@ Best gene value refers to maximum gene value found in the population; this gives
 <a class="sourceLine" id="cb333-14" title="14">    <span class="dt">name=</span><span class="st">&quot;Generations&quot;</span>,</a>
 <a class="sourceLine" id="cb333-15" title="15">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">50000</span>),</a>
 <a class="sourceLine" id="cb333-16" title="16">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>),</a>
-<a class="sourceLine" id="cb333-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb333-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+4&quot;</span>, <span class="st">&quot;1e+4&quot;</span>, <span class="st">&quot;2e+4&quot;</span>, <span class="st">&quot;3e+4&quot;</span>, <span class="st">&quot;4e+4&quot;</span>, <span class="st">&quot;5e+4&quot;</span>)</a>
 <a class="sourceLine" id="cb333-18" title="18"></a>
 <a class="sourceLine" id="cb333-19" title="19">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb333-20" title="20"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Best performance over time&quot;</span>) <span class="op">+</span></a>
@@ -1550,7 +1550,7 @@ Best gene value refers to maximum gene value found in the population; this gives
 <a class="sourceLine" id="cb350-14" title="14">    <span class="dt">name=</span><span class="st">&quot;Generations&quot;</span>,</a>
 <a class="sourceLine" id="cb350-15" title="15">    <span class="dt">limits=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">50000</span>),</a>
 <a class="sourceLine" id="cb350-16" title="16">    <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">20000</span>, <span class="dv">30000</span>, <span class="dv">40000</span>, <span class="dv">50000</span>),</a>
-<a class="sourceLine" id="cb350-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+6&quot;</span>, <span class="st">&quot;1e+6&quot;</span>, <span class="st">&quot;2e+6&quot;</span>, <span class="st">&quot;3e+6&quot;</span>, <span class="st">&quot;4e+6&quot;</span>, <span class="st">&quot;5e+6&quot;</span>)</a>
+<a class="sourceLine" id="cb350-17" title="17">    <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;0e+4&quot;</span>, <span class="st">&quot;1e+4&quot;</span>, <span class="st">&quot;2e+4&quot;</span>, <span class="st">&quot;3e+4&quot;</span>, <span class="st">&quot;4e+4&quot;</span>, <span class="st">&quot;5e+4&quot;</span>)</a>
 <a class="sourceLine" id="cb350-18" title="18"></a>
 <a class="sourceLine" id="cb350-19" title="19">  ) <span class="op">+</span></a>
 <a class="sourceLine" id="cb350-20" title="20"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Best gene value over time&quot;</span>) <span class="op">+</span></a>
