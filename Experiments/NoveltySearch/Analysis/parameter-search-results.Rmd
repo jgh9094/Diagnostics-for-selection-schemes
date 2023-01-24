@@ -51,7 +51,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, s
     name="Generations",
     limits=c(0, 50000),
     breaks=c(0, 10000, 20000, 30000, 40000, 50000),
-    labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
 
   ) +
   scale_shape_manual(values=SHAPE)+
@@ -192,7 +192,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, s
     name="Generations",
     limits=c(0, 50000),
     breaks=c(0, 10000, 20000, 30000, 40000, 50000),
-    labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
 
   ) +
   scale_shape_manual(values=SHAPE)+
@@ -336,7 +336,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K))
     name="Generations",
     limits=c(0, 50000),
     breaks=c(0, 10000, 20000, 30000, 40000, 50000),
-    labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
 
   ) +
   scale_shape_manual(values=SHAPE)+
@@ -510,7 +510,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K))
     name="Generations",
     limits=c(0, 50000),
     breaks=c(0, 10000, 20000, 30000, 40000, 50000),
-    labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
 
   ) +
   scale_shape_manual(values=SHAPE)+
@@ -637,7 +637,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, s
     name="Generations",
     limits=c(0, 50000),
     breaks=c(0, 10000, 20000, 30000, 40000, 50000),
-    labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
 
   ) +
   scale_shape_manual(values=SHAPE)+
@@ -842,7 +842,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K))
     name="Generations",
     limits=c(0, 50000),
     breaks=c(0, 10000, 20000, 30000, 40000, 50000),
-    labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
 
   ) +
   scale_shape_manual(values=SHAPE)+
@@ -969,7 +969,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, s
     name="Generations",
     limits=c(0, 50000),
     breaks=c(0, 10000, 20000, 30000, 40000, 50000),
-    labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
 
   ) +
   ggtitle("Best performance over time") +
@@ -1159,7 +1159,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill = K, color = K, shape = K)
     name="Generations",
     limits=c(0, 50000),
     breaks=c(0, 10000, 20000, 30000, 40000, 50000),
-    labels=c("0e+6", "1e+6", "2e+6", "3e+6", "4e+6", "5e+6")
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
 
   ) +
   ggtitle("Best gene value over time") +
