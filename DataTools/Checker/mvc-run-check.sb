@@ -253,6 +253,6 @@ fi
 # final seed calculation
 FINAL_SEED=$((SEED_OFFSET + SEED))
 
-echo "python3 run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
+echo "python3 run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM} 1  > run.log" > ./cmd-coh.txt
 
-python3 run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
+python3 run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM} 1
