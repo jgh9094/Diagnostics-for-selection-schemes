@@ -91,7 +91,7 @@ def DirExplore(data, dump, sel, dia, offs, pt, val):
 
     # Time to export the csv file
     fdf = pd.DataFrame({'trt': pd.Series(TRT),'Generations': pd.Series(GEN),'SEL': pd.Series(SEL),'Diagnostic': pd.Series(DIA)})
-    fdf.to_csv(path_or_buf= dump + 'ssf-' + dp.SetDiagnostic(dia).lower() + '-' + dp.SetSelection(s,pt).lower() + '.csv', index=False)
+    fdf.to_csv(path_or_buf= dump + 'ssf-' + dp.SetDiagnostic(dia).lower() + '-' + dp.SetSelection(sel,pt).lower() + '.csv', index=False)
 
 
 def main():
