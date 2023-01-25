@@ -10,7 +10,7 @@
 ##################################
 # SETUP RELEVANT DIRECTORIES
 ##################################
-DATA_DIR=/mnt/gs21/scratch/herna383/DIAGNOSTICS-DATA-10-21/
+DATA_DIR=/mnt/gs21/scratch/herna383/DIAGNOSTICS-DATA-1-17-23/
 
 ##################################
 # SETUP RELEVANT DIRECTORIES
@@ -291,6 +291,6 @@ fi
 # final seed calculation
 FINAL_SEED=$((SEED_OFFSET + SEED))
 
-echo "python3 ../Checker/run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
+echo "python3 run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}  > run.log" > ./cmd-coh.txt
 
-python3 ../Checker/run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
+python3 run-checker.py ${DATA_DIR} ${SELECTION} ${DIAGNOSTIC} ${FINAL_SEED} ${OBJECTIVE_CNT} ${ACCURACY_DIR} ${GENERATIONS} ${SECOND_PARAM}
