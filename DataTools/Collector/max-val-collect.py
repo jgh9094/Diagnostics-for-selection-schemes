@@ -86,7 +86,7 @@ def DirExplore(data, dump, sel, dia, offs, pt, val):
                 VAR.append(key)
                 GEN.append(max_gen)
                 SEL.append(dp.SetSelection(sel,pt))
-                DIA.append(dp.SetDiagnostic(i))
+                DIA.append(dp.SetDiagnostic(dia))
                 TRT.append(dp.SetVarList(sel)[i])
 
     # Time to export the csv file
