@@ -38,8 +38,7 @@ import data_params as dp
 def DirExplore(data, dump, sel, dia, offs, pt, val):
 
     # check that selection data folder exists
-    # SEL_DIR = dp.GetDataDirectory(dir,sel,pt)
-    SEL_DIR = data
+    SEL_DIR = dp.GetDataDirectory(data,sel,pt)
 
     if val:
         print('Full data Dir=', SEL_DIR + 'DIA_' + dp.SetDiagnostic(dia) + '__' + dp.SetSelectionVar(sel) + '_XXX' + '__SEED_XXXXXX__MVC/')
