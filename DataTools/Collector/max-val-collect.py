@@ -85,7 +85,7 @@ def DirExplore(data, dump, sel, dia, offs, pt, val):
                 VAL.append(max_val)
                 VAR.append(key)
                 GEN.append(max_gen)
-                SEL.append(dp.SetSelection(sel))
+                SEL.append(dp.SetSelection(sel,pt))
                 DIA.append(dp.SetDiagnostic(i))
                 TRT.append(dp.SetVarList(sel)[i])
 
