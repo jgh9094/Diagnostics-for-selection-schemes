@@ -81,7 +81,7 @@ def DirExplore(data, dump, sel, dia, offs, pt, val):
 
             TRT.append(dp.SetVarList(sel)[i])
             SEL.append(dp.SetSelection(sel,pt))
-            DIA.append(dp.SetDiagnostic(i))
+            DIA.append(dp.SetDiagnostic(dia))
 
             # check if there are any gens where optimal solution is found
             if(len(gens) == 0):
