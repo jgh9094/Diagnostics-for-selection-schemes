@@ -31,90 +31,68 @@ import os
 
 # file location for data-params.py file
 sys.path.insert(1, '../')
-import data_params
+import data_params as dp
 
-# loop through differnt files that exist
-def DirExplore(data, dump, sel, dia, offs, res, obj, acc, gens, pt, val):
-    # check if data dir exists
-    if os.path.isdir(data) == False:
-        print('DATA=', data)
-        sys.exit('DATA DIRECTORY DOES NOT EXIST')
-
-    # check if data dir exists
-    if os.path.isdir(dump) == False:
-        print('DATA=', data)
-        sys.exit('DATA DIRECTORY DOES NOT EXIST')
+    # loop through differnt files that exist
+def DirExplore(data, dump, sel, dia, offs, pt, val):
 
     # check that selection data folder exists
-    SEL_DIR = data + data_params.SetSelection(sel,pt) + '/TRT_' + obj + '__ACC_' + acc + '__GEN_' + gens + '/'
-    if os.path.isdir(SEL_DIR) == False:
-        print('SEL_DIR=', SEL_DIR)
-        sys.exit('SELECTION DIRECTORY NOT FOUND')
+    SEL_DIR = dp.GetDataDirectory(data,sel,pt)
 
-    # Set vars that we need to loop through
-    VLIST = data_params.SetVarList(sel)
-    SEEDS = data_params.SetSeedSets(sel)
+    if val:
+        print('Full data Dir=', SEL_DIR + 'DIA_' + dp.SetDiagnostic(dia) + '__' + dp.SetSelectionVar(sel) + '_XXX' + '__SEED_XXXXXX__MVC/')
+    else:
+        print('Full data Dir=', SEL_DIR + 'DIA_' + dp.SetDiagnostic(dia) + '__' + dp.SetSelectionVar(sel) + '_XXX' + '__SEED_XXXXXX/')
 
+    # loop through sub data directories
+    print('Full data Dir=', SEL_DIR + 'DIA_' + dp.SetDiagnostic(dia) + '__' + dp.SetSelectionVar(sel) + '_XXX' + '__SEED_XXX' + '/')
+    print('Now checking data replicates sub directories')
+
+    SEEDS = dp.SetSeedSets(sel)
     # gens we are expecting
-    GEN_LIST = [x for x in range(int(gens)+1) if x%res == 0]
-    # data frame list for concatanation
+    GEN_LIST = [x for x in range(int(dp.GENERATIONS)+1) if x % dp.RESOLUTION == 0]
+    # collect all data
     DF_LIST = []
 
     # iterate through the sets of seeds
     for i in range(len(SEEDS)):
-        seeds = SEEDS[i]
-        print('i=',i)
-
-        TRT = [VLIST[i]] * len(GEN_LIST)
-
-        # iterate through seeds to collect data
-        for s in seeds:
-            it = int((s-1)/data_params.REPLICATES)
-            var_val = str(VLIST[it])
+        for s in SEEDS[i]:
             seed = str(s + offs)
-            DATA_DIR =  SEL_DIR + 'DIA_' + data_params.SetDiagnostic(dia) + '__' + data_params.SetSelectionVar(sel) + '_' + var_val + '__SEED_' + seed
-
+            DATA_DIR =  SEL_DIR + 'DIA_' + dp.SetDiagnostic(dia) + '__' + dp.SetSelectionVar(sel) + '_' + dp.SetVarList(sel)[i] + '__SEED_' + seed
             if val:
                 DATA_DIR += '__MVC/data.csv'
             else:
                 DATA_DIR += '/data.csv'
 
-            # check if data file even exists
-            if os.path.isfile(DATA_DIR) == False:
-                print('DNE: ' + DATA_DIR)
-                continue
+            print('Sub directory:', DATA_DIR)
 
-            # create pandas data frame of entire csv and grab the row
+            # get data from file and check if can store it
             df = pd.read_csv(DATA_DIR)
-            df = df.iloc[::res, :]
+            df = df.iloc[::dp.RESOLUTION, :]
 
             # time to export the data
             cdf = pd.DataFrame(
                 {   'gen': pd.Series(GEN_LIST),
-                    'trt': pd.Series(TRT),
-                    data_params.POP_FIT_AVG:   pd.Series(df[data_params.POP_FIT_AVG].tolist()),
-                    data_params.POP_FIT_MAX:   pd.Series(df[data_params.POP_FIT_MAX].tolist()),
-                    data_params.POP_OPT_AVG:   pd.Series(df[data_params.POP_OPT_AVG].tolist()),
-                    data_params.POP_OPT_MAX:   pd.Series(df[data_params.POP_OPT_MAX].tolist()),
-                    data_params.POP_UNI_OBJ:   pd.Series(df[data_params.POP_UNI_OBJ].tolist()),
-                    data_params.POP_STR_AVG:   pd.Series(df[data_params.POP_STR_AVG].tolist()),
-                    data_params.POP_STR_MAX:   pd.Series(df[data_params.POP_STR_MAX].tolist()),
-                    data_params.ELE_AGG_PER:   pd.Series(df[data_params.ELE_AGG_PER].tolist()),
-                    data_params.ELE_OPT_CNT:   pd.Series(df[data_params.ELE_OPT_CNT].tolist()),
-                    data_params.ARC_ACTI_GENE: pd.Series(df[data_params.ARC_ACTI_GENE].tolist()),
-                    data_params.OVERLAP:       pd.Series(df[data_params.OVERLAP].tolist()),
-                    data_params.ARCHIVE_CNT:   pd.Series(df[data_params.ARCHIVE_CNT].tolist()),
-                    data_params.UNI_STR_POS:   pd.Series(df[data_params.UNI_STR_POS].tolist()),
-                    data_params.PMIN:          pd.Series(df[data_params.PMIN].tolist()),
-                    data_params.POP_MAX_TRT:   pd.Series(df[data_params.POP_MAX_TRT].tolist()),
-                    data_params.POP_MAX_GENE:  pd.Series(df[data_params.POP_MAX_GENE].tolist()),
-                    data_params.PARETO_CNT :   pd.Series(df[data_params.PARETO_CNT].tolist())
+                    'trt': pd.Series([dp.SetVarList(sel)[i]] * len(GEN_LIST)),
+                    dp.POP_FIT_AVG:   pd.Series(df[dp.POP_FIT_AVG].tolist()),
+                    dp.POP_FIT_MAX:   pd.Series(df[dp.POP_FIT_MAX].tolist()),
+                    dp.POP_OPT_MAX:   pd.Series(df[dp.POP_OPT_MAX].tolist()),
+                    dp.POP_UNI_OBJ:   pd.Series(df[dp.POP_UNI_OBJ].tolist()),
+                    dp.POP_STR_MAX:   pd.Series(df[dp.POP_STR_MAX].tolist()),
+                    dp.ARC_ACTI_GENE: pd.Series(df[dp.ARC_ACTI_GENE].tolist()),
+                    dp.OVERLAP:       pd.Series(df[dp.OVERLAP].tolist()),
+                    dp.ARCHIVE_CNT:   pd.Series(df[dp.ARCHIVE_CNT].tolist()),
+                    dp.UNI_STR_POS:   pd.Series(df[dp.UNI_STR_POS].tolist()),
+                    dp.PMIN:          pd.Series(df[dp.PMIN].tolist()),
+                    dp.POP_MAX_TRT:   pd.Series(df[dp.POP_MAX_TRT].tolist()),
+                    dp.POP_MAX_GENE:  pd.Series(df[dp.POP_MAX_GENE].tolist()),
+                    dp.PARETO_CNT :   pd.Series(df[dp.PARETO_CNT].tolist())
                 })
             DF_LIST.append(cdf)
 
     fin_df = pd.concat(DF_LIST)
 
-    fin_df.to_csv(path_or_buf= dump + 'over-time-' + data_params.SetDiagnostic(dia).lower() + '-' + data_params.SetSelection(sel,pt).lower() + '.csv', index=False)
+    fin_df.to_csv(path_or_buf= dump + 'over-time-' + dp.SetDiagnostic(dia).lower() + '-' + dp.SetSelection(sel,pt).lower() + '.csv', index=False)
 
 def main():
     # Generate and get the arguments
@@ -124,10 +102,6 @@ def main():
     parser.add_argument("selection",     type=int, help="Selection scheme we are looking for? \n0: Truncation\n1: Tournament\n2: Fitness Sharing\n4: Espilon Lexicase\n6: Nondominated Sorting\n7: Novelty Search")
     parser.add_argument("diagnostic",    type=int, help="Diagnostic we are looking for?\n0: Exploitation\n1: Structured Exploitation\n2: Strong Ecology\n3: Exploration\n4: Weak Ecology")
     parser.add_argument("seed_offset",   type=int, help="Experiment seed offset. (REPLICATION_OFFSET + PROBLEM_SEED_OFFSET")
-    parser.add_argument("resolution",    type=int, help="The resolution desired for the data extraction")
-    parser.add_argument("objectives",    type=str, help="Number of objectives being optimized")
-    parser.add_argument("accuracy",      type=str, help="Accuracy for experiment")
-    parser.add_argument("generations",   type=str, help="Number of generations experiments ran for")
     parser.add_argument("param_two",     type=str, help="Second paramater for any selection scheme")
     parser.add_argument("--valleys",     type=int, help="True (1) or False (0) on whether or not valleys are applied", action='store', required=False)
 
@@ -138,26 +112,19 @@ def main():
     dump_dir = args.dump_dir.strip()
     print('Dump directory=', dump_dir)
     selection = args.selection
-    print('Selection scheme=', data_params.SetSelection(selection, args.param_two))
+    print('Selection scheme=', dp.SetSelection(selection,args.param_two))
     diagnostic = args.diagnostic
-    print('Diagnostic=', data_params.SetDiagnostic(diagnostic))
+    print('Diagnostic=', dp.SetDiagnostic(diagnostic))
     offset = args.seed_offset
     print('Offset=', offset)
-    resolution = args.resolution
-    print('Resolution=', resolution)
-    objectives = args.objectives
-    print('Objectives=', objectives)
-    accuracy = args.accuracy
-    print('Accuracy=', accuracy)
-    generations = args.generations
-    print('Generations=', generations)
     param_two = args.param_two
     print('2nd param=', param_two)
     valleys = bool(args.valleys)
     print('valleys=', valleys)
+
     # Get to work!
     print("\nChecking all related data directories now!")
-    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, resolution, objectives, accuracy, generations, param_two, valleys)
+    DirExplore(data_dir, dump_dir, selection, diagnostic, offset, param_two, valleys)
 
 if __name__ == "__main__":
     main()
