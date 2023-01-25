@@ -22,14 +22,9 @@ GENERATION = 'gen'
 # pop level
 POP_FIT_AVG = 'pop_fit_avg'
 POP_FIT_MAX = 'pop_fit_max'
-POP_OPT_AVG = 'pop_opt_avg'
 POP_OPT_MAX = 'pop_opt_max'
 POP_UNI_OBJ = 'pop_uni_obj'
-POP_STR_AVG = 'pop_str_avg'
 POP_STR_MAX = 'pop_str_max'
-# elite solutions (max agg traits)
-ELE_AGG_PER = 'ele_agg_per'
-ELE_OPT_CNT = 'ele_opt_cnt'
 # trait coverage
 UNI_STR_POS = 'uni_str_pos'
 # # pareto data
@@ -42,8 +37,15 @@ OVERLAP = 'overlap'
 POP_MAX_TRT = 'pop_max_trt'
 POP_MAX_GENE = 'pop_max_gene'
 
+# collection of data in list
+DATA_LIST = [GENERATION,POP_FIT_AVG,POP_FIT_MAX,POP_OPT_MAX,POP_UNI_OBJ,POP_STR_MAX,UNI_STR_POS,PARETO_CNT,ARCHIVE_CNT,PMIN,ARC_ACTI_GENE,OVERLAP,POP_MAX_TRT,POP_MAX_GENE]
+
 # seed experiements replicates range
 REPLICATES = 50
+GENERATIONS = 50000
+RESOLUTION = 100
+DIMENTIONALITY = 100
+ACCURACY = 99
 
 # return appropiate string dir name (based off run.sb file naming system)
 def SetSelection(s,p):
@@ -79,8 +81,6 @@ def SetDiagnostic(s):
         return 'CONTRADICTORY_OBJECTIVES'
     elif s == 3:
         return 'MULTIPATH_EXPLORATION'
-    elif s == 4:
-        return 'MULTIVALLEY_CROSSING'
     else:
         sys.exit('UNKNOWN DIAGNOSTIC')
 
@@ -101,30 +101,6 @@ def SetSelectionVar(s):
         return 'NOV'
     else:
         sys.exit("UNKNOWN SELECTION VAR")
-
-# return the correct amount of seed ran by experiment treatment
-def SetSeeds(s):
-    # TRUNCATIONN
-    if s == 0:
-        return [x for x in range(1,451)]
-    # TOURNAMENT
-    elif s == 1:
-        return [x for x in range(1,451)]
-    # FITNESS SHARING
-    elif s == 2:
-        return [x for x in range(1,351)]
-    # LEXICASE
-    elif s == 3:
-        return [x for x in range(1,51)]
-    # NONDOMINATED SORTING
-    elif s == 4:
-        return [x for x in range(1,351)]
-    # NOVELTY
-    elif s == 5:
-        return [x for x in range(1,351)]
-    # ERROR
-    else:
-        sys.exit('SEEDS SELECTION UNKNOWN')
 
 # return the correct amount of seed ran by experiment treatment
 def SetSeedSets(s):
@@ -178,3 +154,20 @@ def SetVarList(s):
         return NS_LIST
     else:
         sys.exit("UNKNOWN VARIABLE LIST")
+
+# get data main directory
+def GetDataDirectory(dir,sel,pt):
+    # check if data dir exists
+    if os.path.isdir(dir):
+        print('Data dirctory exists=', dir)
+    else:
+        sys.exit('DATA DIRECTORY DOES NOT EXIST: ' + dir)
+
+    # check that selection data folder exists
+    SEL_DIR = dir + SetSelection(sel,pt) + '/TRT_' + str(DIMENTIONALITY) + '__ACC_' + str(ACCURACY) + '__GEN_' + str(GENERATIONS) + '/'
+    if os.path.isdir(SEL_DIR):
+        print('Selection scheme data folder exists', SEL_DIR)
+    else:
+        sys.exit('SELECTION DATA DIRECTORY DOES NOT EXIST: ' + SEL_DIR)
+
+    return SEL_DIR
