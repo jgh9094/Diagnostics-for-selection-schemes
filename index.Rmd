@@ -82,8 +82,8 @@ Setting up required variables variables.
 ```{r data-setup}
 # includes
 
-library(dplyr)
 library(plyr)
+library(dplyr)
 library(tidyverse)
 
 # graph variables
@@ -549,11 +549,4 @@ tru_ssf = rbind(exp_df,ord_df)
 
 #final clean up
 rm(i,exp_dir,ord_dir,exp_df,ord_df)
-
-```
-
-These analyses were conducted in the following computing environment:
-
-```{r idx-version}
-print(version)
 ```
