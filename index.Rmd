@@ -67,23 +67,55 @@ Nondominated sorting was best for maintaining diverse populations comprised of i
 Lexicase selection balanced search space exploration without sacrificing exploitation, generally performing well across diagnostics.
 Our work demonstrates the value of diagnostics for building a deeper understanding of selection schemes, which can then be used to improve or develop new selection methods.
 
+## Computer Setup
+
+These analyses were conducted in the following computing environment:
+
+```{r com-ver}
+print(version)
+```
+
 ## Experimental setup
 
 Setting up required variables variables.
 
-```{r idx-setup}
-library(ggplot2)
-library(dplyr)
+```{r data-setup}
+# includes
 
-# variables used throughout
-TRAITS = 100
-TSIZE = 26
-ORDER = c('Truncation (tru)','Tournament (tor)','Lexicase (lex)', 'Genotypic Fitness Sharing (gfs)','Phenotypic Fitness Sharing (pfs)','Nondominated Sorting (nds)','Novelty Search (nov)','Random (ran)')
-ACRON = tolower(c('TRU','TOR','LEX','GFS','PFS','NDS','NOV','RAN'))
+library(dplyr)
+library(plyr)
+library(tidyverse)
+library(reshape2)
+
+# graph variables
 SHAPE = c(5,3,1,2,6,0,4,20,1)
-PARAM = c('8', '8', '0.0', '0.3', '0.3', '0.3', '15', '1')
 cb_palette <- c('#332288','#88CCEE','#EE7733','#EE3377','#117733','#882255','#44AA99','#CCBB44', '#000000')
-GENERATIONS = 50000
+mvc_col = c('#1A85FF','#D41159')
+TSIZE = 26
+p_theme <- theme(
+  text = element_text(size = 28),
+  plot.title = element_text( face = "bold", size = 22, hjust=0.5),
+  panel.border = element_blank(),
+  panel.grid.minor = element_blank(),
+  legend.title=element_text(size=22),
+  legend.text=element_text(size=23),
+  axis.title = element_text(size=23),
+  axis.text = element_text(size=22),
+  legend.position="bottom",
+  panel.background = element_rect(fill = "#f1f2f5",
+                                  colour = "white",
+                                  size = 0.5, linetype = "solid")
+)
+
+# default variables
+REPLICATES = 50
+DIMENSIONALITY = 100
+
+# selection scheme related stuff
+ACRON = tolower(c('TRU','TOR','LEX','GFS','PFS','NDS','NOV','RAN'))
+NAMES = c('Truncation (tru)','Tournament (tor)','Lexicase (lex)', 'Genotypic Fitness Sharing (gfs)','Phenotypic Fitness Sharing (pfs)','Nondominated Sorting (nds)','Novelty Search (nov)','Random (ran)')
+SCHEME = c('TRUNCATION','TOURNAMENT','LEXICASE','FITSHARING_G','FITSHARING_P','NONDOMINATEDSORTING','NOVELTY','TOURNAMENT')
+ORDER = c('Truncation (tru)','Tournament (tor)','Lexicase (lex)', 'Genotypic Fitness Sharing (gfs)','Phenotypic Fitness Sharing (pfs)','Nondominated Sorting (nds)','Novelty Search (nov)','Random (ran)')
 
 # selection scheme parameters
 TR_LIST = c(1, 2, 4, 8, 16, 32, 64, 128, 256)
@@ -92,98 +124,433 @@ FS_LIST = c(0.0, 0.1, 0.3, 0.6, 1.2, 2.5, 5.0)
 ND_LIST = c(0.0, 0.1, 0.3, 0.6, 1.2, 2.5, 5.0)
 NS_LIST = c(1, 2, 4, 8, 15, 30)
 
-# theme that graphs will follow
-p_theme <- theme(
-  text = element_text(size = 28),
-  plot.title = element_text( face = "bold", size = 22, hjust=0.5),
-  panel.border = element_blank(),
-  panel.grid.minor = element_blank(),
-  legend.title=element_text(size=18),
-  legend.text=element_text(size=14),
-  axis.title = element_text(size=18),
-  axis.text = element_text(size=16),
-  legend.position="bottom",
-  panel.background = element_rect(fill = "#f1f2f5",
-                                  colour = "white",
-                                  size = 0.5, linetype = "solid")
-)
+# selection scheme parameter we are looking for
+PARAM = c('8', '8', '0.0', '0.3', '0.3', '0.3', '15', '1')
 
-# cross comparison data frames
-cc_over_time <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-over-time.csv', header = TRUE, stringsAsFactors = FALSE)
-colnames(cc_over_time)[colnames(cc_over_time) == "Selection.Scheme"] = 'Selection\nScheme'
+# for diagnostic loops
+DIAGNOSTIC = tolower(c('EXPLOITATION_RATE', 'ORDERED_EXPLOITATION', 'CONTRADICTORY_OBJECTIVES', 'MULTIPATH_EXPLORATION'))
+
+# data diractory for gh-pages
+DATA_DIR = '/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/'
+
+######################################################################################
+# go through each diagnostic and collect over time data for cross comparison (cc)
+print('Collecting over time data...')
+cc_over_time = data.frame()
+cc_over_time_mvc = data.frame()
+for(diagnostic in DIAGNOSTIC)
+{
+  print(paste('DIAGNOSTIC',diagnostic))
+  for(i in 1:8)
+  {
+    print(paste('SCHEME:',SCHEME[i]))
+    dir = paste(DATA_DIR,'NO-MVC/',SCHEME[i],'/over-time-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
+    dir_mvc = paste(DATA_DIR,'MVC/',SCHEME[i],'/over-time-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
+
+    # read csv
+    df = read.csv(dir, header = TRUE, stringsAsFactors = FALSE)
+    df_mvc = read.csv(dir_mvc, header = TRUE, stringsAsFactors = FALSE)
+
+    # add names/tags
+    df$acron = ACRON[i]
+    df$`Selection\nScheme` = NAMES[i]
+    df$diagnostic = diagnostic
+
+    df_mvc$acron = ACRON[i]
+    df_mvc$`Selection\nScheme` = NAMES[i]
+    df_mvc$diagnostic = diagnostic
+
+    # add to cc_over_time data frame
+    if(i == 3)
+    {
+      cc_over_time = rbind(cc_over_time, df)
+      cc_over_time_mvc = rbind(cc_over_time_mvc, df_mvc)
+    }
+    else
+    {
+      cc_over_time = rbind(cc_over_time, filter(df, trt == PARAM[i]))
+      cc_over_time_mvc = rbind(cc_over_time_mvc, filter(df_mvc, trt == PARAM[i]))
+    }
+  }
+  rm(df);  rm(df_mvc);  rm(dir);   rm(dir_mvc)
+}
 cc_over_time$`Selection\nScheme` <- factor(cc_over_time$`Selection\nScheme`, levels = ORDER)
+cc_over_time$acron <- factor(cc_over_time$acron, levels = ACRON)
 cc_over_time$uni_str_pos = cc_over_time$uni_str_pos + cc_over_time$arc_acti_gene - cc_over_time$overlap
+cc_over_time = subset(cc_over_time, select = -c(trt,pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))
 
-cc_best = read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/cross-comp-best.csv', header = TRUE, stringsAsFactors = FALSE)
+cc_over_time_mvc$`Selection\nScheme` <- factor(cc_over_time$`Selection\nScheme`, levels = ORDER)
+cc_over_time_mvc$acron <- factor(cc_over_time$acron, levels = ACRON)
+cc_over_time_mvc$uni_str_pos = cc_over_time_mvc$uni_str_pos + cc_over_time_mvc$arc_acti_gene - cc_over_time_mvc$overlap
+cc_over_time_mvc = subset(cc_over_time_mvc, select = -c(trt,pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))
+
+
+######################################################################################
+# go through each diagnostic and collect best over time for cross comparison (cc)
+cc_best = data.frame()
+cc_best_mvc = data.frame()
+for(diagnostic in DIAGNOSTIC)
+{
+  print(paste('DIAGNOSTIC',diagnostic))
+  for(i in 1:8)
+  {
+    print(paste('SCHEME:',SCHEME[i]))
+    dir = paste(DATA_DIR,'NO-MVC/',SCHEME[i],'/best-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
+    dir_mvc = paste(DATA_DIR,'MVC/',SCHEME[i],'/best-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
+
+
+    # read csv
+    df = read.csv(dir, header = TRUE, stringsAsFactors = FALSE)
+    df_mvc = read.csv(dir_mvc, header = TRUE, stringsAsFactors = FALSE)
+
+    # add names/tags
+    df$acron = ACRON[i]
+    df$`Selection\nScheme` = NAMES[i]
+    df$diagnostic = diagnostic
+    df = subset(df, select = -c(Diagnostic,SEL) )
+
+    df_mvc$acron = ACRON[i]
+    df_mvc$`Selection\nScheme` = NAMES[i]
+    df_mvc$diagnostic = diagnostic
+    df_mvc = subset(df_mvc, select = -c(Diagnostic,SEL) )
+
+    # add to cc_over_time data frame
+    if(i == 3)
+    {
+      cc_best = rbind(cc_best, df)
+      cc_best_mvc = rbind(cc_best_mvc, df_mvc)
+    }
+    else
+    {
+      cc_best = rbind(cc_best, filter(df, trt == PARAM[i]))
+      cc_best_mvc = rbind(cc_best_mvc, filter(df_mvc, trt == PARAM[i]))
+    }
+  }
+  rm(df);  rm(df_mvc);  rm(dir);   rm(dir_mvc)
+}
 cc_best$acron <- factor(cc_best$acron, levels = ACRON)
-colnames(cc_best)[colnames(cc_best) == "Selection.Scheme"] = 'Selection\nScheme'
+cc_best = subset(cc_best, select = -c(trt,gen))
+cc_best = filter(cc_best, col == 'pop_fit_max' | col == 'pop_uni_obj')
 
-cc_ssf = read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv', header = TRUE, stringsAsFactors = FALSE)
+cc_best_mvc$acron <- factor(cc_best_mvc$acron, levels = ACRON)
+cc_best_mvc = subset(cc_best_mvc, select = -c(trt,gen))
+cc_best_mvc = subset(cc_best_mvc, col == 'pop_fit_max' | col == 'pop_uni_obj')
+
+
+######################################################################################
+# get generation a satisfactory solution is found for cross comparison (cc)
+cc_ssf  = data.frame()
+for(diagnostic in DIAGNOSTIC)
+{
+  if(diagnostic == 'contradictory_objectives' | diagnostic == 'multipath_exploration')
+  {next}
+
+  print(paste('DIAGNOSTIC',diagnostic))
+  for(i in 1:8)
+  {
+    print(paste('SCHEME:',SCHEME[i]))
+    dir = paste(DATA_DIR,'NO-MVC/',SCHEME[i],'/ssf-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
+
+    # read csv
+    df = read.csv(dir, header = TRUE, stringsAsFactors = FALSE)
+
+    # add names/tags
+    df$acron = ACRON[i]
+    df$`Selection\nScheme` = NAMES[i]
+    df$diagnostic = diagnostic
+    df = subset(df, select = -c(Diagnostic,SEL) )
+
+    # add to cc_over_time data frame
+    if(i == 3)
+    {
+      cc_ssf = rbind(cc_ssf, df)
+    }
+    else
+    {
+      cc_ssf = rbind(cc_ssf, filter(df, trt == PARAM[i]))
+    }
+  }
+  rm(df); rm(dir);
+}
 cc_ssf$acron <- factor(cc_ssf$acron, levels = ACRON)
-colnames(cc_over_time)[colnames(cc_over_time) == "Selection.Scheme"] = 'Selection\nScheme'
-cc_ssf[is.na(cc_ssf)] <- 59999
+cc_ssf = subset(cc_ssf, select = -c(trt))
 
-cc_end <- filter(cc_over_time, gen == 50000)
-cc_end$acron <- factor(cc_end$acron, levels = ACRON)
 
-# selection scheme data frames
-ss_over_time <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-over-time.csv', header = TRUE, stringsAsFactors = FALSE)
-colnames(ss_over_time)[colnames(ss_over_time) == "Selection.Scheme"] = 'Selection\nScheme'
+######################################################################################
+# go through each scheme and collect over time data
+ss_over_time = data.frame()
+ss_over_time_mvc = data.frame()
+for(i in 1:8)
+{
+  # add to cc_over_time data frame
+  if(i == 3 | i == 8)
+  {
+    next
+  }
+  print(SCHEME[i])
+  for(diagnostic in DIAGNOSTIC)
+  {
+    dir = paste(DATA_DIR,'NO-MVC/',SCHEME[i],'/over-time-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
+    dir_mvc = paste(DATA_DIR,'MVC/',SCHEME[i],'/over-time-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
+
+    # read csv
+    df = read.csv(dir, header = TRUE, stringsAsFactors = FALSE)
+    df_mvc = read.csv(dir_mvc, header = TRUE, stringsAsFactors = FALSE)
+
+    # add names/tags
+    df$acron = ACRON[i]
+    df$diagnostic = diagnostic
+
+    df_mvc$acron = ACRON[i]
+    df_mvc$diagnostic = diagnostic
+
+    ss_over_time = rbind(ss_over_time, df)
+    ss_over_time_mvc = rbind(ss_over_time_mvc,df_mvc)
+  }
+  rm(df);  rm(df_mvc);  rm(dir);   rm(dir_mvc)
+}
+
+# remove unused data
+
 ss_over_time$uni_str_pos = ss_over_time$uni_str_pos + ss_over_time$arc_acti_gene - ss_over_time$overlap
+ss_over_time = subset(ss_over_time, select = -c(pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))
 
-ss_best <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-best.csv', header = TRUE, stringsAsFactors = FALSE)
-colnames(ss_best)[colnames(ss_best) == "Selection.Scheme"] = 'Selection\nScheme'
-
-ss_ssf <- read.csv('/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/POLISHED/selection-scheme-ssf.csv', header = TRUE, stringsAsFactors = FALSE)
-colnames(ss_ssf)[colnames(ss_ssf) == "Selection.Scheme"] = 'Selection\nScheme'
-
-## genotypic fitness sharing data frames
-gfs_ot <- filter(ss_over_time, acron == 'gfs')
-gfs_ot$Sigma <- factor(gfs_ot$trt, levels = FS_LIST)
-gfs_best <- filter(ss_best, acron == 'gfs')
-gfs_best$Sigma <- factor(gfs_best$trt, levels = FS_LIST)
-gfs_end  <- filter(gfs_ot, gen == 50000)
-
-## phenotypic fitness sharing data frames
-pfs_ot <- filter(ss_over_time, acron == 'pfs')
-pfs_ot$Sigma <- factor(pfs_ot$trt, levels = FS_LIST)
-pfs_best <- filter(ss_best, acron == 'pfs')
-pfs_best$Sigma <- factor(pfs_best$trt, levels = FS_LIST)
-pfs_end  <- filter(pfs_ot, gen == 50000)
-
-## nodominated sorting data frames
-nds_ot <- filter(ss_over_time, acron == 'nds')
-nds_ot$Sigma <- factor(nds_ot$trt, levels = ND_LIST)
-nds_best <- filter(ss_best, acron == 'nds')
-nds_best$Sigma <- factor(nds_best$trt, levels = ND_LIST)
-nds_end  <- filter(nds_ot, gen == 50000)
-
-## novelty search data frames
-nov_ot <- filter(ss_over_time, acron == 'nov' & trt != 0)
-nov_ot$K <- factor(nov_ot$trt, levels = NS_LIST)
-nov_best <- filter(ss_best, acron == 'nov' & trt != 0)
-nov_best$K <- factor(nov_best$trt, levels = NS_LIST)
-nov_end  <- filter(nov_ot, gen == 50000)
+ss_over_time_mvc$uni_str_pos = ss_over_time_mvc$uni_str_pos + ss_over_time_mvc$arc_acti_gene - ss_over_time_mvc$overlap
+ss_over_time_mvc = subset(ss_over_time_mvc, select = -c(pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))
 
 ## tournament data frames
+tor_ot <- data.frame()
 tor_ot <- filter(ss_over_time, acron == 'tor' & trt != 1)
 tor_ot$T <- factor(tor_ot$trt, levels = TS_LIST)
-tor_best <- filter(ss_best, acron == 'tor' & trt != 1)
-tor_best$T <- factor(tor_best$trt, levels = TS_LIST)
-tor_end  <- filter(tor_ot, gen == 50000)
-tor_ssf <- filter(ss_ssf, acron == 'tor' & trt != 1)
-tor_ssf$T <- factor(tor_ssf$trt, levels = TS_LIST)
-tor_ssf[is.na(tor_ssf)] <- 59999
+tor_ot <- subset(tor_ot, select = -c(acron,trt))
 
 ## truncation data frames
+tru_ot <- data.frame()
 tru_ot <- filter(ss_over_time, acron == 'tru')
 tru_ot$T <- factor(tru_ot$trt, levels = TR_LIST)
+tru_ot <- subset(tru_ot, select = -c(acron,trt))
+
+## genotypic fitness sharing data frames
+gfs_ot <- data.frame()
+gfs_ot <- filter(ss_over_time, acron == 'gfs')
+gfs_ot$Sigma <- factor(gfs_ot$trt, levels = FS_LIST)
+gfs_ot <- subset(gfs_ot, select = -c(acron,trt))
+
+## phenotypic fitness sharing data frames
+pfs_ot <- data.frame()
+pfs_ot <- filter(ss_over_time, acron == 'pfs')
+pfs_ot$Sigma <- factor(pfs_ot$trt, levels = FS_LIST)
+pfs_ot <- subset(pfs_ot, select = -c(acron,trt))
+
+
+## nodominated sorting data frames
+nds_ot <- data.frame()
+nds_ot <- filter(ss_over_time, acron == 'nds')
+nds_ot$Sigma <- factor(nds_ot$trt, levels = ND_LIST)
+nds_ot <- subset(nds_ot, select = -c(acron,trt))
+
+## novelty search data frames
+nov_ot <- data.frame()
+nov_ot <- filter(ss_over_time, acron == 'nov' & trt != 0)
+nov_ot$K <- factor(nov_ot$trt, levels = NS_LIST)
+nov_ot <- subset(nov_ot, select = -c(acron,trt))
+
+## tournament data frames mvc
+tor_ot_mvc <- data.frame()
+tor_ot_mvc <- filter(ss_over_time_mvc, acron == 'tor' & trt != 1)
+tor_ot_mvc$T <- factor(tor_ot_mvc$trt, levels = TS_LIST)
+tor_ot_mvc <- subset(tor_ot_mvc, select = -c(acron,trt))
+
+## truncation data frames mvc
+tru_ot_mvc <- data.frame()
+tru_ot_mvc <- filter(ss_over_time_mvc, acron == 'tru')
+tru_ot_mvc$T <- factor(tru_ot_mvc$trt, levels = TR_LIST)
+tru_ot_mvc <- subset(tru_ot_mvc, select = -c(acron,trt))
+
+## genotypic fitness sharing data frames mvc
+gfs_ot_mvc <- data.frame()
+gfs_ot_mvc <- filter(ss_over_time_mvc, acron == 'gfs')
+gfs_ot_mvc$Sigma <- factor(gfs_ot_mvc$trt, levels = FS_LIST)
+gfs_ot_mvc <- subset(gfs_ot_mvc, select = -c(acron,trt))
+
+## phenotypic fitness sharing data frames mvc
+pfs_ot_mvc <- data.frame()
+pfs_ot_mvc <- filter(ss_over_time_mvc, acron == 'pfs')
+pfs_ot_mvc$Sigma <- factor(pfs_ot_mvc$trt, levels = FS_LIST)
+pfs_ot_mvc <- subset(pfs_ot_mvc, select = -c(acron,trt))
+
+
+## nodominated sorting data frames mvc
+nds_ot_mvc <- data.frame()
+nds_ot_mvc <- filter(ss_over_time_mvc, acron == 'nds')
+nds_ot_mvc$Sigma <- factor(nds_ot_mvc$trt, levels = ND_LIST)
+nds_ot_mvc <- subset(nds_ot_mvc, select = -c(acron,trt))
+
+## novelty search data frames mvc
+nov_ot_mvc <- data.frame()
+nov_ot_mvc <- filter(ss_over_time_mvc, acron == 'nov' & trt != 0)
+nov_ot_mvc$K <- factor(nov_ot_mvc$trt, levels = NS_LIST)
+nov_ot_mvc <- subset(nov_ot_mvc, select = -c(acron,trt))
+
+# clean up
+rm(ss_over_time_mvc)
+rm(ss_over_time)
+
+
+######################################################################################
+# go through each scheme and collect best data
+ss_best = data.frame()
+ss_best_mvc = data.frame()
+for(i in 1:8)
+{
+  # add to cc_best data frame
+  if(i == 3 | i == 8)
+  {
+    next
+  }
+  print(SCHEME[i])
+  for(diagnostic in DIAGNOSTIC)
+  {
+    dir = paste(DATA_DIR,'NO-MVC/',SCHEME[i],'/best-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
+    dir_mvc = paste(DATA_DIR,'MVC/',SCHEME[i],'/best-',diagnostic,'-', tolower(SCHEME[i]), '.csv', sep = "", collapse = NULL)
+
+    # read csv
+    df = read.csv(dir, header = TRUE, stringsAsFactors = FALSE)
+    df_mvc = read.csv(dir_mvc, header = TRUE, stringsAsFactors = FALSE)
+
+    # add names/tags
+    df$acron = ACRON[i]
+    df$diagnostic = diagnostic
+
+    df_mvc$acron = ACRON[i]
+    df_mvc$diagnostic = diagnostic
+
+    ss_best = rbind(ss_best, df)
+    ss_best_mvc = rbind(ss_best_mvc,df_mvc)
+  }
+  rm(df);  rm(df_mvc);  rm(dir);   rm(dir_mvc)
+}
+
+# removed unused data
+ss_best = subset(ss_best, select = -c(gen))
+ss_best = filter(ss_best, col == 'pop_fit_max' | col == 'pop_uni_obj')
+
+ss_best_mvc = subset(ss_best_mvc, select = -c(gen))
+ss_best_mvc = filter(ss_best_mvc, col == 'pop_fit_max' | col == 'pop_uni_obj')
+
+## tournament data frames
+tor_best <- data.frame()
+tor_best <- filter(ss_best, acron == 'tor' & trt != 1)
+tor_best$T <- factor(tor_best$trt, levels = TS_LIST)
+tor_best <- subset(tor_best, select = -c(acron,trt))
+
+## truncation data frames
+tru_best <- data.frame()
 tru_best <- filter(ss_best, acron == 'tru')
 tru_best$T <- factor(tru_best$trt, levels = TR_LIST)
-tru_end  <- filter(tru_ot, gen == 50000)
-tru_ssf <- filter(ss_ssf, acron == 'tru')
-tru_ssf$T <- factor(tru_ssf$trt, levels = TR_LIST)
-tru_ssf[is.na(tru_ssf)] <- 59999
+tru_best <- subset(tru_best, select = -c(acron,trt))
+
+## genotypic fitness sharing data frames
+gfs_best <- data.frame()
+gfs_best <- filter(ss_best, acron == 'gfs')
+gfs_best$Sigma <- factor(gfs_best$trt, levels = FS_LIST)
+gfs_best <- subset(gfs_best, select = -c(acron,trt))
+
+## phenotypic fitness sharing data frames
+pfs_best <- data.frame()
+pfs_best <- filter(ss_best, acron == 'pfs')
+pfs_best$Sigma <- factor(pfs_best$trt, levels = FS_LIST)
+pfs_best <- subset(pfs_best, select = -c(acron,trt))
+
+
+## nodominated sorting data frames
+nds_best <- data.frame()
+nds_best <- filter(ss_best, acron == 'nds')
+nds_best$Sigma <- factor(nds_best$trt, levels = ND_LIST)
+nds_best <- subset(nds_best, select = -c(acron,trt))
+
+## novelty search data frames
+nov_best <- data.frame()
+nov_best <- filter(ss_best, acron == 'nov' & trt != 0)
+nov_best$K <- factor(nov_best$trt, levels = NS_LIST)
+nov_best <- subset(nov_best, select = -c(acron,trt))
+
+## tournament data frames mvc
+tor_best_mvc <- data.frame()
+tor_best_mvc <- filter(ss_best_mvc, acron == 'tor' & trt != 1)
+tor_best_mvc$T <- factor(tor_best_mvc$trt, levels = TS_LIST)
+tor_best_mvc <- subset(tor_best_mvc, select = -c(acron,trt))
+
+## truncation data frames mvc
+tru_best_mvc <- data.frame()
+tru_best_mvc <- filter(ss_best_mvc, acron == 'tru')
+tru_best_mvc$T <- factor(tru_best_mvc$trt, levels = TR_LIST)
+tru_best_mvc <- subset(tru_best_mvc, select = -c(acron,trt))
+
+## genotypic fitness sharing data frames mvc
+gfs_best_mvc <- data.frame()
+gfs_best_mvc <- filter(ss_best_mvc, acron == 'gfs')
+gfs_best_mvc$Sigma <- factor(gfs_best_mvc$trt, levels = FS_LIST)
+gfs_best_mvc <- subset(gfs_best_mvc, select = -c(acron,trt))
+
+## phenotypic fitness sharing data frames mvc
+pfs_best_mvc <- data.frame()
+pfs_best_mvc <- filter(ss_best_mvc, acron == 'pfs')
+pfs_best_mvc$Sigma <- factor(pfs_best_mvc$trt, levels = FS_LIST)
+pfs_best_mvc <- subset(pfs_best_mvc, select = -c(acron,trt))
+
+
+## nodominated sorting data frames mvc
+nds_best_mvc <- data.frame()
+nds_best_mvc <- filter(ss_best_mvc, acron == 'nds')
+nds_best_mvc$Sigma <- factor(nds_best_mvc$trt, levels = ND_LIST)
+nds_best_mvc <- subset(nds_best_mvc, select = -c(acron,trt))
+
+## novelty search data frames mvc
+nov_best_mvc <- data.frame()
+nov_best_mvc <- filter(ss_best_mvc, acron == 'nov' & trt != 0)
+nov_best_mvc$K <- factor(nov_best_mvc$trt, levels = NS_LIST)
+nov_best_mvc <- subset(nov_best_mvc, select = -c(acron,trt))
+
+# clean up
+rm(ss_best_mvc)
+rm(ss_best)
+
+
+######################################################################################
+# go through each scheme and collect satisfactory solution found
+
+#Tournament
+exp_dir = paste(DATA_DIR,'NO-MVC/TOURNAMENT/ssf-exploitation_rate-tournament.csv', sep = "", collapse = NULL)
+ord_dir = paste(DATA_DIR,'NO-MVC/TOURNAMENT/ssf-ordered_exploitation-tournament.csv', sep = "", collapse = NULL)
+# read csv
+exp_df = read.csv(exp_dir, header = TRUE, stringsAsFactors = FALSE)
+ord_df = read.csv(ord_dir, header = TRUE, stringsAsFactors = FALSE)
+# remove data
+exp_df = subset(exp_df, select = -c(SEL))
+exp_df = filter(exp_df, trt != 1)
+ord_df = subset(ord_df, select = -c(SEL))
+ord_df = filter(ord_df, trt != 1)
+# combine
+tru_ssf = rbind(exp_df,ord_df)
+
+#Truncation
+exp_dir = paste(DATA_DIR,'NO-MVC/TRUNCATION/ssf-exploitation_rate-truncation.csv', sep = "", collapse = NULL)
+ord_dir = paste(DATA_DIR,'NO-MVC/TRUNCATION/ssf-ordered_exploitation-truncation.csv', sep = "", collapse = NULL)
+# read csv
+exp_df = read.csv(exp_dir, header = TRUE, stringsAsFactors = FALSE)
+ord_df = read.csv(ord_dir, header = TRUE, stringsAsFactors = FALSE)
+# remove data
+exp_df = subset(exp_df, select = -c(SEL))
+exp_df = filter(exp_df, trt != 1)
+ord_df = subset(ord_df, select = -c(SEL))
+ord_df = filter(ord_df, trt != 1)
+# combine
+tru_ssf = rbind(exp_df,ord_df)
+
+#final clean up
+rm(i,exp_dir,ord_dir,exp_df,ord_df)
+
 ```
 
 These analyses were conducted in the following computing environment:
