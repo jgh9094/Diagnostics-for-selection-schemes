@@ -25,7 +25,7 @@ Best performance in a population over time.
 
 ```{r mpe-per-ot, warning=FALSE}
 # data for lines and shading on plots
-lines = filter(cc_over_time, diagnostic == 'multipath_mpeloration') %>%
+lines = filter(cc_over_time, diagnostic == 'multipath_exploration') %>%
   group_by(`Selection\nScheme`, gen) %>%
   dplyr::summarise(
     min = min(pop_fit_max) / DIMENSIONALITY,
@@ -67,7 +67,7 @@ Best performance throughout 50,000 generations.
 
 ```{r mpe-per-bst}
 ### best performance throughout
-filter(cc_best, col == 'pop_fit_max' & diagnostic == 'multipath_mpeloration') %>%
+filter(cc_best, col == 'pop_fit_max' & diagnostic == 'multipath_exploration') %>%
   ggplot(., aes(x = acron, y = val / DIMENSIONALITY, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
@@ -100,7 +100,7 @@ Summary statistics for the best performance.
 
 ```{r mpe-per-bst-sum}
 ### best performance throughout
-performance = filter(cc_best, col == 'pop_fit_max' & diagnostic == 'multipath_mpeloration')
+performance = filter(cc_best, col == 'pop_fit_max' & diagnostic == 'multipath_exploration')
 performance$acron = factor(performance$acron, levels = c('lex','tor','tru','nds','gfs','pfs','nov','ran'))
 performance %>%
   group_by(acron) %>%
@@ -134,7 +134,7 @@ Best performance in the population at the end of 50,000 generations.
 
 ```{r mpe-per-end}
 # end of run
-filter(cc_over_time, diagnostic == 'multipath_mpeloration' & gen == 50000) %>%
+filter(cc_over_time, diagnostic == 'multipath_exploration' & gen == 50000) %>%
   ggplot(., aes(x = acron, y = pop_fit_max / DIMENSIONALITY, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
@@ -167,7 +167,7 @@ Summary statistics for best performance in the final population.
 
 ```{r mpe-per-end-sum}
 # end of run
-performance = filter(cc_over_time, diagnostic == 'multipath_mpeloration' & gen == 50000)
+performance = filter(cc_over_time, diagnostic == 'multipath_exploration' & gen == 50000)
 performance$acron = factor(performance$acron, levels = c('lex','tor','tru','nds','gfs','pfs','nov','ran'))
 performance %>%
   group_by(acron) %>%
@@ -204,7 +204,7 @@ Activation gene coverage over time.
 
 ```{r mpe-act-ot, warning=FALSE}
 # data for lines and shading on plots
-lines = filter(cc_over_time, diagnostic == 'multipath_mpeloration') %>%
+lines = filter(cc_over_time, diagnostic == 'multipath_exploration') %>%
   group_by(`Selection\nScheme`, gen) %>%
   dplyr::summarise(
     min = min(uni_str_pos),
@@ -245,7 +245,7 @@ Activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r mpe-act-end}
 # end of run
-filter(cc_over_time, diagnostic == 'multipath_mpeloration' & gen == 50000) %>%
+filter(cc_over_time, diagnostic == 'multipath_exploration' & gen == 50000) %>%
   ggplot(., aes(x = acron, y = uni_str_pos, color = acron, fill = acron, shape = acron)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
@@ -278,7 +278,7 @@ Summary statistics for activation gene coverage in the final population.
 
 ```{r mpe-act-end-sum}
 # end of run
-coverage = filter(cc_over_time, diagnostic == 'multipath_mpeloration' & gen == 50000)
+coverage = filter(cc_over_time, diagnostic == 'multipath_exploration' & gen == 50000)
 coverage$acron = factor(coverage$acron, levels = c('nov','lex','nds','gfs','pfs','tor','tru','ran'))
 coverage %>%
   group_by(acron) %>%
