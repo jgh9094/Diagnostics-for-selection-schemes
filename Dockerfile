@@ -86,6 +86,8 @@ RUN \
     && \
   R -e "install.packages('PupillometryR', dependencies=NA, repos='http://cran.rstudio.com/')" \
     && \
+  R -e "install.packages('sdamr', dependencies=NA, repos='http://cran.rstudio.com/')" \
+    && \
   echo "installed r and configured r environment"
 
 
@@ -99,9 +101,9 @@ RUN \
     && \
   export PROJECT_PATH=/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/ \
     && \
-  osf -p ${OSF_PROJECT} fetch 2022-10-21-data.tar.gz ${PROJECT_PATH}2022-10-21-data.tar.gz \
+  osf -p ${OSF_PROJECT} fetch 2023-01-17-data.tar.gz ${PROJECT_PATH}2023-01-17-data.tar.gz \
     && \
-  tar -xzf ${PROJECT_PATH}2022-10-21-data.tar.gz -C ${PROJECT_PATH} \
+  tar -xzf ${PROJECT_PATH}2023-01-17-data.tar.gz -C ${PROJECT_PATH} \
     && \
   echo "download"
 
