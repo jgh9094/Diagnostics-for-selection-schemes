@@ -5,16 +5,16 @@ language:
 delete_merged_file: true
 rmd_files: [
   "index.Rmd",
-  "Experiments/Analysis/exploitation-rate-cross-results.Rmd",
-  "Experiments/Analysis/ordered-exploitation-cross-results.Rmd",
-  "Experiments/Analysis/contradictory-objectives-cross-results.Rmd",
-  "Experiments/Analysis/multi-path-exploration-cross-results.Rmd",
-  "Experiments/Analysis/multi-valley-crossing-cross-results.Rmd",
-  "Experiments/Truncation/Analysis/parameter-search-results.Rmd",
-  "Experiments/Tournament/Analysis/parameter-search-results.Rmd",
-  "Experiments/GenotypicFitnessSharing/Analysis/parameter-search-results.Rmd",
-  "Experiments/PhenotypicFitnessSharing/Analysis/parameter-search-results.Rmd",
-  "Experiments/NonDominatedSorting/Analysis/parameter-search-results.Rmd",
-  "Experiments/NoveltySearch/Analysis/parameter-search-results.Rmd",
+  # "Experiments/Analysis/exploitation-rate-cross-results.Rmd",
+  # "Experiments/Analysis/ordered-exploitation-cross-results.Rmd",
+  # "Experiments/Analysis/contradictory-objectives-cross-results.Rmd",
+  # "Experiments/Analysis/multi-path-exploration-cross-results.Rmd",
+  # # "Experiments/Analysis/multi-valley-crossing-cross-results.Rmd",
+  # "Experiments/Truncation/Analysis/parameter-search-results.Rmd",
+  # "Experiments/Tournament/Analysis/parameter-search-results.Rmd",
+  # "Experiments/GenotypicFitnessSharing/Analysis/parameter-search-results.Rmd",
+  # "Experiments/PhenotypicFitnessSharing/Analysis/parameter-search-results.Rmd",
+  # "Experiments/NonDominatedSorting/Analysis/parameter-search-results.Rmd",
+  # "Experiments/NoveltySearch/Analysis/parameter-search-results.Rmd",
   "tail.Rmd"
 ]
