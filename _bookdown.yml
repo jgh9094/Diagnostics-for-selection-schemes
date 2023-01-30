@@ -8,7 +8,7 @@ rmd_files: [
   "Experiments/Analysis/exploitation-rate-cross-results.Rmd",
   "Experiments/Analysis/ordered-exploitation-cross-results.Rmd",
   "Experiments/Analysis/contradictory-objectives-cross-results.Rmd",
-  # "Experiments/Analysis/multi-path-exploration-cross-results.Rmd",
+  "Experiments/Analysis/multi-path-exploration-cross-results.Rmd",
   # "Experiments/Truncation/Analysis/parameter-search-results.Rmd",
   # "Experiments/Tournament/Analysis/parameter-search-results.Rmd",
   # "Experiments/GenotypicFitnessSharing/Analysis/parameter-search-results.Rmd",
