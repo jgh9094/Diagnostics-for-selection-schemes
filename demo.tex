@@ -235,6 +235,7 @@ Setting up required variables variables.
 \begin{Highlighting}[]
 \CommentTok{# includes}
 
+\KeywordTok{library}\NormalTok{(plyr)}
 \KeywordTok{library}\NormalTok{(dplyr)}
 \end{Highlighting}
 \end{Shaded}
@@ -242,6 +243,13 @@ Setting up required variables variables.
 \begin{verbatim}
 ## 
 ## Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:plyr':
+## 
+##     arrange, count, desc, failwith, id, mutate, rename, summarise,
+##     summarize
 \end{verbatim}
 
 \begin{verbatim}
@@ -254,38 +262,6 @@ Setting up required variables variables.
 ## The following objects are masked from 'package:base':
 ## 
 ##     intersect, setdiff, setequal, union
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{library}\NormalTok{(plyr)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## ------------------------------------------------------------------------------
-\end{verbatim}
-
-\begin{verbatim}
-## You have loaded plyr after dplyr - this is likely to cause problems.
-## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
-## library(plyr); library(dplyr)
-\end{verbatim}
-
-\begin{verbatim}
-## ------------------------------------------------------------------------------
-\end{verbatim}
-
-\begin{verbatim}
-## 
-## Attaching package: 'plyr'
-\end{verbatim}
-
-\begin{verbatim}
-## The following objects are masked from 'package:dplyr':
-## 
-##     arrange, count, desc, failwith, id, mutate, rename, summarise,
-##     summarize
 \end{verbatim}
 
 \begin{Shaded}
@@ -305,18 +281,18 @@ Setting up required variables variables.
 ## v tidyr   1.3.0     v forcats 1.0.0
 ## v readr   2.1.3     
 ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
-## x plyr::arrange()   masks dplyr::arrange()
-## x purrr::compact()  masks plyr::compact()
-## x plyr::count()     masks dplyr::count()
-## x plyr::desc()      masks dplyr::desc()
-## x plyr::failwith()  masks dplyr::failwith()
-## x dplyr::filter()   masks stats::filter()
-## x plyr::id()        masks dplyr::id()
-## x dplyr::lag()      masks stats::lag()
-## x plyr::mutate()    masks dplyr::mutate()
-## x plyr::rename()    masks dplyr::rename()
-## x plyr::summarise() masks dplyr::summarise()
-## x plyr::summarize() masks dplyr::summarize()
+## x dplyr::arrange()   masks plyr::arrange()
+## x purrr::compact()   masks plyr::compact()
+## x dplyr::count()     masks plyr::count()
+## x dplyr::desc()      masks plyr::desc()
+## x dplyr::failwith()  masks plyr::failwith()
+## x dplyr::filter()    masks stats::filter()
+## x dplyr::id()        masks plyr::id()
+## x dplyr::lag()       masks stats::lag()
+## x dplyr::mutate()    masks plyr::mutate()
+## x dplyr::rename()    masks plyr::rename()
+## x dplyr::summarise() masks plyr::summarise()
+## x dplyr::summarize() masks plyr::summarize()
 \end{verbatim}
 
 \begin{Shaded}
@@ -943,32 +919,6 @@ Setting up required variables variables.
 \KeywordTok{rm}\NormalTok{(i,exp_dir,ord_dir,exp_df,ord_df)}
 \end{Highlighting}
 \end{Shaded}
-
-These analyses were conducted in the following computing environment:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{print}\NormalTok{(version)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-##                _                                          
-## platform       x86_64-pc-linux-gnu                        
-## arch           x86_64                                     
-## os             linux-gnu                                  
-## system         x86_64, linux-gnu                          
-## status         Patched                                    
-## major          4                                          
-## minor          2.2                                        
-## year           2022                                       
-## month          11                                         
-## day            10                                         
-## svn rev        83330                                      
-## language       R                                          
-## version.string R version 4.2.2 Patched (2022-11-10 r83330)
-## nickname       Innocent and Trusting
-\end{verbatim}
 
 \bibliography{book.bib,packages.bib}
 

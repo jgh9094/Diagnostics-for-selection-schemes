@@ -240,28 +240,21 @@ Our work demonstrates the value of diagnostics for building a deeper understandi
 <p>Setting up required variables variables.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># includes</span></a>
 <a class="sourceLine" id="cb3-2" title="2"></a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="kw">library</span>(dplyr)</a></code></pre></div>
+<a class="sourceLine" id="cb3-3" title="3"><span class="kw">library</span>(plyr)</a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="kw">library</span>(dplyr)</a></code></pre></div>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:plyr&#39;:
+## 
+##     arrange, count, desc, failwith, id, mutate, rename, summarise,
+##     summarize</code></pre>
 <pre><code>## The following objects are masked from &#39;package:stats&#39;:
 ## 
 ##     filter, lag</code></pre>
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">library</span>(plyr)</a></code></pre></div>
-<pre><code>## ------------------------------------------------------------------------------</code></pre>
-<pre><code>## You have loaded plyr after dplyr - this is likely to cause problems.
-## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
-## library(plyr); library(dplyr)</code></pre>
-<pre><code>## ------------------------------------------------------------------------------</code></pre>
-<pre><code>## 
-## Attaching package: &#39;plyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
-## 
-##     arrange, count, desc, failwith, id, mutate, rename, summarise,
-##     summarize</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">library</span>(tidyverse)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">library</span>(tidyverse)</a></code></pre></div>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.2
 ## --</code></pre>
 <pre><code>## v ggplot2 3.4.0     v purrr   1.0.1
@@ -269,107 +262,107 @@ Our work demonstrates the value of diagnostics for building a deeper understandi
 ## v tidyr   1.3.0     v forcats 1.0.0
 ## v readr   2.1.3     
 ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
-## x plyr::arrange()   masks dplyr::arrange()
-## x purrr::compact()  masks plyr::compact()
-## x plyr::count()     masks dplyr::count()
-## x plyr::desc()      masks dplyr::desc()
-## x plyr::failwith()  masks dplyr::failwith()
-## x dplyr::filter()   masks stats::filter()
-## x plyr::id()        masks dplyr::id()
-## x dplyr::lag()      masks stats::lag()
-## x plyr::mutate()    masks dplyr::mutate()
-## x plyr::rename()    masks dplyr::rename()
-## x plyr::summarise() masks dplyr::summarise()
-## x plyr::summarize() masks dplyr::summarize()</code></pre>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="co"># graph variables</span></a>
-<a class="sourceLine" id="cb16-2" title="2">SHAPE =<span class="st"> </span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">4</span>,<span class="dv">20</span>,<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb16-3" title="3">cb_palette &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;#332288&#39;</span>,<span class="st">&#39;#88CCEE&#39;</span>,<span class="st">&#39;#EE7733&#39;</span>,<span class="st">&#39;#EE3377&#39;</span>,<span class="st">&#39;#117733&#39;</span>,<span class="st">&#39;#882255&#39;</span>,<span class="st">&#39;#44AA99&#39;</span>,<span class="st">&#39;#CCBB44&#39;</span>, <span class="st">&#39;#000000&#39;</span>)</a>
-<a class="sourceLine" id="cb16-4" title="4">mvc_col =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;#1A85FF&#39;</span>,<span class="st">&#39;#D41159&#39;</span>)</a>
-<a class="sourceLine" id="cb16-5" title="5">TSIZE =<span class="st"> </span><span class="dv">26</span></a>
-<a class="sourceLine" id="cb16-6" title="6">p_theme &lt;-<span class="st"> </span><span class="kw">theme</span>(</a>
-<a class="sourceLine" id="cb16-7" title="7">  <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">28</span>),</a>
-<a class="sourceLine" id="cb16-8" title="8">  <span class="dt">plot.title =</span> <span class="kw">element_text</span>( <span class="dt">face =</span> <span class="st">&quot;bold&quot;</span>, <span class="dt">size =</span> <span class="dv">22</span>, <span class="dt">hjust=</span><span class="fl">0.5</span>),</a>
-<a class="sourceLine" id="cb16-9" title="9">  <span class="dt">panel.border =</span> <span class="kw">element_blank</span>(),</a>
-<a class="sourceLine" id="cb16-10" title="10">  <span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),</a>
-<a class="sourceLine" id="cb16-11" title="11">  <span class="dt">legend.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">22</span>),</a>
-<a class="sourceLine" id="cb16-12" title="12">  <span class="dt">legend.text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">23</span>),</a>
-<a class="sourceLine" id="cb16-13" title="13">  <span class="dt">axis.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">23</span>),</a>
-<a class="sourceLine" id="cb16-14" title="14">  <span class="dt">axis.text =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">22</span>),</a>
-<a class="sourceLine" id="cb16-15" title="15">  <span class="dt">legend.position=</span><span class="st">&quot;bottom&quot;</span>,</a>
-<a class="sourceLine" id="cb16-16" title="16">  <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;#f1f2f5&quot;</span>,</a>
-<a class="sourceLine" id="cb16-17" title="17">                                  <span class="dt">colour =</span> <span class="st">&quot;white&quot;</span>,</a>
-<a class="sourceLine" id="cb16-18" title="18">                                  <span class="dt">size =</span> <span class="fl">0.5</span>, <span class="dt">linetype =</span> <span class="st">&quot;solid&quot;</span>)</a>
-<a class="sourceLine" id="cb16-19" title="19">)</a></code></pre></div>
+## x dplyr::arrange()   masks plyr::arrange()
+## x purrr::compact()   masks plyr::compact()
+## x dplyr::count()     masks plyr::count()
+## x dplyr::desc()      masks plyr::desc()
+## x dplyr::failwith()  masks plyr::failwith()
+## x dplyr::filter()    masks stats::filter()
+## x dplyr::id()        masks plyr::id()
+## x dplyr::lag()       masks stats::lag()
+## x dplyr::mutate()    masks plyr::mutate()
+## x dplyr::rename()    masks plyr::rename()
+## x dplyr::summarise() masks plyr::summarise()
+## x dplyr::summarize() masks plyr::summarize()</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="co"># graph variables</span></a>
+<a class="sourceLine" id="cb11-2" title="2">SHAPE =<span class="st"> </span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">6</span>,<span class="dv">0</span>,<span class="dv">4</span>,<span class="dv">20</span>,<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb11-3" title="3">cb_palette &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;#332288&#39;</span>,<span class="st">&#39;#88CCEE&#39;</span>,<span class="st">&#39;#EE7733&#39;</span>,<span class="st">&#39;#EE3377&#39;</span>,<span class="st">&#39;#117733&#39;</span>,<span class="st">&#39;#882255&#39;</span>,<span class="st">&#39;#44AA99&#39;</span>,<span class="st">&#39;#CCBB44&#39;</span>, <span class="st">&#39;#000000&#39;</span>)</a>
+<a class="sourceLine" id="cb11-4" title="4">mvc_col =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;#1A85FF&#39;</span>,<span class="st">&#39;#D41159&#39;</span>)</a>
+<a class="sourceLine" id="cb11-5" title="5">TSIZE =<span class="st"> </span><span class="dv">26</span></a>
+<a class="sourceLine" id="cb11-6" title="6">p_theme &lt;-<span class="st"> </span><span class="kw">theme</span>(</a>
+<a class="sourceLine" id="cb11-7" title="7">  <span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">28</span>),</a>
+<a class="sourceLine" id="cb11-8" title="8">  <span class="dt">plot.title =</span> <span class="kw">element_text</span>( <span class="dt">face =</span> <span class="st">&quot;bold&quot;</span>, <span class="dt">size =</span> <span class="dv">22</span>, <span class="dt">hjust=</span><span class="fl">0.5</span>),</a>
+<a class="sourceLine" id="cb11-9" title="9">  <span class="dt">panel.border =</span> <span class="kw">element_blank</span>(),</a>
+<a class="sourceLine" id="cb11-10" title="10">  <span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),</a>
+<a class="sourceLine" id="cb11-11" title="11">  <span class="dt">legend.title=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">22</span>),</a>
+<a class="sourceLine" id="cb11-12" title="12">  <span class="dt">legend.text=</span><span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">23</span>),</a>
+<a class="sourceLine" id="cb11-13" title="13">  <span class="dt">axis.title =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">23</span>),</a>
+<a class="sourceLine" id="cb11-14" title="14">  <span class="dt">axis.text =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">22</span>),</a>
+<a class="sourceLine" id="cb11-15" title="15">  <span class="dt">legend.position=</span><span class="st">&quot;bottom&quot;</span>,</a>
+<a class="sourceLine" id="cb11-16" title="16">  <span class="dt">panel.background =</span> <span class="kw">element_rect</span>(<span class="dt">fill =</span> <span class="st">&quot;#f1f2f5&quot;</span>,</a>
+<a class="sourceLine" id="cb11-17" title="17">                                  <span class="dt">colour =</span> <span class="st">&quot;white&quot;</span>,</a>
+<a class="sourceLine" id="cb11-18" title="18">                                  <span class="dt">size =</span> <span class="fl">0.5</span>, <span class="dt">linetype =</span> <span class="st">&quot;solid&quot;</span>)</a>
+<a class="sourceLine" id="cb11-19" title="19">)</a></code></pre></div>
 <pre><code>## Warning: The `size` argument of `element_rect()` is deprecated as of ggplot2 3.4.0.
 ## i Please use the `linewidth` argument instead.</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="co"># default variables</span></a>
-<a class="sourceLine" id="cb18-2" title="2">REPLICATES =<span class="st"> </span><span class="dv">50</span></a>
-<a class="sourceLine" id="cb18-3" title="3">DIMENSIONALITY =<span class="st"> </span><span class="dv">100</span></a>
-<a class="sourceLine" id="cb18-4" title="4"></a>
-<a class="sourceLine" id="cb18-5" title="5"><span class="co"># selection scheme related stuff</span></a>
-<a class="sourceLine" id="cb18-6" title="6">ACRON =<span class="st"> </span><span class="kw">tolower</span>(<span class="kw">c</span>(<span class="st">&#39;TRU&#39;</span>,<span class="st">&#39;TOR&#39;</span>,<span class="st">&#39;LEX&#39;</span>,<span class="st">&#39;GFS&#39;</span>,<span class="st">&#39;PFS&#39;</span>,<span class="st">&#39;NDS&#39;</span>,<span class="st">&#39;NOV&#39;</span>,<span class="st">&#39;RAN&#39;</span>))</a>
-<a class="sourceLine" id="cb18-7" title="7">NAMES =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Truncation (tru)&#39;</span>,<span class="st">&#39;Tournament (tor)&#39;</span>,<span class="st">&#39;Lexicase (lex)&#39;</span>, <span class="st">&#39;Genotypic Fitness Sharing (gfs)&#39;</span>,<span class="st">&#39;Phenotypic Fitness Sharing (pfs)&#39;</span>,<span class="st">&#39;Nondominated Sorting (nds)&#39;</span>,<span class="st">&#39;Novelty Search (nov)&#39;</span>,<span class="st">&#39;Random (ran)&#39;</span>)</a>
-<a class="sourceLine" id="cb18-8" title="8">SCHEME =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;TRUNCATION&#39;</span>,<span class="st">&#39;TOURNAMENT&#39;</span>,<span class="st">&#39;LEXICASE&#39;</span>,<span class="st">&#39;FITSHARING_G&#39;</span>,<span class="st">&#39;FITSHARING_P&#39;</span>,<span class="st">&#39;NONDOMINATEDSORTING&#39;</span>,<span class="st">&#39;NOVELTY&#39;</span>,<span class="st">&#39;TOURNAMENT&#39;</span>)</a>
-<a class="sourceLine" id="cb18-9" title="9">ORDER =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Truncation (tru)&#39;</span>,<span class="st">&#39;Tournament (tor)&#39;</span>,<span class="st">&#39;Lexicase (lex)&#39;</span>, <span class="st">&#39;Genotypic Fitness Sharing (gfs)&#39;</span>,<span class="st">&#39;Phenotypic Fitness Sharing (pfs)&#39;</span>,<span class="st">&#39;Nondominated Sorting (nds)&#39;</span>,<span class="st">&#39;Novelty Search (nov)&#39;</span>,<span class="st">&#39;Random (ran)&#39;</span>)</a>
-<a class="sourceLine" id="cb18-10" title="10"></a>
-<a class="sourceLine" id="cb18-11" title="11"><span class="co"># selection scheme parameters</span></a>
-<a class="sourceLine" id="cb18-12" title="12">TR_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>)</a>
-<a class="sourceLine" id="cb18-13" title="13">TS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>)</a>
-<a class="sourceLine" id="cb18-14" title="14">FS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">2.5</span>, <span class="fl">5.0</span>)</a>
-<a class="sourceLine" id="cb18-15" title="15">ND_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">2.5</span>, <span class="fl">5.0</span>)</a>
-<a class="sourceLine" id="cb18-16" title="16">NS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">15</span>, <span class="dv">30</span>)</a>
-<a class="sourceLine" id="cb18-17" title="17"></a>
-<a class="sourceLine" id="cb18-18" title="18"><span class="co"># selection scheme parameter we are looking for</span></a>
-<a class="sourceLine" id="cb18-19" title="19">PARAM =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;8&#39;</span>, <span class="st">&#39;8&#39;</span>, <span class="st">&#39;0.0&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;15&#39;</span>, <span class="st">&#39;1&#39;</span>)</a>
-<a class="sourceLine" id="cb18-20" title="20"></a>
-<a class="sourceLine" id="cb18-21" title="21"><span class="co"># for diagnostic loops</span></a>
-<a class="sourceLine" id="cb18-22" title="22">DIAGNOSTIC =<span class="st"> </span><span class="kw">tolower</span>(<span class="kw">c</span>(<span class="st">&#39;EXPLOITATION_RATE&#39;</span>, <span class="st">&#39;ORDERED_EXPLOITATION&#39;</span>, <span class="st">&#39;CONTRADICTORY_OBJECTIVES&#39;</span>, <span class="st">&#39;MULTIPATH_EXPLORATION&#39;</span>))</a>
-<a class="sourceLine" id="cb18-23" title="23"></a>
-<a class="sourceLine" id="cb18-24" title="24"><span class="co"># data diractory for gh-pages</span></a>
-<a class="sourceLine" id="cb18-25" title="25">DATA_DIR =<span class="st"> &#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/&#39;</span></a>
-<a class="sourceLine" id="cb18-26" title="26"></a>
-<a class="sourceLine" id="cb18-27" title="27"><span class="co">######################################################################################</span></a>
-<a class="sourceLine" id="cb18-28" title="28"><span class="co"># go through each diagnostic and collect over time data for cross comparison (cc)</span></a>
-<a class="sourceLine" id="cb18-29" title="29"><span class="kw">print</span>(<span class="st">&#39;Collecting over time data...&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="co"># default variables</span></a>
+<a class="sourceLine" id="cb13-2" title="2">REPLICATES =<span class="st"> </span><span class="dv">50</span></a>
+<a class="sourceLine" id="cb13-3" title="3">DIMENSIONALITY =<span class="st"> </span><span class="dv">100</span></a>
+<a class="sourceLine" id="cb13-4" title="4"></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="co"># selection scheme related stuff</span></a>
+<a class="sourceLine" id="cb13-6" title="6">ACRON =<span class="st"> </span><span class="kw">tolower</span>(<span class="kw">c</span>(<span class="st">&#39;TRU&#39;</span>,<span class="st">&#39;TOR&#39;</span>,<span class="st">&#39;LEX&#39;</span>,<span class="st">&#39;GFS&#39;</span>,<span class="st">&#39;PFS&#39;</span>,<span class="st">&#39;NDS&#39;</span>,<span class="st">&#39;NOV&#39;</span>,<span class="st">&#39;RAN&#39;</span>))</a>
+<a class="sourceLine" id="cb13-7" title="7">NAMES =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Truncation (tru)&#39;</span>,<span class="st">&#39;Tournament (tor)&#39;</span>,<span class="st">&#39;Lexicase (lex)&#39;</span>, <span class="st">&#39;Genotypic Fitness Sharing (gfs)&#39;</span>,<span class="st">&#39;Phenotypic Fitness Sharing (pfs)&#39;</span>,<span class="st">&#39;Nondominated Sorting (nds)&#39;</span>,<span class="st">&#39;Novelty Search (nov)&#39;</span>,<span class="st">&#39;Random (ran)&#39;</span>)</a>
+<a class="sourceLine" id="cb13-8" title="8">SCHEME =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;TRUNCATION&#39;</span>,<span class="st">&#39;TOURNAMENT&#39;</span>,<span class="st">&#39;LEXICASE&#39;</span>,<span class="st">&#39;FITSHARING_G&#39;</span>,<span class="st">&#39;FITSHARING_P&#39;</span>,<span class="st">&#39;NONDOMINATEDSORTING&#39;</span>,<span class="st">&#39;NOVELTY&#39;</span>,<span class="st">&#39;TOURNAMENT&#39;</span>)</a>
+<a class="sourceLine" id="cb13-9" title="9">ORDER =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;Truncation (tru)&#39;</span>,<span class="st">&#39;Tournament (tor)&#39;</span>,<span class="st">&#39;Lexicase (lex)&#39;</span>, <span class="st">&#39;Genotypic Fitness Sharing (gfs)&#39;</span>,<span class="st">&#39;Phenotypic Fitness Sharing (pfs)&#39;</span>,<span class="st">&#39;Nondominated Sorting (nds)&#39;</span>,<span class="st">&#39;Novelty Search (nov)&#39;</span>,<span class="st">&#39;Random (ran)&#39;</span>)</a>
+<a class="sourceLine" id="cb13-10" title="10"></a>
+<a class="sourceLine" id="cb13-11" title="11"><span class="co"># selection scheme parameters</span></a>
+<a class="sourceLine" id="cb13-12" title="12">TR_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>)</a>
+<a class="sourceLine" id="cb13-13" title="13">TS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>)</a>
+<a class="sourceLine" id="cb13-14" title="14">FS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">2.5</span>, <span class="fl">5.0</span>)</a>
+<a class="sourceLine" id="cb13-15" title="15">ND_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">2.5</span>, <span class="fl">5.0</span>)</a>
+<a class="sourceLine" id="cb13-16" title="16">NS_LIST =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">15</span>, <span class="dv">30</span>)</a>
+<a class="sourceLine" id="cb13-17" title="17"></a>
+<a class="sourceLine" id="cb13-18" title="18"><span class="co"># selection scheme parameter we are looking for</span></a>
+<a class="sourceLine" id="cb13-19" title="19">PARAM =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;8&#39;</span>, <span class="st">&#39;8&#39;</span>, <span class="st">&#39;0.0&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;0.3&#39;</span>, <span class="st">&#39;15&#39;</span>, <span class="st">&#39;1&#39;</span>)</a>
+<a class="sourceLine" id="cb13-20" title="20"></a>
+<a class="sourceLine" id="cb13-21" title="21"><span class="co"># for diagnostic loops</span></a>
+<a class="sourceLine" id="cb13-22" title="22">DIAGNOSTIC =<span class="st"> </span><span class="kw">tolower</span>(<span class="kw">c</span>(<span class="st">&#39;EXPLOITATION_RATE&#39;</span>, <span class="st">&#39;ORDERED_EXPLOITATION&#39;</span>, <span class="st">&#39;CONTRADICTORY_OBJECTIVES&#39;</span>, <span class="st">&#39;MULTIPATH_EXPLORATION&#39;</span>))</a>
+<a class="sourceLine" id="cb13-23" title="23"></a>
+<a class="sourceLine" id="cb13-24" title="24"><span class="co"># data diractory for gh-pages</span></a>
+<a class="sourceLine" id="cb13-25" title="25">DATA_DIR =<span class="st"> &#39;/opt/ECJ-2022-suite-of-diagnostics-for-selection-schemes/DATA-FINAL/&#39;</span></a>
+<a class="sourceLine" id="cb13-26" title="26"></a>
+<a class="sourceLine" id="cb13-27" title="27"><span class="co">######################################################################################</span></a>
+<a class="sourceLine" id="cb13-28" title="28"><span class="co"># go through each diagnostic and collect over time data for cross comparison (cc)</span></a>
+<a class="sourceLine" id="cb13-29" title="29"><span class="kw">print</span>(<span class="st">&#39;Collecting over time data...&#39;</span>)</a></code></pre></div>
 <pre><code>## [1] &quot;Collecting over time data...&quot;</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">cc_over_time =<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb20-2" title="2">cc_over_time_mvc =<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb20-3" title="3"><span class="cf">for</span>(diagnostic <span class="cf">in</span> DIAGNOSTIC)</a>
-<a class="sourceLine" id="cb20-4" title="4">{</a>
-<a class="sourceLine" id="cb20-5" title="5">  <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;DIAGNOSTIC&#39;</span>,diagnostic))</a>
-<a class="sourceLine" id="cb20-6" title="6">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</a>
-<a class="sourceLine" id="cb20-7" title="7">  {</a>
-<a class="sourceLine" id="cb20-8" title="8">    <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;SCHEME:&#39;</span>,SCHEME[i]))</a>
-<a class="sourceLine" id="cb20-9" title="9">    dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/over-time-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb20-10" title="10">    dir_mvc =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/over-time-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb20-11" title="11"></a>
-<a class="sourceLine" id="cb20-12" title="12">    <span class="co"># read csv</span></a>
-<a class="sourceLine" id="cb20-13" title="13">    df =<span class="st"> </span><span class="kw">read.csv</span>(dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb20-14" title="14">    df_mvc =<span class="st"> </span><span class="kw">read.csv</span>(dir_mvc, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb20-15" title="15"></a>
-<a class="sourceLine" id="cb20-16" title="16">    <span class="co"># add names/tags</span></a>
-<a class="sourceLine" id="cb20-17" title="17">    df<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
-<a class="sourceLine" id="cb20-18" title="18">    df<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> =<span class="st"> </span>NAMES[i]</a>
-<a class="sourceLine" id="cb20-19" title="19">    df<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
-<a class="sourceLine" id="cb20-20" title="20"></a>
-<a class="sourceLine" id="cb20-21" title="21">    df_mvc<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
-<a class="sourceLine" id="cb20-22" title="22">    df_mvc<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> =<span class="st"> </span>NAMES[i]</a>
-<a class="sourceLine" id="cb20-23" title="23">    df_mvc<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
-<a class="sourceLine" id="cb20-24" title="24"></a>
-<a class="sourceLine" id="cb20-25" title="25">    <span class="co"># add to cc_over_time data frame</span></a>
-<a class="sourceLine" id="cb20-26" title="26">    <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb20-27" title="27">    {</a>
-<a class="sourceLine" id="cb20-28" title="28">      cc_over_time =<span class="st"> </span><span class="kw">rbind</span>(cc_over_time, df)</a>
-<a class="sourceLine" id="cb20-29" title="29">      cc_over_time_mvc =<span class="st"> </span><span class="kw">rbind</span>(cc_over_time_mvc, df_mvc)</a>
-<a class="sourceLine" id="cb20-30" title="30">    }</a>
-<a class="sourceLine" id="cb20-31" title="31">    <span class="cf">else</span></a>
-<a class="sourceLine" id="cb20-32" title="32">    {</a>
-<a class="sourceLine" id="cb20-33" title="33">      cc_over_time =<span class="st"> </span><span class="kw">rbind</span>(cc_over_time, <span class="kw">filter</span>(df, trt <span class="op">==</span><span class="st"> </span>PARAM[i]))</a>
-<a class="sourceLine" id="cb20-34" title="34">      cc_over_time_mvc =<span class="st"> </span><span class="kw">rbind</span>(cc_over_time_mvc, <span class="kw">filter</span>(df_mvc, trt <span class="op">==</span><span class="st"> </span>PARAM[i]))</a>
-<a class="sourceLine" id="cb20-35" title="35">    }</a>
-<a class="sourceLine" id="cb20-36" title="36">  }</a>
-<a class="sourceLine" id="cb20-37" title="37">  <span class="kw">rm</span>(df);  <span class="kw">rm</span>(df_mvc);  <span class="kw">rm</span>(dir);   <span class="kw">rm</span>(dir_mvc)</a>
-<a class="sourceLine" id="cb20-38" title="38">}</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">cc_over_time =<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb15-2" title="2">cc_over_time_mvc =<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="cf">for</span>(diagnostic <span class="cf">in</span> DIAGNOSTIC)</a>
+<a class="sourceLine" id="cb15-4" title="4">{</a>
+<a class="sourceLine" id="cb15-5" title="5">  <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;DIAGNOSTIC&#39;</span>,diagnostic))</a>
+<a class="sourceLine" id="cb15-6" title="6">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb15-7" title="7">  {</a>
+<a class="sourceLine" id="cb15-8" title="8">    <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;SCHEME:&#39;</span>,SCHEME[i]))</a>
+<a class="sourceLine" id="cb15-9" title="9">    dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/over-time-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb15-10" title="10">    dir_mvc =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/over-time-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb15-11" title="11"></a>
+<a class="sourceLine" id="cb15-12" title="12">    <span class="co"># read csv</span></a>
+<a class="sourceLine" id="cb15-13" title="13">    df =<span class="st"> </span><span class="kw">read.csv</span>(dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb15-14" title="14">    df_mvc =<span class="st"> </span><span class="kw">read.csv</span>(dir_mvc, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb15-15" title="15"></a>
+<a class="sourceLine" id="cb15-16" title="16">    <span class="co"># add names/tags</span></a>
+<a class="sourceLine" id="cb15-17" title="17">    df<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
+<a class="sourceLine" id="cb15-18" title="18">    df<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> =<span class="st"> </span>NAMES[i]</a>
+<a class="sourceLine" id="cb15-19" title="19">    df<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
+<a class="sourceLine" id="cb15-20" title="20"></a>
+<a class="sourceLine" id="cb15-21" title="21">    df_mvc<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
+<a class="sourceLine" id="cb15-22" title="22">    df_mvc<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> =<span class="st"> </span>NAMES[i]</a>
+<a class="sourceLine" id="cb15-23" title="23">    df_mvc<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
+<a class="sourceLine" id="cb15-24" title="24"></a>
+<a class="sourceLine" id="cb15-25" title="25">    <span class="co"># add to cc_over_time data frame</span></a>
+<a class="sourceLine" id="cb15-26" title="26">    <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb15-27" title="27">    {</a>
+<a class="sourceLine" id="cb15-28" title="28">      cc_over_time =<span class="st"> </span><span class="kw">rbind</span>(cc_over_time, df)</a>
+<a class="sourceLine" id="cb15-29" title="29">      cc_over_time_mvc =<span class="st"> </span><span class="kw">rbind</span>(cc_over_time_mvc, df_mvc)</a>
+<a class="sourceLine" id="cb15-30" title="30">    }</a>
+<a class="sourceLine" id="cb15-31" title="31">    <span class="cf">else</span></a>
+<a class="sourceLine" id="cb15-32" title="32">    {</a>
+<a class="sourceLine" id="cb15-33" title="33">      cc_over_time =<span class="st"> </span><span class="kw">rbind</span>(cc_over_time, <span class="kw">filter</span>(df, trt <span class="op">==</span><span class="st"> </span>PARAM[i]))</a>
+<a class="sourceLine" id="cb15-34" title="34">      cc_over_time_mvc =<span class="st"> </span><span class="kw">rbind</span>(cc_over_time_mvc, <span class="kw">filter</span>(df_mvc, trt <span class="op">==</span><span class="st"> </span>PARAM[i]))</a>
+<a class="sourceLine" id="cb15-35" title="35">    }</a>
+<a class="sourceLine" id="cb15-36" title="36">  }</a>
+<a class="sourceLine" id="cb15-37" title="37">  <span class="kw">rm</span>(df);  <span class="kw">rm</span>(df_mvc);  <span class="kw">rm</span>(dir);   <span class="kw">rm</span>(dir_mvc)</a>
+<a class="sourceLine" id="cb15-38" title="38">}</a></code></pre></div>
 <pre><code>## [1] &quot;DIAGNOSTIC exploitation_rate&quot;
 ## [1] &quot;SCHEME: TRUNCATION&quot;
 ## [1] &quot;SCHEME: TOURNAMENT&quot;
@@ -406,59 +399,59 @@ Our work demonstrates the value of diagnostics for building a deeper understandi
 ## [1] &quot;SCHEME: NONDOMINATEDSORTING&quot;
 ## [1] &quot;SCHEME: NOVELTY&quot;
 ## [1] &quot;SCHEME: TOURNAMENT&quot;</code></pre>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">cc_over_time<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_over_time<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span>, <span class="dt">levels =</span> ORDER)</a>
-<a class="sourceLine" id="cb22-2" title="2">cc_over_time<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_over_time<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
-<a class="sourceLine" id="cb22-3" title="3">cc_over_time<span class="op">$</span>uni_str_pos =<span class="st"> </span>cc_over_time<span class="op">$</span>uni_str_pos <span class="op">+</span><span class="st"> </span>cc_over_time<span class="op">$</span>arc_acti_gene <span class="op">-</span><span class="st"> </span>cc_over_time<span class="op">$</span>overlap</a>
-<a class="sourceLine" id="cb22-4" title="4">cc_over_time =<span class="st"> </span><span class="kw">subset</span>(cc_over_time, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(trt,pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))</a>
-<a class="sourceLine" id="cb22-5" title="5"></a>
-<a class="sourceLine" id="cb22-6" title="6">cc_over_time_mvc<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_over_time<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span>, <span class="dt">levels =</span> ORDER)</a>
-<a class="sourceLine" id="cb22-7" title="7">cc_over_time_mvc<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_over_time<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
-<a class="sourceLine" id="cb22-8" title="8">cc_over_time_mvc<span class="op">$</span>uni_str_pos =<span class="st"> </span>cc_over_time_mvc<span class="op">$</span>uni_str_pos <span class="op">+</span><span class="st"> </span>cc_over_time_mvc<span class="op">$</span>arc_acti_gene <span class="op">-</span><span class="st"> </span>cc_over_time_mvc<span class="op">$</span>overlap</a>
-<a class="sourceLine" id="cb22-9" title="9">cc_over_time_mvc =<span class="st"> </span><span class="kw">subset</span>(cc_over_time_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(trt,pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))</a>
-<a class="sourceLine" id="cb22-10" title="10"></a>
-<a class="sourceLine" id="cb22-11" title="11"></a>
-<a class="sourceLine" id="cb22-12" title="12"><span class="co">######################################################################################</span></a>
-<a class="sourceLine" id="cb22-13" title="13"><span class="co"># go through each diagnostic and collect best over time for cross comparison (cc)</span></a>
-<a class="sourceLine" id="cb22-14" title="14">cc_best =<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb22-15" title="15">cc_best_mvc =<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb22-16" title="16"><span class="cf">for</span>(diagnostic <span class="cf">in</span> DIAGNOSTIC)</a>
-<a class="sourceLine" id="cb22-17" title="17">{</a>
-<a class="sourceLine" id="cb22-18" title="18">  <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;DIAGNOSTIC&#39;</span>,diagnostic))</a>
-<a class="sourceLine" id="cb22-19" title="19">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</a>
-<a class="sourceLine" id="cb22-20" title="20">  {</a>
-<a class="sourceLine" id="cb22-21" title="21">    <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;SCHEME:&#39;</span>,SCHEME[i]))</a>
-<a class="sourceLine" id="cb22-22" title="22">    dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/best-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb22-23" title="23">    dir_mvc =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/best-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb22-24" title="24"></a>
-<a class="sourceLine" id="cb22-25" title="25">    <span class="co"># read csv</span></a>
-<a class="sourceLine" id="cb22-26" title="26">    df =<span class="st"> </span><span class="kw">read.csv</span>(dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb22-27" title="27">    df_mvc =<span class="st"> </span><span class="kw">read.csv</span>(dir_mvc, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb22-28" title="28"></a>
-<a class="sourceLine" id="cb22-29" title="29">    <span class="co"># add names/tags</span></a>
-<a class="sourceLine" id="cb22-30" title="30">    df<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
-<a class="sourceLine" id="cb22-31" title="31">    df<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> =<span class="st"> </span>NAMES[i]</a>
-<a class="sourceLine" id="cb22-32" title="32">    df<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
-<a class="sourceLine" id="cb22-33" title="33">    df =<span class="st"> </span><span class="kw">subset</span>(df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(Diagnostic,SEL) )</a>
-<a class="sourceLine" id="cb22-34" title="34"></a>
-<a class="sourceLine" id="cb22-35" title="35">    df_mvc<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
-<a class="sourceLine" id="cb22-36" title="36">    df_mvc<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> =<span class="st"> </span>NAMES[i]</a>
-<a class="sourceLine" id="cb22-37" title="37">    df_mvc<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
-<a class="sourceLine" id="cb22-38" title="38">    df_mvc =<span class="st"> </span><span class="kw">subset</span>(df_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(Diagnostic,SEL) )</a>
-<a class="sourceLine" id="cb22-39" title="39"></a>
-<a class="sourceLine" id="cb22-40" title="40">    <span class="co"># add to cc_over_time data frame</span></a>
-<a class="sourceLine" id="cb22-41" title="41">    <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb22-42" title="42">    {</a>
-<a class="sourceLine" id="cb22-43" title="43">      cc_best =<span class="st"> </span><span class="kw">rbind</span>(cc_best, df)</a>
-<a class="sourceLine" id="cb22-44" title="44">      cc_best_mvc =<span class="st"> </span><span class="kw">rbind</span>(cc_best_mvc, df_mvc)</a>
-<a class="sourceLine" id="cb22-45" title="45">    }</a>
-<a class="sourceLine" id="cb22-46" title="46">    <span class="cf">else</span></a>
-<a class="sourceLine" id="cb22-47" title="47">    {</a>
-<a class="sourceLine" id="cb22-48" title="48">      cc_best =<span class="st"> </span><span class="kw">rbind</span>(cc_best, <span class="kw">filter</span>(df, trt <span class="op">==</span><span class="st"> </span>PARAM[i]))</a>
-<a class="sourceLine" id="cb22-49" title="49">      cc_best_mvc =<span class="st"> </span><span class="kw">rbind</span>(cc_best_mvc, <span class="kw">filter</span>(df_mvc, trt <span class="op">==</span><span class="st"> </span>PARAM[i]))</a>
-<a class="sourceLine" id="cb22-50" title="50">    }</a>
-<a class="sourceLine" id="cb22-51" title="51">  }</a>
-<a class="sourceLine" id="cb22-52" title="52">  <span class="kw">rm</span>(df);  <span class="kw">rm</span>(df_mvc);  <span class="kw">rm</span>(dir);   <span class="kw">rm</span>(dir_mvc)</a>
-<a class="sourceLine" id="cb22-53" title="53">}</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">cc_over_time<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_over_time<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span>, <span class="dt">levels =</span> ORDER)</a>
+<a class="sourceLine" id="cb17-2" title="2">cc_over_time<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_over_time<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
+<a class="sourceLine" id="cb17-3" title="3">cc_over_time<span class="op">$</span>uni_str_pos =<span class="st"> </span>cc_over_time<span class="op">$</span>uni_str_pos <span class="op">+</span><span class="st"> </span>cc_over_time<span class="op">$</span>arc_acti_gene <span class="op">-</span><span class="st"> </span>cc_over_time<span class="op">$</span>overlap</a>
+<a class="sourceLine" id="cb17-4" title="4">cc_over_time =<span class="st"> </span><span class="kw">subset</span>(cc_over_time, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(trt,pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))</a>
+<a class="sourceLine" id="cb17-5" title="5"></a>
+<a class="sourceLine" id="cb17-6" title="6">cc_over_time_mvc<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_over_time<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span>, <span class="dt">levels =</span> ORDER)</a>
+<a class="sourceLine" id="cb17-7" title="7">cc_over_time_mvc<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_over_time<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
+<a class="sourceLine" id="cb17-8" title="8">cc_over_time_mvc<span class="op">$</span>uni_str_pos =<span class="st"> </span>cc_over_time_mvc<span class="op">$</span>uni_str_pos <span class="op">+</span><span class="st"> </span>cc_over_time_mvc<span class="op">$</span>arc_acti_gene <span class="op">-</span><span class="st"> </span>cc_over_time_mvc<span class="op">$</span>overlap</a>
+<a class="sourceLine" id="cb17-9" title="9">cc_over_time_mvc =<span class="st"> </span><span class="kw">subset</span>(cc_over_time_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(trt,pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))</a>
+<a class="sourceLine" id="cb17-10" title="10"></a>
+<a class="sourceLine" id="cb17-11" title="11"></a>
+<a class="sourceLine" id="cb17-12" title="12"><span class="co">######################################################################################</span></a>
+<a class="sourceLine" id="cb17-13" title="13"><span class="co"># go through each diagnostic and collect best over time for cross comparison (cc)</span></a>
+<a class="sourceLine" id="cb17-14" title="14">cc_best =<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb17-15" title="15">cc_best_mvc =<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb17-16" title="16"><span class="cf">for</span>(diagnostic <span class="cf">in</span> DIAGNOSTIC)</a>
+<a class="sourceLine" id="cb17-17" title="17">{</a>
+<a class="sourceLine" id="cb17-18" title="18">  <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;DIAGNOSTIC&#39;</span>,diagnostic))</a>
+<a class="sourceLine" id="cb17-19" title="19">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb17-20" title="20">  {</a>
+<a class="sourceLine" id="cb17-21" title="21">    <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;SCHEME:&#39;</span>,SCHEME[i]))</a>
+<a class="sourceLine" id="cb17-22" title="22">    dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/best-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb17-23" title="23">    dir_mvc =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/best-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb17-24" title="24"></a>
+<a class="sourceLine" id="cb17-25" title="25">    <span class="co"># read csv</span></a>
+<a class="sourceLine" id="cb17-26" title="26">    df =<span class="st"> </span><span class="kw">read.csv</span>(dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb17-27" title="27">    df_mvc =<span class="st"> </span><span class="kw">read.csv</span>(dir_mvc, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb17-28" title="28"></a>
+<a class="sourceLine" id="cb17-29" title="29">    <span class="co"># add names/tags</span></a>
+<a class="sourceLine" id="cb17-30" title="30">    df<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
+<a class="sourceLine" id="cb17-31" title="31">    df<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> =<span class="st"> </span>NAMES[i]</a>
+<a class="sourceLine" id="cb17-32" title="32">    df<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
+<a class="sourceLine" id="cb17-33" title="33">    df =<span class="st"> </span><span class="kw">subset</span>(df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(Diagnostic,SEL) )</a>
+<a class="sourceLine" id="cb17-34" title="34"></a>
+<a class="sourceLine" id="cb17-35" title="35">    df_mvc<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
+<a class="sourceLine" id="cb17-36" title="36">    df_mvc<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> =<span class="st"> </span>NAMES[i]</a>
+<a class="sourceLine" id="cb17-37" title="37">    df_mvc<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
+<a class="sourceLine" id="cb17-38" title="38">    df_mvc =<span class="st"> </span><span class="kw">subset</span>(df_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(Diagnostic,SEL) )</a>
+<a class="sourceLine" id="cb17-39" title="39"></a>
+<a class="sourceLine" id="cb17-40" title="40">    <span class="co"># add to cc_over_time data frame</span></a>
+<a class="sourceLine" id="cb17-41" title="41">    <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb17-42" title="42">    {</a>
+<a class="sourceLine" id="cb17-43" title="43">      cc_best =<span class="st"> </span><span class="kw">rbind</span>(cc_best, df)</a>
+<a class="sourceLine" id="cb17-44" title="44">      cc_best_mvc =<span class="st"> </span><span class="kw">rbind</span>(cc_best_mvc, df_mvc)</a>
+<a class="sourceLine" id="cb17-45" title="45">    }</a>
+<a class="sourceLine" id="cb17-46" title="46">    <span class="cf">else</span></a>
+<a class="sourceLine" id="cb17-47" title="47">    {</a>
+<a class="sourceLine" id="cb17-48" title="48">      cc_best =<span class="st"> </span><span class="kw">rbind</span>(cc_best, <span class="kw">filter</span>(df, trt <span class="op">==</span><span class="st"> </span>PARAM[i]))</a>
+<a class="sourceLine" id="cb17-49" title="49">      cc_best_mvc =<span class="st"> </span><span class="kw">rbind</span>(cc_best_mvc, <span class="kw">filter</span>(df_mvc, trt <span class="op">==</span><span class="st"> </span>PARAM[i]))</a>
+<a class="sourceLine" id="cb17-50" title="50">    }</a>
+<a class="sourceLine" id="cb17-51" title="51">  }</a>
+<a class="sourceLine" id="cb17-52" title="52">  <span class="kw">rm</span>(df);  <span class="kw">rm</span>(df_mvc);  <span class="kw">rm</span>(dir);   <span class="kw">rm</span>(dir_mvc)</a>
+<a class="sourceLine" id="cb17-53" title="53">}</a></code></pre></div>
 <pre><code>## [1] &quot;DIAGNOSTIC exploitation_rate&quot;
 ## [1] &quot;SCHEME: TRUNCATION&quot;
 ## [1] &quot;SCHEME: TOURNAMENT&quot;
@@ -495,50 +488,50 @@ Our work demonstrates the value of diagnostics for building a deeper understandi
 ## [1] &quot;SCHEME: NONDOMINATEDSORTING&quot;
 ## [1] &quot;SCHEME: NOVELTY&quot;
 ## [1] &quot;SCHEME: TOURNAMENT&quot;</code></pre>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">cc_best<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_best<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
-<a class="sourceLine" id="cb24-2" title="2">cc_best =<span class="st"> </span><span class="kw">subset</span>(cc_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(trt,gen))</a>
-<a class="sourceLine" id="cb24-3" title="3">cc_best =<span class="st"> </span><span class="kw">filter</span>(cc_best, col <span class="op">==</span><span class="st"> &#39;pop_fit_max&#39;</span> <span class="op">|</span><span class="st"> </span>col <span class="op">==</span><span class="st"> &#39;pop_uni_obj&#39;</span>)</a>
-<a class="sourceLine" id="cb24-4" title="4"></a>
-<a class="sourceLine" id="cb24-5" title="5">cc_best_mvc<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_best_mvc<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
-<a class="sourceLine" id="cb24-6" title="6">cc_best_mvc =<span class="st"> </span><span class="kw">subset</span>(cc_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(trt,gen))</a>
-<a class="sourceLine" id="cb24-7" title="7">cc_best_mvc =<span class="st"> </span><span class="kw">subset</span>(cc_best_mvc, col <span class="op">==</span><span class="st"> &#39;pop_fit_max&#39;</span> <span class="op">|</span><span class="st"> </span>col <span class="op">==</span><span class="st"> &#39;pop_uni_obj&#39;</span>)</a>
-<a class="sourceLine" id="cb24-8" title="8"></a>
-<a class="sourceLine" id="cb24-9" title="9"></a>
-<a class="sourceLine" id="cb24-10" title="10"><span class="co">######################################################################################</span></a>
-<a class="sourceLine" id="cb24-11" title="11"><span class="co"># get generation a satisfactory solution is found for cross comparison (cc)</span></a>
-<a class="sourceLine" id="cb24-12" title="12">cc_ssf  =<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb24-13" title="13"><span class="cf">for</span>(diagnostic <span class="cf">in</span> DIAGNOSTIC)</a>
-<a class="sourceLine" id="cb24-14" title="14">{</a>
-<a class="sourceLine" id="cb24-15" title="15">  <span class="cf">if</span>(diagnostic <span class="op">==</span><span class="st"> &#39;contradictory_objectives&#39;</span> <span class="op">|</span><span class="st"> </span>diagnostic <span class="op">==</span><span class="st"> &#39;multipath_exploration&#39;</span>)</a>
-<a class="sourceLine" id="cb24-16" title="16">  {<span class="cf">next</span>}</a>
-<a class="sourceLine" id="cb24-17" title="17"></a>
-<a class="sourceLine" id="cb24-18" title="18">  <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;DIAGNOSTIC&#39;</span>,diagnostic))</a>
-<a class="sourceLine" id="cb24-19" title="19">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</a>
-<a class="sourceLine" id="cb24-20" title="20">  {</a>
-<a class="sourceLine" id="cb24-21" title="21">    <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;SCHEME:&#39;</span>,SCHEME[i]))</a>
-<a class="sourceLine" id="cb24-22" title="22">    dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/ssf-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb24-23" title="23"></a>
-<a class="sourceLine" id="cb24-24" title="24">    <span class="co"># read csv</span></a>
-<a class="sourceLine" id="cb24-25" title="25">    df =<span class="st"> </span><span class="kw">read.csv</span>(dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb24-26" title="26"></a>
-<a class="sourceLine" id="cb24-27" title="27">    <span class="co"># add names/tags</span></a>
-<a class="sourceLine" id="cb24-28" title="28">    df<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
-<a class="sourceLine" id="cb24-29" title="29">    df<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> =<span class="st"> </span>NAMES[i]</a>
-<a class="sourceLine" id="cb24-30" title="30">    df<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
-<a class="sourceLine" id="cb24-31" title="31">    df =<span class="st"> </span><span class="kw">subset</span>(df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(Diagnostic,SEL) )</a>
-<a class="sourceLine" id="cb24-32" title="32"></a>
-<a class="sourceLine" id="cb24-33" title="33">    <span class="co"># add to cc_over_time data frame</span></a>
-<a class="sourceLine" id="cb24-34" title="34">    <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb24-35" title="35">    {</a>
-<a class="sourceLine" id="cb24-36" title="36">      cc_ssf =<span class="st"> </span><span class="kw">rbind</span>(cc_ssf, df)</a>
-<a class="sourceLine" id="cb24-37" title="37">    }</a>
-<a class="sourceLine" id="cb24-38" title="38">    <span class="cf">else</span></a>
-<a class="sourceLine" id="cb24-39" title="39">    {</a>
-<a class="sourceLine" id="cb24-40" title="40">      cc_ssf =<span class="st"> </span><span class="kw">rbind</span>(cc_ssf, <span class="kw">filter</span>(df, trt <span class="op">==</span><span class="st"> </span>PARAM[i]))</a>
-<a class="sourceLine" id="cb24-41" title="41">    }</a>
-<a class="sourceLine" id="cb24-42" title="42">  }</a>
-<a class="sourceLine" id="cb24-43" title="43">  <span class="kw">rm</span>(df); <span class="kw">rm</span>(dir);</a>
-<a class="sourceLine" id="cb24-44" title="44">}</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">cc_best<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_best<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
+<a class="sourceLine" id="cb19-2" title="2">cc_best =<span class="st"> </span><span class="kw">subset</span>(cc_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(trt,gen))</a>
+<a class="sourceLine" id="cb19-3" title="3">cc_best =<span class="st"> </span><span class="kw">filter</span>(cc_best, col <span class="op">==</span><span class="st"> &#39;pop_fit_max&#39;</span> <span class="op">|</span><span class="st"> </span>col <span class="op">==</span><span class="st"> &#39;pop_uni_obj&#39;</span>)</a>
+<a class="sourceLine" id="cb19-4" title="4"></a>
+<a class="sourceLine" id="cb19-5" title="5">cc_best_mvc<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_best_mvc<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
+<a class="sourceLine" id="cb19-6" title="6">cc_best_mvc =<span class="st"> </span><span class="kw">subset</span>(cc_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(trt,gen))</a>
+<a class="sourceLine" id="cb19-7" title="7">cc_best_mvc =<span class="st"> </span><span class="kw">subset</span>(cc_best_mvc, col <span class="op">==</span><span class="st"> &#39;pop_fit_max&#39;</span> <span class="op">|</span><span class="st"> </span>col <span class="op">==</span><span class="st"> &#39;pop_uni_obj&#39;</span>)</a>
+<a class="sourceLine" id="cb19-8" title="8"></a>
+<a class="sourceLine" id="cb19-9" title="9"></a>
+<a class="sourceLine" id="cb19-10" title="10"><span class="co">######################################################################################</span></a>
+<a class="sourceLine" id="cb19-11" title="11"><span class="co"># get generation a satisfactory solution is found for cross comparison (cc)</span></a>
+<a class="sourceLine" id="cb19-12" title="12">cc_ssf  =<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb19-13" title="13"><span class="cf">for</span>(diagnostic <span class="cf">in</span> DIAGNOSTIC)</a>
+<a class="sourceLine" id="cb19-14" title="14">{</a>
+<a class="sourceLine" id="cb19-15" title="15">  <span class="cf">if</span>(diagnostic <span class="op">==</span><span class="st"> &#39;contradictory_objectives&#39;</span> <span class="op">|</span><span class="st"> </span>diagnostic <span class="op">==</span><span class="st"> &#39;multipath_exploration&#39;</span>)</a>
+<a class="sourceLine" id="cb19-16" title="16">  {<span class="cf">next</span>}</a>
+<a class="sourceLine" id="cb19-17" title="17"></a>
+<a class="sourceLine" id="cb19-18" title="18">  <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;DIAGNOSTIC&#39;</span>,diagnostic))</a>
+<a class="sourceLine" id="cb19-19" title="19">  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb19-20" title="20">  {</a>
+<a class="sourceLine" id="cb19-21" title="21">    <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">&#39;SCHEME:&#39;</span>,SCHEME[i]))</a>
+<a class="sourceLine" id="cb19-22" title="22">    dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/ssf-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb19-23" title="23"></a>
+<a class="sourceLine" id="cb19-24" title="24">    <span class="co"># read csv</span></a>
+<a class="sourceLine" id="cb19-25" title="25">    df =<span class="st"> </span><span class="kw">read.csv</span>(dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb19-26" title="26"></a>
+<a class="sourceLine" id="cb19-27" title="27">    <span class="co"># add names/tags</span></a>
+<a class="sourceLine" id="cb19-28" title="28">    df<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
+<a class="sourceLine" id="cb19-29" title="29">    df<span class="op">$</span><span class="st">`</span><span class="dt">Selection</span><span class="ch">\n</span><span class="dt">Scheme</span><span class="st">`</span> =<span class="st"> </span>NAMES[i]</a>
+<a class="sourceLine" id="cb19-30" title="30">    df<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
+<a class="sourceLine" id="cb19-31" title="31">    df =<span class="st"> </span><span class="kw">subset</span>(df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(Diagnostic,SEL) )</a>
+<a class="sourceLine" id="cb19-32" title="32"></a>
+<a class="sourceLine" id="cb19-33" title="33">    <span class="co"># add to cc_over_time data frame</span></a>
+<a class="sourceLine" id="cb19-34" title="34">    <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb19-35" title="35">    {</a>
+<a class="sourceLine" id="cb19-36" title="36">      cc_ssf =<span class="st"> </span><span class="kw">rbind</span>(cc_ssf, df)</a>
+<a class="sourceLine" id="cb19-37" title="37">    }</a>
+<a class="sourceLine" id="cb19-38" title="38">    <span class="cf">else</span></a>
+<a class="sourceLine" id="cb19-39" title="39">    {</a>
+<a class="sourceLine" id="cb19-40" title="40">      cc_ssf =<span class="st"> </span><span class="kw">rbind</span>(cc_ssf, <span class="kw">filter</span>(df, trt <span class="op">==</span><span class="st"> </span>PARAM[i]))</a>
+<a class="sourceLine" id="cb19-41" title="41">    }</a>
+<a class="sourceLine" id="cb19-42" title="42">  }</a>
+<a class="sourceLine" id="cb19-43" title="43">  <span class="kw">rm</span>(df); <span class="kw">rm</span>(dir);</a>
+<a class="sourceLine" id="cb19-44" title="44">}</a></code></pre></div>
 <pre><code>## [1] &quot;DIAGNOSTIC exploitation_rate&quot;
 ## [1] &quot;SCHEME: TRUNCATION&quot;
 ## [1] &quot;SCHEME: TOURNAMENT&quot;
@@ -557,311 +550,294 @@ Our work demonstrates the value of diagnostics for building a deeper understandi
 ## [1] &quot;SCHEME: NONDOMINATEDSORTING&quot;
 ## [1] &quot;SCHEME: NOVELTY&quot;
 ## [1] &quot;SCHEME: TOURNAMENT&quot;</code></pre>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">cc_ssf<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_ssf<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
-<a class="sourceLine" id="cb26-2" title="2">cc_ssf =<span class="st"> </span><span class="kw">subset</span>(cc_ssf, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(trt))</a>
-<a class="sourceLine" id="cb26-3" title="3"></a>
-<a class="sourceLine" id="cb26-4" title="4"></a>
-<a class="sourceLine" id="cb26-5" title="5"><span class="co">######################################################################################</span></a>
-<a class="sourceLine" id="cb26-6" title="6"><span class="co"># go through each scheme and collect over time data</span></a>
-<a class="sourceLine" id="cb26-7" title="7">ss_over_time =<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb26-8" title="8">ss_over_time_mvc =<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb26-9" title="9"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</a>
-<a class="sourceLine" id="cb26-10" title="10">{</a>
-<a class="sourceLine" id="cb26-11" title="11">  <span class="co"># add to cc_over_time data frame</span></a>
-<a class="sourceLine" id="cb26-12" title="12">  <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">|</span><span class="st"> </span>i <span class="op">==</span><span class="st"> </span><span class="dv">8</span>)</a>
-<a class="sourceLine" id="cb26-13" title="13">  {</a>
-<a class="sourceLine" id="cb26-14" title="14">    <span class="cf">next</span></a>
-<a class="sourceLine" id="cb26-15" title="15">  }</a>
-<a class="sourceLine" id="cb26-16" title="16">  <span class="kw">print</span>(SCHEME[i])</a>
-<a class="sourceLine" id="cb26-17" title="17">  <span class="cf">for</span>(diagnostic <span class="cf">in</span> DIAGNOSTIC)</a>
-<a class="sourceLine" id="cb26-18" title="18">  {</a>
-<a class="sourceLine" id="cb26-19" title="19">    dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/over-time-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb26-20" title="20">    dir_mvc =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/over-time-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb26-21" title="21"></a>
-<a class="sourceLine" id="cb26-22" title="22">    <span class="co"># read csv</span></a>
-<a class="sourceLine" id="cb26-23" title="23">    df =<span class="st"> </span><span class="kw">read.csv</span>(dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb26-24" title="24">    df_mvc =<span class="st"> </span><span class="kw">read.csv</span>(dir_mvc, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb26-25" title="25"></a>
-<a class="sourceLine" id="cb26-26" title="26">    <span class="co"># add names/tags</span></a>
-<a class="sourceLine" id="cb26-27" title="27">    df<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
-<a class="sourceLine" id="cb26-28" title="28">    df<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
-<a class="sourceLine" id="cb26-29" title="29"></a>
-<a class="sourceLine" id="cb26-30" title="30">    df_mvc<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
-<a class="sourceLine" id="cb26-31" title="31">    df_mvc<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
-<a class="sourceLine" id="cb26-32" title="32"></a>
-<a class="sourceLine" id="cb26-33" title="33">    ss_over_time =<span class="st"> </span><span class="kw">rbind</span>(ss_over_time, df)</a>
-<a class="sourceLine" id="cb26-34" title="34">    ss_over_time_mvc =<span class="st"> </span><span class="kw">rbind</span>(ss_over_time_mvc,df_mvc)</a>
-<a class="sourceLine" id="cb26-35" title="35">  }</a>
-<a class="sourceLine" id="cb26-36" title="36">  <span class="kw">rm</span>(df);  <span class="kw">rm</span>(df_mvc);  <span class="kw">rm</span>(dir);   <span class="kw">rm</span>(dir_mvc)</a>
-<a class="sourceLine" id="cb26-37" title="37">}</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">cc_ssf<span class="op">$</span>acron &lt;-<span class="st"> </span><span class="kw">factor</span>(cc_ssf<span class="op">$</span>acron, <span class="dt">levels =</span> ACRON)</a>
+<a class="sourceLine" id="cb21-2" title="2">cc_ssf =<span class="st"> </span><span class="kw">subset</span>(cc_ssf, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(trt))</a>
+<a class="sourceLine" id="cb21-3" title="3"></a>
+<a class="sourceLine" id="cb21-4" title="4"></a>
+<a class="sourceLine" id="cb21-5" title="5"><span class="co">######################################################################################</span></a>
+<a class="sourceLine" id="cb21-6" title="6"><span class="co"># go through each scheme and collect over time data</span></a>
+<a class="sourceLine" id="cb21-7" title="7">ss_over_time =<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb21-8" title="8">ss_over_time_mvc =<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb21-9" title="9"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb21-10" title="10">{</a>
+<a class="sourceLine" id="cb21-11" title="11">  <span class="co"># add to cc_over_time data frame</span></a>
+<a class="sourceLine" id="cb21-12" title="12">  <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">|</span><span class="st"> </span>i <span class="op">==</span><span class="st"> </span><span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb21-13" title="13">  {</a>
+<a class="sourceLine" id="cb21-14" title="14">    <span class="cf">next</span></a>
+<a class="sourceLine" id="cb21-15" title="15">  }</a>
+<a class="sourceLine" id="cb21-16" title="16">  <span class="kw">print</span>(SCHEME[i])</a>
+<a class="sourceLine" id="cb21-17" title="17">  <span class="cf">for</span>(diagnostic <span class="cf">in</span> DIAGNOSTIC)</a>
+<a class="sourceLine" id="cb21-18" title="18">  {</a>
+<a class="sourceLine" id="cb21-19" title="19">    dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/over-time-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb21-20" title="20">    dir_mvc =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/over-time-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb21-21" title="21"></a>
+<a class="sourceLine" id="cb21-22" title="22">    <span class="co"># read csv</span></a>
+<a class="sourceLine" id="cb21-23" title="23">    df =<span class="st"> </span><span class="kw">read.csv</span>(dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb21-24" title="24">    df_mvc =<span class="st"> </span><span class="kw">read.csv</span>(dir_mvc, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb21-25" title="25"></a>
+<a class="sourceLine" id="cb21-26" title="26">    <span class="co"># add names/tags</span></a>
+<a class="sourceLine" id="cb21-27" title="27">    df<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
+<a class="sourceLine" id="cb21-28" title="28">    df<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
+<a class="sourceLine" id="cb21-29" title="29"></a>
+<a class="sourceLine" id="cb21-30" title="30">    df_mvc<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
+<a class="sourceLine" id="cb21-31" title="31">    df_mvc<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
+<a class="sourceLine" id="cb21-32" title="32"></a>
+<a class="sourceLine" id="cb21-33" title="33">    ss_over_time =<span class="st"> </span><span class="kw">rbind</span>(ss_over_time, df)</a>
+<a class="sourceLine" id="cb21-34" title="34">    ss_over_time_mvc =<span class="st"> </span><span class="kw">rbind</span>(ss_over_time_mvc,df_mvc)</a>
+<a class="sourceLine" id="cb21-35" title="35">  }</a>
+<a class="sourceLine" id="cb21-36" title="36">  <span class="kw">rm</span>(df);  <span class="kw">rm</span>(df_mvc);  <span class="kw">rm</span>(dir);   <span class="kw">rm</span>(dir_mvc)</a>
+<a class="sourceLine" id="cb21-37" title="37">}</a></code></pre></div>
 <pre><code>## [1] &quot;TRUNCATION&quot;
 ## [1] &quot;TOURNAMENT&quot;
 ## [1] &quot;FITSHARING_G&quot;
 ## [1] &quot;FITSHARING_P&quot;
 ## [1] &quot;NONDOMINATEDSORTING&quot;
 ## [1] &quot;NOVELTY&quot;</code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1"><span class="co"># remove unused data</span></a>
-<a class="sourceLine" id="cb28-2" title="2"></a>
-<a class="sourceLine" id="cb28-3" title="3">ss_over_time<span class="op">$</span>uni_str_pos =<span class="st"> </span>ss_over_time<span class="op">$</span>uni_str_pos <span class="op">+</span><span class="st"> </span>ss_over_time<span class="op">$</span>arc_acti_gene <span class="op">-</span><span class="st"> </span>ss_over_time<span class="op">$</span>overlap</a>
-<a class="sourceLine" id="cb28-4" title="4">ss_over_time =<span class="st"> </span><span class="kw">subset</span>(ss_over_time, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))</a>
-<a class="sourceLine" id="cb28-5" title="5"></a>
-<a class="sourceLine" id="cb28-6" title="6">ss_over_time_mvc<span class="op">$</span>uni_str_pos =<span class="st"> </span>ss_over_time_mvc<span class="op">$</span>uni_str_pos <span class="op">+</span><span class="st"> </span>ss_over_time_mvc<span class="op">$</span>arc_acti_gene <span class="op">-</span><span class="st"> </span>ss_over_time_mvc<span class="op">$</span>overlap</a>
-<a class="sourceLine" id="cb28-7" title="7">ss_over_time_mvc =<span class="st"> </span><span class="kw">subset</span>(ss_over_time_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))</a>
-<a class="sourceLine" id="cb28-8" title="8"></a>
-<a class="sourceLine" id="cb28-9" title="9"><span class="co">## tournament data frames</span></a>
-<a class="sourceLine" id="cb28-10" title="10">tor_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-11" title="11">tor_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb28-12" title="12">tor_ot<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_ot<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
-<a class="sourceLine" id="cb28-13" title="13">tor_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(tor_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-14" title="14"></a>
-<a class="sourceLine" id="cb28-15" title="15"><span class="co">## truncation data frames</span></a>
-<a class="sourceLine" id="cb28-16" title="16">tru_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-17" title="17">tru_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
-<a class="sourceLine" id="cb28-18" title="18">tru_ot<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_ot<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
-<a class="sourceLine" id="cb28-19" title="19">tru_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(tru_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-20" title="20"></a>
-<a class="sourceLine" id="cb28-21" title="21"><span class="co">## genotypic fitness sharing data frames</span></a>
-<a class="sourceLine" id="cb28-22" title="22">gfs_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-23" title="23">gfs_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
-<a class="sourceLine" id="cb28-24" title="24">gfs_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_ot<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb28-25" title="25">gfs_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(gfs_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-26" title="26"></a>
-<a class="sourceLine" id="cb28-27" title="27"><span class="co">## phenotypic fitness sharing data frames</span></a>
-<a class="sourceLine" id="cb28-28" title="28">pfs_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-29" title="29">pfs_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
-<a class="sourceLine" id="cb28-30" title="30">pfs_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_ot<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb28-31" title="31">pfs_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(pfs_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-32" title="32"></a>
-<a class="sourceLine" id="cb28-33" title="33"></a>
-<a class="sourceLine" id="cb28-34" title="34"><span class="co">## nodominated sorting data frames</span></a>
-<a class="sourceLine" id="cb28-35" title="35">nds_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-36" title="36">nds_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
-<a class="sourceLine" id="cb28-37" title="37">nds_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_ot<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
-<a class="sourceLine" id="cb28-38" title="38">nds_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(nds_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-39" title="39"></a>
-<a class="sourceLine" id="cb28-40" title="40"><span class="co">## novelty search data frames</span></a>
-<a class="sourceLine" id="cb28-41" title="41">nov_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-42" title="42">nov_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb28-43" title="43">nov_ot<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_ot<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
-<a class="sourceLine" id="cb28-44" title="44">nov_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(nov_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-45" title="45"></a>
-<a class="sourceLine" id="cb28-46" title="46"><span class="co">## tournament data frames mvc</span></a>
-<a class="sourceLine" id="cb28-47" title="47">tor_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-48" title="48">tor_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb28-49" title="49">tor_ot_mvc<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
-<a class="sourceLine" id="cb28-50" title="50">tor_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(tor_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-51" title="51"></a>
-<a class="sourceLine" id="cb28-52" title="52"><span class="co">## truncation data frames mvc</span></a>
-<a class="sourceLine" id="cb28-53" title="53">tru_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-54" title="54">tru_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
-<a class="sourceLine" id="cb28-55" title="55">tru_ot_mvc<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
-<a class="sourceLine" id="cb28-56" title="56">tru_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(tru_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-57" title="57"></a>
-<a class="sourceLine" id="cb28-58" title="58"><span class="co">## genotypic fitness sharing data frames mvc</span></a>
-<a class="sourceLine" id="cb28-59" title="59">gfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-60" title="60">gfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
-<a class="sourceLine" id="cb28-61" title="61">gfs_ot_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb28-62" title="62">gfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(gfs_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-63" title="63"></a>
-<a class="sourceLine" id="cb28-64" title="64"><span class="co">## phenotypic fitness sharing data frames mvc</span></a>
-<a class="sourceLine" id="cb28-65" title="65">pfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-66" title="66">pfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
-<a class="sourceLine" id="cb28-67" title="67">pfs_ot_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb28-68" title="68">pfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(pfs_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-69" title="69"></a>
-<a class="sourceLine" id="cb28-70" title="70"></a>
-<a class="sourceLine" id="cb28-71" title="71"><span class="co">## nodominated sorting data frames mvc</span></a>
-<a class="sourceLine" id="cb28-72" title="72">nds_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-73" title="73">nds_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
-<a class="sourceLine" id="cb28-74" title="74">nds_ot_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
-<a class="sourceLine" id="cb28-75" title="75">nds_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(nds_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-76" title="76"></a>
-<a class="sourceLine" id="cb28-77" title="77"><span class="co">## novelty search data frames mvc</span></a>
-<a class="sourceLine" id="cb28-78" title="78">nov_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-79" title="79">nov_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb28-80" title="80">nov_ot_mvc<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
-<a class="sourceLine" id="cb28-81" title="81">nov_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(nov_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb28-82" title="82"></a>
-<a class="sourceLine" id="cb28-83" title="83"><span class="co"># clean up</span></a>
-<a class="sourceLine" id="cb28-84" title="84"><span class="kw">rm</span>(ss_over_time_mvc)</a>
-<a class="sourceLine" id="cb28-85" title="85"><span class="kw">rm</span>(ss_over_time)</a>
-<a class="sourceLine" id="cb28-86" title="86"></a>
-<a class="sourceLine" id="cb28-87" title="87"></a>
-<a class="sourceLine" id="cb28-88" title="88"><span class="co">######################################################################################</span></a>
-<a class="sourceLine" id="cb28-89" title="89"><span class="co"># go through each scheme and collect best data</span></a>
-<a class="sourceLine" id="cb28-90" title="90">ss_best =<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-91" title="91">ss_best_mvc =<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb28-92" title="92"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</a>
-<a class="sourceLine" id="cb28-93" title="93">{</a>
-<a class="sourceLine" id="cb28-94" title="94">  <span class="co"># add to cc_best data frame</span></a>
-<a class="sourceLine" id="cb28-95" title="95">  <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">|</span><span class="st"> </span>i <span class="op">==</span><span class="st"> </span><span class="dv">8</span>)</a>
-<a class="sourceLine" id="cb28-96" title="96">  {</a>
-<a class="sourceLine" id="cb28-97" title="97">    <span class="cf">next</span></a>
-<a class="sourceLine" id="cb28-98" title="98">  }</a>
-<a class="sourceLine" id="cb28-99" title="99">  <span class="kw">print</span>(SCHEME[i])</a>
-<a class="sourceLine" id="cb28-100" title="100">  <span class="cf">for</span>(diagnostic <span class="cf">in</span> DIAGNOSTIC)</a>
-<a class="sourceLine" id="cb28-101" title="101">  {</a>
-<a class="sourceLine" id="cb28-102" title="102">    dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/best-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb28-103" title="103">    dir_mvc =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/best-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb28-104" title="104"></a>
-<a class="sourceLine" id="cb28-105" title="105">    <span class="co"># read csv</span></a>
-<a class="sourceLine" id="cb28-106" title="106">    df =<span class="st"> </span><span class="kw">read.csv</span>(dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb28-107" title="107">    df_mvc =<span class="st"> </span><span class="kw">read.csv</span>(dir_mvc, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb28-108" title="108"></a>
-<a class="sourceLine" id="cb28-109" title="109">    <span class="co"># add names/tags</span></a>
-<a class="sourceLine" id="cb28-110" title="110">    df<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
-<a class="sourceLine" id="cb28-111" title="111">    df<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
-<a class="sourceLine" id="cb28-112" title="112"></a>
-<a class="sourceLine" id="cb28-113" title="113">    df_mvc<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
-<a class="sourceLine" id="cb28-114" title="114">    df_mvc<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
-<a class="sourceLine" id="cb28-115" title="115"></a>
-<a class="sourceLine" id="cb28-116" title="116">    ss_best =<span class="st"> </span><span class="kw">rbind</span>(ss_best, df)</a>
-<a class="sourceLine" id="cb28-117" title="117">    ss_best_mvc =<span class="st"> </span><span class="kw">rbind</span>(ss_best_mvc,df_mvc)</a>
-<a class="sourceLine" id="cb28-118" title="118">  }</a>
-<a class="sourceLine" id="cb28-119" title="119">  <span class="kw">rm</span>(df);  <span class="kw">rm</span>(df_mvc);  <span class="kw">rm</span>(dir);   <span class="kw">rm</span>(dir_mvc)</a>
-<a class="sourceLine" id="cb28-120" title="120">}</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1"><span class="co"># remove unused data</span></a>
+<a class="sourceLine" id="cb23-2" title="2"></a>
+<a class="sourceLine" id="cb23-3" title="3">ss_over_time<span class="op">$</span>uni_str_pos =<span class="st"> </span>ss_over_time<span class="op">$</span>uni_str_pos <span class="op">+</span><span class="st"> </span>ss_over_time<span class="op">$</span>arc_acti_gene <span class="op">-</span><span class="st"> </span>ss_over_time<span class="op">$</span>overlap</a>
+<a class="sourceLine" id="cb23-4" title="4">ss_over_time =<span class="st"> </span><span class="kw">subset</span>(ss_over_time, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))</a>
+<a class="sourceLine" id="cb23-5" title="5"></a>
+<a class="sourceLine" id="cb23-6" title="6">ss_over_time_mvc<span class="op">$</span>uni_str_pos =<span class="st"> </span>ss_over_time_mvc<span class="op">$</span>uni_str_pos <span class="op">+</span><span class="st"> </span>ss_over_time_mvc<span class="op">$</span>arc_acti_gene <span class="op">-</span><span class="st"> </span>ss_over_time_mvc<span class="op">$</span>overlap</a>
+<a class="sourceLine" id="cb23-7" title="7">ss_over_time_mvc =<span class="st"> </span><span class="kw">subset</span>(ss_over_time_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(pop_fit_avg,archive_cnt,pmin,pareto_cnt,arc_acti_gene,overlap))</a>
+<a class="sourceLine" id="cb23-8" title="8"></a>
+<a class="sourceLine" id="cb23-9" title="9"><span class="co">## tournament data frames</span></a>
+<a class="sourceLine" id="cb23-10" title="10">tor_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-11" title="11">tor_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb23-12" title="12">tor_ot<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_ot<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
+<a class="sourceLine" id="cb23-13" title="13">tor_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(tor_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-14" title="14"></a>
+<a class="sourceLine" id="cb23-15" title="15"><span class="co">## truncation data frames</span></a>
+<a class="sourceLine" id="cb23-16" title="16">tru_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-17" title="17">tru_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
+<a class="sourceLine" id="cb23-18" title="18">tru_ot<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_ot<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
+<a class="sourceLine" id="cb23-19" title="19">tru_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(tru_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-20" title="20"></a>
+<a class="sourceLine" id="cb23-21" title="21"><span class="co">## genotypic fitness sharing data frames</span></a>
+<a class="sourceLine" id="cb23-22" title="22">gfs_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-23" title="23">gfs_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
+<a class="sourceLine" id="cb23-24" title="24">gfs_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_ot<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb23-25" title="25">gfs_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(gfs_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-26" title="26"></a>
+<a class="sourceLine" id="cb23-27" title="27"><span class="co">## phenotypic fitness sharing data frames</span></a>
+<a class="sourceLine" id="cb23-28" title="28">pfs_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-29" title="29">pfs_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
+<a class="sourceLine" id="cb23-30" title="30">pfs_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_ot<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb23-31" title="31">pfs_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(pfs_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-32" title="32"></a>
+<a class="sourceLine" id="cb23-33" title="33"></a>
+<a class="sourceLine" id="cb23-34" title="34"><span class="co">## nodominated sorting data frames</span></a>
+<a class="sourceLine" id="cb23-35" title="35">nds_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-36" title="36">nds_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
+<a class="sourceLine" id="cb23-37" title="37">nds_ot<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_ot<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
+<a class="sourceLine" id="cb23-38" title="38">nds_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(nds_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-39" title="39"></a>
+<a class="sourceLine" id="cb23-40" title="40"><span class="co">## novelty search data frames</span></a>
+<a class="sourceLine" id="cb23-41" title="41">nov_ot &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-42" title="42">nov_ot &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb23-43" title="43">nov_ot<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_ot<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
+<a class="sourceLine" id="cb23-44" title="44">nov_ot &lt;-<span class="st"> </span><span class="kw">subset</span>(nov_ot, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-45" title="45"></a>
+<a class="sourceLine" id="cb23-46" title="46"><span class="co">## tournament data frames mvc</span></a>
+<a class="sourceLine" id="cb23-47" title="47">tor_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-48" title="48">tor_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb23-49" title="49">tor_ot_mvc<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
+<a class="sourceLine" id="cb23-50" title="50">tor_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(tor_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-51" title="51"></a>
+<a class="sourceLine" id="cb23-52" title="52"><span class="co">## truncation data frames mvc</span></a>
+<a class="sourceLine" id="cb23-53" title="53">tru_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-54" title="54">tru_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
+<a class="sourceLine" id="cb23-55" title="55">tru_ot_mvc<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
+<a class="sourceLine" id="cb23-56" title="56">tru_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(tru_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-57" title="57"></a>
+<a class="sourceLine" id="cb23-58" title="58"><span class="co">## genotypic fitness sharing data frames mvc</span></a>
+<a class="sourceLine" id="cb23-59" title="59">gfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-60" title="60">gfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
+<a class="sourceLine" id="cb23-61" title="61">gfs_ot_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb23-62" title="62">gfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(gfs_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-63" title="63"></a>
+<a class="sourceLine" id="cb23-64" title="64"><span class="co">## phenotypic fitness sharing data frames mvc</span></a>
+<a class="sourceLine" id="cb23-65" title="65">pfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-66" title="66">pfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
+<a class="sourceLine" id="cb23-67" title="67">pfs_ot_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb23-68" title="68">pfs_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(pfs_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-69" title="69"></a>
+<a class="sourceLine" id="cb23-70" title="70"></a>
+<a class="sourceLine" id="cb23-71" title="71"><span class="co">## nodominated sorting data frames mvc</span></a>
+<a class="sourceLine" id="cb23-72" title="72">nds_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-73" title="73">nds_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
+<a class="sourceLine" id="cb23-74" title="74">nds_ot_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
+<a class="sourceLine" id="cb23-75" title="75">nds_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(nds_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-76" title="76"></a>
+<a class="sourceLine" id="cb23-77" title="77"><span class="co">## novelty search data frames mvc</span></a>
+<a class="sourceLine" id="cb23-78" title="78">nov_ot_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-79" title="79">nov_ot_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_over_time_mvc, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb23-80" title="80">nov_ot_mvc<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_ot_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
+<a class="sourceLine" id="cb23-81" title="81">nov_ot_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(nov_ot_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb23-82" title="82"></a>
+<a class="sourceLine" id="cb23-83" title="83"><span class="co"># clean up</span></a>
+<a class="sourceLine" id="cb23-84" title="84"><span class="kw">rm</span>(ss_over_time_mvc)</a>
+<a class="sourceLine" id="cb23-85" title="85"><span class="kw">rm</span>(ss_over_time)</a>
+<a class="sourceLine" id="cb23-86" title="86"></a>
+<a class="sourceLine" id="cb23-87" title="87"></a>
+<a class="sourceLine" id="cb23-88" title="88"><span class="co">######################################################################################</span></a>
+<a class="sourceLine" id="cb23-89" title="89"><span class="co"># go through each scheme and collect best data</span></a>
+<a class="sourceLine" id="cb23-90" title="90">ss_best =<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-91" title="91">ss_best_mvc =<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb23-92" title="92"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb23-93" title="93">{</a>
+<a class="sourceLine" id="cb23-94" title="94">  <span class="co"># add to cc_best data frame</span></a>
+<a class="sourceLine" id="cb23-95" title="95">  <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span><span class="dv">3</span> <span class="op">|</span><span class="st"> </span>i <span class="op">==</span><span class="st"> </span><span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb23-96" title="96">  {</a>
+<a class="sourceLine" id="cb23-97" title="97">    <span class="cf">next</span></a>
+<a class="sourceLine" id="cb23-98" title="98">  }</a>
+<a class="sourceLine" id="cb23-99" title="99">  <span class="kw">print</span>(SCHEME[i])</a>
+<a class="sourceLine" id="cb23-100" title="100">  <span class="cf">for</span>(diagnostic <span class="cf">in</span> DIAGNOSTIC)</a>
+<a class="sourceLine" id="cb23-101" title="101">  {</a>
+<a class="sourceLine" id="cb23-102" title="102">    dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/best-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb23-103" title="103">    dir_mvc =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;MVC/&#39;</span>,SCHEME[i],<span class="st">&#39;/best-&#39;</span>,diagnostic,<span class="st">&#39;-&#39;</span>, <span class="kw">tolower</span>(SCHEME[i]), <span class="st">&#39;.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb23-104" title="104"></a>
+<a class="sourceLine" id="cb23-105" title="105">    <span class="co"># read csv</span></a>
+<a class="sourceLine" id="cb23-106" title="106">    df =<span class="st"> </span><span class="kw">read.csv</span>(dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb23-107" title="107">    df_mvc =<span class="st"> </span><span class="kw">read.csv</span>(dir_mvc, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb23-108" title="108"></a>
+<a class="sourceLine" id="cb23-109" title="109">    <span class="co"># add names/tags</span></a>
+<a class="sourceLine" id="cb23-110" title="110">    df<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
+<a class="sourceLine" id="cb23-111" title="111">    df<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
+<a class="sourceLine" id="cb23-112" title="112"></a>
+<a class="sourceLine" id="cb23-113" title="113">    df_mvc<span class="op">$</span>acron =<span class="st"> </span>ACRON[i]</a>
+<a class="sourceLine" id="cb23-114" title="114">    df_mvc<span class="op">$</span>diagnostic =<span class="st"> </span>diagnostic</a>
+<a class="sourceLine" id="cb23-115" title="115"></a>
+<a class="sourceLine" id="cb23-116" title="116">    ss_best =<span class="st"> </span><span class="kw">rbind</span>(ss_best, df)</a>
+<a class="sourceLine" id="cb23-117" title="117">    ss_best_mvc =<span class="st"> </span><span class="kw">rbind</span>(ss_best_mvc,df_mvc)</a>
+<a class="sourceLine" id="cb23-118" title="118">  }</a>
+<a class="sourceLine" id="cb23-119" title="119">  <span class="kw">rm</span>(df);  <span class="kw">rm</span>(df_mvc);  <span class="kw">rm</span>(dir);   <span class="kw">rm</span>(dir_mvc)</a>
+<a class="sourceLine" id="cb23-120" title="120">}</a></code></pre></div>
 <pre><code>## [1] &quot;TRUNCATION&quot;
 ## [1] &quot;TOURNAMENT&quot;
 ## [1] &quot;FITSHARING_G&quot;
 ## [1] &quot;FITSHARING_P&quot;
 ## [1] &quot;NONDOMINATEDSORTING&quot;
 ## [1] &quot;NOVELTY&quot;</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1"><span class="co"># removed unused data</span></a>
-<a class="sourceLine" id="cb30-2" title="2">ss_best =<span class="st"> </span><span class="kw">subset</span>(ss_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(gen))</a>
-<a class="sourceLine" id="cb30-3" title="3">ss_best =<span class="st"> </span><span class="kw">filter</span>(ss_best, col <span class="op">==</span><span class="st"> &#39;pop_fit_max&#39;</span> <span class="op">|</span><span class="st"> </span>col <span class="op">==</span><span class="st"> &#39;pop_uni_obj&#39;</span>)</a>
-<a class="sourceLine" id="cb30-4" title="4"></a>
-<a class="sourceLine" id="cb30-5" title="5">ss_best_mvc =<span class="st"> </span><span class="kw">subset</span>(ss_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(gen))</a>
-<a class="sourceLine" id="cb30-6" title="6">ss_best_mvc =<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, col <span class="op">==</span><span class="st"> &#39;pop_fit_max&#39;</span> <span class="op">|</span><span class="st"> </span>col <span class="op">==</span><span class="st"> &#39;pop_uni_obj&#39;</span>)</a>
-<a class="sourceLine" id="cb30-7" title="7"></a>
-<a class="sourceLine" id="cb30-8" title="8"><span class="co">## tournament data frames</span></a>
-<a class="sourceLine" id="cb30-9" title="9">tor_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-10" title="10">tor_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb30-11" title="11">tor_best<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_best<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
-<a class="sourceLine" id="cb30-12" title="12">tor_best &lt;-<span class="st"> </span><span class="kw">subset</span>(tor_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-13" title="13"></a>
-<a class="sourceLine" id="cb30-14" title="14"><span class="co">## truncation data frames</span></a>
-<a class="sourceLine" id="cb30-15" title="15">tru_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-16" title="16">tru_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
-<a class="sourceLine" id="cb30-17" title="17">tru_best<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_best<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
-<a class="sourceLine" id="cb30-18" title="18">tru_best &lt;-<span class="st"> </span><span class="kw">subset</span>(tru_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-19" title="19"></a>
-<a class="sourceLine" id="cb30-20" title="20"><span class="co">## genotypic fitness sharing data frames</span></a>
-<a class="sourceLine" id="cb30-21" title="21">gfs_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-22" title="22">gfs_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
-<a class="sourceLine" id="cb30-23" title="23">gfs_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_best<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb30-24" title="24">gfs_best &lt;-<span class="st"> </span><span class="kw">subset</span>(gfs_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-25" title="25"></a>
-<a class="sourceLine" id="cb30-26" title="26"><span class="co">## phenotypic fitness sharing data frames</span></a>
-<a class="sourceLine" id="cb30-27" title="27">pfs_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-28" title="28">pfs_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
-<a class="sourceLine" id="cb30-29" title="29">pfs_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_best<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb30-30" title="30">pfs_best &lt;-<span class="st"> </span><span class="kw">subset</span>(pfs_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-31" title="31"></a>
-<a class="sourceLine" id="cb30-32" title="32"></a>
-<a class="sourceLine" id="cb30-33" title="33"><span class="co">## nodominated sorting data frames</span></a>
-<a class="sourceLine" id="cb30-34" title="34">nds_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-35" title="35">nds_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
-<a class="sourceLine" id="cb30-36" title="36">nds_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_best<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
-<a class="sourceLine" id="cb30-37" title="37">nds_best &lt;-<span class="st"> </span><span class="kw">subset</span>(nds_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-38" title="38"></a>
-<a class="sourceLine" id="cb30-39" title="39"><span class="co">## novelty search data frames</span></a>
-<a class="sourceLine" id="cb30-40" title="40">nov_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-41" title="41">nov_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb30-42" title="42">nov_best<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_best<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
-<a class="sourceLine" id="cb30-43" title="43">nov_best &lt;-<span class="st"> </span><span class="kw">subset</span>(nov_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-44" title="44"></a>
-<a class="sourceLine" id="cb30-45" title="45"><span class="co">## tournament data frames mvc</span></a>
-<a class="sourceLine" id="cb30-46" title="46">tor_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-47" title="47">tor_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb30-48" title="48">tor_best_mvc<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
-<a class="sourceLine" id="cb30-49" title="49">tor_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(tor_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-50" title="50"></a>
-<a class="sourceLine" id="cb30-51" title="51"><span class="co">## truncation data frames mvc</span></a>
-<a class="sourceLine" id="cb30-52" title="52">tru_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-53" title="53">tru_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
-<a class="sourceLine" id="cb30-54" title="54">tru_best_mvc<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
-<a class="sourceLine" id="cb30-55" title="55">tru_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(tru_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-56" title="56"></a>
-<a class="sourceLine" id="cb30-57" title="57"><span class="co">## genotypic fitness sharing data frames mvc</span></a>
-<a class="sourceLine" id="cb30-58" title="58">gfs_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-59" title="59">gfs_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
-<a class="sourceLine" id="cb30-60" title="60">gfs_best_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb30-61" title="61">gfs_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(gfs_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-62" title="62"></a>
-<a class="sourceLine" id="cb30-63" title="63"><span class="co">## phenotypic fitness sharing data frames mvc</span></a>
-<a class="sourceLine" id="cb30-64" title="64">pfs_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-65" title="65">pfs_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
-<a class="sourceLine" id="cb30-66" title="66">pfs_best_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
-<a class="sourceLine" id="cb30-67" title="67">pfs_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(pfs_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-68" title="68"></a>
-<a class="sourceLine" id="cb30-69" title="69"></a>
-<a class="sourceLine" id="cb30-70" title="70"><span class="co">## nodominated sorting data frames mvc</span></a>
-<a class="sourceLine" id="cb30-71" title="71">nds_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-72" title="72">nds_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
-<a class="sourceLine" id="cb30-73" title="73">nds_best_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
-<a class="sourceLine" id="cb30-74" title="74">nds_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(nds_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-75" title="75"></a>
-<a class="sourceLine" id="cb30-76" title="76"><span class="co">## novelty search data frames mvc</span></a>
-<a class="sourceLine" id="cb30-77" title="77">nov_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
-<a class="sourceLine" id="cb30-78" title="78">nov_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb30-79" title="79">nov_best_mvc<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
-<a class="sourceLine" id="cb30-80" title="80">nov_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(nov_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
-<a class="sourceLine" id="cb30-81" title="81"></a>
-<a class="sourceLine" id="cb30-82" title="82"><span class="co"># clean up</span></a>
-<a class="sourceLine" id="cb30-83" title="83"><span class="kw">rm</span>(ss_best_mvc)</a>
-<a class="sourceLine" id="cb30-84" title="84"><span class="kw">rm</span>(ss_best)</a>
-<a class="sourceLine" id="cb30-85" title="85"></a>
-<a class="sourceLine" id="cb30-86" title="86"></a>
-<a class="sourceLine" id="cb30-87" title="87"><span class="co">######################################################################################</span></a>
-<a class="sourceLine" id="cb30-88" title="88"><span class="co"># go through each scheme and collect satisfactory solution found</span></a>
-<a class="sourceLine" id="cb30-89" title="89"></a>
-<a class="sourceLine" id="cb30-90" title="90"><span class="co">#Tournament</span></a>
-<a class="sourceLine" id="cb30-91" title="91">exp_dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/TOURNAMENT/ssf-exploitation_rate-tournament.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb30-92" title="92">ord_dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/TOURNAMENT/ssf-ordered_exploitation-tournament.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb30-93" title="93"><span class="co"># read csv</span></a>
-<a class="sourceLine" id="cb30-94" title="94">exp_df =<span class="st"> </span><span class="kw">read.csv</span>(exp_dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb30-95" title="95">ord_df =<span class="st"> </span><span class="kw">read.csv</span>(ord_dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb30-96" title="96"><span class="co"># remove data</span></a>
-<a class="sourceLine" id="cb30-97" title="97">exp_df =<span class="st"> </span><span class="kw">subset</span>(exp_df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(SEL))</a>
-<a class="sourceLine" id="cb30-98" title="98">exp_df =<span class="st"> </span><span class="kw">filter</span>(exp_df, trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb30-99" title="99">ord_df =<span class="st"> </span><span class="kw">subset</span>(ord_df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(SEL))</a>
-<a class="sourceLine" id="cb30-100" title="100">ord_df =<span class="st"> </span><span class="kw">filter</span>(ord_df, trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb30-101" title="101"><span class="co"># combine</span></a>
-<a class="sourceLine" id="cb30-102" title="102">tru_ssf =<span class="st"> </span><span class="kw">rbind</span>(exp_df,ord_df)</a>
-<a class="sourceLine" id="cb30-103" title="103"></a>
-<a class="sourceLine" id="cb30-104" title="104"><span class="co">#Truncation</span></a>
-<a class="sourceLine" id="cb30-105" title="105">exp_dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/TRUNCATION/ssf-exploitation_rate-truncation.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb30-106" title="106">ord_dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/TRUNCATION/ssf-ordered_exploitation-truncation.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb30-107" title="107"><span class="co"># read csv</span></a>
-<a class="sourceLine" id="cb30-108" title="108">exp_df =<span class="st"> </span><span class="kw">read.csv</span>(exp_dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb30-109" title="109">ord_df =<span class="st"> </span><span class="kw">read.csv</span>(ord_dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb30-110" title="110"><span class="co"># remove data</span></a>
-<a class="sourceLine" id="cb30-111" title="111">exp_df =<span class="st"> </span><span class="kw">subset</span>(exp_df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(SEL))</a>
-<a class="sourceLine" id="cb30-112" title="112">exp_df =<span class="st"> </span><span class="kw">filter</span>(exp_df, trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb30-113" title="113">ord_df =<span class="st"> </span><span class="kw">subset</span>(ord_df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(SEL))</a>
-<a class="sourceLine" id="cb30-114" title="114">ord_df =<span class="st"> </span><span class="kw">filter</span>(ord_df, trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb30-115" title="115"><span class="co"># combine</span></a>
-<a class="sourceLine" id="cb30-116" title="116">tru_ssf =<span class="st"> </span><span class="kw">rbind</span>(exp_df,ord_df)</a>
-<a class="sourceLine" id="cb30-117" title="117"></a>
-<a class="sourceLine" id="cb30-118" title="118"><span class="co">#final clean up</span></a>
-<a class="sourceLine" id="cb30-119" title="119"><span class="kw">rm</span>(i,exp_dir,ord_dir,exp_df,ord_df)</a></code></pre></div>
-<p>These analyses were conducted in the following computing environment:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1"><span class="kw">print</span>(version)</a></code></pre></div>
-<pre><code>##                _                                          
-## platform       x86_64-pc-linux-gnu                        
-## arch           x86_64                                     
-## os             linux-gnu                                  
-## system         x86_64, linux-gnu                          
-## status         Patched                                    
-## major          4                                          
-## minor          2.2                                        
-## year           2022                                       
-## month          11                                         
-## day            10                                         
-## svn rev        83330                                      
-## language       R                                          
-## version.string R version 4.2.2 Patched (2022-11-10 r83330)
-## nickname       Innocent and Trusting</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="co"># removed unused data</span></a>
+<a class="sourceLine" id="cb25-2" title="2">ss_best =<span class="st"> </span><span class="kw">subset</span>(ss_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(gen))</a>
+<a class="sourceLine" id="cb25-3" title="3">ss_best =<span class="st"> </span><span class="kw">filter</span>(ss_best, col <span class="op">==</span><span class="st"> &#39;pop_fit_max&#39;</span> <span class="op">|</span><span class="st"> </span>col <span class="op">==</span><span class="st"> &#39;pop_uni_obj&#39;</span>)</a>
+<a class="sourceLine" id="cb25-4" title="4"></a>
+<a class="sourceLine" id="cb25-5" title="5">ss_best_mvc =<span class="st"> </span><span class="kw">subset</span>(ss_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(gen))</a>
+<a class="sourceLine" id="cb25-6" title="6">ss_best_mvc =<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, col <span class="op">==</span><span class="st"> &#39;pop_fit_max&#39;</span> <span class="op">|</span><span class="st"> </span>col <span class="op">==</span><span class="st"> &#39;pop_uni_obj&#39;</span>)</a>
+<a class="sourceLine" id="cb25-7" title="7"></a>
+<a class="sourceLine" id="cb25-8" title="8"><span class="co">## tournament data frames</span></a>
+<a class="sourceLine" id="cb25-9" title="9">tor_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-10" title="10">tor_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb25-11" title="11">tor_best<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_best<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
+<a class="sourceLine" id="cb25-12" title="12">tor_best &lt;-<span class="st"> </span><span class="kw">subset</span>(tor_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-13" title="13"></a>
+<a class="sourceLine" id="cb25-14" title="14"><span class="co">## truncation data frames</span></a>
+<a class="sourceLine" id="cb25-15" title="15">tru_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-16" title="16">tru_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
+<a class="sourceLine" id="cb25-17" title="17">tru_best<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_best<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
+<a class="sourceLine" id="cb25-18" title="18">tru_best &lt;-<span class="st"> </span><span class="kw">subset</span>(tru_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-19" title="19"></a>
+<a class="sourceLine" id="cb25-20" title="20"><span class="co">## genotypic fitness sharing data frames</span></a>
+<a class="sourceLine" id="cb25-21" title="21">gfs_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-22" title="22">gfs_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
+<a class="sourceLine" id="cb25-23" title="23">gfs_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_best<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb25-24" title="24">gfs_best &lt;-<span class="st"> </span><span class="kw">subset</span>(gfs_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-25" title="25"></a>
+<a class="sourceLine" id="cb25-26" title="26"><span class="co">## phenotypic fitness sharing data frames</span></a>
+<a class="sourceLine" id="cb25-27" title="27">pfs_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-28" title="28">pfs_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
+<a class="sourceLine" id="cb25-29" title="29">pfs_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_best<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb25-30" title="30">pfs_best &lt;-<span class="st"> </span><span class="kw">subset</span>(pfs_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-31" title="31"></a>
+<a class="sourceLine" id="cb25-32" title="32"></a>
+<a class="sourceLine" id="cb25-33" title="33"><span class="co">## nodominated sorting data frames</span></a>
+<a class="sourceLine" id="cb25-34" title="34">nds_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-35" title="35">nds_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
+<a class="sourceLine" id="cb25-36" title="36">nds_best<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_best<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
+<a class="sourceLine" id="cb25-37" title="37">nds_best &lt;-<span class="st"> </span><span class="kw">subset</span>(nds_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-38" title="38"></a>
+<a class="sourceLine" id="cb25-39" title="39"><span class="co">## novelty search data frames</span></a>
+<a class="sourceLine" id="cb25-40" title="40">nov_best &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-41" title="41">nov_best &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb25-42" title="42">nov_best<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_best<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
+<a class="sourceLine" id="cb25-43" title="43">nov_best &lt;-<span class="st"> </span><span class="kw">subset</span>(nov_best, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-44" title="44"></a>
+<a class="sourceLine" id="cb25-45" title="45"><span class="co">## tournament data frames mvc</span></a>
+<a class="sourceLine" id="cb25-46" title="46">tor_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-47" title="47">tor_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;tor&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb25-48" title="48">tor_best_mvc<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tor_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> TS_LIST)</a>
+<a class="sourceLine" id="cb25-49" title="49">tor_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(tor_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-50" title="50"></a>
+<a class="sourceLine" id="cb25-51" title="51"><span class="co">## truncation data frames mvc</span></a>
+<a class="sourceLine" id="cb25-52" title="52">tru_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-53" title="53">tru_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;tru&#39;</span>)</a>
+<a class="sourceLine" id="cb25-54" title="54">tru_best_mvc<span class="op">$</span>T &lt;-<span class="st"> </span><span class="kw">factor</span>(tru_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> TR_LIST)</a>
+<a class="sourceLine" id="cb25-55" title="55">tru_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(tru_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-56" title="56"></a>
+<a class="sourceLine" id="cb25-57" title="57"><span class="co">## genotypic fitness sharing data frames mvc</span></a>
+<a class="sourceLine" id="cb25-58" title="58">gfs_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-59" title="59">gfs_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;gfs&#39;</span>)</a>
+<a class="sourceLine" id="cb25-60" title="60">gfs_best_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(gfs_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb25-61" title="61">gfs_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(gfs_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-62" title="62"></a>
+<a class="sourceLine" id="cb25-63" title="63"><span class="co">## phenotypic fitness sharing data frames mvc</span></a>
+<a class="sourceLine" id="cb25-64" title="64">pfs_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-65" title="65">pfs_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;pfs&#39;</span>)</a>
+<a class="sourceLine" id="cb25-66" title="66">pfs_best_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(pfs_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> FS_LIST)</a>
+<a class="sourceLine" id="cb25-67" title="67">pfs_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(pfs_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-68" title="68"></a>
+<a class="sourceLine" id="cb25-69" title="69"></a>
+<a class="sourceLine" id="cb25-70" title="70"><span class="co">## nodominated sorting data frames mvc</span></a>
+<a class="sourceLine" id="cb25-71" title="71">nds_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-72" title="72">nds_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;nds&#39;</span>)</a>
+<a class="sourceLine" id="cb25-73" title="73">nds_best_mvc<span class="op">$</span>Sigma &lt;-<span class="st"> </span><span class="kw">factor</span>(nds_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> ND_LIST)</a>
+<a class="sourceLine" id="cb25-74" title="74">nds_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(nds_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-75" title="75"></a>
+<a class="sourceLine" id="cb25-76" title="76"><span class="co">## novelty search data frames mvc</span></a>
+<a class="sourceLine" id="cb25-77" title="77">nov_best_mvc &lt;-<span class="st"> </span><span class="kw">data.frame</span>()</a>
+<a class="sourceLine" id="cb25-78" title="78">nov_best_mvc &lt;-<span class="st"> </span><span class="kw">filter</span>(ss_best_mvc, acron <span class="op">==</span><span class="st"> &#39;nov&#39;</span> <span class="op">&amp;</span><span class="st"> </span>trt <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb25-79" title="79">nov_best_mvc<span class="op">$</span>K &lt;-<span class="st"> </span><span class="kw">factor</span>(nov_best_mvc<span class="op">$</span>trt, <span class="dt">levels =</span> NS_LIST)</a>
+<a class="sourceLine" id="cb25-80" title="80">nov_best_mvc &lt;-<span class="st"> </span><span class="kw">subset</span>(nov_best_mvc, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(acron,trt))</a>
+<a class="sourceLine" id="cb25-81" title="81"></a>
+<a class="sourceLine" id="cb25-82" title="82"><span class="co"># clean up</span></a>
+<a class="sourceLine" id="cb25-83" title="83"><span class="kw">rm</span>(ss_best_mvc)</a>
+<a class="sourceLine" id="cb25-84" title="84"><span class="kw">rm</span>(ss_best)</a>
+<a class="sourceLine" id="cb25-85" title="85"></a>
+<a class="sourceLine" id="cb25-86" title="86"></a>
+<a class="sourceLine" id="cb25-87" title="87"><span class="co">######################################################################################</span></a>
+<a class="sourceLine" id="cb25-88" title="88"><span class="co"># go through each scheme and collect satisfactory solution found</span></a>
+<a class="sourceLine" id="cb25-89" title="89"></a>
+<a class="sourceLine" id="cb25-90" title="90"><span class="co">#Tournament</span></a>
+<a class="sourceLine" id="cb25-91" title="91">exp_dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/TOURNAMENT/ssf-exploitation_rate-tournament.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb25-92" title="92">ord_dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/TOURNAMENT/ssf-ordered_exploitation-tournament.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb25-93" title="93"><span class="co"># read csv</span></a>
+<a class="sourceLine" id="cb25-94" title="94">exp_df =<span class="st"> </span><span class="kw">read.csv</span>(exp_dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb25-95" title="95">ord_df =<span class="st"> </span><span class="kw">read.csv</span>(ord_dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb25-96" title="96"><span class="co"># remove data</span></a>
+<a class="sourceLine" id="cb25-97" title="97">exp_df =<span class="st"> </span><span class="kw">subset</span>(exp_df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(SEL))</a>
+<a class="sourceLine" id="cb25-98" title="98">exp_df =<span class="st"> </span><span class="kw">filter</span>(exp_df, trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb25-99" title="99">ord_df =<span class="st"> </span><span class="kw">subset</span>(ord_df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(SEL))</a>
+<a class="sourceLine" id="cb25-100" title="100">ord_df =<span class="st"> </span><span class="kw">filter</span>(ord_df, trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb25-101" title="101"><span class="co"># combine</span></a>
+<a class="sourceLine" id="cb25-102" title="102">tru_ssf =<span class="st"> </span><span class="kw">rbind</span>(exp_df,ord_df)</a>
+<a class="sourceLine" id="cb25-103" title="103"></a>
+<a class="sourceLine" id="cb25-104" title="104"><span class="co">#Truncation</span></a>
+<a class="sourceLine" id="cb25-105" title="105">exp_dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/TRUNCATION/ssf-exploitation_rate-truncation.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb25-106" title="106">ord_dir =<span class="st"> </span><span class="kw">paste</span>(DATA_DIR,<span class="st">&#39;NO-MVC/TRUNCATION/ssf-ordered_exploitation-truncation.csv&#39;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">collapse =</span> <span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb25-107" title="107"><span class="co"># read csv</span></a>
+<a class="sourceLine" id="cb25-108" title="108">exp_df =<span class="st"> </span><span class="kw">read.csv</span>(exp_dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb25-109" title="109">ord_df =<span class="st"> </span><span class="kw">read.csv</span>(ord_dir, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb25-110" title="110"><span class="co"># remove data</span></a>
+<a class="sourceLine" id="cb25-111" title="111">exp_df =<span class="st"> </span><span class="kw">subset</span>(exp_df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(SEL))</a>
+<a class="sourceLine" id="cb25-112" title="112">exp_df =<span class="st"> </span><span class="kw">filter</span>(exp_df, trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb25-113" title="113">ord_df =<span class="st"> </span><span class="kw">subset</span>(ord_df, <span class="dt">select =</span> <span class="op">-</span><span class="kw">c</span>(SEL))</a>
+<a class="sourceLine" id="cb25-114" title="114">ord_df =<span class="st"> </span><span class="kw">filter</span>(ord_df, trt <span class="op">!=</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb25-115" title="115"><span class="co"># combine</span></a>
+<a class="sourceLine" id="cb25-116" title="116">tru_ssf =<span class="st"> </span><span class="kw">rbind</span>(exp_df,ord_df)</a>
+<a class="sourceLine" id="cb25-117" title="117"></a>
+<a class="sourceLine" id="cb25-118" title="118"><span class="co">#final clean up</span></a>
+<a class="sourceLine" id="cb25-119" title="119"><span class="kw">rm</span>(i,exp_dir,ord_dir,exp_df,ord_df)</a></code></pre></div>
 
 </div>
 </div>
