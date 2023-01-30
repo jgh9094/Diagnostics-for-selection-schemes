@@ -52,7 +52,7 @@ ggplot(lines, aes(x=gen, y=mean, group = `Selection\nScheme`, fill =`Selection\n
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle('Satisfactory trait coverage over time')+
-  p_theme + theme(legend.title=element_blank(),legend.text=element_text(size=12)) +
+  p_theme + theme(legend.title=element_blank(),legend.text=element_text(size=11)) +
   guides(
     shape=guide_legend(ncol=2, title.position = "bottom"),
     color=guide_legend(ncol=2, title.position = "bottom"),
@@ -229,7 +229,7 @@ ggplot(lines, aes(x=gen, y=mean, group = `Selection\nScheme`, fill =`Selection\n
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle('Activation gene coverage over time')+
-  p_theme + theme(legend.title=element_blank(),legend.text=element_text(size=12)) +
+  p_theme + theme(legend.title=element_blank(),legend.text=element_text(size=11)) +
   guides(
     shape=guide_legend(ncol=2, title.position = "bottom"),
     color=guide_legend(ncol=2, title.position = "bottom"),
@@ -357,7 +357,7 @@ ggplot(lines, aes(x=gen, y=mean, group = `Selection\nScheme`, fill =`Selection\n
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle('Satisfactory trait coverage over time')+
-  p_theme + theme(legend.title=element_blank(),legend.text=element_text(size=12)) +
+  p_theme + theme(legend.title=element_blank(),legend.text=element_text(size=11)) +
   guides(
     shape=guide_legend(ncol=1, title.position = "bottom"),
     color=guide_legend(ncol=1, title.position = "bottom"),
@@ -568,7 +568,7 @@ ggplot(lines, aes(x=gen, y=mean, group = `Selection\nScheme`, fill =`Selection\n
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle('Satisfactory trait coverage over time')+
-  p_theme + theme(legend.title=element_blank(),legend.text=element_text(size=12)) +
+  p_theme + theme(legend.title=element_blank(),legend.text=element_text(size=11)) +
   guides(
     shape=guide_legend(ncol=2, title.position = "bottom"),
     color=guide_legend(ncol=2, title.position = "bottom"),
@@ -819,7 +819,7 @@ ggplot(lines, aes(x=gen, y=mean, group = `Selection\nScheme`, fill =`Selection\n
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle('Activation gene coverage over time')+
-  p_theme + theme(legend.title=element_blank(),legend.text=element_text(size=12)) +
+  p_theme + theme(legend.title=element_blank(),legend.text=element_text(size=11)) +
   guides(
     shape=guide_legend(ncol=2, title.position = "bottom"),
     color=guide_legend(ncol=2, title.position = "bottom"),
