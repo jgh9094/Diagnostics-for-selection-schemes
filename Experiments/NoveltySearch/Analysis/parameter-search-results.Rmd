@@ -1,6 +1,6 @@
 # Novelty Search
 
-We present the results from our parameter sweeep on novelty search.
+We present the results from our parameter sweep on novelty search.
 50 replicates are conducted for each `K-nearest neighbors` parameter value explored.
 
 ```{r, message=FALSE}
@@ -8,12 +8,6 @@ library(ggplot2)
 library(cowplot)
 library(dplyr)
 library(PupillometryR)
-```
-
-These analyses were conducted in the following computing environment:
-
-```{r}
-print(version)
 ```
 
 ## Exploitation rate results
@@ -27,25 +21,19 @@ Note that performance values fall between 0 and 100.
 Performance over time.
 
 ```{r, warning=FALSE}
-problem <- filter(nov_ot, diagnostic == 'exploitation_rate')
-lines = problem %>%
+lines = filter(nov_ot, diagnostic == 'exploitation_rate') %>%
         group_by(K, gen) %>%
           dplyr::summarise(
             min = min(pop_fit_max),
             mean = mean(pop_fit_max),
             max = max(pop_fit_max)
           )
-points = filter(lines, gen %% 2000 == 0 & gen != 0)
-
-ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, shape = K)) +
-  geom_ribbon(aes(ymin = min / TRAITS, ymax = max / TRAITS), alpha = 0.1) +
+ggplot(lines, aes(x=gen, y=mean / DIMENSIONALITY, group = K, fill = K, color = K, shape = K)) +
+  geom_ribbon(aes(ymin = min / DIMENSIONALITY, ymax = max / DIMENSIONALITY), alpha = 0.1) +
   geom_line(size = 0.5) +
-  geom_point(data = points, size = 1.5, stroke = 2.0, alpha = 1.0) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
   scale_y_continuous(
-    name="Average trait score",
-    limits=c(-1, 41),
-    breaks=seq(0,40, 10),
-    labels=c("0", "10", "20", "30", "40")
+    name="Average trait score"
   ) +
   scale_x_continuous(
     name="Generations",
@@ -58,37 +46,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, s
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Best performance over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
-
-ot
-```
-
-```{r, echo = FALSE}
-legend <- cowplot::get_legend(
-  ot +
-    guides(
-      shape=guide_legend(nrow=1, title.position = "bottom"),
-      color=guide_legend(nrow=1, title.position = "bottom"),
-      fill=guide_legend(nrow=1, title.position = "bottom")
-    ) +
-    theme(
-      legend.position = "top",
-      legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
-    )
-)
+  p_theme
 ```
 
 ### Best performance throughout
@@ -96,17 +54,13 @@ legend <- cowplot::get_legend(
 The best performance found throughout 50,000 generations.
 
 ```{r}
-best = filter(nov_best, col == 'pop_fit_max' & diagnostic == 'exploitation_rate')
-
-plot = ggplot(best, aes(x = K, y = val / TRAITS, color = K, fill = K, shape = K)) +
+filter(nov_best, col == 'pop_fit_max' &  diagnostic == 'exploitation_rate') %>%
+ggplot(., aes(x = K, y = val / DIMENSIONALITY, color = K, fill = K, shape = K)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
   scale_y_continuous(
-    name="Average trait score",
-    limits=c(-1, 41),
-    breaks=seq(0,40, 10),
-    labels=c("0", "10", "20", "30", "40")
+    name="Average trait score"
   ) +
   scale_x_discrete(
     name="K"
@@ -114,17 +68,8 @@ plot = ggplot(best, aes(x = K, y = val / TRAITS, color = K, fill = K, shape = K)
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
-  p_theme
-
-plot_grid(
-  plot +
     ggtitle("Best performance throughout") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.3),
-  label_size = TSIZE
-)
+  p_theme
 ```
 
 #### Stats
@@ -132,29 +77,168 @@ plot_grid(
 Summary statistics for the best performance found throughout 50,000 generations.
 
 ```{r}
-group_by(best, K) %>%
+performance = filter(nov_best, col == 'pop_fit_max' & diagnostic == 'exploitation_rate');
+group_by(performance, K) %>%
   dplyr::summarise(
     count = n(),
     na_cnt = sum(is.na(val)),
-    min = min(val / TRAITS, na.rm = TRUE),
-    median = median(val / TRAITS, na.rm = TRUE),
-    mean = mean(val / TRAITS, na.rm = TRUE),
-    max = max(val / TRAITS, na.rm = TRUE),
-    IQR = IQR(val / TRAITS, na.rm = TRUE)
+    min = min(val / DIMENSIONALITY, na.rm = TRUE),
+    median = median(val / DIMENSIONALITY, na.rm = TRUE),
+    mean = mean(val / DIMENSIONALITY, na.rm = TRUE),
+    max = max(val / DIMENSIONALITY, na.rm = TRUE),
+    IQR = IQR(val / DIMENSIONALITY, na.rm = TRUE)
   )
 ```
 
 Kruskal–Wallis test provides evidence of significant differences among K values on the best performance found throughout 50,000 generations
 
 ```{r}
-kruskal.test(val ~ K,data = best)
+kruskal.test(val ~ K,data = performance)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found throughout 50,000 generations.
 
 ```{r}
-pairwise.wilcox.test(x = best$val, g = best$K , p.adjust.method = "bonferroni",
+pairwise.wilcox.test(x = performance$val, g = performance$K , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 't')
+```
+
+### Multi-valley crossing
+
+#### Performance over time
+
+```{r nov-exp-mvc-per}
+# data for lines and shading on plots
+lines = filter(nov_ot_mvc, diagnostic == 'exploitation_rate') %>%
+  group_by(K, gen) %>%
+  dplyr::summarise(
+    min = min(pop_fit_max) / DIMENSIONALITY,
+    mean = mean(pop_fit_max) / DIMENSIONALITY,
+    max = max(pop_fit_max) / DIMENSIONALITY
+  )
+
+ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
+  geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.1) +
+  geom_line(size = 0.5) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
+  scale_y_continuous(
+    name="Average trait score"
+  ) +
+  scale_x_continuous(
+    name="Generations",
+    limits=c(0, 50000),
+    breaks=c(0, 10000, 20000, 30000, 40000, 50000),
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
+
+  ) +
+  scale_shape_manual(values=SHAPE)+
+  scale_colour_manual(values = cb_palette) +
+  scale_fill_manual(values = cb_palette) +
+  ggtitle('Performance over time')+
+  p_theme
+
+```
+
+#### Performance comparison
+
+Best performances in the population at 40,000 and 50,000 generations.
+
+```{r nov-exp-mvc-per-sli, warning=FALSE}
+# 80% and final generation comparison
+end = filter(nov_ot_mvc, diagnostic == 'exploitation_rate' & gen == 50000)
+end$Generation <- factor(end$gen)
+
+mid = filter(nov_ot_mvc, diagnostic == 'exploitation_rate' & gen == 40000)
+mid$Generation <- factor(mid$gen)
+
+mvc_p = ggplot(mid, aes(x = K, y=pop_fit_max / DIMENSIONALITY, group = K, shape = Generation)) +
+  geom_point(col = mvc_col[1] , position = position_jitternudge(jitter.width = .03, nudge.x = -0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(position = position_nudge(x = -.15, y = 0), lwd = 0.7, col = mvc_col[1], fill = mvc_col[1], width = .1, outlier.shape = NA, alpha = 0.0) +
+
+  geom_point(data = end, aes(x = K, y=pop_fit_max / DIMENSIONALITY), col = mvc_col[2], position = position_jitternudge(jitter.width = .03, nudge.x = 0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(data = end, aes(x = K, y=pop_fit_max / DIMENSIONALITY), position = position_nudge(x = .15, y = 0), lwd = 0.7, col = mvc_col[2], fill = mvc_col[2], width = .1, outlier.shape = NA, alpha = 0.0) +
+
+  scale_y_continuous(
+    name="Average trait score"
+  ) +
+  scale_x_discrete(
+    name="K"
+  )+
+  scale_shape_manual(values=c(0,1))+
+  scale_colour_manual(values = c(mvc_col[1],mvc_col[2])) +
+  p_theme
+
+plot_grid(
+  mvc_p +
+    ggtitle("Performance comparisons") +
+    theme(legend.position="none"),
+  legend,
+  nrow=2,
+  rel_heights = c(1,.05),
+  label_size = TSIZE
+)
+```
+
+#### Stats
+
+Summary statistics for the performance of the best performance at 40,000 and 50,000 generations.
+
+```{r nov-exp-mvc-per-sli-sum}
+slices = filter(nov_ot_mvc, diagnostic == 'exploitation_rate' & (gen == 50000 | gen == 40000))
+slices$Generation <- factor(slices$gen, levels = c(50000,40000))
+slices %>%
+  group_by(K, Generation) %>%
+  dplyr::summarise(
+    count = n(),
+    na_cnt = sum(is.na(pop_fit_max  / DIMENSIONALITY)),
+    min = min(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    median = median(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    mean = mean(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    max = max(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    IQR = IQR(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE)
+  )
+```
+
+K 1
+```{r nov-exp-mvc-per-0}
+wilcox.test(x = filter(slices, K == 1 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 1 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
+
+K 2
+```{r nov-exp-mvc-per-01}
+wilcox.test(x = filter(slices, K == 2 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 2 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
+
+K 4
+```{r nov-exp-mvc-per-03}
+wilcox.test(x = filter(slices, K == 4 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 4 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
+
+K 8
+```{r nov-exp-mvc-per-06}
+wilcox.test(x = filter(slices, K == 8 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 8 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
+
+K 15
+```{r nov-exp-mvc-per-12}
+wilcox.test(x = filter(slices, K == 15 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 15 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
+
+K 30
+```{r nov-exp-mvc-per-25}
+wilcox.test(x = filter(slices, K == 30 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 30 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
 ```
 
 ## Ordered exploitation results
@@ -168,25 +252,19 @@ Note that performance values fall between 0 and 100.
 Performance over time.
 
 ```{r, warning=FALSE}
-problem <- filter(nov_ot, diagnostic == 'ordered_exploitation')
-lines = problem %>%
+lines = filter(nov_ot, diagnostic == 'ordered_exploitation') %>%
         group_by(K, gen) %>%
           dplyr::summarise(
             min = min(pop_fit_max),
             mean = mean(pop_fit_max),
             max = max(pop_fit_max)
           )
-points = filter(lines, gen %% 2000 == 0 & gen != 0)
-
-ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, shape = K)) +
-  geom_ribbon(aes(ymin = min / TRAITS, ymax = max / TRAITS), alpha = 0.1) +
+ggplot(lines, aes(x=gen, y=mean / DIMENSIONALITY, group = K, fill = K, color = K, shape = K)) +
+  geom_ribbon(aes(ymin = min / DIMENSIONALITY, ymax = max / DIMENSIONALITY), alpha = 0.1) +
   geom_line(size = 0.5) +
-  geom_point(data = points, size = 1.5, stroke = 2.0, alpha = 1.0) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
   scale_y_continuous(
-    name="Average trait score",
-    limits=c(-1, 11),
-    breaks=seq(0,10, 2),
-    labels=c("0", "2", "4", "6", "8", "10")
+    name="Average trait score"
   ) +
   scale_x_continuous(
     name="Generations",
@@ -199,37 +277,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, s
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Best performance over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
-
-ot
-```
-
-```{r, echo = FALSE}
-legend <- cowplot::get_legend(
-  ot +
-    guides(
-      shape=guide_legend(nrow=1, title.position = "bottom"),
-      color=guide_legend(nrow=1, title.position = "bottom"),
-      fill=guide_legend(nrow=1, title.position = "bottom")
-    ) +
-    theme(
-      legend.position = "top",
-      legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
-    )
-)
+  p_theme
 ```
 
 ### Best performance throughout
@@ -237,17 +285,13 @@ legend <- cowplot::get_legend(
 The best performance found throughout 50,000 generations.
 
 ```{r}
-best = filter(nov_best, col == 'pop_fit_max' & diagnostic == 'ordered_exploitation')
-
-plot = ggplot(best, aes(x = K, y = val / TRAITS, color = K, fill = K, shape = K)) +
+filter(nov_best, col == 'pop_fit_max' & diagnostic == 'ordered_exploitation') %>%
+ggplot(., aes(x = K, y = val / DIMENSIONALITY, color = K, fill = K, shape = K)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
   scale_y_continuous(
-    name="Average trait score",
-    limits=c(-1, 11),
-    breaks=seq(0,10, 2),
-    labels=c("0", "2", "4", "6", "8", "10")
+    name="Average trait score"
   ) +
   scale_x_discrete(
     name="K"
@@ -255,17 +299,8 @@ plot = ggplot(best, aes(x = K, y = val / TRAITS, color = K, fill = K, shape = K)
   scale_shape_manual(values = SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
+  ggtitle("Best performance throughout") +
   p_theme
-
-plot_grid(
-  plot +
-    ggtitle("Best performance throughout") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.2),
-  label_size = TSIZE
-)
 ```
 
 #### Stats
@@ -273,31 +308,169 @@ plot_grid(
 Summary statistics about the best performance found.
 
 ```{r}
-group_by(best, K) %>%
+performance = filter(nov_best, col == 'pop_fit_max' & diagnostic == 'ordered_exploitation')
+group_by(performance, K) %>%
   dplyr::summarise(
     count = n(),
     na_cnt = sum(is.na(val)),
-    min = min(val / TRAITS, na.rm = TRUE),
-    median = median(val / TRAITS, na.rm = TRUE),
-    mean = mean(val / TRAITS, na.rm = TRUE),
-    max = max(val / TRAITS, na.rm = TRUE),
-    IQR = IQR(val / TRAITS, na.rm = TRUE)
+    min = min(val / DIMENSIONALITY, na.rm = TRUE),
+    median = median(val / DIMENSIONALITY, na.rm = TRUE),
+    mean = mean(val / DIMENSIONALITY, na.rm = TRUE),
+    max = max(val / DIMENSIONALITY, na.rm = TRUE),
+    IQR = IQR(val / DIMENSIONALITY, na.rm = TRUE)
   )
 ```
 
 Kruskal–Wallis test provides evidence of statistical differences for the best performance found in the pouplation throughout 50,000 generations.
 
 ```{r}
-kruskal.test(val ~ K,data = best)
+kruskal.test(val ~ K,data = performance)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found in the pouplation throughout 50,000 generations.
 
 ```{r}
-pairwise.wilcox.test(x = best$val, g = best$K , p.adjust.method = "bonferroni",
+pairwise.wilcox.test(x = performance$val, g = performance$K , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 't')
 ```
 
+### Multi-valley crossing
+
+#### Performance over time
+
+```{r nov-ord-mvc-per}
+# data for lines and shading on plots
+lines = filter(nov_ot_mvc, diagnostic == 'ordered_exploitation') %>%
+  group_by(K, gen) %>%
+  dplyr::summarise(
+    min = min(pop_fit_max) / DIMENSIONALITY,
+    mean = mean(pop_fit_max) / DIMENSIONALITY,
+    max = max(pop_fit_max) / DIMENSIONALITY
+  )
+
+ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
+  geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.1) +
+  geom_line(size = 0.5) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
+  scale_y_continuous(
+    name="Average trait score"
+  ) +
+  scale_x_continuous(
+    name="Generations",
+    limits=c(0, 50000),
+    breaks=c(0, 10000, 20000, 30000, 40000, 50000),
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
+
+  ) +
+  scale_shape_manual(values=SHAPE)+
+  scale_colour_manual(values = cb_palette) +
+  scale_fill_manual(values = cb_palette) +
+  ggtitle('Performance over time')+
+  p_theme
+
+```
+
+#### Performance comparison
+
+Best performances in the population at 40,000 and 50,000 generations.
+
+```{r nov-ord-mvc-per-sli, warning=FALSE}
+# 80% and final generation comparison
+end = filter(nov_ot_mvc, diagnostic == 'ordered_exploitation' & gen == 50000)
+end$Generation <- factor(end$gen)
+
+mid = filter(nov_ot_mvc, diagnostic == 'ordered_exploitation' & gen == 40000)
+mid$Generation <- factor(mid$gen)
+
+mvc_p = ggplot(mid, aes(x = K, y=pop_fit_max / DIMENSIONALITY, group = K, shape = Generation)) +
+  geom_point(col = mvc_col[1] , position = position_jitternudge(jitter.width = .03, nudge.x = -0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(position = position_nudge(x = -.15, y = 0), lwd = 0.7, col = mvc_col[1], fill = mvc_col[1], width = .1, outlier.shape = NA, alpha = 0.0) +
+
+  geom_point(data = end, aes(x = K, y=pop_fit_max / DIMENSIONALITY), col = mvc_col[2], position = position_jitternudge(jitter.width = .03, nudge.x = 0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(data = end, aes(x = K, y=pop_fit_max / DIMENSIONALITY), position = position_nudge(x = .15, y = 0), lwd = 0.7, col = mvc_col[2], fill = mvc_col[2], width = .1, outlier.shape = NA, alpha = 0.0) +
+
+  scale_y_continuous(
+    name="Average trait score"
+  ) +
+  scale_x_discrete(
+    name="K"
+  )+
+  scale_shape_manual(values=c(0,1))+
+  scale_colour_manual(values = c(mvc_col[1],mvc_col[2])) +
+  p_theme
+
+plot_grid(
+  mvc_p +
+    ggtitle("Performance comparisons") +
+    theme(legend.position="none"),
+  legend,
+  nrow=2,
+  rel_heights = c(1,.05),
+  label_size = TSIZE
+)
+```
+
+#### Stats
+
+Summary statistics for the performance of the best performance at 40,000 and 50,000 generations.
+
+```{r nov-ord-mvc-per-sli-sum}
+slices = filter(nov_ot_mvc, diagnostic == 'ordered_exploitation' & (gen == 50000 | gen == 40000))
+slices$Generation <- factor(slices$gen, levels = c(50000,40000))
+slices %>%
+  group_by(K, Generation) %>%
+  dplyr::summarise(
+    count = n(),
+    na_cnt = sum(is.na(pop_fit_max  / DIMENSIONALITY)),
+    min = min(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    median = median(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    mean = mean(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    max = max(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    IQR = IQR(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE)
+  )
+```
+
+K 1
+```{r nov-ord-mvc-per-0}
+wilcox.test(x = filter(slices, K == 1 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 1 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
+
+K 2
+```{r nov-ord-mvc-per-01}
+wilcox.test(x = filter(slices, K == 2 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 2 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
+
+K 4
+```{r nov-ord-mvc-per-03}
+wilcox.test(x = filter(slices, K == 4 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 4 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
+
+K 8
+```{r nov-ord-mvc-per-06}
+wilcox.test(x = filter(slices, K == 8 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 8 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
+
+K 15
+```{r nov-ord-mvc-per-12}
+wilcox.test(x = filter(slices, K == 15 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 15 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
+
+K 30
+```{r nov-ord-mvc-per-25}
+wilcox.test(x = filter(slices, K == 30 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 30 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
 
 ## Contraditory objectives diagnostic
 
@@ -314,23 +487,19 @@ Here we analyze the satisfactory trait coverage for each parameter replicate on 
 Satisfactory trait coverage over time.
 
 ```{r, warning=FALSE}
-problem <- filter(nov_ot, diagnostic == 'contradictory_objectives')
-lines = problem %>%
+lines = filter(nov_ot, diagnostic == 'contradictory_objectives') %>%
         group_by(K, gen) %>%
           dplyr::summarise(
             min = min(pop_uni_obj),
             mean = mean(pop_uni_obj),
             max = max(pop_uni_obj)
           )
-points = filter(lines, gen %% 2000 == 0 & gen != 0)
-
-ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
+ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
   geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.1) +
   geom_line(size = 0.5) +
-  geom_point(data = points, size = 1.5, stroke = 2.0, alpha = 1.0) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
   scale_y_continuous(
-    name="Coverage",
-    limits=c(-1, 5)
+    name="Coverage"
   ) +
   scale_x_continuous(
     name="Generations",
@@ -343,37 +512,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K))
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Satisfactory trait coverage over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
-
-ot
-```
-
-```{r, echo = FALSE}
-legend <- cowplot::get_legend(
-  ot +
-    guides(
-      shape=guide_legend(nrow=1, title.position = "bottom"),
-      color=guide_legend(nrow=1, title.position = "bottom"),
-      fill=guide_legend(nrow=1, title.position = "bottom")
-    ) +
-    theme(
-      legend.position = "top",
-      legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
-    )
-)
+  p_theme
 ```
 
 #### Best coverage throughout
@@ -381,9 +520,8 @@ legend <- cowplot::get_legend(
 Best satisfactory trait coverage throughout 50,000 generations.
 
 ```{r}
-best = filter(nov_best, col == 'pop_uni_obj' & diagnostic == 'contradictory_objectives')
-
-plot = ggplot(best, aes(x = K, y = val, color = K, fill = K, shape = K)) +
+filter(nov_best, col == 'pop_uni_obj' & diagnostic == 'contradictory_objectives') %>%
+ggplot(., aes(x = K, y = val, color = K, fill = K, shape = K)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
@@ -397,17 +535,8 @@ plot = ggplot(best, aes(x = K, y = val, color = K, fill = K, shape = K)) +
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
+  ggtitle("Best satisfactory trait coverage") +
   p_theme
-
-plot_grid(
-  plot +
-    ggtitle("Best satisfactory trait coverage") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.2),
-  label_size = TSIZE
-)
 ```
 
 ##### Stats
@@ -415,7 +544,8 @@ plot_grid(
 Summary statistics for the best satisfactory trait coverage throughout 50,000 generations.
 
 ```{r}
-group_by(best, K) %>%
+coverage = filter(nov_best, col == 'pop_uni_obj' & diagnostic == 'contradictory_objectives')
+group_by(coverage, K) %>%
   dplyr::summarise(
     count = n(),
     na_cnt = sum(is.na(val)),
@@ -432,8 +562,8 @@ group_by(best, K) %>%
 Satisfactory trait coverage in the population at the end of 50,000 generations.
 
 ```{r}
-end = filter(nov_end, diagnostic == 'contradictory_objectives')
-plot = ggplot(end, aes(x = K, y = pop_uni_obj, color = K, fill = K, shape = K)) +
+filter(nov_ot, diagnostic == 'contradictory_objectives' & gen == 50000) %>%
+ggplot(., aes(x = K, y = pop_uni_obj, color = K, fill = K, shape = K)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
@@ -447,17 +577,8 @@ plot = ggplot(end, aes(x = K, y = pop_uni_obj, color = K, fill = K, shape = K)) 
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
+  ggtitle("Final satisfactory trait coverage") +
   p_theme
-
-plot_grid(
-  plot +
-    ggtitle("Final satisfactory trait coverage") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.3),
-  label_size = TSIZE
-)
 ```
 
 ##### Stats
@@ -465,7 +586,8 @@ plot_grid(
 Summary statistics for satisfactory trait coverage in the population at the end of 50,000 generations.
 
 ```{r}
-group_by(end, K) %>%
+coverage = filter(nov_ot, diagnostic == 'contradictory_objectives' & gen == 50000)
+group_by(coverage, K) %>%
   dplyr::summarise(
     count = n(),
     na_cnt = sum(is.na(pop_uni_obj)),
@@ -486,20 +608,17 @@ Here we analyze the activation gene coverage for each parameter replicate on the
 Activation gene coverage over time.
 
 ```{r, warning=FALSE}
-problem <- filter(nov_ot, diagnostic == 'contradictory_objectives')
-lines = problem %>%
+lines = filter(nov_ot, diagnostic == 'contradictory_objectives') %>%
         group_by(K, gen) %>%
           dplyr::summarise(
             min = min(uni_str_pos),
             mean = mean(uni_str_pos),
             max = max(uni_str_pos)
           )
-points = filter(lines, gen %% 2000 == 0 & gen != 0)
-
-ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
+ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
   geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.1) +
   geom_line(size = 0.5) +
-  geom_point(data = points, size = 1.5, stroke = 2.0, alpha = 1.0) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
   scale_y_continuous(
     name="Coverage",
     limits=c(-1, 101),
@@ -517,20 +636,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K))
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Activation gene coverage over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
-
-ot
+  p_theme
 ```
 
 #### End of 50,000 generations
@@ -538,16 +644,13 @@ ot
 Activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r}
-end = filter(nov_end, diagnostic == 'contradictory_objectives')
-plot = ggplot(end, aes(x = K, y = uni_str_pos, color = K, fill = K, shape = K)) +
+filter(nov_ot, diagnostic == 'contradictory_objectives' & gen == 50000) %>%
+ggplot(., aes(x = K, y = uni_str_pos, color = K, fill = K, shape = K)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
   scale_y_continuous(
-    name="Coverage",
-    limits=c(-1, 41),
-    breaks=seq(0, 40, 10),
-    labels=c("0", "10", "20", "30", "40")
+    name="Coverage"
   ) +
   scale_x_discrete(
     name="K"
@@ -555,17 +658,8 @@ plot = ggplot(end, aes(x = K, y = uni_str_pos, color = K, fill = K, shape = K)) 
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
+  ggtitle("Final activation gene coverage") +
   p_theme
-
-plot_grid(
-  plot +
-    ggtitle("Final activation gene coverage") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.2),
-  label_size = TSIZE
-)
 ```
 
 ##### Stats
@@ -573,7 +667,8 @@ plot_grid(
 Summary statistics for the activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r}
-group_by(end, K) %>%
+coverage = filter(nov_ot, diagnostic == 'contradictory_objectives' & gen == 50000)
+group_by(coverage, K) %>%
   dplyr::summarise(
     count = n(),
     na_cnt = sum(is.na(uni_str_pos)),
@@ -588,15 +683,286 @@ group_by(end, K) %>%
 Kruskal–Wallis test provides evidence of statistical differences among activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r}
-kruskal.test(uni_str_pos ~ K,data = end)
+kruskal.test(uni_str_pos ~ K,data = coverage)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r}
-pairwise.wilcox.test(x = end$uni_str_pos, g = end$K , p.adjust.method = "bonferroni",
+pairwise.wilcox.test(x = coverage$uni_str_pos, g = coverage$K , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 't')
 ```
+
+### Multi-valley crossing
+
+#### Satisfactory trait coverage over time
+
+```{r nov-con-mvc-sat-ot}
+lines = filter(nov_ot_mvc, diagnostic == 'contradictory_objectives') %>%
+  group_by(K, gen) %>%
+  dplyr::summarise(
+    min = min(pop_uni_obj),
+    mean = mean(pop_uni_obj),
+    max = max(pop_uni_obj)
+  )
+ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
+  geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.1) +
+  geom_line(size = 0.5) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
+  scale_y_continuous(
+    name="Coverage"
+  ) +
+  scale_x_continuous(
+    name="Generations",
+    limits=c(0, 50000),
+    breaks=c(0, 10000, 20000, 30000, 40000, 50000),
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
+
+  ) +
+  scale_shape_manual(values=SHAPE)+
+  scale_colour_manual(values = cb_palette) +
+  scale_fill_manual(values = cb_palette) +
+  ggtitle("Satisfactory trait coverage over time") +
+  p_theme
+```
+
+#### Satisfactory trait coverage comparison
+
+Best performances in the population at 40,000 and 50,000 generations.
+
+```{r nov-con-mvc-sat-sli, warning=FALSE}
+# 80% and final generation comparison
+end = filter(nov_ot_mvc, diagnostic == 'contradictory_objectives' & gen == 50000)
+end$Generation <- factor(end$gen)
+
+mid = filter(nov_ot_mvc, diagnostic == 'contradictory_objectives' & gen == 40000)
+mid$Generation <- factor(mid$gen)
+
+mvc_p = ggplot(mid, aes(x = K, y=pop_uni_obj, group = K, shape = Generation)) +
+  geom_point(col = mvc_col[1] , position = position_jitternudge(jitter.width = .03, nudge.x = -0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(position = position_nudge(x = -.15, y = 0), lwd = 0.7, col = mvc_col[1], fill = mvc_col[1], width = .1, outlier.shape = NA, alpha = 0.0) +
+
+  geom_point(data = end, aes(x = K, y=pop_uni_obj), col = mvc_col[2], position = position_jitternudge(jitter.width = .03, nudge.x = 0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(data = end, aes(x = K, y=pop_uni_obj), position = position_nudge(x = .15, y = 0), lwd = 0.7, col = mvc_col[2], fill = mvc_col[2], width = .1, outlier.shape = NA, alpha = 0.0) +
+
+  scale_y_continuous(
+    name="Coverage",
+  ) +
+  scale_x_discrete(
+    name="K"
+  )+
+  scale_shape_manual(values=c(0,1))+
+  scale_colour_manual(values = c(mvc_col[1],mvc_col[2])) +
+  p_theme
+
+plot_grid(
+  mvc_p +
+    ggtitle("Satisfactory trait coverage over time") +
+    theme(legend.position="none"),
+  legend,
+  nrow=2,
+  rel_heights = c(1,.05),
+  label_size = TSIZE
+)
+```
+
+##### Stats
+
+Summary statistics for the performance of the best performance at 40,000 and 50,000 generations.
+
+```{r nov-con-mvc-sat-sli-sum}
+slices = filter(nov_ot_mvc, diagnostic == 'contradictory_objectives' & (gen == 50000 | gen == 40000))
+slices$Generation <- factor(slices$gen, levels = c(50000,40000))
+slices %>%
+  group_by(K, Generation) %>%
+  dplyr::summarise(
+    count = n(),
+    na_cnt = sum(is.na(pop_uni_obj)),
+    min = min(pop_uni_obj, na.rm = TRUE),
+    median = median(pop_uni_obj, na.rm = TRUE),
+    mean = mean(pop_uni_obj, na.rm = TRUE),
+    max = max(pop_uni_obj, na.rm = TRUE),
+    IQR = IQR(pop_uni_obj, na.rm = TRUE)
+  )
+```
+
+K 1
+```{r nov-con-mvc-sat-0}
+wilcox.test(x = filter(slices, K == 1 & Generation == 50000)$pop_uni_obj,
+            y = filter(slices, K == 1 & Generation == 40000)$pop_uni_obj,
+            alternative = 't')
+```
+
+K 2
+```{r nov-con-mvc-sat-01}
+wilcox.test(x = filter(slices, K == 2 & Generation == 50000)$pop_uni_obj,
+            y = filter(slices, K == 2 & Generation == 40000)$pop_uni_obj,
+            alternative = 't')
+```
+
+K 4
+```{r nov-con-mvc-sat-03}
+wilcox.test(x = filter(slices, K == 4 & Generation == 50000)$pop_uni_obj,
+            y = filter(slices, K == 4 & Generation == 40000)$pop_uni_obj,
+            alternative = 't')
+```
+
+K 8
+```{r nov-con-mvc-sat-06}
+wilcox.test(x = filter(slices, K == 8 & Generation == 50000)$pop_uni_obj,
+            y = filter(slices, K == 8 & Generation == 40000)$pop_uni_obj,
+            alternative = 't')
+```
+
+K 15
+```{r nov-con-mvc-sat-12}
+wilcox.test(x = filter(slices, K == 15 & Generation == 50000)$pop_uni_obj,
+            y = filter(slices, K == 15 & Generation == 40000)$pop_uni_obj,
+            alternative = 't')
+```
+
+K 30
+```{r nov-con-mvc-sat-25}
+wilcox.test(x = filter(slices, K == 30 & Generation == 50000)$pop_uni_obj,
+            y = filter(slices, K == 30 & Generation == 40000)$pop_uni_obj,
+            alternative = 't')
+```
+
+
+#### Activation gene coverage over time
+
+```{r nov-con-mvc-act-ot}
+lines = filter(nov_ot_mvc, diagnostic == 'contradictory_objectives') %>%
+  group_by(K, gen) %>%
+  dplyr::summarise(
+    min = min(uni_str_pos),
+    mean = mean(uni_str_pos),
+    max = max(uni_str_pos)
+  )
+ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
+  geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.1) +
+  geom_line(size = 0.5) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
+  scale_y_continuous(
+    name="Coverage"
+  ) +
+  scale_x_continuous(
+    name="Generations",
+    limits=c(0, 50000),
+    breaks=c(0, 10000, 20000, 30000, 40000, 50000),
+    labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
+
+  ) +
+  scale_shape_manual(values=SHAPE)+
+  scale_colour_manual(values = cb_palette) +
+  scale_fill_manual(values = cb_palette) +
+  ggtitle("Activation gene coverage over time") +
+  p_theme
+```
+
+#### Activation gene coverage comparison
+
+Activation gene coverage in the population at 40,000 and 50,000 generations.
+
+```{r nov-con-mvc-act-sli, warning=FALSE}
+# 80% and final generation comparison
+end = filter(nov_ot_mvc, diagnostic == 'contradictory_objectives' & gen == 50000)
+end$Generation <- factor(end$gen)
+
+mid = filter(nov_ot_mvc, diagnostic == 'contradictory_objectives' & gen == 40000)
+mid$Generation <- factor(mid$gen)
+
+mvc_p = ggplot(mid, aes(x = K, y=uni_str_pos, group = K, shape = Generation)) +
+  geom_point(col = mvc_col[1] , position = position_jitternudge(jitter.width = .03, nudge.x = -0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(position = position_nudge(x = -.15, y = 0), lwd = 0.7, col = mvc_col[1], fill = mvc_col[1], width = .1, outlier.shape = NA, alpha = 0.0) +
+
+  geom_point(data = end, aes(x = K, y=uni_str_pos), col = mvc_col[2], position = position_jitternudge(jitter.width = .03, nudge.x = 0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(data = end, aes(x = K, y=uni_str_pos), position = position_nudge(x = .15, y = 0), lwd = 0.7, col = mvc_col[2], fill = mvc_col[2], width = .1, outlier.shape = NA, alpha = 0.0) +
+
+  scale_y_continuous(
+    name="Coverage",
+  ) +
+  scale_x_discrete(
+    name="K"
+  )+
+  scale_shape_manual(values=c(0,1))+
+  scale_colour_manual(values = c(mvc_col[1],mvc_col[2])) +
+  p_theme
+
+plot_grid(
+  mvc_p +
+    ggtitle("Activation gene coverage over time") +
+    theme(legend.position="none"),
+  legend,
+  nrow=2,
+  rel_heights = c(1,.05),
+  label_size = TSIZE
+)
+```
+
+##### Stats
+
+Summary statistics for the activation gene coverage at 40,000 and 50,000 generations.
+
+```{r nov-con-mvc-act-sli-sum}
+slices = filter(nov_ot_mvc, diagnostic == 'contradictory_objectives' & (gen == 50000 | gen == 40000))
+slices$Generation <- factor(slices$gen, levels = c(50000,40000))
+slices %>%
+  group_by(K, Generation) %>%
+  dplyr::summarise(
+    count = n(),
+    na_cnt = sum(is.na(uni_str_pos)),
+    min = min(uni_str_pos, na.rm = TRUE),
+    median = median(uni_str_pos, na.rm = TRUE),
+    mean = mean(uni_str_pos, na.rm = TRUE),
+    max = max(uni_str_pos, na.rm = TRUE),
+    IQR = IQR(uni_str_pos, na.rm = TRUE)
+  )
+
+```
+
+K 1
+```{r nov-con-mvc-act-0}
+wilcox.test(x = filter(slices, K == 1 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 1 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
+```
+
+K 2
+```{r nov-con-mvc-act-01}
+wilcox.test(x = filter(slices, K == 2 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 2 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
+```
+
+K 4
+```{r nov-con-mvc-act-03}
+wilcox.test(x = filter(slices, K == 4 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 4 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
+```
+
+K 8
+```{r nov-con-mvc-act-06}
+wilcox.test(x = filter(slices, K == 8 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 8 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
+```
+
+K 15
+```{r nov-con-mvc-act-12}
+wilcox.test(x = filter(slices, K == 15 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 15 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
+```
+
+K 30
+```{r nov-con-mvc-act-25}
+wilcox.test(x = filter(slices, K == 30 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 30 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
+```
+
 
 ## Multi-path exploration results
 
@@ -613,25 +979,19 @@ Here we analyze the performances for each parameter replicate on the multi-path 
 Performance over time.
 
 ```{r, warning=FALSE}
-problem <- filter(nov_ot, diagnostic == 'multipath_exploration')
-lines = problem %>%
+lines = filter(nov_ot, diagnostic == 'multipath_exploration') %>%
         group_by(K, gen) %>%
           dplyr::summarise(
             min = min(pop_fit_max),
             mean = mean(pop_fit_max),
             max = max(pop_fit_max)
           )
-points = filter(lines, gen %% 2000 == 0 & gen != 0)
-
-ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, shape = K)) +
-  geom_ribbon(aes(ymin = min / TRAITS, ymax = max / TRAITS), alpha = 0.1) +
+ggplot(lines, aes(x=gen, y=mean / DIMENSIONALITY, group = K, fill = K, color = K, shape = K)) +
+  geom_ribbon(aes(ymin = min / DIMENSIONALITY, ymax = max / DIMENSIONALITY), alpha = 0.1) +
   geom_line(size = 0.5) +
-  geom_point(data = points, size = 1.5, stroke = 2.0, alpha = 1.0) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
   scale_y_continuous(
-    name="Average trait score",
-    limits=c(-1, 11),
-    breaks=seq(0, 10, 2),
-    labels=c("0", "2", "4", "6", "8", "10")
+    name="Average trait score"
   ) +
   scale_x_continuous(
     name="Generations",
@@ -644,37 +1004,7 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, s
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Best performance over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
-
-ot
-```
-
-```{r, echo = FALSE}
-legend <- cowplot::get_legend(
-  ot +
-    guides(
-      shape=guide_legend(nrow=1, title.position = "bottom"),
-      color=guide_legend(nrow=1, title.position = "bottom"),
-      fill=guide_legend(nrow=1, title.position = "bottom")
-    ) +
-    theme(
-      legend.position = "top",
-      legend.box="verticle",
-      legend.justification="center",
-      legend.title=element_blank()
-    )
-)
+  p_theme
 ```
 
 #### Best performance throughout
@@ -682,17 +1012,13 @@ legend <- cowplot::get_legend(
 Here we plot the performance of the best performing solution found throughout 50,000 generations.
 
 ```{r}
-best = filter(nov_best, col == 'pop_fit_max' & diagnostic == 'multipath_exploration')
-
-plot = ggplot(best, aes(x = K, y = val / TRAITS, color = K, fill = K, shape = K)) +
+filter(nov_best, col == 'pop_fit_max' & diagnostic == 'multipath_exploration') %>%
+ggplot(., aes(x = K, y = val / DIMENSIONALITY, color = K, fill = K, shape = K)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
   scale_y_continuous(
-    name="Average trait score",
-    limits=c(-1, 11),
-    breaks=seq(0, 10, 2),
-    labels=c("0", "2", "4", "6", "8", "10")
+    name="Average trait score"
   ) +
   scale_x_discrete(
     name="K"
@@ -700,17 +1026,8 @@ plot = ggplot(best, aes(x = K, y = val / TRAITS, color = K, fill = K, shape = K)
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
+  ggtitle("Best performance throughout") +
   p_theme
-
-plot_grid(
-  plot +
-    ggtitle("Best performance throughout") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.3),
-  label_size = TSIZE
-)
 ```
 
 ##### Stats
@@ -718,28 +1035,29 @@ plot_grid(
 Summary statistics for the performance of the best performing solution found throughout 50,000 generations.
 
 ```{r}
-group_by(best, K) %>%
+performance = filter(nov_best, col == 'pop_fit_max' & diagnostic == 'multipath_exploration')
+group_by(performance, K) %>%
   dplyr::summarise(
     count = n(),
     na_cnt = sum(is.na(val)),
-    min = min(val / TRAITS, na.rm = TRUE),
-    median = median(val / TRAITS, na.rm = TRUE),
-    mean = mean(val / TRAITS, na.rm = TRUE),
-    max = max(val / TRAITS, na.rm = TRUE),
-    IQR = IQR(val / TRAITS, na.rm = TRUE)
+    min = min(val / DIMENSIONALITY, na.rm = TRUE),
+    median = median(val / DIMENSIONALITY, na.rm = TRUE),
+    mean = mean(val / DIMENSIONALITY, na.rm = TRUE),
+    max = max(val / DIMENSIONALITY, na.rm = TRUE),
+    IQR = IQR(val / DIMENSIONALITY, na.rm = TRUE)
   )
 ```
 
 Kruskal–Wallis test provides evidence of statistical differences among the best performing solution found throughout 50,000 generations.
 
 ```{r}
-kruskal.test(val ~ K,data = best)
+kruskal.test(val ~ K,data = performance)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performing solution found throughout 50,000 generations.
 
 ```{r}
-pairwise.wilcox.test(x = best$val, g = best$K , p.adjust.method = "bonferroni",
+pairwise.wilcox.test(x = performance$val, g = performance$K , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 't')
 ```
 
@@ -748,16 +1066,13 @@ pairwise.wilcox.test(x = best$val, g = best$K , p.adjust.method = "bonferroni",
 Best performance in the population at the end of 50,000 generations.
 
 ```{r}
-end = filter(nov_end, diagnostic == 'multipath_exploration')
-plot = ggplot(end, aes(x = K, y = pop_fit_max / TRAITS, color = K, fill = K, shape = K)) +
+filter(nov_ot, diagnostic == 'multipath_exploration' & gen == 50000) %>%
+ggplot(., aes(x = K, y = pop_fit_max / DIMENSIONALITY, color = K, fill = K, shape = K)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
   scale_y_continuous(
-    name="Average trait score",
-    limits=c(-1, 11),
-    breaks=seq(0, 10, 2),
-    labels=c("0", "2", "4", "6", "8", "10")
+    name="Average trait score"
   ) +
   scale_x_discrete(
     name="K"
@@ -765,17 +1080,8 @@ plot = ggplot(end, aes(x = K, y = pop_fit_max / TRAITS, color = K, fill = K, sha
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
+  ggtitle("Final performance") +
   p_theme
-
-plot_grid(
-  plot +
-    ggtitle("Final performance") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.3),
-  label_size = TSIZE
-)
 ```
 
 ##### Stats
@@ -783,28 +1089,29 @@ plot_grid(
 Summary statistics for the best performance in the population at the end of 50,000 generations.
 
 ```{r}
-group_by(end, K) %>%
+performance = filter(nov_ot, diagnostic == 'multipath_exploration' & gen == 50000)
+group_by(performance, K) %>%
   dplyr::summarise(
     count = n(),
-    na_cnt = sum(is.na(pop_fit_max / TRAITS)),
-    min = min(pop_fit_max / TRAITS, na.rm = TRUE),
-    median = median(pop_fit_max / TRAITS, na.rm = TRUE),
-    mean = mean(pop_fit_max / TRAITS, na.rm = TRUE),
-    max = max(pop_fit_max / TRAITS, na.rm = TRUE),
-    IQR = IQR(pop_fit_max / TRAITS, na.rm = TRUE)
+    na_cnt = sum(is.na(pop_fit_max / DIMENSIONALITY)),
+    min = min(pop_fit_max / DIMENSIONALITY, na.rm = TRUE),
+    median = median(pop_fit_max / DIMENSIONALITY, na.rm = TRUE),
+    mean = mean(pop_fit_max / DIMENSIONALITY, na.rm = TRUE),
+    max = max(pop_fit_max / DIMENSIONALITY, na.rm = TRUE),
+    IQR = IQR(pop_fit_max / DIMENSIONALITY, na.rm = TRUE)
   )
 ```
 
 Kruskal–Wallis test provides evidence of statistical differences among best performance in the population at the end of 50,000 generations.
 
 ```{r}
-kruskal.test(pop_fit_max ~ K, data = end)
+kruskal.test(pop_fit_max ~ K, data = performance)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance in the population at the end of 50,000 generations.
 
 ```{r}
-pairwise.wilcox.test(x = end$pop_fit_max, g = end$K , p.adjust.method = "bonferroni",
+pairwise.wilcox.test(x = performance$pop_fit_max, g = performance$K , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 't')
 ```
 
@@ -818,20 +1125,17 @@ Here we analyze the activation gene coverage for each parameter replicate on the
 Activation gene coverage over time.
 
 ```{r, warning=FALSE}
-problem <- filter(nov_ot, diagnostic == 'multipath_exploration')
-lines = problem %>%
+lines = filter(nov_ot, diagnostic == 'multipath_exploration') %>%
         group_by(K, gen) %>%
           dplyr::summarise(
             min = min(uni_str_pos),
             mean = mean(uni_str_pos),
             max = max(uni_str_pos)
           )
-points = filter(lines, gen %% 2000 == 0 & gen != 0)
-
-ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
+ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
   geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.1) +
   geom_line(size = 0.5) +
-  geom_point(data = points, size = 1.5, stroke = 2.0, alpha = 1.0) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
   scale_y_continuous(
     name="Coverage",
     limits=c(-1, 101),
@@ -849,20 +1153,7 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K))
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
   ggtitle("Activation gene coverage over time") +
-  p_theme+
-    guides(
-    shape=guide_legend(nrow=1, title.position = "bottom"),
-    color=guide_legend(nrow=1, title.position = "bottom"),
-    fill=guide_legend(nrow=1, title.position = "bottom")
-  ) +
-  theme(
-    legend.position = "bottom",
-    legend.box="verticle",
-    legend.justification="center",
-    legend.title.align=0.5
-  )
-
-ot
+  p_theme
 ```
 
 #### End of 50,000 generations
@@ -870,16 +1161,13 @@ ot
 Activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r}
-end = filter(nov_end, diagnostic == 'multipath_exploration')
-plot = ggplot(end, aes(x = K, y = uni_str_pos, color = K, fill = K, shape = K)) +
+filter(nov_ot, diagnostic == 'multipath_exploration' & gen == 50000) %>%
+ggplot(., aes(x = K, y = uni_str_pos, color = K, fill = K, shape = K)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
   scale_y_continuous(
-    name="Coverage",
-    limits=c(-1, 21),
-    breaks=seq(0,20, 5),
-    labels=c("0", "5", "10", "15", "20")
+    name="Coverage"
   ) +
   scale_x_discrete(
     name="K"
@@ -887,17 +1175,8 @@ plot = ggplot(end, aes(x = K, y = uni_str_pos, color = K, fill = K, shape = K)) 
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
+  ggtitle("Final activation gene coverage") +
   p_theme
-
-plot_grid(
-  plot +
-    ggtitle("Final activation gene coverage") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.3),
-  label_size = TSIZE
-)
 ```
 
 ##### Stats
@@ -905,7 +1184,8 @@ plot_grid(
 Summary statistics for the activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r}
-group_by(end, K) %>%
+coverage = filter(nov_ot, diagnostic == 'multipath_exploration' & gen == 50000)
+group_by(coverage, K) %>%
   dplyr::summarise(
     count = n(),
     na_cnt = sum(is.na(uni_str_pos)),
@@ -920,50 +1200,34 @@ group_by(end, K) %>%
 Kruskal–Wallis test provides evidence of statistical differences among activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r}
-kruskal.test(uni_str_pos ~ K, data = end)
+kruskal.test(uni_str_pos ~ K, data = coverage)
 ```
 
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the activation gene coverage in the population at the end of 50,000 generations.
 
 ```{r}
-pairwise.wilcox.test(x = end$uni_str_pos, g = end$K , p.adjust.method = "bonferroni",
+pairwise.wilcox.test(x = coverage$uni_str_pos, g = coverage$K , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 't')
 ```
 
-## Multi-valley crossing results
-
-Here we present the results for the **best performances** and **best gene value** generated by each novelty search replicate on the multi-valley crossing diagnostic.
-Best performance found refers to the largest average trait score found in a given population.
-Best gene value refers to maximum gene value found in the population; this gives us a range of values in [0.0, 100.0].
-50 replicates are conducted for each nearest neighbor parameter value explored.
-
-### Performance
-
-Here we analyze the performances for each parameter replicate on the multi-valley crossing diagnostic.
+### Multi-valley crossing
 
 #### Performance over time
 
-Performance over time.
-
-```{r nov-mvc-per-ot, warning=FALSE}
-lines = filter(nov_ot, diagnostic == 'multivalley_crossing') %>%
+```{r nov-mpe-mvc-per-ot}
+lines =  filter(nov_ot_mvc, diagnostic == 'multipath_exploration') %>%
   group_by(K, gen) %>%
   dplyr::summarise(
     min = min(pop_fit_max),
     mean = mean(pop_fit_max),
     max = max(pop_fit_max)
   )
-points = filter(lines, gen %% 2000 == 0 & gen != 0)
-
-ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, shape = K)) +
-  geom_ribbon(aes(ymin = min / TRAITS, ymax = max / TRAITS), alpha = 0.1) +
+ggplot(lines, aes(x=gen, y=mean / DIMENSIONALITY, group = K, fill = K, color = K, shape = K)) +
+  geom_ribbon(aes(ymin = min / DIMENSIONALITY, ymax = max / DIMENSIONALITY), alpha = 0.1) +
   geom_line(size = 0.5) +
-  geom_point(data = points, size = 1.5, stroke = 2.0, alpha = 1.0) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
   scale_y_continuous(
-    name="Average trait score",
-    limits=c(-1, 26),
-    breaks=seq(0,25, 5),
-    labels=c("0", "5", "10", "15", "20", "25")
+    name="Average trait score"
   ) +
   scale_x_continuous(
     name="Generations",
@@ -972,188 +1236,129 @@ ot = ggplot(lines, aes(x=gen, y=mean / TRAITS, group = K, fill = K, color = K, s
     labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
 
   ) +
+  scale_shape_manual(values=SHAPE)+
+  scale_colour_manual(values = cb_palette) +
+  scale_fill_manual(values = cb_palette) +
   ggtitle("Best performance over time") +
-  scale_shape_manual(values=SHAPE)+
-  scale_colour_manual(values = cb_palette) +
-  scale_fill_manual(values = cb_palette) +
   p_theme
-
-ot
 ```
 
-```{r nov-mvc-per-lgd, echo = FALSE}
-legend <- cowplot::get_legend(
-  ot +
-    guides(
-      shape=guide_legend(nrow=2, title.position = "bottom"),
-      color=guide_legend(nrow=2, title.position = "bottom"),
-      fill=guide_legend(nrow=2, title.position = "bottom")
-    ) +
-    theme(
-      legend.position = "top",
-      legend.box="verticle",
-      legend.justification="center"
-    )
-)
-```
+#### Performance comparisons
 
-#### Best performance throughout
+```{r nov-mpe-mvc-per-sli, warning=FALSE}
+# 80% and final generation comparison
+end = filter(nov_ot_mvc, diagnostic == 'multipath_exploration' & gen == 50000)
+end$Generation <- factor(end$gen)
 
-The best performance found throughout 50,000 generations.
+mid = filter(nov_ot_mvc, diagnostic == 'multipath_exploration' & gen == 40000)
+mid$Generation <- factor(mid$gen)
 
-```{r nov-mvc-per-bst}
-best = filter(nov_best, col == 'pop_fit_max' & diagnostic == 'multivalley_crossing')
-plot =  ggplot(best, aes(x = K, y = val / TRAITS, color = K, fill = K, shape = K)) +
-          geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
-          geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
-          geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
-          guides(fill = "none",color = 'none', shape = 'none') +
-          scale_y_continuous(
-            name="Average trait score",
-            limits=c(-1, 26),
-            breaks=seq(0,25, 5),
-            labels=c("0", "5", "10", "15", "20", "25")
-          ) +
-          scale_x_discrete(
-            name="K"
-          )+
-          scale_shape_manual(values=SHAPE)+
-          scale_colour_manual(values = cb_palette, ) +
-          scale_fill_manual(values = cb_palette) +
-          p_theme
+mvc_p = ggplot(mid, aes(x = K, y=pop_fit_max / DIMENSIONALITY, group = K, shape = Generation)) +
+  geom_point(col = mvc_col[1] , position = position_jitternudge(jitter.width = .03, nudge.x = -0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(position = position_nudge(x = -.15, y = 0), lwd = 0.7, col = mvc_col[1], fill = mvc_col[1], width = .1, outlier.shape = NA, alpha = 0.0) +
 
-plot_grid(
-  plot +
-    ggtitle("Best performance throughout") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.55),
-  label_size = TSIZE
-)
-```
+  geom_point(data = end, aes(x = K, y=pop_fit_max / DIMENSIONALITY), col = mvc_col[2], position = position_jitternudge(jitter.width = .03, nudge.x = 0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(data = end, aes(x = K, y=pop_fit_max / DIMENSIONALITY), position = position_nudge(x = .15, y = 0), lwd = 0.7, col = mvc_col[2], fill = mvc_col[2], width = .1, outlier.shape = NA, alpha = 0.0) +
 
-##### Stats
-
-Summary statistics for the best performance found throughout 50,000 generations.
-
-```{r nov-mvc-per-bst-sum}
-best$K = factor(best$K, levels = c(1,2,8,15,30,4))
-group_by(best, K) %>%
-  dplyr::summarise(
-    count = n(),
-    na_cnt = sum(is.na(val)),
-    min = min(val, na.rm = TRUE),
-    median = median(val, na.rm = TRUE),
-    mean = mean(val, na.rm = TRUE),
-    max = max(val, na.rm = TRUE),
-    IQR = IQR(val, na.rm = TRUE)
-  )
-```
-
-Kruskal–Wallis test provides evidence of significant differences among nearest neighbor size on the best performance found throughout 50,000 generations
-
-```{r nov-mvc-per-bst-kru}
-kruskal.test(val ~ K, data = best)
-```
-
-Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found throughout 50,000 generations.
-
-```{r nov-mvc-per-bst-wil}
-pairwise.wilcox.test(x = best$val, g = best$K, p.adjust.method = "bonferroni",
-                     paired = FALSE, conf.int = FALSE, alternative = 'g')
-```
-
-#### End of 50,000 generations
-
-Best performance in the population at the end of 50,000 generations.
-
-```{r nov-mvc-per-end}
-end = filter(nov_end, diagnostic == 'multivalley_crossing')
-plot = ggplot(end, aes(x = K, y = pop_fit_max / TRAITS, group = K, fill =K, color = K, shape = K)) +
-  geom_flat_violin(position = position_nudge(x = .3), alpha = 0.2) +
-  geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 10.8) +
-  geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.1, col = "black") +
   scale_y_continuous(
-    name="Average trait score",
-    limits=c(-1, 26),
-    breaks=seq(0,25, 5),
-    labels=c("0", "5", "10", "15", "20", "25")
+    name="Average trait score"
   ) +
-  scale_shape_manual(values=SHAPE)+
-  scale_colour_manual(values = cb_palette) +
-  scale_fill_manual(values = cb_palette) +
+  scale_x_discrete(
+    name="K"
+  )+
+  scale_shape_manual(values=c(0,1))+
+  scale_colour_manual(values = c(mvc_col[1],mvc_col[2])) +
   p_theme
 
 plot_grid(
-  plot +
-    ggtitle("Final performance") +
+  mvc_p +
+    ggtitle("Performance comparisons") +
     theme(legend.position="none"),
   legend,
   nrow=2,
-  rel_heights = c(2,.55),
+  rel_heights = c(1,.05),
   label_size = TSIZE
 )
 ```
 
 ##### Stats
 
-Summary statistics for the best performance found throughout 50,000 generations.
+Summary statistics for the performance of the best performance at 40,000 and 50,000 generations.
 
-```{r nov-mvc-per-end-sum}
-end$K = factor(end$K, levels = c(1,2,8,15,30,4))
-group_by(end, K) %>%
+```{r nov-mpe-mvc-per-sli-sum}
+# 80% and final generation comparison
+slices = filter(nov_ot_mvc, diagnostic == 'multipath_exploration' & (gen == 50000 | gen == 40000))
+slices$Generation <- factor(slices$gen, levels = c(50000,40000))
+slices %>%
+  group_by(K, Generation) %>%
   dplyr::summarise(
     count = n(),
-    na_cnt = sum(is.na(pop_fit_max)),
-    min = min(pop_fit_max, na.rm = TRUE),
-    median = median(pop_fit_max, na.rm = TRUE),
-    mean = mean(pop_fit_max, na.rm = TRUE),
-    max = max(pop_fit_max, na.rm = TRUE),
-    IQR = IQR(pop_fit_max, na.rm = TRUE)
+    na_cnt = sum(is.na(pop_fit_max  / DIMENSIONALITY)),
+    min = min(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    median = median(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    mean = mean(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    max = max(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE),
+    IQR = IQR(pop_fit_max  / DIMENSIONALITY, na.rm = TRUE)
   )
 ```
-
-Kruskal–Wallis test provides evidence of no significant differences among nearest neighbor size on the best performance found at the end of 50,000 generations.
-
-```{r nov-mvc-per-end-kru}
-kruskal.test(pop_fit_max ~ K, data = end)
+K 1
+```{r nov-mpe-mvc-per-0}
+wilcox.test(x = filter(slices, K == 1 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 1 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
 ```
 
-Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found at the end of 50,000 generations.
-
-```{r nov-mvc-per-end-wil}
-pairwise.wilcox.test(x = end$pop_fit_max, g = end$Sigma, p.adjust.method = "bonferroni",
-                     paired = FALSE, conf.int = FALSE, alternative = 'g')
+K 2
+```{r nov-mpe-mvc-per-01}
+wilcox.test(x = filter(slices, K == 2 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 2 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
 ```
 
-### Best gene value
+K 4
+```{r nov-mpe-mvc-per-03}
+wilcox.test(x = filter(slices, K == 4 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 4 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
 
-Here we analyze the gene values for each parameter replicate on the multi-valley crossing diagnostic.
+K 8
+```{r nov-mpe-mvc-per-06}
+wilcox.test(x = filter(slices, K == 8 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 8 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
 
-#### Gene value over time
+K 15
+```{r nov-mpe-mvc-per-12}
+wilcox.test(x = filter(slices, K == 15 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 15 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
 
-Best gene value over time.
+K 30
+```{r nov-mpe-mvc-per-25}
+wilcox.test(x = filter(slices, K == 30 & Generation == 50000)$pop_fit_max,
+            y = filter(slices, K == 30 & Generation == 40000)$pop_fit_max,
+            alternative = 't')
+```
 
-```{r nov-mvc-gne-ot, warning=FALSE}
-lines = filter(nov_ot, diagnostic == 'multivalley_crossing') %>%
+#### Activation gene coverage over time
+
+```{r nov-mpe-mvc-act-ot}
+lines = filter(nov_ot_mvc, diagnostic == 'multipath_exploration') %>%
   group_by(K, gen) %>%
   dplyr::summarise(
-    min = min(pop_max_gene),
-    mean = mean(pop_max_gene),
-    max = max(pop_max_gene)
+    min = min(uni_str_pos),
+    mean = mean(uni_str_pos),
+    max = max(uni_str_pos)
   )
-points = filter(lines, gen %% 2000 == 0 & gen != 0)
-
-ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill = K, color = K, shape = K)) +
+ggplot(lines, aes(x=gen, y=mean, group = K, fill =K, color = K, shape = K)) +
   geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.1) +
   geom_line(size = 0.5) +
-  geom_point(data = points, size = 1.5, stroke = 2.0, alpha = 1.0) +
+  geom_point(data = filter(lines, gen %% 2000 == 0 & gen != 0), size = 1.5, stroke = 2.0, alpha = 1.0) +
   scale_y_continuous(
-    name="Max gene value",
-    limits=c(-1, 101),
-    breaks=seq(0,100, 20),
-    labels=c("0", "20", "40", "60", "80", "100")
+    name="Coverage"
   ) +
   scale_x_continuous(
     name="Generations",
@@ -1162,157 +1367,114 @@ ot = ggplot(lines, aes(x=gen, y=mean, group = K, fill = K, color = K, shape = K)
     labels=c("0e+4", "1e+4", "2e+4", "3e+4", "4e+4", "5e+4")
 
   ) +
-  ggtitle("Best gene value over time") +
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
+  ggtitle("Activation gene coverage over time") +
   p_theme
-
-ot
 ```
 
-```{r nov-mvc-gne-lgd, echo = FALSE}
-legend <- cowplot::get_legend(
-  ot +
-    guides(
-      shape=guide_legend(nrow=2, title.position = "bottom"),
-      color=guide_legend(nrow=2, title.position = "bottom"),
-      fill=guide_legend(nrow=2, title.position = "bottom")
-    ) +
-    theme(
-      legend.position = "top",
-      legend.box="verticle",
-      legend.justification="center"
-    )
-)
-```
+#### Activation gene coverage comparison
 
-#### Best gene value throughout
+Best performances in the population at 40,000 and 50,000 generations.
 
-The best gene value found throughout 50,000 generations.
+```{r nov-mpe-mvc-act-sli, warning=FALSE}
+# 80% and final generation comparison
+end = filter(nov_ot_mvc, diagnostic == 'multipath_exploration' & gen == 50000)
+end$Generation <- factor(end$gen)
 
-```{r nov-mvc-gne-bst}
-best = filter(nov_best, col == 'pop_max_gene' & diagnostic == 'multivalley_crossing')
-plot =  ggplot(best, aes(x = K, y = val, color = K, fill = K, shape = K)) +
-          geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
-          geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
-          geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
-          guides(fill = "none",color = 'none', shape = 'none') +
-          scale_y_continuous(
-            name="Max gene value",
-            limits=c(-1, 101),
-            breaks=seq(0,100, 20),
-            labels=c("0", "20", "40", "60", "80", "100")
-          ) +
-          scale_x_discrete(
-            name="K"
-          )+
-          scale_shape_manual(values=SHAPE)+
-          scale_colour_manual(values = cb_palette, ) +
-          scale_fill_manual(values = cb_palette) +
-          p_theme
+mid = filter(nov_ot_mvc, diagnostic == 'multipath_exploration' & gen == 40000)
+mid$Generation <- factor(mid$gen)
 
-plot_grid(
-  plot +
-    ggtitle("Best gene value throughout") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.55),
-  label_size = TSIZE
-)
-```
+mvc_p = ggplot(mid, aes(x = K, y=uni_str_pos, group = K, shape = Generation)) +
+  geom_point(col = mvc_col[1] , position = position_jitternudge(jitter.width = .03, nudge.x = -0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(position = position_nudge(x = -.15, y = 0), lwd = 0.7, col = mvc_col[1], fill = mvc_col[1], width = .1, outlier.shape = NA, alpha = 0.0) +
 
-##### Stats
+  geom_point(data = end, aes(x = K, y=uni_str_pos), col = mvc_col[2], position = position_jitternudge(jitter.width = .03, nudge.x = 0.05), size = 2, alpha = 1.0) +
+  geom_boxplot(data = end, aes(x = K, y=uni_str_pos), position = position_nudge(x = .15, y = 0), lwd = 0.7, col = mvc_col[2], fill = mvc_col[2], width = .1, outlier.shape = NA, alpha = 0.0) +
 
-Summary statistics for the best gene value found throughout 50,000 generations.
-
-```{r nov-mvc-gne-bst-sum}
-best$K = factor(best$K, levels = c(1,2,4,8,15,30))
-group_by(best, K) %>%
-  dplyr::summarise(
-    count = n(),
-    na_cnt = sum(is.na(val)),
-    min = min(val, na.rm = TRUE),
-    median = median(val, na.rm = TRUE),
-    mean = mean(val, na.rm = TRUE),
-    max = max(val, na.rm = TRUE),
-    IQR = IQR(val, na.rm = TRUE)
-  )
-```
-
-Kruskal–Wallis test provides evidence of significant differences among nearest neighbor size on the best gene value found throughout 50,000 generations
-
-```{r nov-mvc-gne-bst-kru}
-kruskal.test(val ~ K, data = best)
-```
-
-Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best gene value found throughout 50,000 generations.
-
-```{r nov-mvc-gne-bst-wil}
-pairwise.wilcox.test(x = best$val, g = best$K, p.adjust.method = "bonferroni",
-                     paired = FALSE, conf.int = FALSE, alternative = 'l')
-```
-
-#### End of 50,000 generations
-
-Best gene value in the population at the end of 50,000 generations.
-
-```{r nov-mvc-gne-end}
-end = filter(nov_end, diagnostic == 'multivalley_crossing')
-plot = ggplot(end, aes(x = K, y = pop_max_gene, group = K, fill =K, color = K, shape = K)) +
-  geom_flat_violin(position = position_nudge(x = .3), alpha = 0.2) +
-  geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 10.8) +
-  geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.1, col = "black") +
   scale_y_continuous(
-    name="Max gene value",
-    limits=c(-1, 101),
-    breaks=seq(0,100, 20),
-    labels=c("0", "20", "40", "60", "80", "100")
+    name="Coverage",
   ) +
-  scale_shape_manual(values=SHAPE)+
-  scale_colour_manual(values = cb_palette) +
-  scale_fill_manual(values = cb_palette) +
+  scale_x_discrete(
+    name="K"
+  )+
+  scale_shape_manual(values=c(0,1))+
+  scale_colour_manual(values = c(mvc_col[1],mvc_col[2])) +
   p_theme
 
 plot_grid(
-  plot +
-    ggtitle("Final gene value") +
+  mvc_p +
+    ggtitle("Activation gene coverage over time") +
     theme(legend.position="none"),
   legend,
   nrow=2,
-  rel_heights = c(2,.55),
+  rel_heights = c(1,.05),
   label_size = TSIZE
 )
 ```
 
 ##### Stats
 
-Summary statistics for the best gene value found at the end of 50,000 generations.
+Summary statistics for the performance of the best performance at 40,000 and 50,000 generations.
 
-```{r nov-mvc-gne-end-sum}
-end$K = factor(end$K, levels = c(1,2,4,8,15,30))
-group_by(end, K) %>%
+```{r nov-mpe-mvc-act-sli-sum}
+slices = filter(nov_ot_mvc, diagnostic == 'multipath_exploration' & (gen == 50000 | gen == 40000))
+slices$Generation <- factor(slices$gen, levels = c(50000,40000))
+slices %>%
+  group_by(K, Generation) %>%
   dplyr::summarise(
     count = n(),
-    na_cnt = sum(is.na(pop_max_gene)),
-    min = min(pop_max_gene, na.rm = TRUE),
-    median = median(pop_max_gene, na.rm = TRUE),
-    mean = mean(pop_max_gene, na.rm = TRUE),
-    max = max(pop_max_gene, na.rm = TRUE),
-    IQR = IQR(pop_max_gene, na.rm = TRUE)
+    na_cnt = sum(is.na(uni_str_pos)),
+    min = min(uni_str_pos, na.rm = TRUE),
+    median = median(uni_str_pos, na.rm = TRUE),
+    mean = mean(uni_str_pos, na.rm = TRUE),
+    max = max(uni_str_pos, na.rm = TRUE),
+    IQR = IQR(uni_str_pos, na.rm = TRUE)
   )
+
 ```
 
-Kruskal–Wallis test provides evidence of no significant differences among nearest neighbor size on the best gene value found at the end of 50,000 generations.
-
-```{r nov-mvc-gne-end-kru}
-kruskal.test(pop_max_gene ~ K, data = end)
+K 1
+```{r nov-mpe-mvc-act-0}
+wilcox.test(x = filter(slices, K == 1 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 1 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
 ```
 
-Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best gene value found at the end of 50,000 generations.
-
-```{r nov-mvc-gne-end-wil}
-pairwise.wilcox.test(x = end$pop_max_gene, g = end$Sigma, p.adjust.method = "bonferroni",
-                     paired = FALSE, conf.int = FALSE, alternative = 'l')
+K 2
+```{r nov-mpe-mvc-act-01}
+wilcox.test(x = filter(slices, K == 2 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 2 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
 ```
+
+K 4
+```{r nov-mpe-mvc-act-03}
+wilcox.test(x = filter(slices, K == 4 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 4 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
+```
+
+K 8
+```{r nov-mpe-mvc-act-06}
+wilcox.test(x = filter(slices, K == 8 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 8 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
+```
+
+K 15
+```{r nov-mpe-mvc-act-12}
+wilcox.test(x = filter(slices, K == 15 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 15 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
+```
+
+K 30
+```{r nov-mpe-mvc-act-25}
+wilcox.test(x = filter(slices, K == 30 & Generation == 50000)$uni_str_pos,
+            y = filter(slices, K == 30 & Generation == 40000)$uni_str_pos,
+            alternative = 't')
+```
+
+

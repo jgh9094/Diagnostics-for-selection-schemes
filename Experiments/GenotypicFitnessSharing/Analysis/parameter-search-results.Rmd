@@ -9,6 +9,7 @@ library(ggplot2)
 library(cowplot)
 library(dplyr)
 library(PupillometryR)
+library(sdamr)
 ```
 
 ## Exploitation rate results
@@ -291,7 +292,7 @@ wilcox.test(x = filter(slices, Sigma == 2.5 & Generation == 50000)$pop_fit_max,
 ```
 
 Sigma 5.0
-```{r  gfs-exp-mvc-per-25}
+```{r  gfs-exp-mvc-per-50}
 wilcox.test(x = filter(slices, Sigma == 5.0 & Generation == 50000)$pop_fit_max,
             y = filter(slices, Sigma == 5.0 & Generation == 40000)$pop_fit_max,
             alternative = 't')
@@ -387,7 +388,7 @@ kruskal.test(val ~ Sigma,data = performance)
 Results for post-hoc Wilcoxon rank-sum test with a Bonferroni correction on the best performance found in the pouplation throughout 50,000 generations.
 
 ```{r gfs-ord-per-wil}
-pairwise.wilcox.test(x = performance$val, g = best$Sigma , p.adjust.method = "bonferroni",
+pairwise.wilcox.test(x = performance$val, g = performance$Sigma , p.adjust.method = "bonferroni",
                      paired = FALSE, conf.int = FALSE, alternative = 'l')
 ```
 
@@ -397,7 +398,7 @@ pairwise.wilcox.test(x = performance$val, g = best$Sigma , p.adjust.method = "bo
 
 Best performances in the population at 40,000 and 50,000 generations.
 
-```{r gfs-exp-mvc-per-sli, warning=FALSE}
+```{r gfs-ord-mvc-per-sli, warning=FALSE}
 # 80% and final generation comparison
 end = filter(gfs_ot_mvc, diagnostic == 'ordered_exploitation' & gen == 50000)
 end$Generation <- factor(end$gen)
@@ -437,7 +438,7 @@ plot_grid(
 
 Summary statistics for the performance of the best performance at 40,000 and 50,000 generations.
 
-```{r gfs-exp-mvc-per-sli-sum}
+```{r gfs-ord-mvc-per-sli-sum}
 slices = filter(gfs_ot_mvc, diagnostic == 'ordered_exploitation' & (gen == 50000 | gen == 40000))
 slices$Generation <- factor(slices$gen, levels = c(50000,40000))
 slices %>%
@@ -496,7 +497,7 @@ wilcox.test(x = filter(slices, Sigma == 2.5 & Generation == 50000)$pop_fit_max,
 ```
 
 Sigma 5.0
-```{r  gfs-ord-mvc-per-25}
+```{r  gfs-ord-mvc-per-50}
 wilcox.test(x = filter(slices, Sigma == 5.0 & Generation == 50000)$pop_fit_max,
             y = filter(slices, Sigma == 5.0 & Generation == 40000)$pop_fit_max,
             alternative = 't')
@@ -601,8 +602,8 @@ kruskal.test(val ~ Sigma, data = coverage)
 Satisfactory trait coverage in the final population (50,000 generations).
 
 ```{r gfs-con-sat-end}
-end = filter(gfs_end, diagnostic == 'contradictory_objectives')
-plot = ggplot(end, aes(x = Sigma, y = pop_uni_obj, color = Sigma, fill = Sigma, shape = Sigma)) +
+filter(gfs_ot, diagnostic == 'contradictory_objectives' & gen == 50000) %>%
+ggplot(., aes(x = Sigma, y = pop_uni_obj, color = Sigma, fill = Sigma, shape = Sigma)) +
   geom_flat_violin(position = position_nudge(x = .2, y = 0), scale = 'width', alpha = 0.2) +
   geom_point(position = position_jitter(width = .1), size = 1.5, alpha = 1.0) +
   geom_boxplot(color = 'black', width = .2, outlier.shape = NA, alpha = 0.0) +
@@ -616,17 +617,8 @@ plot = ggplot(end, aes(x = Sigma, y = pop_uni_obj, color = Sigma, fill = Sigma, 
   scale_shape_manual(values=SHAPE)+
   scale_colour_manual(values = cb_palette) +
   scale_fill_manual(values = cb_palette) +
+  ggtitle("Final satisfactory trait coverage") +
   p_theme
-
-plot_grid(
-  plot +
-    ggtitle("Final satisfactory trait coverage") +
-    theme(legend.position="none"),
-  legend,
-  nrow=2,
-  rel_heights = c(2,.3),
-  label_size = TSIZE
-)
 ```
 
 ##### Stats
@@ -779,7 +771,7 @@ ggplot(lines, aes(x=gen, y=mean, group = Sigma, fill =Sigma, color = Sigma, shap
 
 Best performances in the population at 40,000 and 50,000 generations.
 
-```{r gfs-con-mvc-per-sli, warning=FALSE}
+```{r gfs-con-mvc-sat-sli, warning=FALSE}
 # 80% and final generation comparison
 end = filter(gfs_ot_mvc, diagnostic == 'contradictory_objectives' & gen == 50000)
 end$Generation <- factor(end$gen)
@@ -819,7 +811,7 @@ plot_grid(
 
 Summary statistics for the performance of the best performance at 40,000 and 50,000 generations.
 
-```{r gfs-con-mvc-per-sli-sum}
+```{r gfs-con-mvc-sat-sli-sum}
 slices = filter(gfs_ot_mvc, diagnostic == 'contradictory_objectives' & (gen == 50000 | gen == 40000))
 slices$Generation <- factor(slices$gen, levels = c(50000,40000))
 slices %>%
@@ -836,49 +828,49 @@ slices %>%
 ```
 
 Sigma 0.0
-```{r gfs-con-mvc-per-0}
+```{r gfs-con-mvc-sat-0}
 wilcox.test(x = filter(slices, Sigma == 0.0 & Generation == 50000)$pop_uni_obj,
             y = filter(slices, Sigma == 0.0 & Generation == 40000)$pop_uni_obj,
             alternative = 't')
 ```
 
 Sigma 0.1
-```{r gfs-con-mvc-per-01}
+```{r gfs-con-mvc-sat-01}
 wilcox.test(x = filter(slices, Sigma == 0.1 & Generation == 50000)$pop_uni_obj,
             y = filter(slices, Sigma == 0.1 & Generation == 40000)$pop_uni_obj,
             alternative = 't')
 ```
 
 Sigma 0.3
-```{r gfs-con-mvc-per-03}
+```{r gfs-con-mvc-sat-03}
 wilcox.test(x = filter(slices, Sigma == 0.3 & Generation == 50000)$pop_uni_obj,
             y = filter(slices, Sigma == 0.3 & Generation == 40000)$pop_uni_obj,
             alternative = 't')
 ```
 
 Sigma 0.6
-```{r gfs-con-mvc-per-06}
+```{r gfs-con-mvc-sat-06}
 wilcox.test(x = filter(slices, Sigma == 0.6 & Generation == 50000)$pop_uni_obj,
             y = filter(slices, Sigma == 0.6 & Generation == 40000)$pop_uni_obj,
             alternative = 't')
 ```
 
 Sigma 1.2
-```{r gfs-con-mvc-per-12}
+```{r gfs-con-mvc-sat-12}
 wilcox.test(x = filter(slices, Sigma == 1.2 & Generation == 50000)$pop_uni_obj,
             y = filter(slices, Sigma == 1.2 & Generation == 40000)$pop_uni_obj,
             alternative = 't')
 ```
 
 Sigma 2.5
-```{r  gfs-con-mvc-per-25}
+```{r  gfs-con-mvc-sat-25}
 wilcox.test(x = filter(slices, Sigma == 2.5 & Generation == 50000)$pop_uni_obj,
             y = filter(slices, Sigma == 2.5 & Generation == 40000)$pop_uni_obj,
             alternative = 't')
 ```
 
 Sigma 5.0
-```{r  gfs-con-mvc-per-25}
+```{r  gfs-con-mvc-sat-50}
 wilcox.test(x = filter(slices, Sigma == 5.0 & Generation == 50000)$pop_uni_obj,
             y = filter(slices, Sigma == 5.0 & Generation == 40000)$pop_uni_obj,
             alternative = 't')
@@ -887,7 +879,7 @@ wilcox.test(x = filter(slices, Sigma == 5.0 & Generation == 50000)$pop_uni_obj,
 
 #### Activation gene coverage over time
 
-```{r gfs-con-mvc-sat-ot}
+```{r gfs-con-mvc-act-ot}
 lines = filter(gfs_ot_mvc, diagnostic == 'contradictory_objectives') %>%
   group_by(Sigma, gen) %>%
   dplyr::summarise(
@@ -918,7 +910,7 @@ ggplot(lines, aes(x=gen, y=mean, group = Sigma, fill =Sigma, color = Sigma, shap
 
 #### Activation gene coverage comparison
 
-Best performances in the population at 40,000 and 50,000 generations.
+Activation gene coverage in the population at 40,000 and 50,000 generations.
 
 ```{r gfs-con-mvc-act-sli, warning=FALSE}
 # 80% and final generation comparison
@@ -958,9 +950,9 @@ plot_grid(
 
 ##### Stats
 
-Summary statistics for the performance of the best performance at 40,000 and 50,000 generations.
+Summary statistics for the activation gene coverage at 40,000 and 50,000 generations.
 
-```{r gfs-con-mvc-per-sli-sum}
+```{r gfs-con-mvc-act-sli-sum}
 slices = filter(gfs_ot_mvc, diagnostic == 'contradictory_objectives' & (gen == 50000 | gen == 40000))
 slices$Generation <- factor(slices$gen, levels = c(50000,40000))
 slices %>%
@@ -978,49 +970,49 @@ slices %>%
 ```
 
 Sigma 0.0
-```{r gfs-con-mvc-per-0}
+```{r gfs-con-mvc-act-0}
 wilcox.test(x = filter(slices, Sigma == 0.0 & Generation == 50000)$uni_str_pos,
             y = filter(slices, Sigma == 0.0 & Generation == 40000)$uni_str_pos,
             alternative = 't')
 ```
 
 Sigma 0.1
-```{r gfs-con-mvc-per-01}
+```{r gfs-con-mvc-act-01}
 wilcox.test(x = filter(slices, Sigma == 0.1 & Generation == 50000)$uni_str_pos,
             y = filter(slices, Sigma == 0.1 & Generation == 40000)$uni_str_pos,
             alternative = 't')
 ```
 
 Sigma 0.3
-```{r gfs-con-mvc-per-03}
+```{r gfs-con-mvc-act-03}
 wilcox.test(x = filter(slices, Sigma == 0.3 & Generation == 50000)$uni_str_pos,
             y = filter(slices, Sigma == 0.3 & Generation == 40000)$uni_str_pos,
             alternative = 't')
 ```
 
 Sigma 0.6
-```{r gfs-con-mvc-per-06}
+```{r gfs-con-mvc-act-06}
 wilcox.test(x = filter(slices, Sigma == 0.6 & Generation == 50000)$uni_str_pos,
             y = filter(slices, Sigma == 0.6 & Generation == 40000)$uni_str_pos,
             alternative = 't')
 ```
 
 Sigma 1.2
-```{r gfs-con-mvc-per-12}
+```{r gfs-con-mvc-act-12}
 wilcox.test(x = filter(slices, Sigma == 1.2 & Generation == 50000)$uni_str_pos,
             y = filter(slices, Sigma == 1.2 & Generation == 40000)$uni_str_pos,
             alternative = 't')
 ```
 
 Sigma 2.5
-```{r  gfs-con-mvc-per-25}
+```{r  gfs-con-mvc-act-25}
 wilcox.test(x = filter(slices, Sigma == 2.5 & Generation == 50000)$uni_str_pos,
             y = filter(slices, Sigma == 2.5 & Generation == 40000)$uni_str_pos,
             alternative = 't')
 ```
 
 Sigma 5.0
-```{r  gfs-con-mvc-per-25}
+```{r  gfs-con-mvc-act-50}
 wilcox.test(x = filter(slices, Sigma == 5.0 & Generation == 50000)$uni_str_pos,
             y = filter(slices, Sigma == 5.0 & Generation == 40000)$uni_str_pos,
             alternative = 't')
@@ -1282,8 +1274,8 @@ pairwise.wilcox.test(x = performance$uni_str_pos, g = performance$Sigma , p.adju
 
 #### Performance over time
 
-```{r gfs-mpe-val-per-ot}
-lines =  filter(gfs_ot, diagnostic == 'multipath_exploration') %>%
+```{r gfs-mpe-mvc-per-ot}
+lines =  filter(gfs_ot_mvc, diagnostic == 'multipath_exploration') %>%
   group_by(Sigma, gen) %>%
   dplyr::summarise(
     min = min(pop_fit_max),
@@ -1313,7 +1305,7 @@ ggplot(lines, aes(x=gen, y=mean / DIMENSIONALITY, group = Sigma, fill = Sigma, c
 
 #### Performance comparisons
 
-```{r gfs-mpe-val-per-sli, warning=FALSE}
+```{r gfs-mpe-mvc-per-sli, warning=FALSE}
 # 80% and final generation comparison
 end = filter(gfs_ot_mvc, diagnostic == 'multipath_exploration' & gen == 50000)
 end$Generation <- factor(end$gen)
@@ -1353,7 +1345,7 @@ plot_grid(
 
 Summary statistics for the performance of the best performance at 40,000 and 50,000 generations.
 
-```{r gfs-exp-mvc-per-sli-sum}
+```{r gfs-mpe-mvc-per-sli-sum}
 # 80% and final generation comparison
 slices = filter(gfs_ot_mvc, diagnostic == 'multipath_exploration' & (gen == 50000 | gen == 40000))
 slices$Generation <- factor(slices$gen, levels = c(50000,40000))
@@ -1371,49 +1363,49 @@ slices %>%
 ```
 
 Sigma 0.0
-```{r gfs-exp-mvc-per-0}
+```{r gfs-mpe-mvc-per-0}
 wilcox.test(x = filter(slices, Sigma == 0.0 & Generation == 50000)$pop_fit_max,
             y = filter(slices, Sigma == 0.0 & Generation == 40000)$pop_fit_max,
             alternative = 't')
 ```
 
 Sigma 0.1
-```{r gfs-exp-mvc-per-01}
+```{r gfs-mpe-mvc-per-01}
 wilcox.test(x = filter(slices, Sigma == 0.1 & Generation == 50000)$pop_fit_max,
             y = filter(slices, Sigma == 0.1 & Generation == 40000)$pop_fit_max,
             alternative = 't')
 ```
 
 Sigma 0.3
-```{r gfs-exp-mvc-per-03}
+```{r gfs-mpe-mvc-per-03}
 wilcox.test(x = filter(slices, Sigma == 0.3 & Generation == 50000)$pop_fit_max,
             y = filter(slices, Sigma == 0.3 & Generation == 40000)$pop_fit_max,
             alternative = 't')
 ```
 
 Sigma 0.6
-```{r gfs-exp-mvc-per-06}
+```{r gfs-mpe-mvc-per-06}
 wilcox.test(x = filter(slices, Sigma == 0.6 & Generation == 50000)$pop_fit_max,
             y = filter(slices, Sigma == 0.6 & Generation == 40000)$pop_fit_max,
             alternative = 't')
 ```
 
 Sigma 1.2
-```{r gfs-exp-mvc-per-12}
+```{r gfs-mpe-mvc-per-12}
 wilcox.test(x = filter(slices, Sigma == 1.2 & Generation == 50000)$pop_fit_max,
             y = filter(slices, Sigma == 1.2 & Generation == 40000)$pop_fit_max,
             alternative = 't')
 ```
 
 Sigma 2.5
-```{r  gfs-exp-mvc-per-25}
+```{r  gfs-mpe-mvc-per-25}
 wilcox.test(x = filter(slices, Sigma == 2.5 & Generation == 50000)$pop_fit_max,
             y = filter(slices, Sigma == 2.5 & Generation == 40000)$pop_fit_max,
             alternative = 't')
 ```
 
 Sigma 5.0
-```{r  gfs-exp-mvc-per-25}
+```{r  gfs-mpe-mvc-per-50}
 wilcox.test(x = filter(slices, Sigma == 5.0 & Generation == 50000)$pop_fit_max,
             y = filter(slices, Sigma == 5.0 & Generation == 40000)$pop_fit_max,
             alternative = 't')
@@ -1554,7 +1546,7 @@ wilcox.test(x = filter(slices, Sigma == 2.5 & Generation == 50000)$uni_str_pos,
 ```
 
 Sigma 5.0
-```{r gfs-mpe-mvc-act-25}
+```{r gfs-mpe-mvc-act-50}
 wilcox.test(x = filter(slices, Sigma == 5.0 & Generation == 50000)$uni_str_pos,
             y = filter(slices, Sigma == 5.0 & Generation == 40000)$uni_str_pos,
             alternative = 't')
