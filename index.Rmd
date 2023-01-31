@@ -531,7 +531,9 @@ exp_df = filter(exp_df, trt != 1)
 ord_df = subset(ord_df, select = -c(SEL))
 ord_df = filter(ord_df, trt != 1)
 # combine
-tru_ssf = rbind(exp_df,ord_df)
+tor_ssf = rbind(exp_df,ord_df)
+tor_ssf$T = tor_ssf$trt
+tor_ssf$T = factor(tor_ssf$T)
 
 #Truncation
 exp_dir = paste(DATA_DIR,'NO-MVC/TRUNCATION/ssf-exploitation_rate-truncation.csv', sep = "", collapse = NULL)
@@ -546,6 +548,8 @@ ord_df = subset(ord_df, select = -c(SEL))
 ord_df = filter(ord_df, trt != 1)
 # combine
 tru_ssf = rbind(exp_df,ord_df)
+tru_ssf$T = tru_ssf$trt
+tru_ssf$T = factor(tru_ssf$T)
 
 #final clean up
 rm(i,exp_dir,ord_dir,exp_df,ord_df)
