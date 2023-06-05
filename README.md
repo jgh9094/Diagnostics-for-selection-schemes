@@ -91,7 +91,7 @@ Just submit an issue/email me (jgh9094@gmail.com).
 
 ## Results
 
-The results for this work can be found in our [supplemental material page](https://jgh9094.github.io/ECJ-2022-suite-of-diagnostics-for-selection-schemes/).
+The results for this work can be found in our [supplemental material page](https://jgh9094.github.io/Diagnostics-for-selection-schemes/).
 
 ## Reference
 
