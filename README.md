@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository is associated with our **TBD** submission: A suite of diagnostic metrics for characterizing selection schemes.
+This repository is associated with the 6th chapter of my dissertation: A suite of diagnostic metrics for characterizing selection schemes.
 
 **Repository Guide:**
 - [DataTools/](https://github.com/jgh9094/ECJ-2022-suite-of-diagnostics-for-selection-schemes/tree/master/DataTools)
